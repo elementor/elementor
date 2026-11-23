@@ -1,6 +1,7 @@
 import { renderHookWithQuery } from 'test-utils';
 import apiFetch from '@wordpress/api-fetch';
 
+import { postsBaselineTotalQueryKey } from '../use-posts-baseline-total';
 import { postsQueryKey } from '../use-posts';
 import { usePostActions } from '../use-posts-actions';
 
@@ -86,6 +87,51 @@ describe( '@elementor/site-settings/use-post-actions', () => {
 		} );
 
 		expect( queryClient.getQueryState( queryKey )?.isInvalidated ).toBe( true );
+	} );
+
+	it( 'should run forceDeletePost from usePostActions hook', async () => {
+		const { component, queryClient } = renderHookWithQuery( () => usePostActions( 'page' ) );
+		const { forceDeletePost } = component.result.current;
+
+		const queryKey = postsQueryKey( 'page' );
+		const baselineQueryKey = postsBaselineTotalQueryKey( 'page' );
+
+		await queryClient.setQueryData( queryKey, { posts: [] } );
+		await queryClient.setQueryData( baselineQueryKey, 11 );
+
+		await forceDeletePost.mutateAsync( 1 );
+
+		expect( apiFetch ).toHaveBeenCalledWith( {
+			path: '/wp/v2/pages/1?force=true',
+			method: 'DELETE',
+		} );
+
+		expect( queryClient.getQueryState( queryKey )?.isInvalidated ).toBe( true );
+		expect( queryClient.getQueryState( baselineQueryKey )?.isInvalidated ).toBe( true );
+	} );
+
+	it( 'should run restorePost from usePostActions hook', async () => {
+		const { component, queryClient } = renderHookWithQuery( () => usePostActions( 'page' ) );
+		const { restorePost } = component.result.current;
+
+		const queryKey = postsQueryKey( 'page' );
+		const baselineQueryKey = postsBaselineTotalQueryKey( 'page' );
+
+		await queryClient.setQueryData( queryKey, { posts: [] } );
+		await queryClient.setQueryData( baselineQueryKey, 11 );
+
+		await restorePost.mutateAsync( 1 );
+
+		expect( apiFetch ).toHaveBeenCalledWith( {
+			path: '/wp/v2/pages/1',
+			method: 'POST',
+			data: {
+				status: 'draft',
+			},
+		} );
+
+		expect( queryClient.getQueryState( queryKey )?.isInvalidated ).toBe( true );
+		expect( queryClient.getQueryState( baselineQueryKey )?.isInvalidated ).toBe( true );
 	} );
 
 	it( 'invalidates search queries when a post is updated', async () => {

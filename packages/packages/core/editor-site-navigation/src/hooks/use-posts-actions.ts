@@ -9,6 +9,7 @@ import {
 	type UpdatePost,
 	updateRequest,
 } from '../api/post';
+import { SITE_CONTENT_V1_RESTORE_STATUS } from '../site-content-restore';
 import { postsBaselineTotalQueryKey } from './use-posts-baseline-total';
 import { postsQueryKeyBase } from './use-posts';
 import { recentPostsQueryKey } from './use-recent-posts';
@@ -39,7 +40,8 @@ export function usePostActions( postTypeSlug: Slug ) {
 	} );
 
 	const restorePost = useMutation( {
-		mutationFn: ( postId: number ) => updateRequest( postTypeSlug, { id: postId, status: 'draft' } ),
+		mutationFn: ( postId: number ) =>
+			updateRequest( postTypeSlug, { id: postId, status: SITE_CONTENT_V1_RESTORE_STATUS } ),
 		onSuccess,
 	} );
 

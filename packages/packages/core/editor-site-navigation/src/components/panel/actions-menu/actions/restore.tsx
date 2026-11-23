@@ -8,11 +8,15 @@ import { type Post } from '../../../../types';
 import ActionMenuItem from '../action-menu-item';
 
 export default function Restore( { post }: { post: Post } ) {
-	const { type } = usePostListContext();
+	const { setError, type } = usePostListContext();
 	const { restorePost } = usePostActions( type );
 
 	const handleClick = async () => {
-		await restorePost.mutateAsync( post.id );
+		try {
+			await restorePost.mutateAsync( post.id );
+		} catch {
+			setError();
+		}
 	};
 
 	return (

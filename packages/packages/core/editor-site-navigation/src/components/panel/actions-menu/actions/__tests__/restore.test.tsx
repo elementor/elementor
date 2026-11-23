@@ -1,0 +1,65 @@
+import * as React from 'react';
+import { renderWithTheme } from 'test-utils';
+import { fireEvent, screen } from '@testing-library/react';
+
+import { PostListContextProvider } from '../../../../../contexts/post-list-context';
+import { type Post } from '../../../../../types';
+import Restore from '../restore';
+
+const mockMutateAsync = jest.fn();
+const mockSetError = jest.fn();
+
+jest.mock( '../../../../../hooks/use-posts-actions', () => ( {
+	usePostActions: () => ( {
+		restorePost: {
+			isPending: false,
+			mutateAsync: mockMutateAsync,
+		},
+	} ),
+} ) );
+
+const trashedPost: Post = {
+	id: 1,
+	link: 'https://example.local/test-page',
+	status: 'trash',
+	title: { rendered: 'Test Page' },
+	type: 'page',
+	user_can: { delete: true, edit: false },
+};
+
+describe( 'Restore', () => {
+	afterEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	it( 'runs restore when the menu item is clicked', () => {
+		mockMutateAsync.mockResolvedValue( {} );
+
+		renderWithTheme(
+			<PostListContextProvider setError={ mockSetError } type="page">
+				<Restore post={ trashedPost } />
+			</PostListContextProvider>
+		);
+
+		fireEvent.click( screen.getByRole( 'menuitem', { name: 'Restore' } ) );
+
+		expect( mockMutateAsync ).toHaveBeenCalledWith( trashedPost.id );
+		expect( mockSetError ).not.toHaveBeenCalled();
+	} );
+
+	it( 'calls setError when restore fails', async () => {
+		mockMutateAsync.mockRejectedValue( new Error( 'REST error' ) );
+
+		renderWithTheme(
+			<PostListContextProvider setError={ mockSetError } type="page">
+				<Restore post={ trashedPost } />
+			</PostListContextProvider>
+		);
+
+		fireEvent.click( screen.getByRole( 'menuitem', { name: 'Restore' } ) );
+
+		await screen.findByRole( 'menuitem', { name: 'Restore' } );
+
+		expect( mockSetError ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
