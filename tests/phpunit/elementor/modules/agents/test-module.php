@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Agents;
 
 use Elementor\Core\Utils\Exceptions;
+use Elementor\Modules\Agents\Agent_Ready_Settings;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
@@ -918,6 +919,66 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Assert - llms cache should still be cleared due to global invalidation
 		$this->assertFalse( $cache->get_llms() );
+	}
+
+	private function set_enabled_modules( array $enabled_modules ): void {
+		$settings = get_option( Agent_Ready_Settings::OPTION );
+
+		foreach ( Module::EDGE_VISIBLE_MODULES as $module ) {
+			$settings[ $module ]['enabled'] = in_array( $module, $enabled_modules, true );
+		}
+
+		update_option( Agent_Ready_Settings::OPTION, $settings );
+	}
+
+	public function test_on_settings_update__purges_edge_when_last_active_module_is_disabled() {
+		// Arrange
+		$this->set_enabled_modules( [ Agent_Ready_Settings::MODULE_LLMS_TXT ] );
+
+		$purged_urls = null;
+		$purge_all   = null;
+		$invalidated = false;
+		add_action( 'elementor/agents/purge_urls', static function ( $urls, $purge_all_flag ) use ( &$purged_urls, &$purge_all ) {
+			$purged_urls = $urls;
+			$purge_all   = $purge_all_flag;
+		}, 10, 2 );
+		add_action( 'elementor/agents/llms_txt/cache_invalidated', static function () use ( &$invalidated ) {
+			$invalidated = true;
+		} );
+
+		// Act
+		$this->set_enabled_modules( [] );
+
+		// Assert
+		remove_all_actions( 'elementor/agents/purge_urls' );
+		remove_all_actions( 'elementor/agents/llms_txt/cache_invalidated' );
+
+		$this->assertTrue( $invalidated );
+		$this->assertTrue( $purge_all );
+		$this->assertContains( home_url( '/llms.txt' ), $purged_urls );
+	}
+
+	public function test_on_settings_update__purges_edge_when_only_markdown_is_enabled() {
+		// Arrange
+		$this->set_enabled_modules( [] );
+
+		$purged_urls = null;
+		$purge_all   = null;
+		add_action( 'elementor/agents/purge_urls', static function ( $urls, $purge_all_flag ) use ( &$purged_urls, &$purge_all ) {
+			$purged_urls = $urls;
+			$purge_all   = $purge_all_flag;
+		}, 10, 2 );
+
+		// Act
+		$this->set_enabled_modules( [ Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT ] );
+
+		// Assert
+		remove_all_actions( 'elementor/agents/purge_urls' );
+
+		$this->assertTrue( $purge_all );
+		$this->assertContains( home_url( '/index.md' ), $purged_urls );
+		$this->assertContains( home_url( '/robots.txt' ), $purged_urls );
+		$this->assertContains( home_url( '/.well-known/agent.json' ), $purged_urls );
 	}
 
 	public function test_on_settings_add__clears_caches_when_settings_created() {
