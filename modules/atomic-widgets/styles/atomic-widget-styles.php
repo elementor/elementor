@@ -74,8 +74,18 @@ class Atomic_Widget_Styles {
 		foreach ( $post_ids as $post_id ) {
 			$get_styles = fn() => $this->parse_post_styles( $post_id );
 
-			$styles_manager->register( [ self::STYLES_KEY, $post_id, $context ], $get_styles );
+			$styles_manager->register( $this->get_styles_path( $post_id, $context ), $get_styles );
 		}
+	}
+
+	private function get_styles_path( $post_id, string $context ): array {
+		$frontend_document_id = Plugin::$instance->documents->get_frontend_document_id( (int) $post_id );
+
+		if ( $frontend_document_id !== (int) $post_id ) {
+			return [ self::STYLES_KEY, $post_id, self::CONTEXT_PREVIEW, $frontend_document_id ];
+		}
+
+		return [ self::STYLES_KEY, $post_id, $context ];
 	}
 
 	private function parse_post_styles( $post_id ) {

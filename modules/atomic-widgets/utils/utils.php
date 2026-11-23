@@ -36,8 +36,7 @@ class Utils {
 	}
 
 	public static function traverse_post_elements( string $post_id, callable $callback ): void {
-		$documents = Plugin::$instance->documents;
-		$document = Plugin::$instance->preview->is_editor_or_preview() ? $documents->get_doc_or_auto_save( $post_id, get_current_user_id() ) : $documents->get( $post_id );
+		$document = self::get_document_to_traverse( $post_id );
 
 		if ( ! $document ) {
 			return;
@@ -52,5 +51,18 @@ class Utils {
 		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $callback ) {
 			call_user_func( $callback, $element_data );
 		} );
+	}
+
+	private static function get_document_to_traverse( string $post_id ) {
+		$documents = Plugin::$instance->documents;
+		$frontend_document_id = $documents->get_frontend_document_id( (int) $post_id );
+
+		if ( $frontend_document_id !== (int) $post_id ) {
+			return $documents->get( $frontend_document_id );
+		}
+
+		return Plugin::$instance->preview->is_editor_or_preview()
+			? $documents->get_doc_or_auto_save( $post_id, get_current_user_id() )
+			: $documents->get( $post_id );
 	}
 }

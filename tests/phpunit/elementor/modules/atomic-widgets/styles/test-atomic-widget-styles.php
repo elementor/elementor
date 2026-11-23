@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
+use Elementor\Core\Documents_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -26,6 +27,12 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		$this->mock_styles_manager = $this->createMock( Atomic_Styles_Manager::class );
 
 		remove_all_actions( 'elementor/atomic-widgets/styles/register' );
+	}
+
+	public function tear_down() {
+		remove_all_filters( Documents_Manager::FRONTEND_DOCUMENT_ID_FILTER );
+
+		parent::tear_down();
 	}
 
 	public function test_register_styles__registers_styles_for_atomic_widgets() {
@@ -322,6 +329,51 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_styles_manager, [ $doc_id ] );
 	}
 
+	public function test_register_styles__filtered_revision_uses_its_own_path_and_styles() {
+		// Arrange.
+		( new Atomic_Widget_Styles() )->register_hooks();
+		$live_widget = $this->make_mock_widget( [ 'styles' => [ $this->make_style( 'live-style', 'red' ) ] ] );
+		$post_id = $this->make_mock_post( [ $live_widget->get_raw_data() ] );
+		$revision_widget = $this->make_mock_widget( [ 'styles' => [ $this->make_style( 'staged-style', 'blue' ) ] ] );
+		$revision_id = $this->make_revision( $post_id, [ $revision_widget->get_raw_data() ] );
+		add_filter( Documents_Manager::FRONTEND_DOCUMENT_ID_FILTER, fn( $id ) => $id === $post_id ? $revision_id : $id );
+
+		$registered = [];
+		$this->mock_styles_manager
+			->method( 'register' )
+			->willReturnCallback( function( $path, $get_styles ) use ( &$registered ) {
+				$registered[] = [ $path, $get_styles() ];
+			} );
+
+		// Act.
+		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_styles_manager, [ $post_id ] );
+
+		// Assert.
+		$this->assertSame(
+			[ Atomic_Widget_Styles::STYLES_KEY, $post_id, Atomic_Widget_Styles::CONTEXT_PREVIEW, $revision_id ],
+			$registered[0][0]
+		);
+		$this->assertSame( 'staged-style', $registered[0][1][0]['id'] );
+	}
+
+	public function test_cache_invalidation_on_preview_update__clears_revision_styles() {
+		// Arrange.
+		( new Atomic_Widget_Styles() )->register_hooks();
+		$doc = $this->factory()->documents->create_and_get();
+		$doc->update_meta( 'post_status', 'draft' );
+		$id = $doc->get_id();
+		$revision_id = $this->make_revision( $id, [] );
+		$revision_path = [ Atomic_Widget_Styles::STYLES_KEY, $id, Atomic_Widget_Styles::CONTEXT_PREVIEW, $revision_id ];
+		$cache_validity = new Cache_Validity();
+		$cache_validity->validate( $revision_path );
+
+		// Act.
+		do_action( 'elementor/document/after_save', $doc, [] );
+
+		// Assert.
+		$this->assertFalse( $cache_validity->is_valid( $revision_path ) );
+	}
+
 	public function test_cache_invalidation_on_post_deletion() {
 		// Arrange.
 		( new Atomic_Widget_Styles() )->register_hooks();
@@ -465,6 +517,26 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		] );
 
 		return $doc->get_id();
+	}
+
+	private function make_revision( int $post_id, array $elements_data ): int {
+		$revision_id = $this->factory()->post->create( [
+			'post_type' => 'revision',
+			'post_parent' => $post_id,
+			'post_status' => 'inherit',
+		] );
+		update_metadata( 'post', $revision_id, '_elementor_edit_mode', 'builder' );
+		update_metadata( 'post', $revision_id, '_elementor_data', wp_slash( wp_json_encode( $elements_data ) ) );
+
+		return $revision_id;
+	}
+
+	private function make_style( string $id, string $color ): array {
+		return [
+			'id' => $id,
+			'type' => 'class',
+			'variants' => [ [ 'props' => [ 'color' => $color ], 'meta' => [] ] ],
+		];
 	}
 
 	/**
