@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AlertCircleIcon } from '@elementor/icons';
 import Button from '@elementor/ui/Button';
 import Chip from '@elementor/ui/Chip';
@@ -7,6 +7,8 @@ import Typography from '@elementor/ui/Typography';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
+import { FEATURE_MARKDOWN_CONTENT, FILE_TYPE_MARKDOWN } from '../../analytics/agent-ready-events';
+import { trackFeatureConflictDetected, trackFileOpened } from '../../analytics/track-agent-ready-event';
 import { fetchMarkdownPreview, revertMarkdownContent, saveMarkdownContent } from '../../api';
 import { MARKDOWN_SETTINGS_KEY } from '../../constants';
 import { useMarkdownItems } from '../../hooks/use-markdown-items';
@@ -32,6 +34,7 @@ export const MarkdownContentPanel = ( { settings } ) => {
 	const [ content, setContent ] = useState( '' );
 	const [ isOverridden, setIsOverridden ] = useState( false );
 	const [ dialogMode, setDialogMode ] = useState( null );
+	const conflictReportedItemIds = useRef( new Set() );
 
 	const pickedItem = picked?.itemsKey === itemsKey ? picked.item : null;
 	const selectedItem = isEnabled ? pickedItem ?? defaultItems[ 0 ] ?? null : null;
@@ -40,9 +43,27 @@ export const MarkdownContentPanel = ( { settings } ) => {
 	const selectItem = ( item ) => setPicked( { itemsKey, item } );
 	const closeDialog = () => setDialogMode( null );
 
+	const handleEdit = () => {
+		trackFileOpened( { fileType: FILE_TYPE_MARKDOWN } );
+		setDialogMode( DIALOG_MODE_EDIT );
+	};
+
 	const refreshAfterChange = () => setRevision( ( current ) => current + 1 );
 
-	const saveContent = ( nextContent ) => saveMarkdownContent( selectedItemId, nextContent ).then( refreshAfterChange );
+	const reportConflictOnce = ( itemId ) => {
+		if ( conflictReportedItemIds.current.has( itemId ) ) {
+			return;
+		}
+
+		conflictReportedItemIds.current.add( itemId );
+		trackFeatureConflictDetected( { featureName: FEATURE_MARKDOWN_CONTENT } );
+	};
+
+	const saveContent = ( nextContent ) => {
+		conflictReportedItemIds.current.add( selectedItemId );
+
+		return saveMarkdownContent( selectedItemId, nextContent ).then( refreshAfterChange );
+	};
 
 	const revertContent = () => revertMarkdownContent( selectedItemId ).then( refreshAfterChange );
 
@@ -60,6 +81,10 @@ export const MarkdownContentPanel = ( { settings } ) => {
 				if ( isCurrent ) {
 					setContent( preview.content );
 					setIsOverridden( preview.isOverridden );
+
+					if ( preview.isOverridden ) {
+						reportConflictOnce( selectedItemId );
+					}
 				}
 			} )
 			.catch( () => {
@@ -120,7 +145,7 @@ export const MarkdownContentPanel = ( { settings } ) => {
 					content={ content }
 					onSelect={ selectItem }
 					hasContent={ '' !== content }
-					onEdit={ () => setDialogMode( DIALOG_MODE_EDIT ) }
+					onEdit={ handleEdit }
 					onExpand={ () => setDialogMode( DIALOG_MODE_VIEW ) }
 				/>
 			) }

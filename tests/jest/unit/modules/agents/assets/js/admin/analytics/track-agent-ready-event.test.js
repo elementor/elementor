@@ -1,8 +1,11 @@
 import {
 	trackActivationClicked,
 	trackBotPermissionChanged,
+	trackCustomCrawlerAdded,
 	trackDashboardCtaClicked,
+	trackFeatureConflictDetected,
 	trackFeatureToggled,
+	trackFileOpened,
 	trackPostTypeToggled,
 	trackWelcomeViewed,
 } from 'elementor/modules/agents/assets/js/admin/analytics/track-agent-ready-event';
@@ -74,10 +77,23 @@ describe( 'track-agent-ready-event', () => {
 		// Assert
 		expect( dispatchEvent ).toHaveBeenCalledWith( 'agent_readiness_post_type_toggled', expect.objectContaining( {
 			feature_name: 'markdown',
-			post_type: 'page',
+			post_type: 'pages',
 			interaction_result: 'excluded',
 			location_l2: 'markdown',
 		} ) );
+	} );
+
+	it.each( [
+		[ 'post', 'posts' ],
+		[ 'page', 'pages' ],
+		[ 'product', 'products' ],
+		[ 'portfolio', 'portfolio' ],
+	] )( 'should send post type %s as %s', ( postType, expectedName ) => {
+		// Act
+		trackPostTypeToggled( { featureName: 'llms_txt', postType, isIncluded: true } );
+
+		// Assert
+		expect( dispatchEvent.mock.calls[ 0 ][ 1 ].post_type ).toBe( expectedName );
 	} );
 
 	it( 'should dispatch single bot permission change', () => {
@@ -106,6 +122,68 @@ describe( 'track-agent-ready-event', () => {
 
 		// Assert
 		expect( dispatchEvent.mock.calls[ 0 ][ 1 ] ).not.toHaveProperty( 'permission_type' );
+	} );
+
+	it( 'should dispatch feature conflict detected as a view with a conflict flag', () => {
+		// Act
+		trackFeatureConflictDetected( { featureName: 'bot_access' } );
+
+		// Assert
+		expect( dispatchEvent ).toHaveBeenCalledWith( 'agent_readiness_feature_conflict_detected', expect.objectContaining( {
+			interaction_type: 'view',
+			target_name: 'file_conflict',
+			feature_name: 'bot_access',
+			interaction_result: 'conflict_detected',
+			has_conflict: true,
+		} ) );
+	} );
+
+	it.each( [ 'llms_txt', 'markdown' ] )( 'should dispatch file opened for %s with a matching location', ( fileType ) => {
+		// Act
+		trackFileOpened( { fileType } );
+
+		// Assert
+		expect( dispatchEvent ).toHaveBeenCalledWith( 'agent_readiness_file_opened', expect.objectContaining( {
+			target_name: 'edit_file_button',
+			file_type: fileType,
+			interaction_result: 'opened_for_edit',
+			location_l2: fileType,
+		} ) );
+	} );
+
+	it( 'should dispatch custom crawler added with the crawler token', () => {
+		// Act
+		trackCustomCrawlerAdded( { crawlerToken: 'GPTBot' } );
+
+		// Assert
+		expect( dispatchEvent ).toHaveBeenCalledWith( 'agent_readiness_custom_crawler_added', expect.objectContaining( {
+			target_name: 'add_custom_crawler_button',
+			crawler_token: 'GPTBot',
+			interaction_result: 'success',
+			location_l2: 'bot_access',
+		} ) );
+	} );
+
+	it( 'should attach the site key as the site id to every event', () => {
+		// Arrange
+		const siteKey = 'site-key';
+		window.elementorAgentsReadyConfig = { siteKey };
+
+		// Act
+		trackWelcomeViewed();
+
+		// Assert
+		expect( dispatchEvent.mock.calls[ 0 ][ 1 ].site_id ).toBe( siteKey );
+
+		delete window.elementorAgentsReadyConfig;
+	} );
+
+	it( 'should leave the site id empty when no site key is available', () => {
+		// Act
+		trackWelcomeViewed();
+
+		// Assert
+		expect( dispatchEvent.mock.calls[ 0 ][ 1 ].site_id ).toBeUndefined();
 	} );
 
 	it( 'should dispatch dashboard cta clicked with the state and a beacon transport', () => {
