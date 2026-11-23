@@ -4,9 +4,15 @@ import { type HttpResponse, httpService } from '@elementor/http-client';
 import { z } from '@elementor/schema';
 
 import { defaultStylesStylesProvider } from '../default-styles-provider';
+import {
+	getPendingAbilityOperations,
+	recordPendingDefaultStylesOperation,
+	type DefaultStylesAbilityOperation,
+} from './pending-default-styles-changes';
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 const TOOL_NAME = 'manage-default-styles';
+const MAX_OPERATIONS_PER_REQUEST = 20;
 
 type ManageDefaultStylesResult = Partial< StyleDefinition > & {
 	status: 'ok' | 'error';
@@ -17,6 +23,10 @@ type ManageDefaultStylesResult = Partial< StyleDefinition > & {
 type ManageDefaultStylesResponse = {
 	status: string;
 	results?: ManageDefaultStylesResult[];
+};
+
+type ManageDefaultStylesParams = DefaultStylesAbilityOperation & {
+	css?: string;
 };
 
 export const initManageDefaultStylesTool = ( reg: MCPRegistryEntry ) => {
@@ -48,18 +58,24 @@ export const initManageDefaultStylesTool = ( reg: MCPRegistryEntry ) => {
 		},
 		isDestructive: true,
 		handler: async ( params ) => {
+			const pendingOperations = getPendingAbilityOperations();
+
+			if ( pendingOperations.length >= MAX_OPERATIONS_PER_REQUEST ) {
+				throw new Error( 'Too many unsaved default style changes. Save the kit, then try again.' );
+			}
+
 			const { data } = await httpService().post< HttpResponse< ManageDefaultStylesResponse > >( MCP_PROXY_URL, {
 				tool: TOOL_NAME,
-				input: { operations: [ params ], dry_run: true },
+				input: { operations: [ ...pendingOperations, params ], dry_run: true },
 			} );
 
-			const result = data.data.results?.[ 0 ];
+			const result = data.data.results?.[ pendingOperations.length ];
 
 			if ( result?.status !== 'ok' ) {
 				throw new Error( result?.message || 'Unexpected response from server' );
 			}
 
-			applyInEditor( params.action, result );
+			applyPlannedDefaultStylesChange( params, result );
 
 			return {
 				status: 'ok' as const,
@@ -67,6 +83,14 @@ export const initManageDefaultStylesTool = ( reg: MCPRegistryEntry ) => {
 			};
 		},
 	} );
+};
+
+const applyPlannedDefaultStylesChange = (
+	params: ManageDefaultStylesParams,
+	result: ManageDefaultStylesResult
+) => {
+	applyInEditor( params.action, result );
+	recordPendingDefaultStylesOperation( params );
 };
 
 const applyInEditor = ( action: 'update' | 'delete', result: ManageDefaultStylesResult ) => {

@@ -3,6 +3,7 @@ import { httpService } from '@elementor/http-client';
 
 import { defaultStylesStylesProvider } from '../../default-styles-provider';
 import { initManageDefaultStylesTool } from '../manage-default-styles-tool';
+import { getPendingAbilityOperations, resetPendingDefaultStylesChanges } from '../pending-default-styles-changes';
 
 jest.mock( '@elementor/http-client', () => ( {
 	httpService: jest.fn(),
@@ -15,6 +16,10 @@ jest.mock( '../../default-styles-provider', () => ( {
 			delete: jest.fn(),
 		},
 	},
+} ) );
+
+jest.mock( '@elementor/editor-v1-adapters', () => ( {
+	__privateRunCommandSync: jest.fn(),
 } ) );
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
@@ -39,12 +44,12 @@ function createMockRegistry() {
 	return { registeredTool };
 }
 
-function mockProxyResult( result: Record< string, unknown > ) {
+function mockProxyResults( results: Record< string, unknown >[] ) {
 	return {
 		data: {
 			data: {
-				status: result.status,
-				results: [ { index: 0, ...result } ],
+				status: 'ok',
+				results: results.map( ( result, index ) => ( { index, ...result } ) ),
 				dry_run: true,
 			},
 		},
@@ -59,18 +64,21 @@ describe( 'manage-default-styles-tool', () => {
 		( httpService as jest.Mock ).mockReturnValue( httpMock );
 		( defaultStylesStylesProvider.actions.update as jest.Mock ).mockClear();
 		( defaultStylesStylesProvider.actions.delete as jest.Mock ).mockClear();
+		resetPendingDefaultStylesChanges();
 	} );
 
 	it( 'calls the proxy in dry run and applies the planned update locally', async () => {
 		// Arrange.
 		httpMock.post.mockResolvedValue(
-			mockProxyResult( {
-				status: 'ok',
-				action: 'update',
-				tag: 'h1',
-				type: 'class',
-				variants: VARIANTS,
-			} )
+			mockProxyResults( [
+				{
+					status: 'ok',
+					action: 'update',
+					tag: 'h1',
+					type: 'class',
+					variants: VARIANTS,
+				},
+			] )
 		);
 		const { registeredTool } = createMockRegistry();
 
@@ -100,7 +108,7 @@ describe( 'manage-default-styles-tool', () => {
 
 	it( 'throws instead of skipping when the planned update is incomplete', async () => {
 		// Arrange.
-		httpMock.post.mockResolvedValue( mockProxyResult( { status: 'ok', action: 'update', tag: 'h1' } ) );
+		httpMock.post.mockResolvedValue( mockProxyResults( [ { status: 'ok', action: 'update', tag: 'h1' } ] ) );
 		const { registeredTool } = createMockRegistry();
 
 		// Act & Assert.
@@ -112,7 +120,7 @@ describe( 'manage-default-styles-tool', () => {
 
 	it( 'deletes the planned tag locally', async () => {
 		// Arrange.
-		httpMock.post.mockResolvedValue( mockProxyResult( { status: 'ok', action: 'delete', tag: 'h1' } ) );
+		httpMock.post.mockResolvedValue( mockProxyResults( [ { status: 'ok', action: 'delete', tag: 'h1' } ] ) );
 		const { registeredTool } = createMockRegistry();
 
 		// Act.
@@ -125,12 +133,14 @@ describe( 'manage-default-styles-tool', () => {
 	it( 'throws and changes nothing locally when the server rejects the operation', async () => {
 		// Arrange.
 		httpMock.post.mockResolvedValue(
-			mockProxyResult( {
-				status: 'error',
-				action: 'delete',
-				code: 'not_found',
-				message: 'Default style not found for this tag.',
-			} )
+			mockProxyResults( [
+				{
+					status: 'error',
+					action: 'delete',
+					code: 'not_found',
+					message: 'Default style not found for this tag.',
+				},
+			] )
 		);
 		const { registeredTool } = createMockRegistry();
 
@@ -139,5 +149,69 @@ describe( 'manage-default-styles-tool', () => {
 			'Default style not found for this tag.'
 		);
 		expect( defaultStylesStylesProvider.actions.delete ).not.toHaveBeenCalled();
+	} );
+
+	it( 'sends pending operations with the next update on the same tag', async () => {
+		// Arrange.
+		const firstVariants = [ { meta: { breakpoint: 'desktop', state: null }, props: { color: 'black' } } ];
+		const secondVariants = [ { meta: { breakpoint: 'desktop', state: null }, props: { color: 'white' } } ];
+		httpMock.post
+			.mockResolvedValueOnce(
+				mockProxyResults( [
+					{
+						status: 'ok',
+						action: 'update',
+						tag: 'h1',
+						type: 'class',
+						variants: firstVariants,
+					},
+				] )
+			)
+			.mockResolvedValueOnce(
+				mockProxyResults( [
+					{
+						status: 'ok',
+						action: 'update',
+						tag: 'h1',
+						type: 'class',
+						variants: firstVariants,
+					},
+					{
+						status: 'ok',
+						action: 'update',
+						tag: 'h1',
+						type: 'class',
+						variants: secondVariants,
+					},
+				] )
+			);
+		const { registeredTool } = createMockRegistry();
+
+		// Act.
+		await registeredTool.handler( {
+			action: 'update',
+			tag: 'h1',
+			css: 'color: #000000;',
+		} );
+		const result = await registeredTool.handler( {
+			action: 'update',
+			tag: 'h1',
+			css: 'color: #ffffff;',
+		} );
+
+		// Assert.
+		const secondInput = httpMock.post.mock.calls[ 1 ][ 1 ].input;
+		expect( secondInput.operations ).toHaveLength( 2 );
+		expect( secondInput.operations[ 0 ] ).toEqual(
+			expect.objectContaining( { action: 'update', tag: 'h1', css: 'color: #000000;' } )
+		);
+		expect( defaultStylesStylesProvider.actions.update ).toHaveBeenLastCalledWith( {
+			id: 'h1',
+			label: 'h1',
+			type: 'class',
+			variants: secondVariants,
+		} );
+		expect( result ).toEqual( { status: 'ok', tag: 'h1' } );
+		expect( getPendingAbilityOperations() ).toHaveLength( 2 );
 	} );
 } );

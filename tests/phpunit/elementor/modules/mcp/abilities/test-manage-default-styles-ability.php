@@ -242,6 +242,71 @@ class Test_Manage_Default_Styles_Ability extends TestCase {
 		$this->assertArrayNotHasKey( 'default_styles_tag_saved', $this->emitted_events );
 	}
 
+	public function test_dry_run_applies_sequential_updates_on_same_tag_in_one_request() {
+		// Arrange.
+		$css_converter = $this->createMock( Css_Converter::class );
+		$css_converter->method( 'parse_nested' )->willReturn( [
+			'blocks' => [ [ 'selector' => null, 'css' => 'font-size: 20px;' ] ],
+		] );
+		$css_converter->method( 'convert' )->willReturnOnConsecutiveCalls(
+			[
+				'props' => [ 'font-size' => [ '$$type' => 'size', 'value' => '20px' ] ],
+				'customCss' => '',
+			],
+			[
+				'props' => [ 'color' => [ '$$type' => 'color', 'value' => 'red' ] ],
+				'customCss' => '',
+			]
+		);
+		$repo = new Stub_Manage_Default_Styles_Repository();
+		$ability = new Testable_Manage_Default_Styles_Ability( $repo, $css_converter );
+
+		// Act.
+		$result = $ability->execute( [
+			'dry_run' => true,
+			'operations' => [
+				[ 'action' => 'update', 'tag' => 'h1', 'css' => 'font-size: 20px;' ],
+				[ 'action' => 'update', 'tag' => 'h1', 'css' => 'color: red;' ],
+			],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertArrayHasKey( 'font-size', $result['results'][1]['variants'][0]['props'] );
+		$this->assertArrayHasKey( 'color', $result['results'][1]['variants'][0]['props'] );
+		$this->assertSame( [], $repo->puts );
+	}
+
+	public function test_dry_run_delete_after_pending_update_in_same_request() {
+		// Arrange.
+		$css_converter = $this->createMock( Css_Converter::class );
+		$css_converter->method( 'parse_nested' )->willReturn( [
+			'blocks' => [ [ 'selector' => null, 'css' => 'font-size: 20px;' ] ],
+		] );
+		$css_converter->method( 'convert' )->willReturn( [
+			'props' => [ 'font-size' => [ '$$type' => 'size' ] ],
+			'customCss' => '',
+		] );
+		$repo = new Stub_Manage_Default_Styles_Repository();
+		$ability = new Testable_Manage_Default_Styles_Ability( $repo, $css_converter );
+
+		// Act.
+		$result = $ability->execute( [
+			'dry_run' => true,
+			'operations' => [
+				[ 'action' => 'update', 'tag' => 'h1', 'css' => 'font-size: 20px;' ],
+				[ 'action' => 'delete', 'tag' => 'h1' ],
+			],
+		] );
+
+		// Assert.
+		$this->assertTrue( $result['dry_run'] );
+		$this->assertSame( 'ok', $result['status'] );
+		$this->assertSame( 'ok', $result['results'][1]['status'] );
+		$this->assertSame( [], $repo->deletes );
+	}
+
 	public function test_dry_run_delete_validates_without_removing() {
 		// Arrange.
 		$repo = new Stub_Manage_Default_Styles_Repository( [

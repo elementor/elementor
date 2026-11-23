@@ -30,6 +30,7 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 
 	private ?Default_Styles_Repository $repository;
 	private ?Css_Converter $css_converter;
+	private ?array $dry_run_tag_overrides = null;
 	private bool $is_dry_run_execution = false;
 
 	public function __construct( ?Default_Styles_Repository $repository = null, ?Css_Converter $css_converter = null ) {
@@ -157,6 +158,7 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 	}
 
 	private function handle_bulk( array $operations, bool $dry_run = false ): array {
+		$this->dry_run_tag_overrides = $dry_run ? [] : null;
 		$results = new Bulk_Operations_Result();
 
 		foreach ( $operations as $index => $operation ) {
@@ -164,6 +166,22 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 		}
 
 		return $results->to_array();
+	}
+
+	private function get_existing_style( string $tag ): ?array {
+		if ( null !== $this->dry_run_tag_overrides && array_key_exists( $tag, $this->dry_run_tag_overrides ) ) {
+			return $this->dry_run_tag_overrides[ $tag ];
+		}
+
+		return $this->get_repository()->get( $tag );
+	}
+
+	private function remember_dry_run_style( string $tag, ?array $style ): void {
+		if ( null === $this->dry_run_tag_overrides ) {
+			return;
+		}
+
+		$this->dry_run_tag_overrides[ $tag ] = $style;
 	}
 
 	private function process_operation( int $index, $operation, Bulk_Operations_Result $results, bool $dry_run ): void {
@@ -236,7 +254,7 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 
 		$new_variants = Style_Variants_Merger::build_variants( $parsed['breakpoint_blocks'], $this->get_css_converter() );
 
-		$existing = $this->get_repository()->get( $tag );
+		$existing = $this->get_existing_style( $tag );
 		$existing_variants = is_array( $existing['variants'] ?? null ) ? $existing['variants'] : [];
 
 		$existing_after_removal = array_values(
@@ -256,6 +274,11 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 		$merged = $this->strip_null_props( $merged );
 
 		if ( $dry_run ) {
+			$planned = [
+				'type' => self::CLASS_TYPE,
+				'variants' => $merged,
+			];
+			$this->remember_dry_run_style( $tag, $planned );
 			$results->add_success( $index, 'update', [
 				'tag' => $tag,
 				'type' => self::CLASS_TYPE,
@@ -280,7 +303,7 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 	}
 
 	private function handle_delete( int $index, string $tag, Bulk_Operations_Result $results, bool $dry_run ): void {
-		$existing = $this->get_repository()->get( $tag );
+		$existing = $this->get_existing_style( $tag );
 
 		if ( null === $existing ) {
 			$results->add_error( $index, 'delete', 'not_found', __( 'Default style not found for this tag.', 'elementor' ) );
@@ -288,6 +311,7 @@ class Manage_Default_Styles_Ability extends Abstract_Ability {
 		}
 
 		if ( $dry_run ) {
+			$this->remember_dry_run_style( $tag, null );
 			$results->add_success( $index, 'delete', [ 'tag' => $tag ] );
 			return;
 		}
