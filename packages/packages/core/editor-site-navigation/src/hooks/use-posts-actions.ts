@@ -10,8 +10,8 @@ import {
 	updateRequest,
 } from '../api/post';
 import { SITE_CONTENT_V1_RESTORE_STATUS } from '../site-content-restore';
-import { postsQueryKeyBase } from './use-posts';
 import { postsBaselineTotalQueryKey } from './use-posts-baseline-total';
+import { postsQueryKeyBase } from './use-posts';
 import { recentPostsQueryKey } from './use-recent-posts';
 
 export function usePostActions( postTypeSlug: Slug ) {

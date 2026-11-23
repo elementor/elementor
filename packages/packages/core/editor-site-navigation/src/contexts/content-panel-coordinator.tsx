@@ -4,9 +4,9 @@ import { createContext, type ReactNode, useCallback, useContext, useMemo, useRef
 import { type Slug } from '../api/post';
 import {
 	EMPTY_SITE_CONTENT_STATUS_FILTERS,
+	toggleSiteContentStatusFilter,
 	type SiteContentSelectableStatus,
 	type SiteContentStatusFilters,
-	toggleSiteContentStatusFilter,
 } from '../site-content-status-filter';
 
 type SectionHandlers = {

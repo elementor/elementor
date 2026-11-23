@@ -43,14 +43,14 @@ export function usePosts(
 	const trimmedSearch = search.trim();
 	const restStatus = getRestStatusForSiteContentFilters( statusFilters );
 
-	const query = useInfiniteQuery( {
+	const query = useInfiniteQuery< PostsResponse >( {
+		queryKey: [ ...postsQueryKeyBase( postTypeSlug ), restStatus, trimmedSearch ],
+		queryFn: ( { pageParam = 1 } ) => getRequest( postTypeSlug, pageParam, trimmedSearch, restStatus ),
+		initialPageParam: 1,
 		getNextPageParam: ( lastPage ) => {
 			return lastPage.currentPage < lastPage.totalPages ? lastPage.currentPage + 1 : undefined;
 		},
-		initialPageParam: 1,
 		placeholderData: keepPreviousData,
-		queryFn: ( { pageParam = 1 } ) => getRequest( postTypeSlug, pageParam, trimmedSearch, restStatus ),
-		queryKey: [ ...postsQueryKeyBase( postTypeSlug ), restStatus, trimmedSearch ],
 	} );
 
 	return { ...query, data: { posts: flattenData( query.data ), total: query.data?.pages[ 0 ]?.totalPosts ?? 0 } };

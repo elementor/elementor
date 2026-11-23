@@ -164,8 +164,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 	const sectionTitle = postTypesMap[ type ].labels.plural_name;
 	const showNoResults =
 		( debouncedSearch || hasActiveSiteContentStatusFilters( statusFilters ) ) && filteredPosts.length === 0;
-	const countChipLabel =
-		isNarrowed && baselineTotal !== undefined ? `${ total } / ${ baselineTotal }` : undefined;
+	const countChipLabel = isNarrowed && baselineTotal !== undefined ? `${ total } / ${ baselineTotal }` : undefined;
 
 	return (
 		<CollapsibleList
