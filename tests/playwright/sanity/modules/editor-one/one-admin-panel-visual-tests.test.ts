@@ -45,6 +45,7 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 				page.locator( '#wpadminbar' ),
 				page.locator( '#adminmenumain' ),
 				page.locator( '#e-conversion-banner' ),
+				page.locator( '#e-home-screen .MuiContainer-maxWidthXs' ),
 			],
 		} );
 	} );
