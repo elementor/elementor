@@ -35,6 +35,9 @@ on:
           - chromium
           - firefox
           - webkit
+      cdn_scenario:
+        description: 'Extra CDN scenario for the promotion tests. Set to live to fetch and test the live CDN.'
+        required: false
       environment:
         type: choice
         description: 'Target environment'
@@ -82,6 +85,8 @@ jobs:
       contents: read
       id-token: write
     if: ${{ github.event.inputs.tag }}
+    env:
+      E2E_CDN_SCENARIO: ${{ github.event.inputs.cdn_scenario || '' }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -131,7 +136,7 @@ jobs:
           output-dir: tests/playwright/mu-plugins/editor-assets-cdn/live
           mu-plugins-dir: tests/playwright/mu-plugins
           copy-fixtures: true
-          fetch-live: false
+          fetch-live: ${{ env.E2E_CDN_SCENARIO == 'live' }}
           allow-failure: true
       - name: Install WordPress environment
         run: |
