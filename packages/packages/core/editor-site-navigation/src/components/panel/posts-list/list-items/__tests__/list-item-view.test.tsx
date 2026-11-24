@@ -60,6 +60,48 @@ describe( 'ListItemView', () => {
 		expect( screen.getByRole( 'menuitem', { name: 'View Page' } ) ).toBeInTheDocument();
 	} );
 
+	it( 'shows restore and permanent delete for trashed items', () => {
+		const trashedPost: Post = {
+			...pagePost,
+			status: 'trash',
+		};
+
+		renderWithQuery(
+			<PostListContextProvider type="page" setError={ () => {} }>
+				<ListItemView post={ trashedPost } />
+			</PostListContextProvider>
+		);
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
+
+		expect( screen.getByRole( 'menuitem', { name: /Restore/i } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: 'Delete permanently' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'menuitem', { name: 'Rename' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'menuitem', { name: 'Delete' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'menuitem', { name: 'View Page' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not navigate when the row is in trash', () => {
+		const navigateToDocument = jest.fn();
+		jest.mocked( useNavigateToDocument ).mockReturnValue( navigateToDocument );
+
+		const trashedPost: Post = {
+			...pagePost,
+			status: 'trash',
+		};
+
+		renderWithQuery(
+			<PostListContextProvider type="page" setError={ () => {} }>
+				<ListItemView post={ trashedPost } />
+			</PostListContextProvider>
+		);
+
+		const rowButtons = screen.getAllByRole( 'button' );
+		fireEvent.click( rowButtons[ 0 ] );
+
+		expect( navigateToDocument ).not.toHaveBeenCalled();
+	} );
+
 	it( 'navigates when the row is editable', () => {
 		const navigateToDocument = jest.fn();
 		jest.mocked( useNavigateToDocument ).mockReturnValue( navigateToDocument );
