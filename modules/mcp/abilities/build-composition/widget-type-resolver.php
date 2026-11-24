@@ -14,10 +14,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Widget_Type_Resolver {
 
+	const IS_LEAF_KEY = 'is_leaf';
+
 	private Xml_Parser $xml_parser;
 
-	public function __construct( Xml_Parser $xml_parser ) {
+	/** @var string[] */
+	private array $placeholder_tags;
+
+	/**
+	 * @param Xml_Parser $xml_parser
+	 * @param string[]   $placeholder_tags Leaf tags replaced before the appliers run (`Composite_Widget_Placeholders`), not element types.
+	 */
+	public function __construct( Xml_Parser $xml_parser, array $placeholder_tags = [] ) {
 		$this->xml_parser = $xml_parser;
+		$this->placeholder_tags = $placeholder_tags;
 	}
 
 	/**
@@ -130,6 +140,17 @@ class Widget_Type_Resolver {
 	 * @return array|\WP_Error  ['elType', 'widgetType', 'allowed_child_types', 'class', 'controls']
 	 */
 	public function resolve_type_config( string $type ) {
+		if ( in_array( $type, $this->placeholder_tags, true ) ) {
+			return [
+				'elType' => $type,
+				'widgetType' => null,
+				'allowed_child_types' => [],
+				'default_children' => [],
+				'class' => null,
+				self::IS_LEAF_KEY => true,
+			];
+		}
+
 		$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
 		if ( $widget ) {
 			if (
@@ -211,7 +232,7 @@ class Widget_Type_Resolver {
 		$parent_tag = $this->xml_parser->get_tag_name( $node );
 		$parent_config = $widget_configs[ $parent_tag ] ?? null;
 		$allowed = $parent_config['allowed_child_types'] ?? [];
-		$is_leaf_widget = $parent_config && 'widget' === ( $parent_config['elType'] ?? null );
+		$is_leaf_widget = $parent_config && ( 'widget' === ( $parent_config['elType'] ?? null ) || ! empty( $parent_config[ self::IS_LEAF_KEY ] ) );
 
 		foreach ( $this->xml_parser->get_child_elements( $node ) as $child ) {
 			$child_tag = $this->xml_parser->get_tag_name( $child );

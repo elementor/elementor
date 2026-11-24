@@ -29,18 +29,12 @@ class Widget_Instance_Factory {
 			'version' => $definition['version'],
 		];
 
-		$root['elements'] = array_map( [ $this, 'lock_parts' ], $root['elements'] ?? [] );
-
-		return $root;
-	}
-
-	private function lock_parts( array $element ): array {
-		if ( ! empty( $element[ Widget_Markers::PART_KEY ] ) ) {
-			$element[ self::LOCKED_KEY ] = true;
+		foreach ( array_keys( $root['elements'] ?? [] ) as $index ) {
+			Template_Parts::walk( $root['elements'][ $index ], function ( array &$element ) {
+				$element[ self::LOCKED_KEY ] = true;
+			} );
 		}
 
-		$element['elements'] = array_map( [ $this, 'lock_parts' ], $element['elements'] ?? [] );
-
-		return $element;
+		return $root;
 	}
 }
