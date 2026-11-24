@@ -14,9 +14,15 @@ export default function SetHome( { post, closeMenu }: { post: Post; closeMenu: (
 	const { setError } = usePostListContext();
 	const { data: user } = useUser();
 
+	const isPostHomepage = !! post.isHome;
+
 	const handleClick = async () => {
 		try {
-			await updateSettingsMutation.mutateAsync( { show_on_front: 'page', page_on_front: post.id } );
+			if ( isPostHomepage ) {
+				await updateSettingsMutation.mutateAsync( { show_on_front: 'posts', page_on_front: 0 } );
+			} else {
+				await updateSettingsMutation.mutateAsync( { show_on_front: 'page', page_on_front: post.id } );
+			}
 		} catch {
 			setError();
 		} finally {
@@ -26,13 +32,14 @@ export default function SetHome( { post, closeMenu }: { post: Post; closeMenu: (
 
 	const canManageOptions = !! user?.capabilities?.manage_options;
 	const isPostPublished = post.status === 'publish';
-	const isPostHomepage = !! post.isHome;
-
-	const isDisabled = ! canManageOptions || isPostHomepage || ! isPostPublished || updateSettingsMutation.isPending;
+	const isSetHomeDisabled = ! canManageOptions || ! isPostPublished || updateSettingsMutation.isPending;
+	const isRemoveHomeDisabled = ! canManageOptions || updateSettingsMutation.isPending;
+	const isDisabled = isPostHomepage ? isRemoveHomeDisabled : isSetHomeDisabled;
+	const title = isPostHomepage ? __( 'Remove as homepage', 'elementor' ) : __( 'Set as homepage', 'elementor' );
 
 	return (
 		<ActionMenuItem
-			title={ __( 'Set as homepage', 'elementor' ) }
+			title={ title }
 			icon={ ! updateSettingsMutation.isPending ? HomeIcon : CircularProgress }
 			MenuItemProps={ {
 				disabled: isDisabled,

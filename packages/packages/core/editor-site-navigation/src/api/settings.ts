@@ -1,8 +1,8 @@
 import apiFetch from '@wordpress/api-fetch';
 
 export type Settings = {
-	show_on_front: 'page' | '';
 	page_on_front: number;
+	show_on_front: 'page' | 'posts';
 };
 
 type Homepage = number;

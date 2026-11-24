@@ -61,6 +61,33 @@ describe( '@elementor/editor-site-navigation - SetHome', () => {
 		fireEvent.click( button );
 
 		expect( mockMutateAsync ).toHaveBeenCalledTimes( 1 );
+		expect( mockMutateAsync ).toHaveBeenCalledWith( { show_on_front: 'page', page_on_front: 1 } );
+	} );
+
+	it( 'removes homepage assignment when the page is the homepage', () => {
+		const post: Post = {
+			id: 1,
+			title: {
+				rendered: 'Test Page',
+			},
+			status: 'publish',
+			type: 'page',
+			link: 'https://example.local/test-page',
+			isHome: true,
+			user_can: {
+				edit: true,
+				delete: true,
+			},
+		};
+
+		renderWithTheme( <SetHome post={ post } closeMenu={ () => {} } /> );
+
+		const button = screen.getByRole( 'menuitem', { name: 'Remove as homepage' } );
+		expect( button ).not.toHaveAttribute( 'aria-disabled' );
+
+		fireEvent.click( button );
+
+		expect( mockMutateAsync ).toHaveBeenCalledWith( { show_on_front: 'posts', page_on_front: 0 } );
 	} );
 
 	it( 'should render Set as homepage disabled when the page status is draft', () => {
