@@ -148,7 +148,10 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 	}, [ pagination.canLoadMore, pagination.visibleCount ] );
 
 	useEffect( () => {
-		if ( isSiteContentListRefinedByToolbar( statusFilters, debouncedSearch, siteContentSort ) && filteredPosts.length > 0 ) {
+		if (
+			isSiteContentListRefinedByToolbar( statusFilters, debouncedSearch, siteContentSort ) &&
+			filteredPosts.length > 0
+		) {
 			setIsOpen( true );
 		}
 	}, [ debouncedSearch, filteredPosts.length, siteContentSort, statusFilters ] );

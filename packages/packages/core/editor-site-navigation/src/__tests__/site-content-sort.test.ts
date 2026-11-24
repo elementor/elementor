@@ -1,4 +1,3 @@
-import { EMPTY_SITE_CONTENT_STATUS_FILTERS } from '../site-content-status-filter';
 import {
 	DEFAULT_SITE_CONTENT_SORT,
 	getRestOrderForSiteContentSort,
@@ -7,6 +6,7 @@ import {
 	isSiteContentListRefinedByToolbar,
 	shouldPinHomepageForSiteContentSort,
 } from '../site-content-sort';
+import { EMPTY_SITE_CONTENT_STATUS_FILTERS } from '../site-content-status-filter';
 
 describe( 'site-content-sort', () => {
 	it( 'maps oldest to publish date ascending', () => {
