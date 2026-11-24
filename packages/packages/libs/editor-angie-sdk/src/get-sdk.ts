@@ -5,7 +5,7 @@ export const EDITOR_ANGIE_APP_ID = 'elementor-editor-core';
 let sdk: AngieMcpSdk | undefined;
 
 type DetectorAccess = {
-	angieDetector?: { waitForReady(): Promise< { isReady: boolean } > };
+	angieDetector?: { waitForReady: () => Promise< { isReady: boolean } > };
 };
 
 class RetriableAngieSDK extends AngieMcpSdk {

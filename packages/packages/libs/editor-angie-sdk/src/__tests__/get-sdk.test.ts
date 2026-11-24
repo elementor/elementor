@@ -2,7 +2,7 @@ import { EDITOR_ANGIE_APP_ID, getAngieSdk, refreshAngieSdkIfDetectionExpired, re
 
 const mockConstructor = jest.fn();
 const mockDestroy = jest.fn();
-const mockDetection = { resolve: ( _result: { isReady: boolean } ) => {} };
+const mockDetection: { resolve: ( result: { isReady: boolean } ) => void } = { resolve: () => {} };
 
 jest.mock( '@elementor-external/angie-sdk', () => ( {
 	AngieMcpSdk: class {
