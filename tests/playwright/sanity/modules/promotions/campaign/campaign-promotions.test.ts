@@ -22,7 +22,7 @@ import {
 	useCdnScenario,
 } from './cdn-scenario';
 
-// active-campaign always runs. E2E_CDN_SCENARIO adds another scenario, e.g. `live` on the nightly run.
+// The active-campaign scenario always runs. E2E_CDN_SCENARIO adds another scenario, e.g. `live` on the nightly run.
 const CAMPAIGN_SCENARIOS = [ ...new Set( [
 	ACTIVE_CAMPAIGN_SCENARIO,
 	...( process.env.E2E_CDN_SCENARIO ? [ process.env.E2E_CDN_SCENARIO ] : [] ),
