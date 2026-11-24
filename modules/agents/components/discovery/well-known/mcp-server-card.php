@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * MCP server card — /.well-known/mcp/server-card.json
  *
- * MCP registry server.json document pointing agents at the site's MCP server.
+ * MCP Server Card document pointing agents at the site's MCP server.
  *
  * Applicable only while the MCP server is advertised, matching the
  * rel="mcp-server-card" Link header.

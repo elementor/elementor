@@ -18,6 +18,8 @@ class Test_Mcp_Discovery extends Elementor_Test_Base {
 
 	const CARD_ROUTE = '/mcp/mcp-adapter-default-server/server-card';
 
+	const SERVER_CARD_SCHEMA_URL = 'https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json';
+
 	const HTTP_OK = 200;
 
 	const HTTP_NOT_FOUND = 404;
@@ -147,7 +149,7 @@ class Test_Mcp_Discovery extends Elementor_Test_Base {
 		$this->assertTrue( $emit_card );
 	}
 
-	public function test_server_card_endpoint__serves_registry_card_when_active() {
+	public function test_server_card_endpoint__serves_server_card_when_active() {
 		// Arrange
 		$this->activate_mcp();
 		$endpoint = new Mcp_Server_Card();
@@ -159,7 +161,7 @@ class Test_Mcp_Discovery extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertTrue( $endpoint->is_applicable() );
-		$this->assertSame( Mcp_Discovery::SERVER_CARD_SCHEMA, $card['$schema'] );
+		$this->assertSame( self::SERVER_CARD_SCHEMA_URL, $card['$schema'] );
 		$this->assertMatchesRegularExpression( '#^[a-zA-Z0-9.-]+/[a-zA-Z0-9._-]+$#', $card['name'] );
 		$this->assertLessThanOrEqual( self::MAX_CARD_DESCRIPTION_LENGTH, strlen( $card['description'] ) );
 		$this->assertSame( ELEMENTOR_VERSION, $card['version'] );

@@ -31,7 +31,7 @@ class Mcp_Discovery extends Feature_Component {
 
 	const SERVER_CARD_PATH = '.well-known/mcp/server-card.json';
 
-	const SERVER_CARD_SCHEMA = 'https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json';
+	const SERVER_CARD_SCHEMA = 'https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json';
 
 	const SERVER_SLUG = 'elementor-mcp';
 
@@ -97,7 +97,7 @@ class Mcp_Discovery extends Feature_Component {
 	}
 
 	/**
-	 * MCP registry server.json document describing the remote server.
+	 * MCP Server Card document describing the remote server.
 	 */
 	public static function build_server_card(): array {
 		return [
