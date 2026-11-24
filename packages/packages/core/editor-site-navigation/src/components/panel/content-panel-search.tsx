@@ -4,13 +4,12 @@ import { Box, InputAdornment, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
-import { contentPanelSearchBoxSx } from './content-panel-chrome';
 
 export default function ContentPanelSearch() {
 	const { searchQuery, setSearchQuery } = useContentPanelCoordinator();
 
 	return (
-		<Box component="search" sx={ contentPanelSearchBoxSx } aria-label={ __( 'Search site content', 'elementor' ) }>
+		<Box component="search" aria-label={ __( 'Search site content', 'elementor' ) }>
 			<TextField
 				fullWidth
 				size="tiny"
