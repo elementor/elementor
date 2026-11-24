@@ -169,6 +169,22 @@ describe( 'LlmsTxtPanel', () => {
 		expect( screen.getByRole( 'button', { name: 'Edit' } ) ).toBeTruthy();
 	} );
 
+	it( 'tracks the llms.txt file as opened when the edit action is used', () => {
+		// Arrange
+		const dispatchEvent = jest.fn();
+		window.elementorCommon = { eventsManager: { dispatchEvent } };
+		render( <LlmsTxtPanel settings={ createSettings() } /> );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Edit' } ) );
+
+		// Assert
+		expect( dispatchEvent ).toHaveBeenCalledWith( 'agent_readiness_file_opened', expect.objectContaining( { file_type: 'llms_txt' } ) );
+		expect( screen.getByRole( 'dialog' ) ).toBeTruthy();
+
+		delete window.elementorCommon;
+	} );
+
 	it( 'turns rows off, disables them and hides the preview actions when a physical file exists', () => {
 		// Arrange & Act
 		render( <LlmsTxtPanel settings={ createSettings( { hasPhysicalFile: true, isEnabled: false } ) } /> );

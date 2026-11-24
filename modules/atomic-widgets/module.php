@@ -440,10 +440,9 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Atomic_Menu_Toggle_Closed() );
 		$elements_manager->register_element_type( new Atomic_Menu_Toggle_Open() );
 
-		if ( ! \Elementor\Utils::has_pro() ) {
-			$elements_manager->register_element_type( new Atomic_Menu_Submenu_Trigger_Promotion() );
-			$elements_manager->register_element_type( new Atomic_Menu_Submenu_Promotion() );
-		}
+		// Also with Pro installed: a Pro without the Submenu types would leave them unknown and drop them on save. A Pro that has them replaces these later on the same hook.
+		$elements_manager->register_element_type( new Atomic_Menu_Submenu_Trigger_Promotion() );
+		$elements_manager->register_element_type( new Atomic_Menu_Submenu_Promotion() );
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {

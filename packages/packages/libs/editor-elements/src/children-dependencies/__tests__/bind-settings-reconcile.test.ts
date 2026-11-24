@@ -2,8 +2,8 @@ import { createMockChild, createMockContainer } from 'test-utils';
 import { type Dependency } from '@elementor/editor-props';
 
 import { getContainer } from '../../sync/get-container';
-import { addModelToParent, removeModelFromParent } from '../../sync/resolve-element';
-import { type V1ElementConfig, type V1ElementData } from '../../sync/types';
+import { addModelToParent, findModelInDocument, removeModelFromParent } from '../../sync/resolve-element';
+import { type BackboneModel, type V1ElementConfig, type V1ElementData } from '../../sync/types';
 import { bindSettingsReconcile } from '../bind-settings-reconcile';
 import { createChildrenStash } from '../stash';
 import { type ChildDependencyRule } from '../types';
@@ -13,9 +13,11 @@ jest.mock( '../../sync/resolve-element', () => ( {
 	...jest.requireActual( '../../sync/resolve-element' ),
 	addModelToParent: jest.fn(),
 	removeModelFromParent: jest.fn(),
+	findModelInDocument: jest.fn(),
 } ) );
 
 const mockGetContainer = jest.mocked( getContainer );
+const mockFindModelInDocument = jest.mocked( findModelInDocument );
 const mockAddModelToParent = jest.mocked( addModelToParent );
 const mockRemoveModelFromParent = jest.mocked( removeModelFromParent );
 
@@ -87,6 +89,7 @@ describe( 'bindSettingsReconcile', () => {
 	beforeEach( () => {
 		sessionStorage.clear();
 		mockGetContainer.mockReset();
+		mockFindModelInDocument.mockReset();
 		mockAddModelToParent.mockReset();
 		mockRemoveModelFromParent.mockReset();
 		mockAddModelToParent.mockReturnValue( true );
@@ -356,6 +359,70 @@ describe( 'bindSettingsReconcile', () => {
 		detach();
 
 		expect( createChildrenStash().get( 'parent-1', 'e-pagination' ) ).toBeUndefined();
+	} );
+
+	it( 'places a child after a sibling attached by an earlier rule in the same change', () => {
+		// Arrange.
+		const createChildModel = ( data: Record< string, unknown > ): BackboneModel => ( {
+			get: ( key: string ) => data[ key ],
+			set: jest.fn(),
+			toJSON: () => data,
+		} );
+		const childModels: BackboneModel[] = [
+			createChildModel( { id: 'item-1', elType: 'e-menu-item' } ),
+			createChildModel( { id: 'trailing-1', elType: 'e-trailing' } ),
+		];
+
+		mockGetContainer.mockReturnValue( createMockContainer( 'entry-1', [] ) );
+		mockFindModelInDocument.mockReturnValue( {
+			get: jest.fn( () => ( { models: childModels } ) ),
+			set: jest.fn(),
+			toJSON: () => ( {} ),
+		} );
+		mockAddModelToParent.mockImplementation( ( _parentId, childData, options ) => {
+			childModels.splice(
+				options?.at ?? childModels.length,
+				0,
+				createChildModel( childData as unknown as Record< string, unknown > )
+			);
+
+			return true;
+		} );
+
+		const submenuOn: Dependency = {
+			relation: 'or',
+			terms: [ { operator: 'eq', path: [ 'submenu' ], value: true } ],
+		};
+		const settings = createReactiveSettings( { submenu: { $$type: 'boolean', value: false } } );
+
+		bindSettingsReconcile( {
+			model: createReactiveModel( 'entry-1', settings ),
+			elementConfig: createConfig( [
+				createRule( {
+					child_type: 'e-menu-submenu-trigger',
+					when: submenuOn,
+					position: { kind: 'after_type', value: 'e-menu-item' },
+					default_model: { elType: 'e-menu-submenu-trigger', id: 'trigger-1' } as V1ElementData,
+				} ),
+				createRule( {
+					child_type: 'e-menu-submenu',
+					when: submenuOn,
+					position: { kind: 'after_type', value: 'e-menu-submenu-trigger' },
+					default_model: { elType: 'e-menu-submenu', id: 'submenu-1' } as V1ElementData,
+				} ),
+			] ),
+		} );
+
+		// Act.
+		settings.set( { submenu: { $$type: 'boolean', value: true } } );
+
+		// Assert.
+		expect( childModels.map( ( model ) => model.toJSON().elType ) ).toEqual( [
+			'e-menu-item',
+			'e-menu-submenu-trigger',
+			'e-menu-submenu',
+			'e-trailing',
+		] );
 	} );
 
 	it( 'detach() unsubscribes so subsequent changes are ignored', () => {

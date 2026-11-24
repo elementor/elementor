@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
+use Elementor\Modules\AtomicWidgets\Elements\Promotions\Atomic_Pro_Promotion_Element_Base;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -14,10 +15,7 @@ class Submenu_Entitlement {
 	const UPGRADE_URL = 'https://go.elementor.com/go-pro-atomic-mega-menu/';
 
 	public static function is_locked(): bool {
-		$is_locked = self::is_locked_for(
-			Utils::has_pro(),
-			null !== Plugin::$instance->elements_manager->get_element_types( Atomic_Menu::ELEMENT_TYPE_SUBMENU )
-		);
+		$is_locked = self::is_locked_for( Utils::has_pro(), self::has_pro_submenu_type() );
 
 		/**
 		 * Filters whether the Submenu is locked. Pro owns the license and tier rules.
@@ -25,6 +23,15 @@ class Submenu_Entitlement {
 		 * @param bool $is_locked Whether the Submenu is locked.
 		 */
 		return (bool) apply_filters( 'elementor/atomic-widgets/menu/submenu/is_locked', $is_locked );
+	}
+
+	/**
+	 * The Core placeholder is registered with Pro installed too, so only a type that replaced it counts.
+	 */
+	public static function has_pro_submenu_type(): bool {
+		$submenu = Plugin::$instance->elements_manager->get_element_types( Atomic_Menu::ELEMENT_TYPE_SUBMENU );
+
+		return null !== $submenu && ! ( $submenu instanceof Atomic_Pro_Promotion_Element_Base );
 	}
 
 	public static function is_locked_for( bool $has_pro, bool $submenu_registered ): bool {

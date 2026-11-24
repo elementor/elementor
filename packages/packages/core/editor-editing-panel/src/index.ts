@@ -76,3 +76,7 @@ export {
 	type SubmenuToggleProps,
 } from './controls-registry/element-controls/menu-items-control/submenu-toggle-registry';
 export { SubmenuToggle } from './controls-registry/element-controls/menu-items-control/submenu-toggle';
+export {
+	getSubmenuPromotion,
+	type SubmenuPromotion,
+} from './controls-registry/element-controls/menu-items-control/use-submenu';

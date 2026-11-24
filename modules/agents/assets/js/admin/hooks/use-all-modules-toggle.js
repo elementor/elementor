@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { FEATURE_MASTER } from '../analytics/agent-ready-events';
-import { trackFeatureToggled } from '../analytics/track-agent-ready-event';
+import { trackFeatureConflictDetected, trackFeatureToggled } from '../analytics/track-agent-ready-event';
 import { saveAgentReadySettings } from '../api';
 import { getSaveErrorMessage } from './get-save-error-message';
 
@@ -22,6 +22,9 @@ export const useAllModulesToggle = ( modules ) => {
 			isEnabled: nextIsEnabled,
 			hasConflict: modules.some( ( module ) => module.settings.hasPhysicalFile ),
 		} );
+		modules
+			.filter( ( module ) => module.settings.hasPhysicalFile )
+			.forEach( ( module ) => trackFeatureConflictDetected( { featureName: module.featureName } ) );
 		setSaveError( '' );
 		setIsSaving( true );
 		toggleableModules.forEach( ( module ) => module.settings.setIsEnabled( nextIsEnabled ) );
