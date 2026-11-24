@@ -3,6 +3,7 @@ import { waitFor } from '@testing-library/react';
 import apiFetch from '@wordpress/api-fetch';
 
 import { POST_PER_PAGE } from '../../api/post';
+import { EMPTY_SITE_CONTENT_STATUS_FILTERS } from '../../site-content-status-filter';
 import { usePosts } from '../use-posts';
 
 const MOCK_POST_PER_PAGE = 2;
@@ -96,6 +97,53 @@ describe( '@elementor/site-settings/use-posts', () => {
 
 		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
 		const expectedPath = `/wp/v2/pages?status=any&order=asc&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }&search=about`;
+
+		await waitFor( () => {
+			expect( apiFetch ).toHaveBeenCalledWith( {
+				parse: false,
+				path: expectedPath,
+			} );
+		} );
+
+		await waitFor( () => {
+			expect( component.result.current.isLoading ).toBeFalsy();
+		} );
+	} );
+
+	it( 'passes status filters to the REST request', async () => {
+		const { component } = renderHookWithQuery( () =>
+			usePosts( 'page', '', {
+				...EMPTY_SITE_CONTENT_STATUS_FILTERS,
+				draft: true,
+			} )
+		);
+
+		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
+		const expectedPath = `/wp/v2/pages?status=draft&order=asc&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
+
+		await waitFor( () => {
+			expect( apiFetch ).toHaveBeenCalledWith( {
+				parse: false,
+				path: expectedPath,
+			} );
+		} );
+
+		await waitFor( () => {
+			expect( component.result.current.isLoading ).toBeFalsy();
+		} );
+	} );
+
+	it( 'passes combined status filters to the REST request', async () => {
+		const { component } = renderHookWithQuery( () =>
+			usePosts( 'page', '', {
+				...EMPTY_SITE_CONTENT_STATUS_FILTERS,
+				draft: true,
+				publish: true,
+			} )
+		);
+
+		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
+		const expectedPath = `/wp/v2/pages?status=publish%2Cdraft&order=asc&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
 
 		await waitFor( () => {
 			expect( apiFetch ).toHaveBeenCalledWith( {
