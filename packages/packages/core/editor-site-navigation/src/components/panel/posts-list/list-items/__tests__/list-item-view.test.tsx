@@ -56,7 +56,7 @@ describe( 'ListItemView', () => {
 		} );
 
 		const TitleProbe = ( { title }: SiteContentListItemActionsProps ) => (
-			<span data-testid="slot-title">{ title }</span>
+			<button aria-label={ `Slot title ${ title }` } type="button" />
 		);
 
 		injectIntoSiteContentListItemActions( { id: 'title-probe', component: TitleProbe } );
@@ -67,7 +67,7 @@ describe( 'ListItemView', () => {
 			</PostListContextProvider>
 		);
 
-		expect( screen.getByTestId( 'slot-title' ) ).toHaveTextContent( 'Renamed in editor' );
+		expect( screen.getByRole( 'button', { name: 'Slot title Renamed in editor' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders list item action slot only for the active editable row', () => {

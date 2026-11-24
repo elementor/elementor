@@ -17,7 +17,10 @@ type SiteContentActiveDocumentPromptParams = {
 };
 
 const sanitizeAngiePromptQuotedLabel = ( label: string ): string =>
-	label.replace( /[\r\n]+/g, ' ' ).trim().replace( /"/g, "'" );
+	label
+		.replace( /[\r\n]+/g, ' ' )
+		.trim()
+		.replace( /"/g, "'" );
 
 type AngiePromptBuilders = {
 	backgroundImage: ( elementId: string ) => string;
