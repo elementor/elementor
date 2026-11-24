@@ -92,7 +92,9 @@ const PageTitle = ( { title }: { title: string } ) => {
 			noWrap
 			sx={ {
 				...contentPanelListRowTitleSx,
+				flex: 1,
 				flexBasis: 'auto',
+				minWidth: 0,
 			} }
 		>
 			{ modifiedTitle }
