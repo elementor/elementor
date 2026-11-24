@@ -3,7 +3,7 @@ import { type ToggleButtonGroupItem, ToggleControl } from '@elementor/editor-con
 import { ArrowBackIcon, ArrowForwardIcon, ArrowRightIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { UiProviders } from '../../../styles-inheritance/components/ui-providers';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
@@ -32,11 +32,11 @@ const options: ToggleButtonGroupItem< FlexWrap >[] = [
 	},
 ];
 
-export const WrapField = () => {
+export const WrapField = ( { label = FLEX_WRAP_LABEL }: StylesFieldLabelProps ) => {
 	return (
-		<StylesField bind="flex-wrap" propDisplayName={ FLEX_WRAP_LABEL }>
+		<StylesField bind="flex-wrap" propDisplayName={ label }>
 			<UiProviders>
-				<StylesFieldLayout label={ FLEX_WRAP_LABEL }>
+				<StylesFieldLayout label={ label }>
 					<ToggleControl options={ options } />
 				</StylesFieldLayout>
 			</UiProviders>

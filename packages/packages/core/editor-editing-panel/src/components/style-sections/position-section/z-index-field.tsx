@@ -4,15 +4,15 @@ import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, Infotip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
 const Z_INDEX_LABEL = __( 'Z-index', 'elementor' );
 
-export const ZIndexField = ( { disabled }: { disabled?: boolean } ) => {
+export const ZIndexField = ( { disabled, label = Z_INDEX_LABEL }: StylesFieldLabelProps & { disabled?: boolean } ) => {
 	const StyleField = (
-		<StylesField bind="z-index" propDisplayName={ Z_INDEX_LABEL }>
-			<StylesFieldLayout label={ Z_INDEX_LABEL }>
+		<StylesField bind="z-index" propDisplayName={ label }>
+			<StylesFieldLayout label={ label }>
 				<NumberControl disabled={ disabled } />
 			</StylesFieldLayout>
 		</StylesField>

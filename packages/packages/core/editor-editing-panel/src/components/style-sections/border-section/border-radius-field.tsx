@@ -11,7 +11,7 @@ import {
 import { withDirection } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { useDirection } from '../../../hooks/use-direction';
 import { UiProviders } from '../../../styles-inheritance/components/ui-providers';
 
@@ -73,15 +73,15 @@ const getCorners = ( isSiteRtl: boolean ): EqualUnequalItems => [
 	},
 ];
 
-export const BorderRadiusField = () => {
+export const BorderRadiusField = ( { label = BORDER_RADIUS_LABEL }: StylesFieldLabelProps ) => {
 	const { isSiteRtl } = useDirection();
 
 	return (
 		<UiProviders>
-			<StylesField bind={ 'border-radius' } propDisplayName={ BORDER_RADIUS_LABEL }>
+			<StylesField bind={ 'border-radius' } propDisplayName={ label }>
 				<EqualUnequalSizesControl
 					items={ getCorners( isSiteRtl ) }
-					label={ BORDER_RADIUS_LABEL }
+					label={ label }
 					icon={ <BorderCornersIcon fontSize={ 'tiny' } /> }
 					tooltipLabel={ __( 'Adjust corners', 'elementor' ) }
 					multiSizePropTypeUtil={ borderRadiusPropTypeUtil }

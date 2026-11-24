@@ -5,7 +5,7 @@ import { SideAllIcon, SideBottomIcon, SideLeftIcon, SideRightIcon, SideTopIcon }
 import { withDirection } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { useDirection } from '../../../hooks/use-direction';
 
 const BORDER_WIDTH_LABEL = __( 'Border width', 'elementor' );
@@ -40,14 +40,14 @@ const getEdges = ( isSiteRtl: boolean ): EqualUnequalItems => [
 	},
 ];
 
-export const BorderWidthField = () => {
+export const BorderWidthField = ( { label = BORDER_WIDTH_LABEL }: StylesFieldLabelProps ) => {
 	const { isSiteRtl } = useDirection();
 
 	return (
-		<StylesField bind={ 'border-width' } propDisplayName={ BORDER_WIDTH_LABEL }>
+		<StylesField bind={ 'border-width' } propDisplayName={ label }>
 			<EqualUnequalSizesControl
 				items={ getEdges( isSiteRtl ) }
-				label={ BORDER_WIDTH_LABEL }
+				label={ label }
 				icon={ <SideAllIcon fontSize={ 'tiny' } /> }
 				tooltipLabel={ __( 'Adjust borders', 'elementor' ) }
 				multiSizePropTypeUtil={ borderWidthPropTypeUtil }
