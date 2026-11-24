@@ -21,13 +21,15 @@ const CONTENT_ONLY_TAB: TabValue = 'settings';
 
 const DESIGN_TABS: TabValue[] = [ 'style', 'interactions' ];
 
-type SettingsTabSlotProps = {
+type TabSlotProps = {
 	element: Element;
 	elementType: ElementType;
 };
 
-export const { Slot: SettingsTabSlot, inject: injectIntoSettingsTab } =
-	createReplaceableLocation< SettingsTabSlotProps >();
+export const { Slot: SettingsTabSlot, inject: injectIntoSettingsTab } = createReplaceableLocation< TabSlotProps >();
+
+export const { Slot: StyleTabContentSlot, inject: injectIntoStyleTabContent } =
+	createReplaceableLocation< TabSlotProps >();
 
 export const EditingPanelTabs = () => {
 	const { element } = useElement();
@@ -112,7 +114,9 @@ const PanelTabContent = () => {
 				{ hasDesignTabs && ! areDesignTabsRestricted && (
 					<>
 						<TabPanel { ...getTabPanelProps( 'style' ) } disablePadding>
-							<StyleTab />
+							<StyleTabContentSlot element={ element } elementType={ elementType }>
+								<StyleTab />
+							</StyleTabContentSlot>
 						</TabPanel>
 						<TabPanel { ...getTabPanelProps( 'interactions' ) } disablePadding>
 							<InteractionsTab />

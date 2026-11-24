@@ -86,6 +86,10 @@ function buildResolvedPlaceholder( chain: { value: PropValue }[], startIndex: nu
 	} );
 }
 
+export type StylesFieldLabelProps = {
+	label?: string;
+};
+
 export type StylesFieldProps = {
 	bind: PropKey;
 	placeholder?: PropValue;
