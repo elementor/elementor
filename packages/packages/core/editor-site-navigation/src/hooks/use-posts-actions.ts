@@ -11,8 +11,9 @@ import {
 } from '../api/post';
 import { SITE_CONTENT_V1_RESTORE_STATUS } from '../site-content-restore';
 import { postsQueryKeyBase } from './use-posts';
-import { postsBaselineTotalQueryKey } from './use-posts-baseline-total';
+import { postsBaselineTotalQueryKeyBase } from './use-posts-baseline-total';
 import { recentPostsQueryKey } from './use-recent-posts';
+import { siteContentStatusFilterCountsQueryKeyBase } from './use-site-content-status-filter-counts';
 
 export function usePostActions( postTypeSlug: Slug ) {
 	const invalidatePosts = useInvalidatePosts( postTypeSlug );
@@ -66,7 +67,8 @@ function useInvalidatePosts( postTypeSlug: string ) {
 	return () => {
 		const queryKey = postsQueryKeyBase( postTypeSlug );
 		queryClient.invalidateQueries( { queryKey: recentPostsQueryKey } );
-		queryClient.invalidateQueries( { queryKey: postsBaselineTotalQueryKey( postTypeSlug ) } );
+		queryClient.invalidateQueries( { queryKey: postsBaselineTotalQueryKeyBase( postTypeSlug ) } );
+		queryClient.invalidateQueries( { queryKey: siteContentStatusFilterCountsQueryKeyBase } );
 
 		return queryClient.invalidateQueries( { queryKey } );
 	};

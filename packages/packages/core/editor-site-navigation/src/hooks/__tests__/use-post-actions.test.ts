@@ -4,6 +4,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { postsQueryKey } from '../use-posts';
 import { usePostActions } from '../use-posts-actions';
 import { postsBaselineTotalQueryKey } from '../use-posts-baseline-total';
+import { siteContentStatusFilterCountsQueryKey } from '../use-site-content-status-filter-counts';
 
 jest.mock( '@wordpress/api-fetch' );
 
@@ -95,9 +96,13 @@ describe( '@elementor/site-settings/use-post-actions', () => {
 
 		const queryKey = postsQueryKey( 'page' );
 		const baselineQueryKey = postsBaselineTotalQueryKey( 'page' );
+		const trashBaselineQueryKey = postsBaselineTotalQueryKey( 'page', 'trash' );
+		const countsQueryKey = siteContentStatusFilterCountsQueryKey( [ 'page', 'post' ] );
 
 		await queryClient.setQueryData( queryKey, { posts: [] } );
 		await queryClient.setQueryData( baselineQueryKey, 11 );
+		await queryClient.setQueryData( trashBaselineQueryKey, 5 );
+		await queryClient.setQueryData( countsQueryKey, { trash: 5 } );
 
 		await forceDeletePost.mutateAsync( 1 );
 
@@ -108,6 +113,8 @@ describe( '@elementor/site-settings/use-post-actions', () => {
 
 		expect( queryClient.getQueryState( queryKey )?.isInvalidated ).toBe( true );
 		expect( queryClient.getQueryState( baselineQueryKey )?.isInvalidated ).toBe( true );
+		expect( queryClient.getQueryState( trashBaselineQueryKey )?.isInvalidated ).toBe( true );
+		expect( queryClient.getQueryState( countsQueryKey )?.isInvalidated ).toBe( true );
 	} );
 
 	it( 'should run restorePost from usePostActions hook', async () => {
@@ -116,9 +123,11 @@ describe( '@elementor/site-settings/use-post-actions', () => {
 
 		const queryKey = postsQueryKey( 'page' );
 		const baselineQueryKey = postsBaselineTotalQueryKey( 'page' );
+		const trashBaselineQueryKey = postsBaselineTotalQueryKey( 'page', 'trash' );
 
 		await queryClient.setQueryData( queryKey, { posts: [] } );
 		await queryClient.setQueryData( baselineQueryKey, 11 );
+		await queryClient.setQueryData( trashBaselineQueryKey, 5 );
 
 		await restorePost.mutateAsync( 1 );
 
@@ -132,6 +141,7 @@ describe( '@elementor/site-settings/use-post-actions', () => {
 
 		expect( queryClient.getQueryState( queryKey )?.isInvalidated ).toBe( true );
 		expect( queryClient.getQueryState( baselineQueryKey )?.isInvalidated ).toBe( true );
+		expect( queryClient.getQueryState( trashBaselineQueryKey )?.isInvalidated ).toBe( true );
 	} );
 
 	it( 'invalidates search queries when a post is updated', async () => {

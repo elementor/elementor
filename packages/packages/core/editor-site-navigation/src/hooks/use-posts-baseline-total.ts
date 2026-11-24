@@ -2,10 +2,14 @@ import { useQuery } from '@elementor/query';
 
 import { fetchPostsTotal, type Slug } from '../api/post';
 
-export const postsBaselineTotalQueryKey = ( postTypeSlug: string, status = 'any' ) => [
+export const postsBaselineTotalQueryKeyBase = ( postTypeSlug: string ) => [
 	'site-navigation',
 	'posts-baseline-total',
 	postTypeSlug,
+];
+
+export const postsBaselineTotalQueryKey = ( postTypeSlug: string, status = 'any' ) => [
+	...postsBaselineTotalQueryKeyBase( postTypeSlug ),
 	status,
 ];
 

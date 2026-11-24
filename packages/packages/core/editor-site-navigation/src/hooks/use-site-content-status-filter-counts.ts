@@ -6,24 +6,44 @@ import {
 	type SiteContentSelectableStatus,
 } from '../site-content-status-filter';
 
+const STATUS_FILTER_COUNTS_STALE_TIME_MS = 30 * 1000;
+
+export const siteContentStatusFilterCountsQueryKeyBase = [ 'site-navigation', 'status-filter-counts' ];
+
 export const siteContentStatusFilterCountsQueryKey = ( postTypes: Slug[] ) => [
-	'site-navigation',
-	'status-filter-counts',
+	...siteContentStatusFilterCountsQueryKeyBase,
 	postTypes.join( ',' ),
 ];
 
+const sumFulfilledTotals = ( results: PromiseSettledResult< number >[] ): number | undefined => {
+	const fulfilled = results.filter(
+		( result ): result is PromiseFulfilledResult< number > => 'fulfilled' === result.status
+	);
+
+	if ( fulfilled.length !== results.length ) {
+		return undefined;
+	}
+
+	return fulfilled.reduce( ( sum, result ) => sum + result.value, 0 );
+};
+
 const fetchStatusFilterCounts = async (
 	postTypes: Slug[]
-): Promise< Record< SiteContentSelectableStatus, number > > => {
+): Promise< Partial< Record< SiteContentSelectableStatus, number > > > => {
 	const entries = await Promise.all(
 		SITE_CONTENT_SELECTABLE_STATUS_FILTERS.map( async ( status ) => {
-			const totals = await Promise.all( postTypes.map( ( slug ) => fetchPostsTotal( slug, status ) ) );
+			const results = await Promise.allSettled( postTypes.map( ( slug ) => fetchPostsTotal( slug, status ) ) );
+			const total = sumFulfilledTotals( results );
 
-			return [ status, totals.reduce( ( sum, count ) => sum + count, 0 ) ] as const;
+			if ( undefined === total ) {
+				return null;
+			}
+
+			return [ status, total ] as const;
 		} )
 	);
 
-	return Object.fromEntries( entries ) as Record< SiteContentSelectableStatus, number >;
+	return Object.fromEntries( entries.filter( ( entry ) => null !== entry ) );
 };
 
 export function useSiteContentStatusFilterCounts( postTypes: Slug[], enabled: boolean ) {
@@ -31,5 +51,6 @@ export function useSiteContentStatusFilterCounts( postTypes: Slug[], enabled: bo
 		enabled: enabled && postTypes.length > 0,
 		queryFn: () => fetchStatusFilterCounts( postTypes ),
 		queryKey: siteContentStatusFilterCountsQueryKey( postTypes ),
+		staleTime: STATUS_FILTER_COUNTS_STALE_TIME_MS,
 	} );
 }
