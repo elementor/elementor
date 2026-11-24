@@ -32,6 +32,16 @@ describe( 'Restore', () => {
 		jest.clearAllMocks();
 	} );
 
+	it( 'shows restore helper copy for v1 draft restore', () => {
+		renderWithTheme(
+			<PostListContextProvider setError={ mockSetError } type="page">
+				<Restore post={ trashedPost } />
+			</PostListContextProvider>
+		);
+
+		expect( screen.getByText( 'Restored as draft' ) ).toBeInTheDocument();
+	} );
+
 	it( 'runs restore when the menu item is clicked', () => {
 		mockMutateAsync.mockResolvedValue( {} );
 
@@ -41,7 +51,7 @@ describe( 'Restore', () => {
 			</PostListContextProvider>
 		);
 
-		fireEvent.click( screen.getByRole( 'menuitem', { name: 'Restore' } ) );
+		fireEvent.click( screen.getByRole( 'menuitem', { name: /Restore/i } ) );
 
 		expect( mockMutateAsync ).toHaveBeenCalledWith( trashedPost.id );
 		expect( mockSetError ).not.toHaveBeenCalled();
@@ -56,7 +66,7 @@ describe( 'Restore', () => {
 			</PostListContextProvider>
 		);
 
-		fireEvent.click( screen.getByRole( 'menuitem', { name: 'Restore' } ) );
+		fireEvent.click( screen.getByRole( 'menuitem', { name: /Restore/i } ) );
 
 		await waitFor( () => {
 			expect( mockSetError ).toHaveBeenCalledTimes( 1 );

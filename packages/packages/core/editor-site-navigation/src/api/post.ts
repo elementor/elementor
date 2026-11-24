@@ -59,6 +59,8 @@ export function getCannotEditPanelItemMessage( postTypeSlug: Slug ): string {
 
 export const POST_PER_PAGE = 10;
 
+export const COUNT_QUERY_PER_PAGE = 1;
+
 type WpPostsResponse = {
 	json: () => Promise< Post[] >;
 	headers: {
@@ -77,7 +79,8 @@ export const getRequest = async (
 	postTypeSlug: Slug,
 	page: number,
 	search = '',
-	status: string = 'any'
+	status: string = 'any',
+	perPage = POST_PER_PAGE
 ): Promise< PostsResponse > => {
 	const baseUri = `/wp/v2/${ postTypesMap[ postTypeSlug ].rest_base }`;
 
@@ -87,7 +90,7 @@ export const getRequest = async (
 		status,
 		order: 'asc',
 		page: page.toString(),
-		per_page: POST_PER_PAGE.toString(),
+		per_page: perPage.toString(),
 		_fields: keys.join( ',' ),
 	} );
 
@@ -145,7 +148,7 @@ export const deleteRequest = ( postTypeSlug: Slug, postId: number, force = false
 };
 
 export const fetchPostsTotal = async ( postTypeSlug: Slug, status = 'any', search = '' ): Promise< number > => {
-	const response = await getRequest( postTypeSlug, 1, search, status );
+	const response = await getRequest( postTypeSlug, 1, search, status, COUNT_QUERY_PER_PAGE );
 
 	return response.totalPosts;
 };

@@ -74,7 +74,7 @@ describe( 'ListItemView', () => {
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
 
-		expect( screen.getByRole( 'menuitem', { name: 'Restore' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'menuitem', { name: /Restore/i } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'menuitem', { name: 'Delete permanently' } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'menuitem', { name: 'Rename' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'menuitem', { name: 'Delete' } ) ).not.toBeInTheDocument();

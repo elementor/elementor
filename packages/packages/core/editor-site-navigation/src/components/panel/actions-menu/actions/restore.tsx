@@ -21,6 +21,7 @@ export default function Restore( { post }: { post: Post } ) {
 
 	return (
 		<ActionMenuItem
+			description={ __( 'Restored as draft', 'elementor' ) }
 			title={ __( 'Restore', 'elementor' ) }
 			icon={ RefreshIcon }
 			MenuItemProps={ {

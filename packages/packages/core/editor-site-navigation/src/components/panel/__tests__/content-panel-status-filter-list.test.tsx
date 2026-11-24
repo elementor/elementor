@@ -5,28 +5,56 @@ import { fireEvent, screen } from '@testing-library/react';
 import { ContentPanelCoordinatorProvider } from '../../../contexts/content-panel-coordinator';
 import ContentPanelStatusFilterList from '../content-panel-status-filter-list';
 
+jest.mock( '../../../hooks/use-accessible-panel-post-types', () => () => ( {
+	accessiblePostTypes: [ 'page', 'post' ],
+	isUserPending: false,
+	showUserLoadError: false,
+} ) );
+
+jest.mock( '../../../hooks/use-site-content-status-filter-counts', () => ( {
+	useSiteContentStatusFilterCounts: () => ( {
+		data: {
+			draft: 2,
+			future: 0,
+			pending: 0,
+			private: 0,
+			publish: 5,
+			trash: 1,
+		},
+		isPending: false,
+	} ),
+} ) );
+
+const renderList = () =>
+	renderWithTheme(
+		<ContentPanelCoordinatorProvider>
+			<ContentPanelStatusFilterList loadCounts />
+		</ContentPanelCoordinatorProvider>
+	);
+
 describe( 'ContentPanelStatusFilterList', () => {
 	it( 'shows All as selected when no filters are active', () => {
-		renderWithTheme(
-			<ContentPanelCoordinatorProvider>
-				<ContentPanelStatusFilterList />
-			</ContentPanelCoordinatorProvider>
-		);
+		renderList();
 
 		expect( screen.getByRole( 'menuitemcheckbox', { name: /All/i } ) ).toBeChecked();
 	} );
 
 	it( 'toggles Published without checkboxes', () => {
-		renderWithTheme(
-			<ContentPanelCoordinatorProvider>
-				<ContentPanelStatusFilterList />
-			</ContentPanelCoordinatorProvider>
-		);
+		renderList();
 
 		const publishedItem = screen.getByRole( 'menuitemcheckbox', { name: /Published/i } );
 		fireEvent.click( publishedItem );
 
 		expect( publishedItem ).toBeChecked();
 		expect( screen.getByRole( 'menuitemcheckbox', { name: /All/i } ) ).not.toBeChecked();
+	} );
+
+	it( 'hides status rows with zero count', () => {
+		renderList();
+
+		expect( screen.getByRole( 'menuitemcheckbox', { name: /Published/i } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'menuitemcheckbox', { name: /Pending/i } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'menuitemcheckbox', { name: /Private/i } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'menuitemcheckbox', { name: /Scheduled/i } ) ).not.toBeInTheDocument();
 	} );
 } );

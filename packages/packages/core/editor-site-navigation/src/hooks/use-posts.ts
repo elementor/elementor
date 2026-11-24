@@ -10,16 +10,11 @@ import { type Post } from '../types';
 
 export const postsQueryKeyBase = ( postTypeSlug: string ) => [ 'site-navigation', 'posts', postTypeSlug ];
 
-export const postsQueryKey = (
-	postTypeSlug: string,
-	search = '',
-	statusFilters: SiteContentStatusFilters = EMPTY_SITE_CONTENT_STATUS_FILTERS
-) => {
-	const trimmedSearch = search.trim();
-	const restStatus = getRestStatusForSiteContentFilters( statusFilters );
-
-	return [ ...postsQueryKeyBase( postTypeSlug ), restStatus, trimmedSearch ];
-};
+export const postsQueryKey = ( postTypeSlug: string, trimmedSearch = '', restStatus = 'any' ) => [
+	...postsQueryKeyBase( postTypeSlug ),
+	restStatus,
+	trimmedSearch,
+];
 
 const flattenData = ( data?: { pages: PostsResponse[] } ) => {
 	if ( ! data ) {

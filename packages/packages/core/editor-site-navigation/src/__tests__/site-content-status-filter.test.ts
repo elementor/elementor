@@ -3,6 +3,7 @@ import {
 	getRestStatusForSiteContentFilters,
 	hasActiveSiteContentStatusFilters,
 	isSiteContentListNarrowed,
+	shouldShowSiteContentStatusFilterRow,
 	toggleSiteContentStatusFilter,
 } from '../site-content-status-filter';
 
@@ -14,18 +15,28 @@ describe( 'site-content-status-filter', () => {
 	it( 'maps combined publish and draft filters', () => {
 		expect(
 			getRestStatusForSiteContentFilters( {
+				...EMPTY_SITE_CONTENT_STATUS_FILTERS,
 				draft: true,
 				publish: true,
-				trash: false,
 			} )
 		).toBe( 'publish,draft' );
+	} );
+
+	it( 'maps combined non-trash filters including scheduled', () => {
+		expect(
+			getRestStatusForSiteContentFilters( {
+				...EMPTY_SITE_CONTENT_STATUS_FILTERS,
+				future: true,
+				pending: true,
+				publish: true,
+			} )
+		).toBe( 'publish,pending,future' );
 	} );
 
 	it( 'uses trash exclusively in REST status', () => {
 		expect(
 			getRestStatusForSiteContentFilters( {
-				draft: false,
-				publish: false,
+				...EMPTY_SITE_CONTENT_STATUS_FILTERS,
 				trash: true,
 			} )
 		).toBe( 'trash' );
@@ -35,15 +46,13 @@ describe( 'site-content-status-filter', () => {
 		expect(
 			toggleSiteContentStatusFilter(
 				{
+					...EMPTY_SITE_CONTENT_STATUS_FILTERS,
 					draft: true,
-					publish: false,
-					trash: false,
 				},
 				'trash'
 			)
 		).toEqual( {
-			draft: false,
-			publish: false,
+			...EMPTY_SITE_CONTENT_STATUS_FILTERS,
 			trash: true,
 		} );
 	} );
@@ -52,16 +61,14 @@ describe( 'site-content-status-filter', () => {
 		expect(
 			toggleSiteContentStatusFilter(
 				{
-					draft: false,
-					publish: false,
+					...EMPTY_SITE_CONTENT_STATUS_FILTERS,
 					trash: true,
 				},
 				'publish'
 			)
 		).toEqual( {
-			draft: false,
+			...EMPTY_SITE_CONTENT_STATUS_FILTERS,
 			publish: true,
-			trash: false,
 		} );
 	} );
 
@@ -70,9 +77,8 @@ describe( 'site-content-status-filter', () => {
 		expect(
 			isSiteContentListNarrowed(
 				{
+					...EMPTY_SITE_CONTENT_STATUS_FILTERS,
 					draft: true,
-					publish: false,
-					trash: false,
 				},
 				''
 			)
@@ -84,10 +90,16 @@ describe( 'site-content-status-filter', () => {
 		expect( hasActiveSiteContentStatusFilters( EMPTY_SITE_CONTENT_STATUS_FILTERS ) ).toBe( false );
 		expect(
 			hasActiveSiteContentStatusFilters( {
-				draft: false,
+				...EMPTY_SITE_CONTENT_STATUS_FILTERS,
 				publish: true,
-				trash: false,
 			} )
 		).toBe( true );
+	} );
+
+	it( 'hides filter rows with zero count when counts are loaded', () => {
+		expect( shouldShowSiteContentStatusFilterRow( 0, false ) ).toBe( false );
+		expect( shouldShowSiteContentStatusFilterRow( 3, false ) ).toBe( true );
+		expect( shouldShowSiteContentStatusFilterRow( undefined, false ) ).toBe( true );
+		expect( shouldShowSiteContentStatusFilterRow( 0, true ) ).toBe( true );
 	} );
 } );

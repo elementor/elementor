@@ -29,7 +29,7 @@ type Props = {
 };
 
 export default function PostsCollapsibleList( { isOpenByDefault = false }: Props ) {
-	const { type, editMode, setEditMode } = usePostListContext();
+	const { type, editMode, resetEditMode, setEditMode } = usePostListContext();
 	const { registerSection, searchQuery, statusFilters, unregisterSection } = useContentPanelCoordinator();
 	const [ isOpen, setIsOpen ] = useState( isOpenByDefault );
 	const trimmedSearch = searchQuery.trim();
@@ -54,11 +54,18 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 		isFetchingNextPage,
 	} = usePosts( type, debouncedSearch, statusFilters );
 	const isNarrowed = isSiteContentListNarrowed( statusFilters, debouncedSearch );
-	const { data: baselineTotal } = usePostsBaselineTotal( type, isNarrowed );
+	const isTrashFilter = isSiteContentTrashFilterActive( statusFilters );
+	const baselineStatus = isTrashFilter ? 'trash' : 'any';
+	const { data: baselineTotal } = usePostsBaselineTotal( type, isNarrowed, baselineStatus );
 	const { data: homepageId } = useHomepage();
 	const isPageType = type === 'page';
-	const isTrashFilter = isSiteContentTrashFilterActive( statusFilters );
 	const statusFiltersKey = serializeSiteContentStatusFilters( statusFilters );
+
+	useEffect( () => {
+		if ( isTrashFilter ) {
+			resetEditMode();
+		}
+	}, [ isTrashFilter, resetEditMode ] );
 
 	useEffect( () => {
 		registerSection( type, {
@@ -187,7 +194,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 			{ displayedPosts.map( ( post ) => {
 				return <PostListItem key={ post.id } post={ post } />;
 			} ) }
-			{ [ 'duplicate', 'create' ].includes( editMode.mode ) && <PostListItem /> }
+			{ ! isTrashFilter && [ 'duplicate', 'create' ].includes( editMode.mode ) && <PostListItem /> }
 			<PostListPaginationActions
 				canLoadMore={ pagination.canLoadMore }
 				canShowLess={ pagination.canShowLess }

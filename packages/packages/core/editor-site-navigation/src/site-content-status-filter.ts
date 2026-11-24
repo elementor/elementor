@@ -1,13 +1,23 @@
 import { __ } from '@wordpress/i18n';
 
-export type SiteContentSelectableStatus = 'draft' | 'publish' | 'trash';
+export type SiteContentSelectableStatus = 'draft' | 'future' | 'pending' | 'private' | 'publish' | 'trash';
 
 export type SiteContentStatusFilters = Record< SiteContentSelectableStatus, boolean >;
 
-export const SITE_CONTENT_SELECTABLE_STATUS_FILTERS: SiteContentSelectableStatus[] = [ 'publish', 'draft', 'trash' ];
+export const SITE_CONTENT_SELECTABLE_STATUS_FILTERS: SiteContentSelectableStatus[] = [
+	'publish',
+	'draft',
+	'pending',
+	'private',
+	'future',
+	'trash',
+];
 
 export const EMPTY_SITE_CONTENT_STATUS_FILTERS: SiteContentStatusFilters = {
 	draft: false,
+	future: false,
+	pending: false,
+	private: false,
 	publish: false,
 	trash: false,
 };
@@ -15,6 +25,9 @@ export const EMPTY_SITE_CONTENT_STATUS_FILTERS: SiteContentStatusFilters = {
 const filterLabels: Record< SiteContentSelectableStatus, string > = {
 	publish: __( 'Published', 'elementor' ),
 	draft: __( 'Drafts', 'elementor' ),
+	pending: __( 'Pending', 'elementor' ),
+	private: __( 'Private', 'elementor' ),
+	future: __( 'Scheduled', 'elementor' ),
 	trash: __( 'Trash', 'elementor' ),
 };
 
@@ -37,7 +50,7 @@ export function getActiveSiteContentStatusFilterKeys(
 }
 
 export const serializeSiteContentStatusFilters = ( statusFilters: SiteContentStatusFilters ): string =>
-	( [ 'publish', 'draft', 'trash' ] as const ).map( ( key ) => ( statusFilters[ key ] ? key : '' ) ).join( '|' );
+	SITE_CONTENT_SELECTABLE_STATUS_FILTERS.map( ( key ) => ( statusFilters[ key ] ? key : '' ) ).join( '|' );
 
 export function getRestStatusForSiteContentFilters( filters: SiteContentStatusFilters ): string {
 	if ( filters.trash ) {
@@ -69,8 +82,7 @@ export function toggleSiteContentStatusFilter(
 		const isTrashOn = ! filters.trash;
 
 		return {
-			draft: false,
-			publish: false,
+			...EMPTY_SITE_CONTENT_STATUS_FILTERS,
 			trash: isTrashOn,
 		};
 	}
@@ -80,4 +92,12 @@ export function toggleSiteContentStatusFilter(
 		trash: false,
 		[ filter ]: ! filters[ filter ],
 	};
+}
+
+export function shouldShowSiteContentStatusFilterRow( count: number | undefined, isLoadingCounts: boolean ): boolean {
+	if ( isLoadingCounts || undefined === count ) {
+		return true;
+	}
+
+	return count > 0;
 }

@@ -67,7 +67,7 @@ export default function ContentPanelStatusFilter() {
 				/>
 				<Divider sx={ { borderWidth: '1px 0 0 0' } } />
 				<PopoverBody height="auto" width={ SITE_CONTENT_FILTER_POPOVER_WIDTH_PX }>
-					<ContentPanelStatusFilterList />
+					<ContentPanelStatusFilterList loadCounts={ popupState.isOpen } />
 				</PopoverBody>
 			</Popover>
 		</>
