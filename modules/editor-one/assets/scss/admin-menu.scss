@@ -3,8 +3,8 @@ body.e-admin-navigation-active #adminmenu {
 		margin-block: 7px;
 
 		&.wp-menu-open > .wp-submenu {
-			margin-block-start: 7px;
-			padding-block: 6px 13px;
+			margin-block-start: 0;
+			padding-block: 13px;
 		}
 
 		&:not(.wp-menu-open) > a.menu-top {

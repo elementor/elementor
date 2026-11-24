@@ -3,41 +3,40 @@ import { SearchIcon } from '@elementor/icons';
 import { Box, IconButton, type Theme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-type Props = {
-	showLeadingDivider?: boolean;
-};
-
-export function FinderButton( { showLeadingDivider = false }: Props ) {
+export function FinderButton() {
 	return (
 		<Box
 			data-testid="editor-one-finder-slot"
-			sx={ ( theme: Theme ) => ( {
+			sx={ {
 				position: 'relative',
-				width: 60,
 				height: '100%',
 				flexShrink: 0,
-				display: 'grid',
-				placeItems: 'center',
-				...( showLeadingDivider && {
-					'&::before': {
-						content: '""',
-						position: 'absolute',
-						insetBlock: '11px',
-						insetInlineStart: 0,
-						width: '1px',
-						backgroundColor: theme.palette.divider,
-						pointerEvents: 'none',
-					},
-				} ),
-			} ) }
+				display: 'flex',
+				alignItems: 'center',
+				paddingInlineStart: '27px',
+				paddingInlineEnd: '16px',
+			} }
 		>
+			<Box
+				aria-hidden="true"
+				data-testid="editor-one-finder-divider"
+				sx={ ( theme: Theme ) => ( {
+					position: 'absolute',
+					insetInlineStart: '16px',
+					insetBlockStart: '50%',
+					transform: 'translateY( -50% )',
+					width: '1px',
+					height: '20px',
+					backgroundColor: theme.palette.divider,
+					pointerEvents: 'none',
+				} ) }
+			/>
 			<IconButton
 				aria-label={ __( 'Finder', 'elementor' ) }
 				disableRipple
 				onClick={ () => window.$e?.route?.( 'finder' ) }
 				sx={ {
-					width: '100%',
-					height: '100%',
+					padding: 0,
 					borderRadius: 0,
 					'&:hover': {
 						backgroundColor: 'transparent',
