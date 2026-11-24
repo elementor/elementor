@@ -9,191 +9,203 @@ import { usePosts } from '../use-posts';
 const MOCK_POST_PER_PAGE = 2;
 
 jest.mock( '@wordpress/api-fetch', () => ( {
-	default: jest.fn( ( param ) => {
-		const pages = [
-			{ id: 1, type: 'page', title: { rendered: 'Home' }, status: 'draft', link: 'www.test.demo' },
-			{ id: 2, type: 'page', title: { rendered: 'About' }, status: 'publish', link: 'www.test.demo' },
-			{
-				id: 3,
-				type: 'page',
-				title: { rendered: 'Services' },
-				status: 'publish',
-				link: 'www.test.demo',
-				isHome: true,
-			},
-		];
+  default: jest.fn( ( param ) => {
+    const pages = [
+      { id: 1, type: 'page', title: { rendered: 'Home' }, status: 'draft', link: 'www.test.demo' },
+      {
+        id: 2,
+        type: 'page',
+        title: { rendered: 'About' },
+        status: 'publish',
+        link: 'www.test.demo',
+      },
+      {
+        id: 3,
+        type: 'page',
+        title: { rendered: 'Services' },
+        status: 'publish',
+        link: 'www.test.demo',
+        isHome: true,
+      },
+    ];
 
-		const url = new URL( 'http:/example.com' + param.path );
+    const url = new URL( 'http:/example.com' + param.path );
 
-		const page = Number( url.searchParams.get( 'page' ) );
+    const page = Number( url.searchParams.get( 'page' ) );
 
-		const startIndex = ( page - 1 ) * MOCK_POST_PER_PAGE;
-		const endIndex = startIndex + MOCK_POST_PER_PAGE;
-		const paginatedPages = pages.slice( startIndex, endIndex );
+    const startIndex = ( page - 1 ) * MOCK_POST_PER_PAGE;
+    const endIndex = startIndex + MOCK_POST_PER_PAGE;
+    const paginatedPages = pages.slice( startIndex, endIndex );
 
-		return {
-			json: () => Promise.resolve( paginatedPages ),
-			headers: {
-				get: ( header: string ) => {
-					switch ( header ) {
-						case 'x-wp-totalpages':
-							return Math.ceil( pages.length / MOCK_POST_PER_PAGE );
-						case 'x-wp-total':
-							return pages.length;
-						default:
-							return null;
-					}
-				},
-			},
-		};
-	} ),
-	__esModule: true,
+    return {
+      json: () => Promise.resolve( paginatedPages ),
+      headers: {
+        get: ( header: string ) => {
+          switch ( header ) {
+            case 'x-wp-totalpages':
+              return Math.ceil( pages.length / MOCK_POST_PER_PAGE );
+            case 'x-wp-total':
+              return pages.length;
+            default:
+              return null;
+          }
+        },
+      },
+    };
+  } ),
+  __esModule: true,
 } ) );
 
 describe( '@elementor/site-settings/use-posts', () => {
-	afterEach( () => {
-		jest.clearAllMocks();
-	} );
+  afterEach( () => {
+    jest.clearAllMocks();
+  } );
 
-	it( 'usePosts hook should return posts list by type', async () => {
-		//Arrange
-		const pages = [
-			{ id: 1, type: 'page', title: { rendered: 'Home' }, status: 'draft', link: 'www.test.demo' },
-			{ id: 2, type: 'page', title: { rendered: 'About' }, status: 'publish', link: 'www.test.demo' },
-			{
-				id: 3,
-				type: 'page',
-				title: { rendered: 'Services' },
-				status: 'publish',
-				link: 'www.test.demo',
-				isHome: true,
-			},
-		];
+  it( 'usePosts hook should return posts list by type', async () => {
+    //Arrange
+    const pages = [
+      { id: 1, type: 'page', title: { rendered: 'Home' }, status: 'draft', link: 'www.test.demo' },
+      {
+        id: 2,
+        type: 'page',
+        title: { rendered: 'About' },
+        status: 'publish',
+        link: 'www.test.demo',
+      },
+      {
+        id: 3,
+        type: 'page',
+        title: { rendered: 'Services' },
+        status: 'publish',
+        link: 'www.test.demo',
+        isHome: true,
+      },
+    ];
 
-		// Act.
-		const { component } = renderHookWithQuery( () => usePosts( 'page' ) );
+    // Act.
+    const { component } = renderHookWithQuery( () => usePosts( 'page' ) );
 
-		// Assert.
-		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
-		const expectedPath = `/wp/v2/pages?status=any&order=asc&orderby=date&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
+    // Assert.
+    const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
+    const expectedPath = `/wp/v2/pages?status=any&order=asc&orderby=date&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
 
-		expect( apiFetch ).toHaveBeenCalledWith( {
-			parse: false,
-			path: expectedPath,
-		} );
-		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
+    expect( apiFetch ).toHaveBeenCalledWith( {
+      parse: false,
+      path: expectedPath,
+    } );
+    expect( apiFetch ).toHaveBeenCalledTimes( 1 );
 
-		await waitFor( () => {
-			expect( component.result.current.isLoading ).toBeFalsy();
-		} );
+    await waitFor( () => {
+      expect( component.result.current.isLoading ).toBeFalsy();
+    } );
 
-		expect( component.result.current.data.posts ).toContainEqual( pages[ 0 ] );
-		expect( component.result.current.data.posts ).toContainEqual( pages[ 1 ] );
-		expect( component.result.current.data.posts ).not.toContainEqual( pages[ 2 ] );
-	} );
+    expect( component.result.current.data.posts ).toContainEqual( pages[ 0 ] );
+    expect( component.result.current.data.posts ).toContainEqual( pages[ 1 ] );
+    expect( component.result.current.data.posts ).not.toContainEqual( pages[ 2 ] );
+  } );
 
-	it( 'passes search query to the REST request', async () => {
-		const { component } = renderHookWithQuery( () => usePosts( 'page', 'about' ) );
+  it( 'passes search query to the REST request', async () => {
+    const { component } = renderHookWithQuery( () => usePosts( 'page', 'about' ) );
 
-		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
-		const expectedPath = `/wp/v2/pages?status=any&order=asc&orderby=date&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }&search=about`;
+    const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
+    const expectedPath = `/wp/v2/pages?status=any&order=asc&orderby=date&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }&search=about`;
 
-		await waitFor( () => {
-			expect( apiFetch ).toHaveBeenCalledWith( {
-				parse: false,
-				path: expectedPath,
-			} );
-		} );
+    await waitFor( () => {
+      expect( apiFetch ).toHaveBeenCalledWith( {
+        parse: false,
+        path: expectedPath,
+      } );
+    } );
 
-		await waitFor( () => {
-			expect( component.result.current.isLoading ).toBeFalsy();
-		} );
-	} );
+    await waitFor( () => {
+      expect( component.result.current.isLoading ).toBeFalsy();
+    } );
+  } );
 
-	it( 'passes status filters to the REST request', async () => {
-		const { component } = renderHookWithQuery( () =>
-			usePosts( 'page', '', {
-				...EMPTY_SITE_CONTENT_STATUS_FILTERS,
-				draft: true,
-			} )
-		);
+  it( 'passes status filters to the REST request', async () => {
+    const { component } = renderHookWithQuery( () =>
+      usePosts( 'page', '', {
+        ...EMPTY_SITE_CONTENT_STATUS_FILTERS,
+        draft: true,
+      } )
+    );
 
-		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
-		const expectedPath = `/wp/v2/pages?status=draft&order=asc&orderby=date&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
+    const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
+    const expectedPath = `/wp/v2/pages?status=draft&order=asc&orderby=date&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
 
-		await waitFor( () => {
-			expect( apiFetch ).toHaveBeenCalledWith( {
-				parse: false,
-				path: expectedPath,
-			} );
-		} );
+    await waitFor( () => {
+      expect( apiFetch ).toHaveBeenCalledWith( {
+        parse: false,
+        path: expectedPath,
+      } );
+    } );
 
-		await waitFor( () => {
-			expect( component.result.current.isLoading ).toBeFalsy();
-		} );
-	} );
+    await waitFor( () => {
+      expect( component.result.current.isLoading ).toBeFalsy();
+    } );
+  } );
 
-	it( 'passes combined status filters to the REST request', async () => {
-		const { component } = renderHookWithQuery( () =>
-			usePosts( 'page', '', {
-				...EMPTY_SITE_CONTENT_STATUS_FILTERS,
-				draft: true,
-				publish: true,
-			} )
-		);
+  it( 'passes combined status filters to the REST request', async () => {
+    const { component } = renderHookWithQuery( () =>
+      usePosts( 'page', '', {
+        ...EMPTY_SITE_CONTENT_STATUS_FILTERS,
+        draft: true,
+        publish: true,
+      } )
+    );
 
-		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
-		const expectedPath = `/wp/v2/pages?status=publish%2Cdraft&order=asc&orderby=date&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
+    const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
+    const expectedPath = `/wp/v2/pages?status=publish%2Cdraft&order=asc&orderby=date&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
 
-		await waitFor( () => {
-			expect( apiFetch ).toHaveBeenCalledWith( {
-				parse: false,
-				path: expectedPath,
-			} );
-		} );
+    await waitFor( () => {
+      expect( apiFetch ).toHaveBeenCalledWith( {
+        parse: false,
+        path: expectedPath,
+      } );
+    } );
 
-		await waitFor( () => {
-			expect( component.result.current.isLoading ).toBeFalsy();
-		} );
-	} );
+    await waitFor( () => {
+      expect( component.result.current.isLoading ).toBeFalsy();
+    } );
+  } );
 
-	it( 'passes newest sort to the REST request', async () => {
-		const { component } = renderHookWithQuery( () =>
-			usePosts( 'page', '', EMPTY_SITE_CONTENT_STATUS_FILTERS, 'newest' )
-		);
+  it( 'passes newest sort to the REST request', async () => {
+    const { component } = renderHookWithQuery( () =>
+      usePosts( 'page', '', EMPTY_SITE_CONTENT_STATUS_FILTERS, 'newest' )
+    );
 
-		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
-		const expectedPath = `/wp/v2/pages?status=any&order=desc&orderby=date&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
+    const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
+    const expectedPath = `/wp/v2/pages?status=any&order=desc&orderby=date&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
 
-		await waitFor( () => {
-			expect( apiFetch ).toHaveBeenCalledWith( {
-				parse: false,
-				path: expectedPath,
-			} );
-		} );
+    await waitFor( () => {
+      expect( apiFetch ).toHaveBeenCalledWith( {
+        parse: false,
+        path: expectedPath,
+      } );
+    } );
 
-		await waitFor( () => {
-			expect( component.result.current.isLoading ).toBeFalsy();
-		} );
-	} );
+    await waitFor( () => {
+      expect( component.result.current.isLoading ).toBeFalsy();
+    } );
+  } );
 
-	it( 'passes edited sort to the REST request', async () => {
-		const { component } = renderHookWithQuery( () =>
-			usePosts( 'page', '', EMPTY_SITE_CONTENT_STATUS_FILTERS, 'edited' )
-		);
+  it( 'passes edited sort to the REST request', async () => {
+    const { component } = renderHookWithQuery( () =>
+      usePosts( 'page', '', EMPTY_SITE_CONTENT_STATUS_FILTERS, 'edited' )
+    );
 
-		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
-		const expectedPath = `/wp/v2/pages?status=any&order=desc&orderby=modified&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
+    const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
+    const expectedPath = `/wp/v2/pages?status=any&order=desc&orderby=modified&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
 
-		await waitFor( () => {
-			expect( apiFetch ).toHaveBeenCalledWith( {
-				parse: false,
-				path: expectedPath,
-			} );
-		} );
+    await waitFor( () => {
+      expect( apiFetch ).toHaveBeenCalledWith( {
+        parse: false,
+        path: expectedPath,
+      } );
+    } );
 
-		await waitFor( () => {
-			expect( component.result.current.isLoading ).toBeFalsy();
-		} );
-	} );
+    await waitFor( () => {
+      expect( component.result.current.isLoading ).toBeFalsy();
+    } );
+  } );
 } );

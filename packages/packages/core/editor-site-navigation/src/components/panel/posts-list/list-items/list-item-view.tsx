@@ -13,6 +13,7 @@ import {
 	ListItemButton,
 	ListItemText,
 	Menu,
+	Stack,
 	Tooltip,
 	Typography,
 	usePopupState,
@@ -30,7 +31,11 @@ import Rename from '../../actions-menu/actions/rename';
 import Restore from '../../actions-menu/actions/restore';
 import SetHome from '../../actions-menu/actions/set-home';
 import View from '../../actions-menu/actions/view';
-import { contentPanelListItemButtonSx, contentPanelListRowPaddingSx } from '../../content-panel-chrome';
+import { contentPanelListItemButtonSx, getContentPanelListItemSx } from '../../content-panel-chrome';
+import {
+	SiteContentListItemActionsSlot,
+	useSiteContentListItemActionsInjections,
+} from './site-content-list-item-actions-location';
 
 const DisabledPostTooltip = ( {
 	children,
@@ -79,6 +84,52 @@ export default function ListItemView( { post }: { post: Post } ) {
 	const isEditBlocked = ! post.user_can.edit && ! isTrashed;
 	const isRowDisabled = isEditBlocked || isTrashed;
 	const menuTriggerProps = bindTrigger( popupState );
+	const hasListItemActions = useSiteContentListItemActionsInjections().length > 0;
+	const showListItemActions = isActive && post.user_can.edit && ! isTrashed && hasListItemActions;
+
+	const listRow = (
+		<ListItem
+			disablePadding
+			sx={ getContentPanelListItemSx( showListItemActions ) }
+			secondaryAction={
+				<Stack alignItems="center" direction="row" spacing={ 0 }>
+					{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
+					<IconButton
+						aria-label={ __( 'More actions', 'elementor' ) }
+						size="tiny"
+						{ ...menuTriggerProps }
+						onClick={ ( event: React.MouseEvent ) => {
+							event.stopPropagation();
+							menuTriggerProps.onClick?.( event );
+						} }
+					>
+						<DotsVerticalIcon fontSize="tiny" />
+					</IconButton>
+				</Stack>
+			}
+		>
+			<ListItemButton
+				dense
+				disableGutters
+				disabled={ isRowDisabled }
+				onClick={ () => {
+					if ( isTrashed || isActive ) {
+						return;
+					}
+
+					navigateToDocument( post.id );
+				} }
+				selected={ isActive }
+				shape="rounded"
+				sx={ contentPanelListItemButtonSx }
+			>
+				<ListItemText disableTypography sx={ { flex: 1, minWidth: 0 } }>
+					<PageTitleAndStatus title={ title } status={ status } />
+				</ListItemText>
+				{ post.isHome && <HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" /> }
+			</ListItemButton>
+		</ListItem>
+	);
 
 	const listRow = (
 		<ListItem

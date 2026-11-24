@@ -5,57 +5,59 @@ import { DEFAULT_SITE_CONTENT_SORT, getRestOrderForSiteContentSort } from '../si
 import { type Post } from '../types';
 
 export type NewPost = {
-	title: string;
-	status: 'publish' | 'draft';
+  title: string;
+  status: 'publish' | 'draft';
 };
 
 export type UpdatePost = {
-	id: number;
-	status?: 'draft' | 'publish';
-	title?: string;
+  id: number;
+  status?: 'draft' | 'publish';
+  title?: string;
 };
 
 export type Slug = keyof typeof postTypesMap;
 
 export const postTypesMap = {
-	page: {
-		labels: {
-			singular_name: __( 'Page', 'elementor' ),
-			plural_name: __( 'Pages', 'elementor' ),
-		},
-		rest_base: 'pages',
-		createCapability: 'edit_pages',
-	},
-	post: {
-		labels: {
-			singular_name: __( 'Post', 'elementor' ),
-			plural_name: __( 'Posts', 'elementor' ),
-		},
-		rest_base: 'posts',
-		createCapability: 'edit_posts',
-	},
+  page: {
+    labels: {
+      singular_name: __( 'Page', 'elementor' ),
+      plural_name: __( 'Pages', 'elementor' ),
+    },
+    rest_base: 'pages',
+    createCapability: 'edit_pages',
+  },
+  post: {
+    labels: {
+      singular_name: __( 'Post', 'elementor' ),
+      plural_name: __( 'Posts', 'elementor' ),
+    },
+    rest_base: 'posts',
+    createCapability: 'edit_posts',
+  },
 };
 
 export const panelPostTypeSlugs = Object.keys( postTypesMap ) as Slug[];
 
 export function getPostTypeCreateCapability( postTypeSlug: Slug ): string {
-	return postTypesMap[ postTypeSlug ].createCapability;
+  return postTypesMap[ postTypeSlug ].createCapability;
 }
 
 export function getAccessiblePanelPostTypes( capabilities: Record< string, boolean > ): Slug[] {
-	return panelPostTypeSlugs.filter( ( slug ) => capabilities[ getPostTypeCreateCapability( slug ) ] );
+  return panelPostTypeSlugs.filter(
+    ( slug ) => capabilities[ getPostTypeCreateCapability( slug ) ]
+  );
 }
 
 export function canAccessSiteContentPanel( capabilities: Record< string, boolean > ): boolean {
-	return getAccessiblePanelPostTypes( capabilities ).length > 0;
+  return getAccessiblePanelPostTypes( capabilities ).length > 0;
 }
 
 export function getCannotEditPanelItemMessage( postTypeSlug: Slug ): string {
-	if ( 'page' === postTypeSlug ) {
-		return __( 'You cannot edit this page.', 'elementor' );
-	}
+  if ( 'page' === postTypeSlug ) {
+    return __( 'You cannot edit this page.', 'elementor' );
+  }
 
-	return __( 'You cannot edit this post.', 'elementor' );
+  return __( 'You cannot edit this post.', 'elementor' );
 }
 
 export const POST_PER_PAGE = 10;
@@ -63,109 +65,113 @@ export const POST_PER_PAGE = 10;
 export const COUNT_QUERY_PER_PAGE = 1;
 
 type WpPostsResponse = {
-	json: () => Promise< Post[] >;
-	headers: {
-		get: ( key: string ) => string | null;
-	};
+  json: () => Promise< Post[] >;
+  headers: {
+    get: ( key: string ) => string | null;
+  };
 };
 
 export type PostsResponse = {
-	data: Post[];
-	totalPages: number;
-	totalPosts: number;
-	currentPage: number;
+  data: Post[];
+  totalPages: number;
+  totalPosts: number;
+  currentPage: number;
 };
 
 export const getRequest = async (
-	postTypeSlug: Slug,
-	page: number,
-	search = '',
-	status: string = 'any',
-	perPage = POST_PER_PAGE,
-	sort = DEFAULT_SITE_CONTENT_SORT
+  postTypeSlug: Slug,
+  page: number,
+  search = '',
+  status: string = 'any',
+  perPage = POST_PER_PAGE,
+  sort = DEFAULT_SITE_CONTENT_SORT
 ): Promise< PostsResponse > => {
-	const baseUri = `/wp/v2/${ postTypesMap[ postTypeSlug ].rest_base }`;
+  const baseUri = `/wp/v2/${ postTypesMap[ postTypeSlug ].rest_base }`;
 
-	const keys: Array< keyof Post > = [ 'id', 'type', 'title', 'link', 'status', 'user_can' ];
-	const { order, orderby } = getRestOrderForSiteContentSort( sort );
+  const keys: Array< keyof Post > = [ 'id', 'type', 'title', 'link', 'status', 'user_can' ];
+  const { order, orderby } = getRestOrderForSiteContentSort( sort );
 
-	const queryParams = new URLSearchParams( {
-		status,
-		order,
-		orderby,
-		page: page.toString(),
-		per_page: perPage.toString(),
-		_fields: keys.join( ',' ),
-	} );
+  const queryParams = new URLSearchParams( {
+    status,
+    order,
+    orderby,
+    page: page.toString(),
+    per_page: perPage.toString(),
+    _fields: keys.join( ',' ),
+  } );
 
-	const trimmedSearch = search.trim();
+  const trimmedSearch = search.trim();
 
-	if ( trimmedSearch ) {
-		queryParams.set( 'search', trimmedSearch );
-	}
+  if ( trimmedSearch ) {
+    queryParams.set( 'search', trimmedSearch );
+  }
 
-	const uri = baseUri + '?' + queryParams.toString();
+  const uri = baseUri + '?' + queryParams.toString();
 
-	const result = await apiFetch< WpPostsResponse >( { path: uri, parse: false } );
-	const data = await result.json();
+  const result = await apiFetch< WpPostsResponse >( { path: uri, parse: false } );
+  const data = await result.json();
 
-	const totalPages = Number( result.headers.get( 'x-wp-totalpages' ) );
-	const totalPosts = Number( result.headers.get( 'x-wp-total' ) );
+  const totalPages = Number( result.headers.get( 'x-wp-totalpages' ) );
+  const totalPosts = Number( result.headers.get( 'x-wp-total' ) );
 
-	return {
-		data,
-		totalPages,
-		totalPosts,
-		currentPage: page,
-	};
+  return {
+    data,
+    totalPages,
+    totalPosts,
+    currentPage: page,
+  };
 };
 
 export const createRequest = ( postTypeSlug: Slug, newPost: NewPost ) => {
-	const path = `/wp/v2/${ postTypesMap[ postTypeSlug ].rest_base }`;
+  const path = `/wp/v2/${ postTypesMap[ postTypeSlug ].rest_base }`;
 
-	return apiFetch< { id: number } >( {
-		path,
-		method: 'POST',
-		data: newPost,
-	} );
+  return apiFetch< { id: number } >( {
+    path,
+    method: 'POST',
+    data: newPost,
+  } );
 };
 
 export const updateRequest = ( postTypeSlug: Slug, updatedPost: UpdatePost ) => {
-	const path = `/wp/v2/${ postTypesMap[ postTypeSlug ].rest_base }`;
-	const { id, ...data } = updatedPost;
+  const path = `/wp/v2/${ postTypesMap[ postTypeSlug ].rest_base }`;
+  const { id, ...data } = updatedPost;
 
-	return apiFetch( {
-		path: `${ path }/${ id }`,
-		method: 'POST',
-		data,
-	} );
+  return apiFetch( {
+    path: `${ path }/${ id }`,
+    method: 'POST',
+    data,
+  } );
 };
 
 export const deleteRequest = ( postTypeSlug: Slug, postId: number, force = false ) => {
-	const path = `/wp/v2/${ postTypesMap[ postTypeSlug ].rest_base }`;
-	const forceQuery = force ? '?force=true' : '';
+  const path = `/wp/v2/${ postTypesMap[ postTypeSlug ].rest_base }`;
+  const forceQuery = force ? '?force=true' : '';
 
-	return apiFetch( {
-		path: `${ path }/${ postId }${ forceQuery }`,
-		method: 'DELETE',
-	} );
+  return apiFetch( {
+    path: `${ path }/${ postId }${ forceQuery }`,
+    method: 'DELETE',
+  } );
 };
 
-export const fetchPostsTotal = async ( postTypeSlug: Slug, status = 'any', search = '' ): Promise< number > => {
-	const response = await getRequest( postTypeSlug, 1, search, status, COUNT_QUERY_PER_PAGE );
+export const fetchPostsTotal = async (
+  postTypeSlug: Slug,
+  status = 'any',
+  search = ''
+): Promise< number > => {
+  const response = await getRequest( postTypeSlug, 1, search, status, COUNT_QUERY_PER_PAGE );
 
-	return response.totalPosts;
+  return response.totalPosts;
 };
 
 export const duplicateRequest = ( originalPost: UpdatePost ) => {
-	const path = `/elementor/v1/site-navigation/duplicate-post`;
+  const path = `/elementor/v1/site-navigation/duplicate-post`;
 
-	return apiFetch< { post_id: number } >( {
-		path,
-		method: 'POST',
-		data: {
-			post_id: originalPost.id,
-			title: originalPost.title,
-		},
-	} );
+  return apiFetch< { post_id: number } >( {
+    path,
+    method: 'POST',
+    data: {
+      post_id: originalPost.id,
+      title: originalPost.title,
+    },
+  } );
 };

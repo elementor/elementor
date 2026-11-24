@@ -4,6 +4,7 @@ import { injectIntoDefaultStylesHeader } from '@elementor/editor-default-styles'
 import { injectIntoClassSelectorActions, injectIntoCustomCssHeader } from '@elementor/editor-editing-panel';
 import { injectIntoClassManagerHeader } from '@elementor/editor-global-classes';
 import { injectIntoInteractionsHeader } from '@elementor/editor-interactions';
+import { injectIntoSiteContentListItemActions } from '@elementor/editor-site-navigation';
 import { injectIntoVariableFormHeader, injectIntoVariablesManagerHeader } from '@elementor/editor-variables';
 
 import { AngieComponentInstanceHeaderAction } from '../components/angie-component-instance-header-action';
@@ -14,6 +15,7 @@ import { AngieClassSelectorAction } from '../css-classes/angie-class-selector-ac
 import { AngieDefaultStylesHeaderAction } from '../default-styles/angie-default-styles-header-action';
 import { init } from '../init';
 import { AngieInteractionsHeaderAction } from '../interactions/angie-interactions-header-action';
+import { AngieSiteContentListItemAction } from '../site-content/angie-site-content-list-item-action';
 import { AngieCustomCssHeaderAction } from '../style-section/angie-custom-css-header-action';
 import { AngieVariableFormHeaderAction } from '../variables/angie-variable-form-header-action';
 import { AngieVariablesManagerHeaderAction } from '../variables/angie-variables-manager-header-action';
@@ -42,6 +44,10 @@ jest.mock( '@elementor/editor-global-classes', () => ( {
 
 jest.mock( '@elementor/editor-interactions', () => ( {
 	injectIntoInteractionsHeader: jest.fn(),
+} ) );
+
+jest.mock( '@elementor/editor-site-navigation', () => ( {
+	injectIntoSiteContentListItemActions: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/editor-variables', () => ( {
@@ -101,6 +107,10 @@ describe( 'init', () => {
 		expect( injectIntoComponentsTabHeader ).toHaveBeenCalledWith( {
 			id: 'angie-components-tab-header-action',
 			component: AngieComponentsTabHeaderAction,
+		} );
+		expect( injectIntoSiteContentListItemActions ).toHaveBeenCalledWith( {
+			id: 'angie-site-content-list-item-action',
+			component: AngieSiteContentListItemAction,
 		} );
 	} );
 } );
