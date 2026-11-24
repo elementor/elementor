@@ -1,19 +1,20 @@
 import { keepPreviousData, useInfiniteQuery } from '@elementor/query';
 
 import { getRequest, type PostsResponse, type Slug } from '../api/post';
+import {
+	EMPTY_SITE_CONTENT_STATUS_FILTERS,
+	getRestStatusForSiteContentFilters,
+	type SiteContentStatusFilters,
+} from '../site-content-status-filter';
 import { type Post } from '../types';
 
 export const postsQueryKeyBase = ( postTypeSlug: string ) => [ 'site-navigation', 'posts', postTypeSlug ];
 
-export const postsQueryKey = ( postTypeSlug: string, search = '' ) => {
-	const trimmedSearch = search.trim();
-
-	if ( ! trimmedSearch ) {
-		return postsQueryKeyBase( postTypeSlug );
-	}
-
-	return [ ...postsQueryKeyBase( postTypeSlug ), trimmedSearch ];
-};
+export const postsQueryKey = ( postTypeSlug: string, trimmedSearch = '', restStatus = 'any' ) => [
+	...postsQueryKeyBase( postTypeSlug ),
+	restStatus,
+	trimmedSearch,
+];
 
 const flattenData = ( data?: { pages: PostsResponse[] } ) => {
 	if ( ! data ) {
@@ -29,14 +30,19 @@ const flattenData = ( data?: { pages: PostsResponse[] } ) => {
 	return flattened;
 };
 
-export function usePosts( postTypeSlug: Slug, search = '' ) {
+export function usePosts(
+	postTypeSlug: Slug,
+	search = '',
+	statusFilters: SiteContentStatusFilters = EMPTY_SITE_CONTENT_STATUS_FILTERS
+) {
 	const trimmedSearch = search.trim();
+	const restStatus = getRestStatusForSiteContentFilters( statusFilters );
 
 	const query = useInfiniteQuery( {
-		queryKey: postsQueryKey( postTypeSlug, trimmedSearch ),
-		queryFn: ( { pageParam = 1 } ) => getRequest( postTypeSlug, pageParam, trimmedSearch ),
+		queryKey: postsQueryKey( postTypeSlug, trimmedSearch, restStatus ),
+		queryFn: ( { pageParam = 1 } ) => getRequest( postTypeSlug, pageParam as number, trimmedSearch, restStatus ),
 		initialPageParam: 1,
-		getNextPageParam: ( lastPage ) => {
+		getNextPageParam: ( lastPage: PostsResponse ) => {
 			return lastPage.currentPage < lastPage.totalPages ? lastPage.currentPage + 1 : undefined;
 		},
 		placeholderData: keepPreviousData,
