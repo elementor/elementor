@@ -85,8 +85,7 @@ export default function ListItemView( { post }: { post: Post } ) {
 	const isRowDisabled = isEditBlocked || isTrashed;
 	const menuTriggerProps = bindTrigger( popupState );
 	const hasListItemActions = useSiteContentListItemActionsInjections().length > 0;
-	const showListItemActions =
-		isActive && post.user_can.edit && ! isTrashed && hasListItemActions;
+	const showListItemActions = isActive && post.user_can.edit && ! isTrashed && hasListItemActions;
 
 	const listRow = (
 		<ListItem
