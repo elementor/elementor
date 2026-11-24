@@ -11,8 +11,13 @@ export const registerServerOnAngiePlugin = async ( config: AngieLocalServerConfi
 		return;
 	}
 
-	const sdk = getSDK();
+	try {
+		const sdk = getSDK();
 
-	await sdk.waitForReady();
-	await sdk.registerLocalServer( config );
+		await sdk.waitForReady();
+		await sdk.registerLocalServer( config );
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.error( `Angie plugin registration failed for "${ config.name }":`, error );
+	}
 };
