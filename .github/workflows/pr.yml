@@ -574,7 +574,7 @@ jobs:
       - playwright
     if: always() && !cancelled()
     steps:
-      - name: Reuse prior required-check result for non-CI labels
+      - name: Reuse latest full-run required-check result for non-CI labels
         if: github.event.action == 'labeled' && !contains(fromJSON(env.CI_TRIGGER_LABELS), github.event.label.name)
         uses: actions/github-script@v7
         with:
@@ -587,15 +587,43 @@ jobs:
               head_sha: sha,
               per_page: 30,
             });
-            const prior = data.workflow_runs.find(
-              (run) => run.id !== context.runId && run.status === 'completed'
-            );
-            if (!prior) {
-              core.info(`No prior completed pr.yml run for ${sha}`);
-              return;
+
+            const isDetectChanges = (job) =>
+              job.name === 'detect-changes' || job.name === 'Detect changes';
+            const isValidate = (job) => job.name === 'Pull Request Validations';
+
+            let fullRun;
+            let validateConclusion;
+
+            for (const run of data.workflow_runs) {
+              if (run.id === context.runId || run.status !== 'completed') {
+                continue;
+              }
+
+              const jobs = await github.rest.actions.listJobsForWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: run.id,
+                per_page: 100,
+              });
+
+              const detect = jobs.data.jobs.find(isDetectChanges);
+              if (!detect || detect.conclusion === 'skipped' || detect.conclusion === 'cancelled') {
+                continue;
+              }
+
+              fullRun = run;
+              const validate = jobs.data.jobs.find(isValidate);
+              validateConclusion = validate?.conclusion ?? run.conclusion;
+              break;
             }
-            if (prior.conclusion !== 'success') {
-              core.setFailed(`Prior PR workflow ${prior.html_url} concluded ${prior.conclusion}`);
+
+            if (validateConclusion !== 'success') {
+              core.setFailed(
+                fullRun
+                  ? `Latest full pr.yml run ${fullRun.html_url} concluded ${validateConclusion}`
+                  : `No completed full pr.yml run for ${sha}; light labeled runs cannot pass Pull Request Validations`
+              );
             }
 
       - name: Resolve pending Playwright commit status
