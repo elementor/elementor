@@ -8,7 +8,7 @@ import { ElementProvider } from '../../contexts/element-context';
 import { useDefaultPanelSettings } from '../../hooks/use-default-panel-settings';
 import { useStateByElement } from '../../hooks/use-state-by-element';
 import { ContentOnlyInfotip } from '../content-only-infotip';
-import { EditingPanelTabs, injectIntoSettingsTab } from '../editing-panel-tabs';
+import { EditingPanelTabs, injectIntoSettingsTab, injectIntoStyleTabContent } from '../editing-panel-tabs';
 
 jest.mock( '@elementor/editor-current-user' );
 jest.mock( '@elementor/editor-elements', () => ( {
@@ -34,6 +34,8 @@ const PROMOTED_ELEMENT_TYPE = 'promoted-widget';
 const HIDDEN_DESIGN_TABS_ELEMENT_TYPE = 'e-form-hidden';
 const REPLACED_SETTINGS_ELEMENT_TYPE = 'replaced-settings-element';
 const REPLACED_SETTINGS_TAB_PANEL_TEXT = 'Replaced settings tab panel';
+const REPLACED_STYLE_ELEMENT_TYPE = 'replaced-style-element';
+const REPLACED_STYLE_TAB_PANEL_TEXT = 'Replaced style tab panel';
 const LEARN_MORE_URL = 'https://go.elementor.com/content-only-access-infotip';
 const TAB_GENERAL = 'General';
 const TAB_STYLE = 'Style';
@@ -219,6 +221,25 @@ describe( '<EditingPanelTabs />', () => {
 		expect( screen.queryByText( SETTINGS_TAB_PANEL_TEXT ) ).not.toBeInTheDocument();
 		fireEvent.click( getTabByName( TAB_STYLE ) );
 		expect( screen.getByText( STYLE_TAB_PANEL_TEXT ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render a style tab replacement in the Style panel and keep the General tab', () => {
+		// Arrange
+		injectIntoStyleTabContent( {
+			id: 'test-style-tab-replacement',
+			condition: ( { elementType } ) => elementType.key === REPLACED_STYLE_ELEMENT_TYPE,
+			component: () => <div>{ REPLACED_STYLE_TAB_PANEL_TEXT }</div>,
+		} );
+		jest.mocked( useStateByElement ).mockReturnValue( [ 'style', jest.fn() ] );
+
+		// Act
+		renderEditingPanelTabs( REPLACED_STYLE_ELEMENT_TYPE );
+
+		// Assert
+		expect( screen.getByText( REPLACED_STYLE_TAB_PANEL_TEXT ) ).toBeInTheDocument();
+		expect( screen.queryByText( STYLE_TAB_PANEL_TEXT ) ).not.toBeInTheDocument();
+		fireEvent.click( getTabByName( TAB_GENERAL ) );
+		expect( screen.getByText( SETTINGS_TAB_PANEL_TEXT ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render only the General tab for an element that hides the design tabs', () => {
