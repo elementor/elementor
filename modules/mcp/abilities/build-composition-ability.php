@@ -5,6 +5,8 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
 use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
+use Elementor\Modules\CompositeWidgets\Mcp\Widget_Instance_Expander;
+use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
@@ -31,10 +33,16 @@ class Build_Composition_Ability extends Abstract_Ability {
 
 	private ?Document_Mutator $mutator;
 	private ?Closed_Structure $closed_structure;
+	private ?Widget_Instance_Expander $widget_instance_expander;
 
-	public function __construct( ?Document_Mutator $mutator = null, ?Closed_Structure $closed_structure = null ) {
+	public function __construct(
+		?Document_Mutator $mutator = null,
+		?Closed_Structure $closed_structure = null,
+		?Widget_Instance_Expander $widget_instance_expander = null
+	) {
 		$this->mutator = $mutator;
 		$this->closed_structure = $closed_structure;
+		$this->widget_instance_expander = $widget_instance_expander;
 	}
 
 	protected function get_ability_id(): string {
@@ -100,7 +108,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 
 		$elements_data = $this->resolve_base_tree( $input, $document, $dry_run );
-		$compiled = Composition_Compiler::make( $this->closed_structure )->compile(
+		$compiled = Composition_Compiler::make(
+			$this->closed_structure,
+			$this->widget_instance_expander ?? Composite_Widgets_Module::get_active_widget_instance_expander()
+		)->compile(
 			$input,
 			$document,
 			$elements_data,

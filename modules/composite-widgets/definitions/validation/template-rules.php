@@ -69,7 +69,7 @@ class Template_Rules {
 		$this->errors = $errors;
 		$this->parts = [];
 		$this->repeater_items = $this->get_repeater_items( $definition['general'] );
-		$this->allowed_types = $this->get_allowed_types();
+		$this->allowed_types = self::get_allowed_types();
 		$this->forbids_globals = Widget_Definition::SOURCE_CODE === $definition['source'];
 		$this->is_inside_slot = false;
 
@@ -226,7 +226,7 @@ class Template_Rules {
 		return $child_part === $item_part;
 	}
 
-	private function get_allowed_types(): array {
+	public static function get_allowed_types(): array {
 		$allowed_types = apply_filters( self::ALLOWED_PART_TYPES_FILTER, self::DEFAULT_ALLOWED_PART_TYPES );
 
 		return is_array( $allowed_types ) ? $allowed_types : self::DEFAULT_ALLOWED_PART_TYPES;

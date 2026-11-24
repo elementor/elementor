@@ -1,17 +1,26 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
-import { Box, Button, CircularProgress, Skeleton, Typography } from '@elementor/ui';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Box, Skeleton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { postTypesMap } from '../../../api/post';
 import { useContentPanelCoordinator } from '../../../contexts/content-panel-coordinator';
 import { usePostListContext } from '../../../contexts/post-list-context';
 import { useHomepage } from '../../../hooks/use-homepage';
+import { usePostListPagination } from '../../../hooks/use-post-list-pagination';
 import { usePosts } from '../../../hooks/use-posts';
+import { usePostsBaselineTotal } from '../../../hooks/use-posts-baseline-total';
+import {
+	hasActiveSiteContentStatusFilters,
+	isSiteContentListNarrowed,
+	isSiteContentTrashFilterActive,
+	serializeSiteContentStatusFilters,
+} from '../../../site-content-status-filter';
 import SectionAddButton from '../section-add-button';
 import CollapsibleList from './collapsible-list';
 import ErrorState from './error-state';
 import PostListItem from './post-list-item';
+import PostListPaginationActions from './post-list-pagination-actions';
 
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -20,11 +29,15 @@ type Props = {
 };
 
 export default function PostsCollapsibleList( { isOpenByDefault = false }: Props ) {
-	const { type, editMode, setEditMode } = usePostListContext();
-	const { registerSection, unregisterSection, searchQuery } = useContentPanelCoordinator();
+	const { type, editMode, resetEditMode, setEditMode } = usePostListContext();
+	const { registerSection, searchQuery, statusFilters, unregisterSection } = useContentPanelCoordinator();
 	const [ isOpen, setIsOpen ] = useState( isOpenByDefault );
 	const trimmedSearch = searchQuery.trim();
 	const [ debouncedSearch, setDebouncedSearch ] = useState( trimmedSearch );
+	const focusAfterShowLessRef = useRef( false );
+	const listTopRef = useRef< HTMLDivElement | null >( null );
+	const loadMoreButtonRef = useRef< HTMLButtonElement | null >( null );
+	const sectionHeaderRef = useRef< HTMLDivElement | null >( null );
 
 	useEffect( () => {
 		const handle = window.setTimeout( () => setDebouncedSearch( trimmedSearch ), SEARCH_DEBOUNCE_MS );
@@ -39,9 +52,20 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
-	} = usePosts( type, debouncedSearch );
+	} = usePosts( type, debouncedSearch, statusFilters );
+	const isNarrowed = isSiteContentListNarrowed( statusFilters, debouncedSearch );
+	const isTrashFilter = isSiteContentTrashFilterActive( statusFilters );
+	const baselineStatus = isTrashFilter ? 'trash' : 'any';
+	const { data: baselineTotal } = usePostsBaselineTotal( type, isNarrowed, baselineStatus );
 	const { data: homepageId } = useHomepage();
 	const isPageType = type === 'page';
+	const statusFiltersKey = serializeSiteContentStatusFilters( statusFilters );
+
+	useEffect( () => {
+		if ( isTrashFilter ) {
+			resetEditMode();
+		}
+	}, [ isTrashFilter, resetEditMode ] );
 
 	useEffect( () => {
 		registerSection( type, {
@@ -78,11 +102,53 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 		return sorted;
 	}, [ posts, isPageType, homepageId ] );
 
+	const pagination = usePostListPagination( {
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+		loadedCount: filteredPosts.length,
+		resetKey: `${ type }:${ debouncedSearch }:${ statusFiltersKey }`,
+		totalCount: total,
+	} );
+
+	const displayedPosts = useMemo(
+		() => filteredPosts.slice( 0, pagination.visibleCount ),
+		[ filteredPosts, pagination.visibleCount ]
+	);
+
+	const handleShowLess = () => {
+		focusAfterShowLessRef.current = true;
+		pagination.handleShowLess();
+
+		const listTop = listTopRef.current;
+
+		if ( listTop && typeof listTop.scrollIntoView === 'function' ) {
+			listTop.scrollIntoView( { block: 'nearest' } );
+		}
+	};
+
 	useEffect( () => {
-		if ( debouncedSearch && filteredPosts.length > 0 ) {
+		if ( ! focusAfterShowLessRef.current ) {
+			return;
+		}
+
+		focusAfterShowLessRef.current = false;
+
+		const loadMoreButton = loadMoreButtonRef.current;
+
+		if ( loadMoreButton ) {
+			loadMoreButton.focus();
+			return;
+		}
+
+		sectionHeaderRef.current?.focus();
+	}, [ pagination.canLoadMore, pagination.visibleCount ] );
+
+	useEffect( () => {
+		if ( ( debouncedSearch || hasActiveSiteContentStatusFilters( statusFilters ) ) && filteredPosts.length > 0 ) {
 			setIsOpen( true );
 		}
-	}, [ debouncedSearch, filteredPosts.length ] );
+	}, [ debouncedSearch, filteredPosts.length, statusFilters ] );
 
 	if ( postsError ) {
 		return <ErrorState />;
@@ -103,15 +169,19 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 
 	const displayCount = total;
 	const sectionTitle = postTypesMap[ type ].labels.plural_name;
-	const showNoResults = debouncedSearch && filteredPosts.length === 0;
+	const showNoResults =
+		( debouncedSearch || hasActiveSiteContentStatusFilters( statusFilters ) ) && filteredPosts.length === 0;
+	const countChipLabel = isNarrowed && baselineTotal !== undefined ? `${ total } / ${ baselineTotal }` : undefined;
 
 	return (
 		<CollapsibleList
 			count={ displayCount }
+			countChipLabel={ countChipLabel }
+			headerRef={ sectionHeaderRef }
 			isOpen={ isOpen }
 			onOpenChange={ setIsOpen }
 			title={ sectionTitle }
-			trailingActions={ <SectionAddButton onBeforeCreate={ () => setIsOpen( true ) } /> }
+			trailingActions={ isTrashFilter ? null : <SectionAddButton onBeforeCreate={ () => setIsOpen( true ) } /> }
 		>
 			{ showNoResults && (
 				<Box sx={ { py: 2, px: 2 } }>
@@ -120,22 +190,19 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 					</Typography>
 				</Box>
 			) }
-			{ filteredPosts.map( ( post ) => {
+			<Box ref={ listTopRef } />
+			{ displayedPosts.map( ( post ) => {
 				return <PostListItem key={ post.id } post={ post } />;
 			} ) }
-			{ [ 'duplicate', 'create' ].includes( editMode.mode ) && <PostListItem /> }
-			{ hasNextPage && (
-				<Box
-					sx={ {
-						display: 'flex',
-						justifyContent: 'center',
-					} }
-				>
-					<Button onClick={ fetchNextPage } color="secondary">
-						{ isFetchingNextPage ? <CircularProgress /> : __( 'Load more', 'elementor' ) }
-					</Button>
-				</Box>
-			) }
+			{ ! isTrashFilter && [ 'duplicate', 'create' ].includes( editMode.mode ) && <PostListItem /> }
+			<PostListPaginationActions
+				canLoadMore={ pagination.canLoadMore }
+				canShowLess={ pagination.canShowLess }
+				isLoadingMore={ isFetchingNextPage }
+				loadMoreButtonRef={ loadMoreButtonRef }
+				onLoadMore={ pagination.handleLoadMore }
+				onShowLess={ handleShowLess }
+			/>
 		</CollapsibleList>
 	);
 }

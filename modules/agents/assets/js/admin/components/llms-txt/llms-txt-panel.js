@@ -9,6 +9,8 @@ import Typography from '@elementor/ui/Typography';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
+import { FILE_TYPE_LLMS_TXT } from '../../analytics/agent-ready-events';
+import { trackFileOpened } from '../../analytics/track-agent-ready-event';
 import { LLMS_FILE_NAME, LLMS_SETTINGS_KEY } from '../../constants';
 import { ConfirmDialog } from '../confirm-dialog';
 import { ContentEditDialog } from '../content-edit-dialog';
@@ -49,6 +51,11 @@ export const LlmsTxtPanel = ( { settings } ) => {
 		: postTypes;
 
 	const closeDialog = () => setDialogMode( null );
+
+	const handleEdit = () => {
+		trackFileOpened( { fileType: FILE_TYPE_LLMS_TXT } );
+		setDialogMode( DIALOG_MODE_EDIT );
+	};
 
 	return (
 		<Stack direction="row" width="100%" maxWidth="100%" minWidth={ 0 } overflow="auto">
@@ -110,7 +117,7 @@ export const LlmsTxtPanel = ( { settings } ) => {
 						</Alert>
 					) }
 					hasActions={ ! hasPhysicalFile }
-					onEdit={ () => setDialogMode( DIALOG_MODE_EDIT ) }
+					onEdit={ handleEdit }
 					onExpand={ () => setDialogMode( DIALOG_MODE_VIEW ) }
 				/>
 			) }

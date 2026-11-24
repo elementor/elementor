@@ -2,6 +2,7 @@
 namespace Elementor\Tests\Phpunit\Includes;
 
 use Elementor\Api;
+use Elementor\Modules\Mcp\Site_Flag;
 use ElementorEditorTesting\Elementor_Test_AJAX;
 use ElementorEditorTesting\Traits\Auth_Helpers;
 
@@ -121,6 +122,87 @@ class Test_Api extends Elementor_Test_AJAX {
 
 		// Cleanup
 		$cleanup();
+	}
+
+	public function test_get_info_data__sends_mcp_flag_when_site_flag_is_set() {
+		// Arrange
+		update_option( Site_Flag::OPTION_NAME, 'elements' );
+		delete_transient( Api::TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION );
+
+		$captured_body = null;
+		$filter = function ( $preempt, $args, $url ) use ( &$captured_body ) {
+			if ( false !== strpos( $url, '/api/v2/info' ) ) {
+				$captured_body = $args['body'] ?? null;
+			}
+
+			return [
+				'headers' => [],
+				'response' => [
+					'code' => 200,
+					'message' => 'OK',
+				],
+				'cookies' => [],
+				'filename' => '',
+				'body' => wp_json_encode( [
+					'additional-data' => 'test-additional-data',
+				] ),
+			];
+		};
+
+		add_filter( 'pre_http_request', $filter, 10, 3 );
+
+		try {
+			// Act
+			Api::get_canary_deployment_info( true );
+		} finally {
+			remove_filter( 'pre_http_request', $filter );
+			delete_option( Site_Flag::OPTION_NAME );
+			delete_transient( Api::TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION );
+		}
+
+		// Assert
+		$this->assertIsArray( $captured_body );
+		$this->assertSame( '1', $captured_body['mcp'] );
+	}
+
+	public function test_get_info_data__omits_mcp_flag_when_site_flag_is_empty() {
+		// Arrange
+		delete_option( Site_Flag::OPTION_NAME );
+		delete_transient( Api::TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION );
+
+		$captured_body = null;
+		$filter = function ( $preempt, $args, $url ) use ( &$captured_body ) {
+			if ( false !== strpos( $url, '/api/v2/info' ) ) {
+				$captured_body = $args['body'] ?? null;
+			}
+
+			return [
+				'headers' => [],
+				'response' => [
+					'code' => 200,
+					'message' => 'OK',
+				],
+				'cookies' => [],
+				'filename' => '',
+				'body' => wp_json_encode( [
+					'additional-data' => 'test-additional-data',
+				] ),
+			];
+		};
+
+		add_filter( 'pre_http_request', $filter, 10, 3 );
+
+		try {
+			// Act
+			Api::get_canary_deployment_info( true );
+		} finally {
+			remove_filter( 'pre_http_request', $filter );
+			delete_transient( Api::TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION );
+		}
+
+		// Assert
+		$this->assertIsArray( $captured_body );
+		$this->assertArrayNotHasKey( 'mcp', $captured_body );
 	}
 
 	private function mock_get_info() {
