@@ -4,6 +4,7 @@
 
 * Fix: Cached Markdown content may appear instead of the website's regular pages when Generate website markdown is activated ([#37853](https://github.com/elementor/elementor/issues/37853))
 * Fix: Logged-in users may be unexpectedly redirected to the login page after content changes when Agent Ready is enabled ([#38189](https://github.com/elementor/elementor/issues/38189))
+* Fix: SVG Icon Library picker closes when searching for a different icon in grid view
 
 = 4.4.1 - 2026-11-16 =
 
