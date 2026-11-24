@@ -7,5 +7,8 @@ export type SiteContentListItemActionsProps = {
 	title: string;
 };
 
-export const { Slot: SiteContentListItemActionsSlot, inject: injectIntoSiteContentListItemActions } =
-	createLocation< SiteContentListItemActionsProps >();
+export const {
+	Slot: SiteContentListItemActionsSlot,
+	inject: injectIntoSiteContentListItemActions,
+	useInjections: useSiteContentListItemActionsInjections,
+} = createLocation< SiteContentListItemActionsProps >();

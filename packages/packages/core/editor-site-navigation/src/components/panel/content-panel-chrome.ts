@@ -1,7 +1,6 @@
 const CONTENT_PANEL_INSET_SPACING = 2;
 const CONTENT_PANEL_LIST_ROW_GAP = 0.5;
 const CONTENT_PANEL_LIST_ROW_INSET_INLINE = 0.75;
-const CONTENT_PANEL_LIST_ROW_MENU_SECONDARY_INSET = 6;
 const CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_INSET = 10;
 const CONTENT_PANEL_LIST_ROW_TITLE_FONT_SIZE = '0.75rem';
 const CONTENT_PANEL_LIST_SECTION_BOTTOM_SPACING = 1;
@@ -18,13 +17,23 @@ export const contentPanelListRowPaddingSx = {
 	...contentPanelInsetPaddingSx,
 };
 
-export const contentPanelListRowMenuSecondaryInsetSx = {
-	paddingRight: CONTENT_PANEL_LIST_ROW_MENU_SECONDARY_INSET,
+const contentPanelListItemActiveActionsInsetSx = {
+	'&& > .MuiListItemButton-root': {
+		paddingInlineEnd: CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_INSET,
+		paddingRight: 'unset',
+	},
 };
 
-export const contentPanelListRowActiveSecondaryInsetSx = {
-	paddingRight: CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_INSET,
-};
+export function getContentPanelListItemSx( hasActiveRowActions: boolean ) {
+	if ( ! hasActiveRowActions ) {
+		return contentPanelListRowPaddingSx;
+	}
+
+	return {
+		...contentPanelListRowPaddingSx,
+		...contentPanelListItemActiveActionsInsetSx,
+	};
+}
 
 export const contentPanelHeaderStackSx = {
 	width: '100%',

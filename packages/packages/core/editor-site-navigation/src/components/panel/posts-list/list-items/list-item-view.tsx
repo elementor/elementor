@@ -29,13 +29,11 @@ import Duplicate from '../../actions-menu/actions/duplicate';
 import Rename from '../../actions-menu/actions/rename';
 import SetHome from '../../actions-menu/actions/set-home';
 import View from '../../actions-menu/actions/view';
+import { contentPanelListItemButtonSx, getContentPanelListItemSx } from '../../content-panel-chrome';
 import {
-	contentPanelListItemButtonSx,
-	contentPanelListRowActiveSecondaryInsetSx,
-	contentPanelListRowMenuSecondaryInsetSx,
-	contentPanelListRowPaddingSx,
-} from '../../content-panel-chrome';
-import { SiteContentListItemActionsSlot } from './site-content-list-item-actions-location';
+	SiteContentListItemActionsSlot,
+	useSiteContentListItemActionsInjections,
+} from './site-content-list-item-actions-location';
 
 const DisabledPostTooltip = ( {
 	children,
@@ -82,18 +80,18 @@ export default function ListItemView( { post }: { post: Post } ) {
 	const title = isActive ? activeDocument?.title : post.title.rendered;
 	const isDisabled = ! post.user_can.edit;
 	const menuTriggerProps = bindTrigger( popupState );
-	const listRowSecondaryInsetSx =
-		isActive && ! isDisabled ? contentPanelListRowActiveSecondaryInsetSx : contentPanelListRowMenuSecondaryInsetSx;
+	const hasListItemActions = useSiteContentListItemActionsInjections().length > 0;
+	const showListItemActions = isActive && ! isDisabled && hasListItemActions;
 
 	return (
 		<>
 			<DisabledPostTooltip isDisabled={ isDisabled } postTypeSlug={ type }>
 				<ListItem
 					disablePadding
-					sx={ { ...contentPanelListRowPaddingSx, ...listRowSecondaryInsetSx } }
+					sx={ getContentPanelListItemSx( showListItemActions ) }
 					secondaryAction={
 						<Stack alignItems="center" direction="row" spacing={ 0 }>
-							{ isActive && ! isDisabled && (
+							{ showListItemActions && (
 								<SiteContentListItemActionsSlot post={ post } title={ title } />
 							) }
 							<IconButton
