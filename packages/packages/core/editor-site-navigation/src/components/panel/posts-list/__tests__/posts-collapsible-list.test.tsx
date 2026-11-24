@@ -113,6 +113,19 @@ function SearchHarness() {
 	);
 }
 
+function SortHarness() {
+	const { setSiteContentSort } = useContentPanelCoordinator();
+
+	return (
+		<>
+			<button type="button" onClick={ () => setSiteContentSort( 'newest' ) }>
+				Sort newest
+			</button>
+			<PostsCollapsibleList isOpenByDefault />
+		</>
+	);
+}
+
 const defaultUsePostsValue = {
 	isLoading: false,
 	data: {
@@ -333,6 +346,33 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 			},
 			{ timeout: 500 }
 		);
+	} );
+
+	it( 'shows empty state when non-default sort returns no posts', async () => {
+		jest.mocked( usePosts ).mockImplementation( ( ...callArgs ) => {
+			const sort = callArgs[ 3 ] ?? 'oldest';
+			const isEmptyForSort = sort === 'newest';
+
+			return {
+				isLoading: false,
+				data: {
+					posts: isEmptyForSort ? [] : defaultUsePostsValue.data.posts,
+					total: isEmptyForSort ? 0 : defaultUsePostsValue.data.total,
+				},
+			} as ReturnType< typeof usePosts >;
+		} );
+
+		renderList(
+			<PostListContextProvider type={ 'page' } setError={ () => {} }>
+				<SortHarness />
+			</PostListContextProvider>
+		);
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Sort newest' } ) );
+
+		await waitFor( () => {
+			expect( screen.getByText( 'No results found' ) ).toBeInTheDocument();
+		} );
 	} );
 
 	it( 'renders Load more when more items exist than the first page', () => {

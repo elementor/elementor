@@ -10,9 +10,8 @@ import { useHomepage } from '../../../hooks/use-homepage';
 import { usePostListPagination } from '../../../hooks/use-post-list-pagination';
 import { usePosts } from '../../../hooks/use-posts';
 import { usePostsBaselineTotal } from '../../../hooks/use-posts-baseline-total';
-import { shouldPinHomepageForSiteContentSort } from '../../../site-content-sort';
+import { isSiteContentListRefinedByToolbar, shouldPinHomepageForSiteContentSort } from '../../../site-content-sort';
 import {
-	hasActiveSiteContentStatusFilters,
 	isSiteContentListNarrowed,
 	isSiteContentTrashFilterActive,
 	serializeSiteContentStatusFilters,
@@ -149,10 +148,10 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 	}, [ pagination.canLoadMore, pagination.visibleCount ] );
 
 	useEffect( () => {
-		if ( ( debouncedSearch || hasActiveSiteContentStatusFilters( statusFilters ) ) && filteredPosts.length > 0 ) {
+		if ( isSiteContentListRefinedByToolbar( statusFilters, debouncedSearch, siteContentSort ) && filteredPosts.length > 0 ) {
 			setIsOpen( true );
 		}
-	}, [ debouncedSearch, filteredPosts.length, statusFilters ] );
+	}, [ debouncedSearch, filteredPosts.length, siteContentSort, statusFilters ] );
 
 	if ( postsError ) {
 		return <ErrorState />;
@@ -174,7 +173,8 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 	const displayCount = total;
 	const sectionTitle = postTypesMap[ type ].labels.plural_name;
 	const showNoResults =
-		( debouncedSearch || hasActiveSiteContentStatusFilters( statusFilters ) ) && filteredPosts.length === 0;
+		isSiteContentListRefinedByToolbar( statusFilters, debouncedSearch, siteContentSort ) &&
+		filteredPosts.length === 0;
 	const countChipLabel = isNarrowed && baselineTotal !== undefined ? `${ total } / ${ baselineTotal }` : undefined;
 
 	return (

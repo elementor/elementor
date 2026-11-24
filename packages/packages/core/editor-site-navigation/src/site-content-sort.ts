@@ -1,5 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
+import { isSiteContentListNarrowed, type SiteContentStatusFilters } from './site-content-status-filter';
+
 export type SiteContentSortOption = 'edited' | 'newest' | 'oldest';
 
 export const SITE_CONTENT_SORT_OPTIONS: SiteContentSortOption[] = [ 'oldest', 'newest', 'edited' ];
@@ -25,6 +27,14 @@ export function getSiteContentSortLabel( sort: SiteContentSortOption ): string {
 
 export function hasActiveSiteContentSort( sort: SiteContentSortOption ): boolean {
 	return sort !== DEFAULT_SITE_CONTENT_SORT;
+}
+
+export function isSiteContentListRefinedByToolbar(
+	statusFilters: SiteContentStatusFilters,
+	search: string,
+	sort: SiteContentSortOption
+): boolean {
+	return isSiteContentListNarrowed( statusFilters, search ) || hasActiveSiteContentSort( sort );
 }
 
 export function getRestOrderForSiteContentSort( sort: SiteContentSortOption ): SiteContentRestListOrder {
