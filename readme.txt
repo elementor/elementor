@@ -351,6 +351,11 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 
 == Changelog ==
 
+= 4.4.2 - 2026-11-24 =
+
+* Fix: Cached Markdown content may appear instead of the website's regular pages when Generate website markdown is activated ([#37853](https://github.com/elementor/elementor/issues/37853))
+* Fix: Logged-in users may be unexpectedly redirected to the login page after content changes when Agent Ready is enabled ([#38189](https://github.com/elementor/elementor/issues/38189))
+
 = 4.4.1 - 2026-11-16 =
 
 * Tweak: Updated WordPress compatibility to version 7.2
