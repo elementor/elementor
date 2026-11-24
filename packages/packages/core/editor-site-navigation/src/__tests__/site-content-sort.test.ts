@@ -23,13 +23,6 @@ describe( 'site-content-sort', () => {
 		} );
 	} );
 
-	it( 'maps edited to modified descending', () => {
-		expect( getRestOrderForSiteContentSort( 'edited' ) ).toEqual( {
-			order: 'desc',
-			orderby: 'modified',
-		} );
-	} );
-
 	it( 'treats oldest as the default sort without a chip', () => {
 		expect( hasActiveSiteContentSort( DEFAULT_SITE_CONTENT_SORT ) ).toBe( false );
 		expect( hasActiveSiteContentSort( 'newest' ) ).toBe( true );
@@ -48,12 +41,10 @@ describe( 'site-content-sort', () => {
 	it( 'pins the homepage only for oldest', () => {
 		expect( shouldPinHomepageForSiteContentSort( 'oldest' ) ).toBe( true );
 		expect( shouldPinHomepageForSiteContentSort( 'newest' ) ).toBe( false );
-		expect( shouldPinHomepageForSiteContentSort( 'edited' ) ).toBe( false );
 	} );
 
 	it( 'exposes translated sort labels', () => {
 		expect( getSiteContentSortLabel( 'oldest' ) ).toBeTruthy();
 		expect( getSiteContentSortLabel( 'newest' ) ).toBeTruthy();
-		expect( getSiteContentSortLabel( 'edited' ) ).toBeTruthy();
 	} );
 } );

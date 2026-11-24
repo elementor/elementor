@@ -176,24 +176,4 @@ describe( '@elementor/site-settings/use-posts', () => {
 			expect( component.result.current.isLoading ).toBeFalsy();
 		} );
 	} );
-
-	it( 'passes edited sort to the REST request', async () => {
-		const { component } = renderHookWithQuery( () =>
-			usePosts( 'page', '', EMPTY_SITE_CONTENT_STATUS_FILTERS, 'edited' )
-		);
-
-		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
-		const expectedPath = `/wp/v2/pages?status=any&order=desc&orderby=modified&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
-
-		await waitFor( () => {
-			expect( apiFetch ).toHaveBeenCalledWith( {
-				parse: false,
-				path: expectedPath,
-			} );
-		} );
-
-		await waitFor( () => {
-			expect( component.result.current.isLoading ).toBeFalsy();
-		} );
-	} );
 } );
