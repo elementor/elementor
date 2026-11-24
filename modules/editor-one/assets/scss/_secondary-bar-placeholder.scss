@@ -1,0 +1,92 @@
+// Static stand-in printed by `Secondary_Bar_Handler::render_container()` until React mounts the secondary bar.
+// Values mirror the mounted `@elementor/ui` bar (`packages/apps/editor-one-secondary-bar`) so the swap is not visible.
+#editor-one-secondary-bar .e-one-secondary-bar-placeholder {
+	$text-primary: #0c0d0e;
+	$text-secondary: #3f444b;
+	$divider: rgba(0, 20, 54, 0.12);
+	$font-family: "DM Sans", Roboto, Helvetica, Arial, sans-serif;
+
+	display: flex;
+	box-sizing: content-box;
+	height: 48px;
+	border-block-end: 1px solid $divider;
+	background-color: #fff;
+
+	.e-one-secondary-bar-placeholder__tabs {
+		display: flex;
+		flex: 1;
+		min-width: 0;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+
+	.e-one-secondary-bar-placeholder__tab {
+		display: inline-flex;
+		align-items: center;
+		flex-shrink: 0;
+		padding-block: 0;
+		padding-inline: 16px;
+		font-family: $font-family;
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.429;
+		letter-spacing: -0.25px;
+		white-space: nowrap;
+		text-decoration: none;
+
+		&,
+		&:visited {
+			color: $text-secondary;
+			box-shadow: none;
+		}
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: $text-primary;
+			box-shadow: none;
+			outline: none;
+		}
+
+		&.is-active {
+			font-weight: 500;
+
+			&,
+			&:visited,
+			&:hover,
+			&:focus,
+			&:active {
+				color: $text-primary;
+				box-shadow: inset 0 -3px 0 currentColor;
+			}
+		}
+	}
+
+	.e-one-secondary-bar-placeholder__tag {
+		display: inline-flex;
+		align-items: center;
+		box-sizing: border-box;
+		height: 20px;
+		margin-inline-start: 8px;
+		padding-block: 0;
+		padding-inline: 8px;
+		border: 1px solid #818a96;
+		border-radius: 6px;
+		color: $text-primary;
+		font-size: 12px;
+		font-weight: 500;
+	}
+
+	.e-one-secondary-bar-placeholder__actions {
+		display: flex;
+		flex-shrink: 0;
+	}
+
+	.e-one-secondary-bar-placeholder__addons {
+		width: 128px;
+	}
+
+	.e-one-secondary-bar-placeholder__finder {
+		width: 60px;
+	}
+}

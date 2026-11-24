@@ -48,6 +48,28 @@ describe( 'init', () => {
 		expect( root ).toBeEmptyDOMElement();
 	} );
 
+	it( 'should replace the server-rendered placeholder with the bar', () => {
+		// Arrange
+		const root = addRootElement();
+		root.innerHTML =
+			'<nav class="e-one-secondary-bar-placeholder" aria-hidden="true">' +
+			'<div class="e-one-secondary-bar-placeholder__tabs">' +
+			'<a class="e-one-secondary-bar-placeholder__tab is-active" href="/settings" tabindex="-1">Settings</a>' +
+			'</div>' +
+			'<div class="e-one-secondary-bar-placeholder__actions"></div>' +
+			'</nav>';
+		window.editorOneSecondaryBarConfig = config;
+
+		// Act
+		act( () => init() );
+
+		// Assert
+		expect( root.querySelector( '.e-one-secondary-bar-placeholder' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'navigation', { name: 'Settings section' } ) ).toBeInTheDocument();
+		expect( screen.getAllByRole( 'link', { name: 'Settings' } ) ).toHaveLength( 1 );
+		expect( screen.getByRole( 'link', { name: 'Settings' } ) ).toHaveAttribute( 'aria-current', 'page' );
+	} );
+
 	it( 'should render the bar in RTL', () => {
 		// Arrange
 		addRootElement();

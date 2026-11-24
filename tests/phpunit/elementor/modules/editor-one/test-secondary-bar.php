@@ -193,8 +193,123 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 		$empty_html = ob_get_clean();
 
 		// Assert
-		$this->assertSame( '<div id="editor-one-secondary-bar"></div>', $html );
+		$this->assertStringStartsWith( '<div id="editor-one-secondary-bar"><nav class="e-one-secondary-bar-placeholder" aria-hidden="true">', $html );
+		$this->assertStringEndsWith( '</nav></div>', $html );
 		$this->assertSame( '', $empty_html );
+	}
+
+	public function test_render_container__prints_the_tabs_as_plain_links_inside_the_root() {
+		// Arrange
+		$handler = $this->create_handler( [
+			'label' => 'Settings',
+			'tabs' => [
+				[ 'id' => 'settings', 'label' => 'Settings', 'url' => 'https://example.org/wp-admin/admin.php?page=elementor-settings', 'is_active' => true ],
+				[ 'id' => 'tools', 'label' => 'Tools', 'url' => 'https://example.org/wp-admin/admin.php?page=elementor-tools', 'is_active' => false ],
+			],
+			'addons' => [],
+		] );
+
+		// Act
+		ob_start();
+		$handler->render_container();
+		$html = ob_get_clean();
+
+		// Assert
+		$this->assertStringContainsString(
+			'<div class="e-one-secondary-bar-placeholder__tabs">' .
+			'<a class="e-one-secondary-bar-placeholder__tab is-active" href="https://example.org/wp-admin/admin.php?page=elementor-settings" tabindex="-1">Settings</a>' .
+			'<a class="e-one-secondary-bar-placeholder__tab" href="https://example.org/wp-admin/admin.php?page=elementor-tools" tabindex="-1">Tools</a>' .
+			'</div>',
+			$html
+		);
+		$this->assertSame( 1, substr_count( $html, 'is-active' ) );
+	}
+
+	public function test_render_container__escapes_the_tab_labels_tags_and_urls() {
+		// Arrange
+		$handler = $this->create_handler( [
+			'label' => 'Settings',
+			'tabs' => [
+				[
+					'id' => 'settings',
+					'label' => '<script>alert(1)</script> & More',
+					'tag' => '<b>Beta</b>',
+					'url' => 'javascript:alert(1)',
+					'is_active' => true,
+				],
+				[
+					'id' => 'tools',
+					'label' => 'Tools',
+					'url' => 'https://example.org/wp-admin/admin.php?page=elementor-tools&tab="x"',
+					'is_active' => false,
+				],
+			],
+			'addons' => [],
+		] );
+
+		// Act
+		ob_start();
+		$handler->render_container();
+		$html = ob_get_clean();
+
+		// Assert
+		$this->assertStringNotContainsString( '<script>', $html );
+		$this->assertStringNotContainsString( '<b>', $html );
+		$this->assertStringNotContainsString( 'javascript:', $html );
+		$this->assertStringNotContainsString( '"x"', $html );
+		$this->assertStringContainsString( '&lt;script&gt;alert(1)&lt;/script&gt; &amp; More', $html );
+		$this->assertStringContainsString( '<span class="e-one-secondary-bar-placeholder__tag">&lt;b&gt;Beta&lt;/b&gt;</span>', $html );
+	}
+
+	public function test_render_container__prints_a_tag_only_for_tabs_that_have_one() {
+		// Arrange
+		$handler = $this->create_handler( [
+			'label' => 'Settings',
+			'tabs' => [
+				[ 'id' => 'agents', 'label' => 'Agent Ready', 'tag' => 'Beta', 'url' => 'https://example.org/agents', 'is_active' => false ],
+				[ 'id' => 'tools', 'label' => 'Tools', 'url' => 'https://example.org/tools', 'is_active' => true ],
+			],
+			'addons' => [],
+		] );
+
+		// Act
+		ob_start();
+		$handler->render_container();
+		$html = ob_get_clean();
+
+		// Assert
+		$this->assertStringContainsString( 'Agent Ready<span class="e-one-secondary-bar-placeholder__tag">Beta</span></a>', $html );
+		$this->assertSame( 1, substr_count( $html, 'e-one-secondary-bar-placeholder__tag' ) );
+	}
+
+	public function test_render_container__reserves_the_addons_and_finder_slots_only_when_they_are_shown() {
+		// Arrange
+		$bar = $this->create_bar();
+		$with_actions = $this->create_handler(
+			array_merge( $bar, [ 'addons' => [ [ 'id' => 'addon', 'label' => 'Addon', 'url' => 'https://example.org/addon' ] ] ] ),
+			[ 'handle' => Secondary_Bar_Handler::SCRIPT_HANDLE, 'deps' => [] ],
+			true
+		);
+		$without_actions = $this->create_handler( $bar );
+
+		// Act
+		ob_start();
+		$with_actions->render_container();
+		$with_actions_html = ob_get_clean();
+
+		ob_start();
+		$without_actions->render_container();
+		$without_actions_html = ob_get_clean();
+
+		// Assert
+		$this->assertStringContainsString(
+			'<div class="e-one-secondary-bar-placeholder__actions">' .
+			'<span class="e-one-secondary-bar-placeholder__addons"></span>' .
+			'<span class="e-one-secondary-bar-placeholder__finder"></span>' .
+			'</div>',
+			$with_actions_html
+		);
+		$this->assertStringContainsString( '<div class="e-one-secondary-bar-placeholder__actions"></div>', $without_actions_html );
 	}
 
 	public function test_render_container__prints_nothing_when_the_package_is_missing() {
@@ -254,15 +369,16 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 		];
 	}
 
-	private function create_handler( array $bar, ?array $package_config = [ 'handle' => Secondary_Bar_Handler::SCRIPT_HANDLE, 'deps' => [] ] ): Secondary_Bar_Handler {
+	private function create_handler( array $bar, ?array $package_config = [ 'handle' => Secondary_Bar_Handler::SCRIPT_HANDLE, 'deps' => [] ], bool $is_finder_available = false ): Secondary_Bar_Handler {
 		$secondary_bar = $this->createMock( Secondary_Bar::class );
 		$secondary_bar->method( 'get_bar' )->willReturn( $bar );
 
 		$handler = $this->getMockBuilder( Secondary_Bar_Handler::class )
 			->setConstructorArgs( [ $this->createMock( Admin_Flow_Handler::class ), $secondary_bar ] )
-			->onlyMethods( [ 'get_package_config' ] )
+			->onlyMethods( [ 'get_package_config', 'is_finder_available' ] )
 			->getMock();
 		$handler->method( 'get_package_config' )->willReturn( $package_config );
+		$handler->method( 'is_finder_available' )->willReturn( $is_finder_available );
 
 		$this->handlers[] = $handler;
 

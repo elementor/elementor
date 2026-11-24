@@ -38,3 +38,38 @@
 		position: fixed;
 	}
 }
+
+// Static stand-in printed by `Top_Bar_Handler::render_top_bar_container()` until React mounts `ElementorOneHeader`.
+// Values mirror the mounted header so the swap is not visible.
+.e-one-top-bar-placeholder {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	height: 48px;
+	padding-block: 0;
+	padding-inline: 30px 24px;
+	background-color: #0c0d0e;
+	color: #fff;
+	z-index: 1100;
+
+	&__brand {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	&__logo {
+		display: block;
+		flex-shrink: 0;
+		width: 24px;
+		height: 24px;
+	}
+
+	&__title {
+		font-family: "DM Sans", Roboto, Helvetica, Arial, sans-serif;
+		font-size: 20px;
+		font-weight: 400;
+		line-height: 35px;
+		white-space: nowrap;
+	}
+}
