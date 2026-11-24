@@ -539,23 +539,91 @@ describe( 'atomic-menu current handler', () => {
 			expect( isAncestor( items.parent ) ).toBe( false );
 		} );
 
-		it( 'should not let a nested menu inside a submenu mark the outer menu entries', () => {
-			// Arrange
-			const { menu, items } = buildNestedMenu( [
+		const buildMenuInsideSubmenu = ( innerNodes ) => {
+			const outer = buildNestedMenu( [
 				{ key: 'outerParent', children: [ { key: 'outerChild', href: `${ ORIGIN }/contact/` } ] },
+				{ key: 'outerSibling', children: [ { key: 'outerOther', href: `${ ORIGIN }/team/` } ] },
 			] );
-			const submenu = items.outerParent.parentElement.querySelector( '[data-element_type="e-menu-submenu"]' );
-			const inner = buildNestedMenu( [
+			const submenu = outer.items.outerParent.parentElement.querySelector( '[data-element_type="e-menu-submenu"]' );
+			const inner = buildNestedMenu( innerNodes, submenu );
+
+			return { outer, inner };
+		};
+
+		it( 'should mark the outer entry whose submenu holds a nested menu with the current item', () => {
+			// Arrange
+			const { outer, inner } = buildMenuInsideSubmenu( [
 				{ key: 'innerParent', children: [ { key: 'innerCurrent', href: `${ ORIGIN }/about/` } ] },
-			], submenu );
+			] );
 
 			// Act
-			run( menu );
+			run( outer.menu );
 			run( inner.menu );
 
 			// Assert
-			expect( isAncestor( items.outerParent ) ).toBe( false );
+			expect( isAncestor( outer.items.outerParent ) ).toBe( true );
+			expect( isAncestor( outer.items.outerSibling ) ).toBe( false );
 			expect( isAncestor( inner.items.innerParent ) ).toBe( true );
+			expect( isAncestor( inner.items.innerCurrent ) ).toBe( false );
+		} );
+
+		it( 'should mark the outer entry when the nested menu runs before the outer one', () => {
+			// Arrange
+			const { outer, inner } = buildMenuInsideSubmenu( [
+				{ key: 'innerCurrent', href: `${ ORIGIN }/about/` },
+			] );
+
+			// Act
+			run( inner.menu );
+			run( outer.menu );
+
+			// Assert
+			expect( isAncestor( outer.items.outerParent ) ).toBe( true );
+			expect( outer.items.outerParent.classList.contains( CURRENT_CLASS ) ).toBe( false );
+		} );
+
+		it( 'should move the outer ancestor with an anchor section of a nested menu', () => {
+			// Arrange
+			window.history.pushState( {}, '', '/' );
+			addSection( 'contact' );
+			const { outer, inner } = buildMenuInsideSubmenu( [
+				{ key: 'innerAnchor', href: `${ ORIGIN }/#contact` },
+			] );
+			run( outer.menu );
+			run( inner.menu );
+			const [ observer ] = IntersectionObserverMock.instances;
+
+			// Act
+			observer.trigger( true );
+
+			// Assert
+			expect( isAncestor( outer.items.outerParent ) ).toBe( true );
+
+			// Act
+			observer.trigger( false );
+
+			// Assert
+			expect( isAncestor( outer.items.outerParent ) ).toBe( false );
+		} );
+
+		it( 'should stop following the nested menu once the outer handler is aborted', () => {
+			// Arrange
+			window.history.pushState( {}, '', '/' );
+			addSection( 'contact' );
+			const { outer, inner } = buildMenuInsideSubmenu( [
+				{ key: 'innerAnchor', href: `${ ORIGIN }/#contact` },
+			] );
+			const controller = new AbortController();
+			run( outer.menu, controller.signal );
+			run( inner.menu );
+			const [ observer ] = IntersectionObserverMock.instances;
+			controller.abort();
+
+			// Act
+			observer.trigger( true );
+
+			// Assert
+			expect( isAncestor( outer.items.outerParent ) ).toBe( false );
 		} );
 
 		it( 'should not mark any ancestor when nothing is current', () => {

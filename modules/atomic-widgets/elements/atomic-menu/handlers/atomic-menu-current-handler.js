@@ -10,6 +10,7 @@ const ENTRY_SELECTOR = '[data-element_type="e-menu-entry"]';
 const CURRENT_CLASS = 'e--current';
 const CURRENT_ANCESTOR_CLASS = 'e--current-ancestor';
 const PREVIEW_STATE_ATTRIBUTE = 'data-e-preview-state';
+const CURRENT_CHANGE_EVENT = 'elementor/menu/current-change';
 
 function getOwnItems( menu ) {
 	return [ ...menu.querySelectorAll( ITEM_SELECTOR ) ].filter( ( item ) => item.closest( MENU_SELECTOR ) === menu );
@@ -32,13 +33,13 @@ function getEntryItem( entry ) {
 	return [ ...entry.children ].find( ( child ) => child.matches( ITEM_SELECTOR ) ) ?? null;
 }
 
-function setCurrentAncestors( menu, currentItems ) {
+function setCurrentAncestors( menu ) {
 	const ancestorItems = new Set();
 
-	currentItems.forEach( ( item ) => {
+	menu.querySelectorAll( `${ ITEM_SELECTOR }[aria-current]` ).forEach( ( item ) => {
 		let entry = item.closest( ENTRY_SELECTOR )?.parentElement?.closest( ENTRY_SELECTOR );
 
-		while ( entry && entry.closest( MENU_SELECTOR ) === menu ) {
+		while ( entry && menu.contains( entry ) ) {
 			ancestorItems.add( getEntryItem( entry ) );
 			entry = entry.parentElement?.closest( ENTRY_SELECTOR );
 		}
@@ -85,7 +86,8 @@ register( {
 					}
 				} );
 
-				setCurrentAncestors( element, items.filter( ( item ) => item.hasAttribute( 'aria-current' ) ) );
+				setCurrentAncestors( element );
+				element.dispatchEvent( new CustomEvent( CURRENT_CHANGE_EVENT, { bubbles: true } ) );
 			};
 
 			render( new Set() );
@@ -99,6 +101,12 @@ register( {
 			anchorLinks = new AnchorLinks( anchorEntries, render );
 			anchorLinks.initialize();
 		};
+
+		element.addEventListener( CURRENT_CHANGE_EVENT, ( event ) => {
+			if ( event.target !== element ) {
+				setCurrentAncestors( element );
+			}
+		}, { signal } );
 
 		setup();
 
