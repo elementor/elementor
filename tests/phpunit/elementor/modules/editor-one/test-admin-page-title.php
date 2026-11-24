@@ -24,8 +24,7 @@ class Test_Admin_Page_Title extends Elementor_Test_Base {
 		$markup = Admin_Page_Title::get_markup( 'Agent Ready', true );
 
 		// Assert
-		$this->assertStringContainsString( '<h1 class="wp-heading-inline screen-reader-text">Agent Ready</h1>', $markup );
-		$this->assertStringContainsString( '<hr class="wp-header-end">', $markup );
+		$this->assertSame( '<h1 class="wp-heading-inline screen-reader-text">Agent Ready</h1><hr class="wp-header-end">', $markup );
 	}
 
 	public function test_get_markup__escapes_the_title() {

@@ -23,6 +23,8 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 
 	private $original_submenu;
 
+	private $original_menu;
+
 	private ?string $page_hook = null;
 
 	public function setUp(): void {
@@ -32,11 +34,13 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 
 		$this->act_as_admin();
 		$this->original_submenu = $GLOBALS['submenu'] ?? null;
+		$this->original_menu = $GLOBALS['menu'] ?? null;
 		$this->structure = new Admin_Menu_Structure( new Admin_Flow_Handler() );
 	}
 
 	public function tearDown(): void {
 		$GLOBALS['submenu'] = $this->original_submenu;
+		$GLOBALS['menu'] = $this->original_menu;
 
 		if ( $this->page_hook ) {
 			remove_all_actions( $this->page_hook );
@@ -82,19 +86,25 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 
 	public function test_construct__does_not_move_elementor_menu_item() {
 		// Arrange
-		global $wp_filter;
+		$GLOBALS['menu'] = [
+			'20' => [ 'Pages', 'edit_pages', 'edit.php?post_type=page' ],
+			'58.5' => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_HOME_MENU_SLUG ],
+		];
 
 		// Act
-		$structure = new Admin_Menu_Structure( new Admin_Flow_Handler() );
+		foreach ( $GLOBALS['wp_filter']['admin_menu']->callbacks as $callbacks ) {
+			foreach ( $callbacks as $callback ) {
+				$function = $callback['function'];
+
+				if ( is_array( $function ) && $this->structure === $function[0] ) {
+					call_user_func( $function );
+				}
+			}
+		}
 
 		// Assert
-		$late_callbacks = isset( $wp_filter['admin_menu'] ) ? ( $wp_filter['admin_menu']->callbacks[10020] ?? [] ) : [];
-		$own_late_callbacks = array_filter(
-			$late_callbacks,
-			fn( $callback ) => is_array( $callback['function'] ) && $structure === $callback['function'][0]
-		);
-
-		$this->assertSame( [], $own_late_callbacks );
+		$this->assertSame( Menu_Config::ELEMENTOR_HOME_MENU_SLUG, $GLOBALS['menu']['58.5'][2] );
+		$this->assertArrayNotHasKey( '21', $GLOBALS['menu'] );
 	}
 
 	public function test_build_submenu__orders_groups_and_keeps_upgrade_against_account() {
