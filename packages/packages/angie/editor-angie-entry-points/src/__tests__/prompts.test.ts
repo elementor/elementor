@@ -132,6 +132,14 @@ describe( 'ANGIE_PROMPTS', () => {
 		expect( prompt ).toBe( 'In the design system global classes, I want: ' );
 	} );
 
+	it( 'builds the default styles manager prompt', () => {
+		// Act
+		const prompt = ANGIE_PROMPTS.defaultStylesManager();
+
+		// Assert
+		expect( prompt ).toBe( 'In the design system default styles, I want: ' );
+	} );
+
 	it( 'builds the interactions prompt', () => {
 		// Act
 		const prompt = ANGIE_PROMPTS.interactions( { elementId: 'element-88' } );

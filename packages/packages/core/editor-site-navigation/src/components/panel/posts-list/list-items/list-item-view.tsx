@@ -25,7 +25,9 @@ import { type Post } from '../../../../types';
 import PageTitleAndStatus from '../../../shared/page-title-and-status';
 import Delete from '../../actions-menu/actions/delete';
 import Duplicate from '../../actions-menu/actions/duplicate';
+import ForceDelete from '../../actions-menu/actions/force-delete';
 import Rename from '../../actions-menu/actions/rename';
+import Restore from '../../actions-menu/actions/restore';
 import SetHome from '../../actions-menu/actions/set-home';
 import View from '../../actions-menu/actions/view';
 import { contentPanelListItemButtonSx, contentPanelListRowPaddingSx } from '../../content-panel-chrome';
@@ -73,62 +75,83 @@ export default function ListItemView( { post }: { post: Post } ) {
 	const isActive = activeDocument?.id === post.id;
 	const status = isActive ? activeDocument?.status.value : post.status;
 	const title = isActive ? activeDocument?.title : post.title.rendered;
-	const isDisabled = ! post.user_can.edit;
+	const isTrashed = 'trash' === post.status;
+	const isEditBlocked = ! post.user_can.edit && ! isTrashed;
+	const isRowDisabled = isEditBlocked || isTrashed;
 	const menuTriggerProps = bindTrigger( popupState );
+
+	const listRow = (
+		<ListItem
+			disablePadding
+			sx={ contentPanelListRowPaddingSx }
+			secondaryAction={
+				<IconButton
+					aria-label={ __( 'More actions', 'elementor' ) }
+					size="tiny"
+					{ ...menuTriggerProps }
+					onClick={ ( event: React.MouseEvent ) => {
+						event.stopPropagation();
+						menuTriggerProps.onClick?.( event );
+					} }
+				>
+					<DotsVerticalIcon fontSize="tiny" />
+				</IconButton>
+			}
+		>
+			<ListItemButton
+				dense
+				disableGutters
+				disabled={ isRowDisabled }
+				onClick={ () => {
+					if ( isTrashed || isActive ) {
+						return;
+					}
+
+					navigateToDocument( post.id );
+				} }
+				selected={ isActive }
+				shape="rounded"
+				sx={ contentPanelListItemButtonSx }
+			>
+				<ListItemText disableTypography sx={ { flex: 1, minWidth: 0 } }>
+					<PageTitleAndStatus title={ title } status={ status } />
+				</ListItemText>
+				{ post.isHome && <HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" /> }
+			</ListItemButton>
+		</ListItem>
+	);
 
 	return (
 		<>
-			<DisabledPostTooltip isDisabled={ isDisabled } postTypeSlug={ type }>
-				<ListItem
-					disablePadding
-					sx={ contentPanelListRowPaddingSx }
-					secondaryAction={
-						<IconButton
-							aria-label={ __( 'More actions', 'elementor' ) }
-							size="tiny"
-							{ ...menuTriggerProps }
-							onClick={ ( event: React.MouseEvent ) => {
-								event.stopPropagation();
-								menuTriggerProps.onClick?.( event );
-							} }
-						>
-							<DotsVerticalIcon fontSize="tiny" />
-						</IconButton>
-					}
-				>
-					<ListItemButton
-						dense
-						disableGutters
-						disabled={ isDisabled }
-						onClick={ () => {
-							if ( ! isActive ) {
-								navigateToDocument( post.id );
-							}
-						} }
-						selected={ isActive }
-						shape="rounded"
-						sx={ contentPanelListItemButtonSx }
-					>
-						<ListItemText disableTypography sx={ { flex: 1, minWidth: 0 } }>
-							<PageTitleAndStatus title={ title } status={ status } />
-						</ListItemText>
-						{ post.isHome && <HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" /> }
-					</ListItemButton>
-				</ListItem>
-			</DisabledPostTooltip>
+			{ isEditBlocked ? (
+				<DisabledPostTooltip isDisabled postTypeSlug={ type }>
+					{ listRow }
+				</DisabledPostTooltip>
+			) : (
+				listRow
+			) }
 			<Menu
 				PaperProps={ { sx: { mt: 2, width: 200 } } }
 				MenuListProps={ { dense: true } }
 				{ ...bindMenu( popupState ) }
 			>
-				<Rename post={ post } />
-				<Duplicate post={ post } popupState={ popupState } />
-				<Delete post={ post } />
-				<View post={ post } />
-				{ type === 'page' && (
+				{ isTrashed ? (
 					<>
-						<Divider />
-						<SetHome post={ post } closeMenu={ () => popupState.close() } />
+						<Restore post={ post } />
+						<ForceDelete post={ post } />
+					</>
+				) : (
+					<>
+						<Rename post={ post } />
+						<Duplicate post={ post } popupState={ popupState } />
+						<Delete post={ post } />
+						<View post={ post } />
+						{ type === 'page' && (
+							<>
+								<Divider />
+								<SetHome post={ post } closeMenu={ () => popupState.close() } />
+							</>
+						) }
 					</>
 				) }
 			</Menu>
