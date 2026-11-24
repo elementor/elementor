@@ -80,63 +80,21 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		$this->assertSame( $expected, $result );
 	}
 
-	public function test_move_below_pages__places_elementor_directly_after_pages() {
+	public function test_construct__does_not_move_elementor_menu_item() {
 		// Arrange
-		$menu = [
-			2 => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_HOME_MENU_SLUG ],
-			5 => [ 'Posts', 'edit_posts', 'edit.php' ],
-			20 => [ 'Pages', 'edit_pages', Admin_Menu_Structure::PAGES_MENU_SLUG ],
-			25 => [ 'Comments', 'moderate_comments', 'edit-comments.php' ],
-		];
+		global $wp_filter;
 
 		// Act
-		$menu = $this->structure->move_below_pages(
-			$menu,
-			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-			Admin_Menu_Structure::PAGES_MENU_SLUG
-		);
+		$structure = new Admin_Menu_Structure( new Admin_Flow_Handler() );
 
 		// Assert
-		$this->assertArrayNotHasKey( 2, $menu );
-		$this->assertSame( Menu_Config::ELEMENTOR_HOME_MENU_SLUG, $menu[21][2] );
-		$this->assertSame( Admin_Menu_Structure::PAGES_MENU_SLUG, $menu[20][2] );
-	}
-
-	public function test_move_below_pages__skips_a_taken_position() {
-		// Arrange
-		$menu = [
-			2 => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_HOME_MENU_SLUG ],
-			20 => [ 'Pages', 'edit_pages', Admin_Menu_Structure::PAGES_MENU_SLUG ],
-			21 => [ 'Other', 'read', 'other' ],
-		];
-
-		// Act
-		$menu = $this->structure->move_below_pages(
-			$menu,
-			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-			Admin_Menu_Structure::PAGES_MENU_SLUG
+		$late_callbacks = isset( $wp_filter['admin_menu'] ) ? ( $wp_filter['admin_menu']->callbacks[10020] ?? [] ) : [];
+		$own_late_callbacks = array_filter(
+			$late_callbacks,
+			fn( $callback ) => is_array( $callback['function'] ) && $structure === $callback['function'][0]
 		);
 
-		// Assert
-		$this->assertSame( 'other', $menu[21][2] );
-		$this->assertSame( Menu_Config::ELEMENTOR_HOME_MENU_SLUG, $menu[22][2] );
-	}
-
-	public function test_move_below_pages__leaves_the_menu_when_pages_is_missing() {
-		// Arrange
-		$menu = [
-			2 => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_HOME_MENU_SLUG ],
-		];
-
-		// Act
-		$updated = $this->structure->move_below_pages(
-			$menu,
-			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-			Admin_Menu_Structure::PAGES_MENU_SLUG
-		);
-
-		// Assert
-		$this->assertSame( $menu, $updated );
+		$this->assertSame( [], $own_late_callbacks );
 	}
 
 	public function test_build_submenu__orders_groups_and_keeps_upgrade_against_account() {

@@ -15,8 +15,6 @@ class Admin_Menu_Structure {
 
 	const DIVIDER_CLASS = 'elementor-submenu-has-divider';
 
-	const PAGES_MENU_SLUG = 'edit.php?post_type=page';
-
 	const UPGRADE_SLUGS = [
 		'elementor-one-upgrade',
 		'go_elementor_pro',
@@ -33,7 +31,6 @@ class Admin_Menu_Structure {
 
 		add_action( 'admin_menu', [ $this, 'register_upgrade_submenu_page' ], 10007 );
 		add_action( 'admin_menu', [ $this, 'register_parent_aliases' ], 10008 );
-		add_action( 'admin_menu', [ $this, 'place_elementor_below_pages' ], 10020 );
 		add_action( 'admin_head', [ $this, 'rebuild_submenu' ], 20 );
 		add_filter( 'admin_body_class', [ $this, 'add_admin_navigation_body_class' ] );
 	}
@@ -85,16 +82,6 @@ class Admin_Menu_Structure {
 		}
 	}
 
-	public function place_elementor_below_pages(): void {
-		if ( ! $this->should_apply() ) {
-			return;
-		}
-
-		global $menu;
-
-		$menu = $this->move_below_pages( (array) $menu, Menu_Config::ELEMENTOR_HOME_MENU_SLUG, self::PAGES_MENU_SLUG ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-	}
-
 	public function rebuild_submenu(): void {
 		if ( ! $this->should_apply() ) {
 			return;
@@ -130,28 +117,6 @@ class Admin_Menu_Structure {
 			$existing_items,
 			fn( $item ) => ! in_array( $item[2] ?? '', $known_slugs, true ) && ! $provider->is_item_already_registered( $item[2] ?? '' )
 		) );
-	}
-
-	public function move_below_pages( array $menu, string $item_slug, string $pages_slug ): array {
-		$slugs = array_map( fn( $item ) => $item[2] ?? '', $menu );
-		$item_key = array_search( $item_slug, $slugs, true );
-		$pages_key = array_search( $pages_slug, $slugs, true );
-
-		if ( false === $item_key || false === $pages_key ) {
-			return $menu;
-		}
-
-		$item = $menu[ $item_key ];
-		unset( $menu[ $item_key ] );
-		$position = (float) $pages_key + 1;
-
-		while ( isset( $menu[ (string) $position ] ) ) {
-			++$position;
-		}
-
-		$menu[ (string) $position ] = $item;
-
-		return $menu;
 	}
 
 	public function build_submenu( array $parents, array $existing_items, ?array $upgrade_item, array $extra_items = [] ): array {
