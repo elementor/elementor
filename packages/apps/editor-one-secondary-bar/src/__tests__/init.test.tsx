@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/no-node-access */
 import { act, screen } from '@testing-library/react';
 
 import { init } from '../init';
@@ -66,7 +67,7 @@ describe( 'init', () => {
 		// Assert
 		expect( root.querySelector( '.e-one-secondary-bar-placeholder' ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'navigation', { name: 'Settings section' } ) ).toBeInTheDocument();
-		expect( screen.getAllByRole( 'link', { name: 'Settings' } ) ).toHaveLength( 1 );
+		expect( root.querySelectorAll( 'a[href="/settings"]' ) ).toHaveLength( 1 );
 		expect( screen.getByRole( 'link', { name: 'Settings' } ) ).toHaveAttribute( 'aria-current', 'page' );
 	} );
 

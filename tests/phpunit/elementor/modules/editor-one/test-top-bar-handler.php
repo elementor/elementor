@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
+use Elementor\Modules\EditorOne\Classes\Top_Bar_Locale_Assets;
 use Elementor\Modules\EditorOne\Components\Top_Bar_Handler;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -25,6 +26,7 @@ class Test_Top_Bar_Handler extends Elementor_Test_Base {
 	public function tearDown(): void {
 		remove_action( 'admin_enqueue_scripts', [ $this->handler, 'enqueue_assets' ] );
 		remove_action( 'in_admin_header', [ $this->handler, 'render_top_bar_container' ] );
+		remove_filter( 'script_loader_tag', [ Top_Bar_Locale_Assets::class, 'filter_locale_json_script_tag' ], 10 );
 		$GLOBALS['current_screen'] = $this->original_screen;
 
 		parent::tearDown();

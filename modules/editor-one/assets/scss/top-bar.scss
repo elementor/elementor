@@ -129,5 +129,10 @@
 		font-weight: 400;
 		line-height: 35px;
 		white-space: nowrap;
+
+		// The mounted header hides the title below 600px.
+		@media (max-width: 599px) {
+			display: none;
+		}
 	}
 }

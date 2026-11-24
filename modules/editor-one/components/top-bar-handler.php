@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Top_Bar_Handler {
 
-	const LOGO_SVG = '<svg class="e-one-top-bar-placeholder__logo" viewBox="0 0 25 24" width="24" height="24" fill="none" focusable="false" aria-hidden="true"><path d="M12.1207 0C5.42401 0 0 5.37 0 12C0 18.63 5.42401 24 12.1207 24C18.8174 24 24.2414 18.63 24.2414 12C24.2414 5.37 18.8174 0 12.1207 0ZM8.48448 18H6.06034V6H8.48448V18ZM18.181 18H10.9086V15.6H18.181V18ZM18.181 13.2H10.9086V10.8H18.181V13.2ZM18.181 8.4H10.9086V6H18.181V8.4Z" fill="currentColor"/></svg>';
+	private const LOGO_SVG = '<svg class="e-one-top-bar-placeholder__logo" viewBox="0 0 25 24" width="24" height="24" fill="none" focusable="false" aria-hidden="true"><path d="M12.1207 0C5.42401 0 0 5.37 0 12C0 18.63 5.42401 24 12.1207 24C18.8174 24 24.2414 18.63 24.2414 12C24.2414 5.37 18.8174 0 12.1207 0ZM8.48448 18H6.06034V6H8.48448V18ZM18.181 18H10.9086V15.6H18.181V18ZM18.181 13.2H10.9086V10.8H18.181V13.2ZM18.181 8.4H10.9086V6H18.181V8.4Z" fill="currentColor"/></svg>';
 
 	private Menu_Data_Provider $menu_data_provider;
 
