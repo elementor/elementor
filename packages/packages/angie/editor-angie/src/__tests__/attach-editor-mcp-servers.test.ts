@@ -1,5 +1,4 @@
-import { activateMcpAdapter, AngieMcpAdapter, waitForMcpReady } from '@elementor/editor-mcp';
-import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
+import { activateMcpAdapter, AngieMcpAdapter, type AngieMcpSdk, waitForMcpReady } from '@elementor/editor-mcp';
 
 import { attachEditorMcpServers, resetEditorMcpServersAttachmentForTests } from '../attach-editor-mcp-servers';
 import { initConsoleMcp } from '../mcp/console-mcp';

@@ -4,7 +4,7 @@ import type {
 	OpenAngieRequest,
 	OpenAngieSdkProperties,
 } from '@elementor/editor-mcp';
-import { setAngieInteractionMode } from '@elementor-external/angie-sdk';
+import { setAngieInteractionMode } from '@elementor/editor-mcp';
 
 import { bootAngieSdk, EDITOR_ANGIE_APP_ID } from './boot-angie-sdk';
 import { openInstalledAngieSidebar } from './open-installed-angie';

@@ -1,6 +1,8 @@
 import { AngieMcpSdk } from '@elementor-external/angie-sdk';
 export { getAngieIframe, MessageEventType } from '@elementor-external/angie-sdk';
 
+export const EDITOR_ANGIE_APP_ID = 'elementor-editor-core';
+
 let sdk: AngieMcpSdk;
 
 class RetriableAngieSDK extends AngieMcpSdk {
@@ -31,7 +33,7 @@ export const getSDK = () => {
 		return {} as unknown as AngieMcpSdk;
 	}
 	if ( ! sdk ) {
-		sdk = new RetriableAngieSDK();
+		sdk = new RetriableAngieSDK( { appId: EDITOR_ANGIE_APP_ID } );
 	}
 	return sdk;
 };

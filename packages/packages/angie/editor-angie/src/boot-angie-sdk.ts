@@ -1,15 +1,17 @@
 import {
-	AngieMcpSdk,
+	type AngieMcpSdk,
+	EDITOR_ANGIE_APP_ID,
 	getAngieIframe,
+	getAngieSdk,
 	LAYOUT_SIDEBAR,
 	type LoadSidebarV2Options,
 	toggleAngieSidebar,
-} from '@elementor-external/angie-sdk';
+} from '@elementor/editor-mcp';
 
 import { attachEditorMcpServers } from './attach-editor-mcp-servers';
 import { ensureHelpCenterAbility } from './help-center-ability';
 
-export const EDITOR_ANGIE_APP_ID = 'elementor-editor-core';
+export { EDITOR_ANGIE_APP_ID };
 export const EDITOR_ANGIE_CONTAINER_ID = 'elementor-editor-angie';
 const CONTAINER_POLL_ATTEMPTS = 10;
 const CONTAINER_POLL_INTERVAL_MS = 10;
@@ -90,7 +92,7 @@ export const bootAngieSdk = (): Promise< AngieMcpSdk > => {
 		try {
 			await waitForAngieContainer();
 
-			const instance = new AngieMcpSdk( { appId: EDITOR_ANGIE_APP_ID } );
+			const instance = getAngieSdk();
 
 			await instance.loadSidebarV2( getLoadSidebarOptions() );
 			openAngieIframe();

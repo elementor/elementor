@@ -1,4 +1,4 @@
-import { getAngieIframe, isAngiePluginAvailable, toggleAngieSidebar } from '@elementor-external/angie-sdk';
+import { getAngieIframe, isAngiePluginAvailable, toggleAngieSidebar } from '@elementor/editor-mcp';
 
 import { EDITOR_ANGIE_CONTAINER_ID } from './boot-angie-sdk';
 import { isAngiePluginActive } from './is-angie-plugin-active';

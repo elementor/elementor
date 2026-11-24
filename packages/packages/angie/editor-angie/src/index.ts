@@ -1,4 +1,4 @@
-export { AngieInteractionMode } from '@elementor-external/angie-sdk';
+export { AngieInteractionMode } from '@elementor/editor-mcp';
 export { bootAngieSdk, EDITOR_ANGIE_CONTAINER_ID } from './boot-angie-sdk';
 export { helpCenterAbility } from './help-center-ability';
 export { init } from './init';

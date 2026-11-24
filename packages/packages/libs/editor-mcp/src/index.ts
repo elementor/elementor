@@ -1,7 +1,17 @@
 import './types/open-angie-request';
 
 import { getSDK } from './utils/get-sdk';
-export { getAngieIframe, MessageEventType as AngieMessageEvenetType } from './utils/get-sdk';
+export { EDITOR_ANGIE_APP_ID, getAngieIframe, MessageEventType as AngieMessageEvenetType } from './utils/get-sdk';
+export {
+	type AngieLocalServerConfig,
+	AngieInteractionMode,
+	type AngieMcpSdk,
+	isAngiePluginAvailable,
+	LAYOUT_SIDEBAR,
+	type LoadSidebarV2Options,
+	setAngieInteractionMode,
+	toggleAngieSidebar,
+} from '@elementor-external/angie-sdk';
 
 export {
 	McpServer,
