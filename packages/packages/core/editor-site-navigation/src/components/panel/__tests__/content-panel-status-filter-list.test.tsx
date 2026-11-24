@@ -5,6 +5,25 @@ import { fireEvent, screen } from '@testing-library/react';
 import { ContentPanelCoordinatorProvider } from '../../../contexts/content-panel-coordinator';
 import ContentPanelStatusFilterList from '../content-panel-status-filter-list';
 
+type MockStatusCountsResult = {
+	data?: Record< string, number >;
+	isPending: boolean;
+};
+
+const defaultStatusCountsResult = (): MockStatusCountsResult => ( {
+	data: {
+		draft: 2,
+		future: 0,
+		pending: 0,
+		private: 0,
+		publish: 5,
+		trash: 1,
+	},
+	isPending: false,
+} );
+
+const mockUseSiteContentStatusFilterCounts = jest.fn( defaultStatusCountsResult );
+
 jest.mock( '../../../hooks/use-accessible-panel-post-types', () => () => ( {
 	accessiblePostTypes: [ 'page', 'post' ],
 	isUserPending: false,
@@ -12,17 +31,7 @@ jest.mock( '../../../hooks/use-accessible-panel-post-types', () => () => ( {
 } ) );
 
 jest.mock( '../../../hooks/use-site-content-status-filter-counts', () => ( {
-	useSiteContentStatusFilterCounts: () => ( {
-		data: {
-			draft: 2,
-			future: 0,
-			pending: 0,
-			private: 0,
-			publish: 5,
-			trash: 1,
-		},
-		isPending: false,
-	} ),
+	useSiteContentStatusFilterCounts: () => mockUseSiteContentStatusFilterCounts(),
 } ) );
 
 const renderList = () =>
@@ -33,6 +42,11 @@ const renderList = () =>
 	);
 
 describe( 'ContentPanelStatusFilterList', () => {
+	afterEach( () => {
+		mockUseSiteContentStatusFilterCounts.mockReset();
+		mockUseSiteContentStatusFilterCounts.mockImplementation( defaultStatusCountsResult );
+	} );
+
 	it( 'shows All as selected when no filters are active', () => {
 		renderList();
 
@@ -56,5 +70,18 @@ describe( 'ContentPanelStatusFilterList', () => {
 		expect( screen.queryByRole( 'menuitemcheckbox', { name: /Pending/i } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'menuitemcheckbox', { name: /Private/i } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'menuitemcheckbox', { name: /Scheduled/i } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows only All while status counts are loading', () => {
+		mockUseSiteContentStatusFilterCounts.mockImplementation( () => ( {
+			data: undefined,
+			isPending: true,
+		} ) );
+
+		renderList();
+
+		expect( screen.getByRole( 'menuitemcheckbox', { name: /All/i } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'menuitemcheckbox', { name: /Published/i } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'menuitemcheckbox', { name: /Drafts/i } ) ).not.toBeInTheDocument();
 	} );
 } );

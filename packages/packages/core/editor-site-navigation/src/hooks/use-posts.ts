@@ -39,7 +39,7 @@ export function usePosts(
 	const restStatus = getRestStatusForSiteContentFilters( statusFilters );
 
 	const query = useInfiniteQuery( {
-		queryKey: [ ...postsQueryKeyBase( postTypeSlug ), restStatus, trimmedSearch ],
+		queryKey: postsQueryKey( postTypeSlug, trimmedSearch, restStatus ),
 		queryFn: ( { pageParam = 1 } ) => getRequest( postTypeSlug, pageParam as number, trimmedSearch, restStatus ),
 		initialPageParam: 1,
 		getNextPageParam: ( lastPage: PostsResponse ) => {

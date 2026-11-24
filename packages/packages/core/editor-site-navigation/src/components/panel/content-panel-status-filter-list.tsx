@@ -37,7 +37,7 @@ export default function ContentPanelStatusFilterList( { loadCounts }: Props ) {
 	const isAllSelected = ! hasActiveSiteContentStatusFilters( statusFilters );
 
 	const visibleFilters = SITE_CONTENT_SELECTABLE_STATUS_FILTERS.filter( ( filter ) =>
-		shouldShowSiteContentStatusFilterRow( statusCounts?.[ filter ], isLoadingCounts )
+		shouldShowSiteContentStatusFilterRow( statusCounts?.[ filter ], isLoadingCounts, statusFilters[ filter ] )
 	);
 
 	return (

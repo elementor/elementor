@@ -94,9 +94,17 @@ export function toggleSiteContentStatusFilter(
 	};
 }
 
-export function shouldShowSiteContentStatusFilterRow( count: number | undefined, isLoadingCounts: boolean ): boolean {
-	if ( isLoadingCounts || undefined === count ) {
+export function shouldShowSiteContentStatusFilterRow(
+	count: number | undefined,
+	isLoadingCounts: boolean,
+	isSelected: boolean
+): boolean {
+	if ( isSelected ) {
 		return true;
+	}
+
+	if ( isLoadingCounts || undefined === count ) {
+		return false;
 	}
 
 	return count > 0;

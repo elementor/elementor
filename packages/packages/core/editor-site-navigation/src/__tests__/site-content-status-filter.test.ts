@@ -97,9 +97,10 @@ describe( 'site-content-status-filter', () => {
 	} );
 
 	it( 'hides filter rows with zero count when counts are loaded', () => {
-		expect( shouldShowSiteContentStatusFilterRow( 0, false ) ).toBe( false );
-		expect( shouldShowSiteContentStatusFilterRow( 3, false ) ).toBe( true );
-		expect( shouldShowSiteContentStatusFilterRow( undefined, false ) ).toBe( true );
-		expect( shouldShowSiteContentStatusFilterRow( 0, true ) ).toBe( true );
+		expect( shouldShowSiteContentStatusFilterRow( 0, false, false ) ).toBe( false );
+		expect( shouldShowSiteContentStatusFilterRow( 3, false, false ) ).toBe( true );
+		expect( shouldShowSiteContentStatusFilterRow( undefined, false, false ) ).toBe( false );
+		expect( shouldShowSiteContentStatusFilterRow( 0, true, false ) ).toBe( false );
+		expect( shouldShowSiteContentStatusFilterRow( 0, false, true ) ).toBe( true );
 	} );
 } );

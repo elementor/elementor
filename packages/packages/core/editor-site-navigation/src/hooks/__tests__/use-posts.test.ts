@@ -3,6 +3,7 @@ import { waitFor } from '@testing-library/react';
 import apiFetch from '@wordpress/api-fetch';
 
 import { POST_PER_PAGE } from '../../api/post';
+import { EMPTY_SITE_CONTENT_STATUS_FILTERS } from '../../site-content-status-filter';
 import { usePosts } from '../use-posts';
 
 const MOCK_POST_PER_PAGE = 2;
@@ -112,9 +113,8 @@ describe( '@elementor/site-settings/use-posts', () => {
 	it( 'passes status filters to the REST request', async () => {
 		const { component } = renderHookWithQuery( () =>
 			usePosts( 'page', '', {
+				...EMPTY_SITE_CONTENT_STATUS_FILTERS,
 				draft: true,
-				publish: false,
-				trash: false,
 			} )
 		);
 
@@ -136,9 +136,9 @@ describe( '@elementor/site-settings/use-posts', () => {
 	it( 'passes combined status filters to the REST request', async () => {
 		const { component } = renderHookWithQuery( () =>
 			usePosts( 'page', '', {
+				...EMPTY_SITE_CONTENT_STATUS_FILTERS,
 				draft: true,
 				publish: true,
-				trash: false,
 			} )
 		);
 
