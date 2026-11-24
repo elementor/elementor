@@ -4,6 +4,7 @@ import { getElementSetting } from './sync/get-element-setting';
 import { getPreviewElementDOM } from './sync/get-preview-element-dom';
 
 const ANCHOR_SELECTOR = 'a, [data-action-link]';
+const MENU_SELECTOR = '[data-element_type="e-menu"]';
 
 type LinkValue = LinkPropValue[ 'value' ];
 
@@ -40,6 +41,16 @@ export function getLinkInLinkRestriction( elementId: string, resolvedValue?: Lin
 		};
 	}
 
+	const menuDescendantId = getMenuDescendantId( elementId );
+
+	if ( menuDescendantId ) {
+		return {
+			shouldRestrict: true as const,
+			reason: 'descendant' as const,
+			elementId: menuDescendantId,
+		};
+	}
+
 	const ancestor = getAnchoredAncestorId( elementId );
 
 	if ( ancestor ) {
@@ -72,6 +83,12 @@ export function getAnchoredDescendantId( elementId: string ): string | null {
 	}
 
 	return null;
+}
+
+function getMenuDescendantId( elementId: string ): string | null {
+	const menu = getElementDOM( elementId )?.querySelector( MENU_SELECTOR );
+
+	return menu ? findElementIdOf( menu ) : null;
 }
 
 export function getAnchoredAncestorId( elementId: string ): string | null {

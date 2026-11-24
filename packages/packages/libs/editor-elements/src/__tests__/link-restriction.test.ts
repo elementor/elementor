@@ -521,4 +521,95 @@ describe( 'link-restriction', () => {
 			} );
 		} );
 	} );
+
+	describe( 'getLinkInLinkRestriction with a Menu', () => {
+		const menuMarkup = ( itemContent = '<span>Home</span>' ) => `
+			<nav data-id="menu" data-element_type="e-menu">
+				<ul>
+					<li data-id="entry" data-element_type="e-menu-entry">
+						<span data-id="item" data-element_type="e-menu-item">${ itemContent }</span>
+					</li>
+				</ul>
+			</nav>
+		`;
+
+		it( 'should restrict an element that contains a Menu without links', () => {
+			// Arrange
+			document.body.innerHTML = `<div data-id="container">${ menuMarkup() }</div>`;
+
+			// Act
+			const result = getLinkInLinkRestriction( 'container', {} );
+
+			// Assert
+			expect( result ).toEqual( {
+				shouldRestrict: true,
+				reason: 'descendant',
+				elementId: 'menu',
+			} );
+		} );
+
+		it( 'should restrict an element that contains a Menu several levels down', () => {
+			// Arrange
+			document.body.innerHTML = `
+				<div data-id="container">
+					<div data-id="inner"><div data-id="innermost">${ menuMarkup() }</div></div>
+				</div>
+			`;
+
+			// Act
+			const result = getLinkInLinkRestriction( 'container', {} );
+
+			// Assert
+			expect( result ).toEqual( {
+				shouldRestrict: true,
+				reason: 'descendant',
+				elementId: 'menu',
+			} );
+		} );
+
+		it( 'should not restrict a Menu Item whose ancestor is the Menu', () => {
+			// Arrange
+			document.body.innerHTML = menuMarkup();
+
+			// Act
+			const result = getLinkInLinkRestriction( 'item', {} );
+
+			// Assert
+			expect( result ).toEqual( { shouldRestrict: false } );
+		} );
+
+		it( 'should restrict a Menu Item whose Paragraph child is linked', () => {
+			// Arrange
+			document.body.innerHTML = menuMarkup(
+				'<a data-id="paragraph" data-element_type="e-paragraph" href="#">Home</a>'
+			);
+
+			// Act
+			const result = getLinkInLinkRestriction( 'item', {} );
+
+			// Assert
+			expect( result ).toEqual( {
+				shouldRestrict: true,
+				reason: 'descendant',
+				elementId: 'paragraph',
+			} );
+		} );
+
+		it( 'should restrict a Menu Item whose Paragraph has an inline text link', () => {
+			// Arrange
+			document.body.innerHTML = menuMarkup(
+				'<p data-id="paragraph" data-element_type="e-paragraph">Go <a href="#">home</a></p>'
+			);
+
+			// Act
+			const result = getLinkInLinkRestriction( 'item', {} );
+
+			// Assert
+			expect( result ).toEqual( {
+				shouldRestrict: true,
+				reason: 'descendant',
+				elementId: 'paragraph',
+			} );
+		} );
+	} );
 } );
