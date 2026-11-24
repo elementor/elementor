@@ -63,7 +63,8 @@ class Composite_Widgets_Resource_Ability extends Abstract_Ability {
 		return [
 			__( 'Place a widget in elementor/build-composition as the self-closing leaf tag <e-widget configuration-id="buy-button"/>, with element_config { "buy-button": { "widget_id": "<widget id>" } } only. <e-widget> takes no children.', 'elementor' ),
 			__( 'Configure a part under the key "<configuration-id>.<part>" (e.g. "buy-button.label") in element_config, style, classes and interactions, with that part element\'s own schema. The widget\'s configuration-id alone styles its root. A key that matches no part is skipped with a widget_part_not_found warning; never use a part key as another element\'s configuration-id.', 'elementor' ),
-			__( 'The structure is closed: after insertion, settings and styles of its parts can be updated with elementor/manage-elements, but parts can\'t be added, moved, duplicated or deleted. Only a part with "slot": true takes new children (pass its element id as parent_id).', 'elementor' ),
+			__( 'Parts marked "repeated": true exist once per repeater item, so they can\'t be configured at insertion (widget_part_repeated warning); edit each item with elementor/manage-elements afterwards.', 'elementor' ),
+			__( 'resolved_xml has the widget root\'s element id only; read its parts\' element ids with elementor/get-page-structure. The structure is closed: settings and styles of its parts can be updated with elementor/manage-elements, but parts can\'t be added, moved, duplicated or deleted. Only a part with "slot": true takes new children (pass its element id as parent_id).', 'elementor' ),
 			__( 'Only insert widgets with "insertable": true. Widget ids starting with "site/" are saved site widgets and need an active Elementor Pro license; without it they are skipped and reported in pro_features_discovery, and the rest of the composition is built.', 'elementor' ),
 		];
 	}

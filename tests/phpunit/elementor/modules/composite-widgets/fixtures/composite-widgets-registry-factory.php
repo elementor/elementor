@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Composite_Widgets_Registry_Factory {
 	const CODE_WIDGET_ID = 'test/card';
+	const REPEATER_WIDGET_ID = 'test/list';
 	const SITE_WIDGET_ID = 'site/promo';
 	const ARCHIVED_SITE_WIDGET_ID = 'site/old-promo';
 	const WIDGET_VERSION = 1;
@@ -30,14 +31,66 @@ class Composite_Widgets_Registry_Factory {
 		);
 
 		$registry->register( self::definition( self::CODE_WIDGET_ID ) );
+		$registry->register( self::repeater_definition() );
 
-		foreach ( [ self::CODE_WIDGET_ID, self::SITE_WIDGET_ID, self::ARCHIVED_SITE_WIDGET_ID ] as $id ) {
+		foreach ( [ self::CODE_WIDGET_ID, self::REPEATER_WIDGET_ID, self::SITE_WIDGET_ID, self::ARCHIVED_SITE_WIDGET_ID ] as $id ) {
 			if ( ! $registry->get( $id ) ) {
 				throw new \RuntimeException( "The test composite widget \"{$id}\" did not register." );
 			}
 		}
 
 		return $registry;
+	}
+
+	/**
+	 * A list whose two repeater items share the `item` and `item_title` part names.
+	 */
+	public static function repeater_definition(): array {
+		$item = [
+			'elType' => 'e-flexbox',
+			'part' => 'item',
+			'elements' => [
+				[
+					'elType' => 'widget',
+					'widgetType' => 'e-heading',
+					'part' => 'item_title',
+				],
+			],
+		];
+
+		return [
+			'id' => self::REPEATER_WIDGET_ID,
+			'version' => self::WIDGET_VERSION,
+			'title' => 'List',
+			'template' => [
+				'elType' => 'e-flexbox',
+				'part' => 'root',
+				'elements' => [
+					[
+						'elType' => 'e-flexbox',
+						'part' => 'items',
+						'elements' => [ $item, $item ],
+					],
+				],
+			],
+			'general' => [
+				[
+					'repeater' => 'items',
+					'label' => 'Items',
+					'item' => 'item',
+					'container' => 'items',
+					'item_fields' => [
+						[
+							'label' => 'Title',
+							'target' => [
+								'part' => 'item_title',
+								'prop' => 'title',
+							],
+						],
+					],
+				],
+			],
+		];
 	}
 
 	/**

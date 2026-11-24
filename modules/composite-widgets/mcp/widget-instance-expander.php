@@ -25,6 +25,7 @@ class Widget_Instance_Expander {
 	const PART_SEPARATOR = '.';
 	const ERROR_CODE = 'elementor_invalid_widget_instance';
 	const PART_NOT_FOUND_WARNING = 'widget_part_not_found';
+	const PART_REPEATED_WARNING = 'widget_part_repeated';
 	const KEY_IGNORED_WARNING = 'widget_config_key_ignored';
 
 	/** @var callable(): Widgets_Definitions_Registry */
@@ -69,6 +70,7 @@ class Widget_Instance_Expander {
 		$errors = [];
 		$warnings = Warnings_Bag::make();
 		$registry = ( $this->get_registry )();
+		$repeated_parts = [];
 
 		foreach ( $placeholders as $config_id => $config ) {
 			$config_id = (string) $config_id;
@@ -84,7 +86,8 @@ class Widget_Instance_Expander {
 			Editor_Settings::apply_name( $instance, $config_id );
 
 			$config_id_index[ $config_id ] = $instance;
-			$this->index_parts( $config_id_index, $config_id, $errors );
+			$repeated_parts[ $config_id ] = Template_Parts::get_repeated_names( $instance );
+			$this->index_parts( $config_id_index, $config_id, $repeated_parts[ $config_id ], $errors );
 		}
 
 		if ( ! empty( $errors ) ) {
@@ -94,7 +97,7 @@ class Widget_Instance_Expander {
 			];
 		}
 
-		$this->warn_unknown_parts( $referenced_config_ids, array_map( 'strval', array_keys( $placeholders ) ), $config_id_index, $warnings );
+		$this->warn_unindexed_parts( $referenced_config_ids, $repeated_parts, $config_id_index, $warnings );
 
 		return [
 			'error' => null,
@@ -128,8 +131,20 @@ class Widget_Instance_Expander {
 		return $definition;
 	}
 
-	private function index_parts( array &$config_id_index, string $config_id, array &$errors ): void {
-		Template_Parts::walk( $config_id_index[ $config_id ], function ( array &$element, string $part ) use ( &$config_id_index, $config_id, &$errors ) {
+	/**
+	 * A repeated part (one per repeater item) has no single element to configure, so it isn't indexed.
+	 *
+	 * @param array<string, array&> $config_id_index
+	 * @param string                $config_id
+	 * @param string[]              $repeated_parts
+	 * @param string[]              $errors
+	 */
+	private function index_parts( array &$config_id_index, string $config_id, array $repeated_parts, array &$errors ): void {
+		Template_Parts::walk( $config_id_index[ $config_id ], function ( array &$element, string $part ) use ( &$config_id_index, $config_id, $repeated_parts, &$errors ) {
+			if ( in_array( $part, $repeated_parts, true ) ) {
+				return;
+			}
+
 			$part_config_id = self::get_part_configuration_id( $config_id, $part );
 
 			if ( isset( $config_id_index[ $part_config_id ] ) ) {
@@ -161,25 +176,33 @@ class Widget_Instance_Expander {
 		}
 	}
 
-	private function warn_unknown_parts( array $referenced_config_ids, array $widget_config_ids, array $config_id_index, Warnings_Bag $warnings ): void {
+	/**
+	 * @param string[]                $referenced_config_ids
+	 * @param array<string, string[]> $repeated_parts        Widget configuration-id => its repeated part names.
+	 * @param array<string, array&>   $config_id_index
+	 * @param Warnings_Bag            $warnings
+	 */
+	private function warn_unindexed_parts( array $referenced_config_ids, array $repeated_parts, array $config_id_index, Warnings_Bag $warnings ): void {
 		foreach ( array_unique( $referenced_config_ids ) as $referenced_id ) {
 			if ( isset( $config_id_index[ $referenced_id ] ) ) {
 				continue;
 			}
 
-			foreach ( $widget_config_ids as $widget_config_id ) {
-				if ( ! str_starts_with( $referenced_id, $widget_config_id . self::PART_SEPARATOR ) ) {
+			foreach ( $repeated_parts as $widget_config_id => $widget_repeated_parts ) {
+				$prefix = $widget_config_id . self::PART_SEPARATOR;
+
+				if ( ! str_starts_with( $referenced_id, $prefix ) ) {
 					continue;
 				}
 
+				$is_repeated = in_array( substr( $referenced_id, strlen( $prefix ) ), $widget_repeated_parts, true );
 				$warnings->add(
-					self::PART_NOT_FOUND_WARNING,
-					sprintf(
+					$is_repeated ? self::PART_REPEATED_WARNING : self::PART_NOT_FOUND_WARNING,
+					$is_repeated
+						/* translators: 1: configuration-id */
+						? sprintf( __( '"%1$s" is a repeated part (one per repeater item), so it was skipped. Edit each item with elementor/manage-elements after insertion.', 'elementor' ), $referenced_id )
 						/* translators: 1: configuration-id, 2: widget configuration-id */
-						__( '"%1$s" matches no part of widget "%2$s" and was ignored. Read the widget\'s parts from the elementor://composite-widgets resource.', 'elementor' ),
-						$referenced_id,
-						$widget_config_id
-					),
+						: sprintf( __( '"%1$s" matches no part of widget "%2$s" and was ignored. Read the widget\'s parts from the elementor://composite-widgets resource.', 'elementor' ), $referenced_id, $widget_config_id ),
 					$referenced_id
 				);
 				break;

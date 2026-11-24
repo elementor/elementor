@@ -52,6 +52,9 @@ final class Composition_Compiler {
 		$this->widget_instance_expander = $widget_instance_expander;
 	}
 
+	/**
+	 * `<e-widget>` is accepted only when a widget instance expander is passed (`build-composition`).
+	 */
 	public static function make( ?Closed_Structure $closed_structure = null, ?Widget_Instance_Expander $widget_instance_expander = null ): self {
 		return new self( $closed_structure, $widget_instance_expander );
 	}
@@ -71,10 +74,7 @@ final class Composition_Compiler {
 		string $parent_id = self::DEFAULT_PARENT_ID
 	) {
 		$xml_parser = new Xml_Parser();
-		$widget_placeholders = new Composite_Widget_Placeholders(
-			$xml_parser,
-			$this->widget_instance_expander ?? Composite_Widgets_Module::get_active_widget_instance_expander()
-		);
+		$widget_placeholders = new Composite_Widget_Placeholders( $xml_parser, $this->widget_instance_expander );
 		$type_resolver = new Widget_Type_Resolver( $xml_parser, $widget_placeholders->get_tags() );
 		$subtree_builder = new Subtree_Builder( $xml_parser );
 		$element_config = $this->as_map( $input['element_config'] ?? [] );

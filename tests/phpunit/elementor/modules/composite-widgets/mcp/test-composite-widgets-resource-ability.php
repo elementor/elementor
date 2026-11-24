@@ -62,6 +62,10 @@ class Test_Composite_Widgets_Resource_Ability extends Elementor_Test_Base {
 		$this->assertIsArray( $widget['fields'][0]['schema'] );
 		$this->assertContains( 'e-heading', $resource['allowed_part_types'] );
 		$this->assertStringContainsString( '<e-widget', implode( ' ', $resource['usage'] ) );
+
+		$repeater_parts = $resource['widgets'][ Composite_Widgets_Registry_Factory::REPEATER_WIDGET_ID ]['parts'];
+		$this->assertTrue( $repeater_parts['item_title']['repeated'] );
+		$this->assertArrayNotHasKey( 'repeated', $repeater_parts['items'] );
 	}
 
 	/**

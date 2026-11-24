@@ -34,7 +34,7 @@ class Template_Parts {
 	}
 
 	/**
-	 * @return array<string, array{type: string, slot?: true}> Part name => its element type, and whether it's a slot.
+	 * @return array<string, array{type: string, slot?: true, repeated?: true}> Part name => its element type, and whether it's a slot or repeated.
 	 */
 	public static function describe( array $template ): array {
 		$parts = [];
@@ -47,7 +47,24 @@ class Template_Parts {
 			}
 		} );
 
+		foreach ( self::get_repeated_names( $template ) as $part ) {
+			$parts[ $part ]['repeated'] = true;
+		}
+
 		return $parts;
+	}
+
+	/**
+	 * @return string[] Part names used by more than one element: repeater items share their parts' names.
+	 */
+	public static function get_repeated_names( array $element ): array {
+		$names = [];
+
+		self::walk( $element, function ( array &$part_element, string $part ) use ( &$names ) {
+			$names[] = $part;
+		} );
+
+		return array_keys( array_filter( array_count_values( $names ), fn ( int $count ) => $count > 1 ) );
 	}
 
 	public static function get_element_type( array $element ): string {

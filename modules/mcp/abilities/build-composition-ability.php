@@ -6,6 +6,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Document\Document_Mutator;
 use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
 use Elementor\Modules\CompositeWidgets\Mcp\Widget_Instance_Expander;
+use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
@@ -107,7 +108,10 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 
 		$elements_data = $this->resolve_base_tree( $input, $document, $dry_run );
-		$compiled = Composition_Compiler::make( $this->closed_structure, $this->widget_instance_expander )->compile(
+		$compiled = Composition_Compiler::make(
+			$this->closed_structure,
+			$this->widget_instance_expander ?? Composite_Widgets_Module::get_active_widget_instance_expander()
+		)->compile(
 			$input,
 			$document,
 			$elements_data,

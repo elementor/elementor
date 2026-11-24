@@ -8,9 +8,8 @@ use Elementor\Modules\CompositeWidgets\Definitions\Widgets_Definitions_Registry;
 use Elementor\Modules\CompositeWidgets\Instance\Widget_Instance_Factory;
 use Elementor\Modules\CompositeWidgets\Mcp\Widget_Instance_Expander;
 use Elementor\Modules\CompositeWidgets\Site\Site_Widgets_Access_Controller;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
 use Elementor\Modules\Mcp\Abilities\Build_Composition_Ability;
+use Elementor\Modules\Mcp\Abilities\Utils\Composition_Compiler;
 use Elementor\Modules\Mcp\Utils\Pro_Features_Discovery;
 use Elementor\Plugin;
 use Elementor\Testing\Modules\CompositeWidgets\Fixtures\Composite_Widgets_Registry_Factory;
@@ -267,16 +266,78 @@ class Test_Widget_Instance_Expander extends Elementor_Test_Base {
 		$this->assertSame( Closed_Structure::ERROR_CODE, $into_part->get_error_code() );
 	}
 
-	public function test_resolve_type_config__treats_the_widget_tag_as_unknown_without_composite_widgets() {
+	public function test_execute__inserts_a_repeater_widget_and_skips_its_repeated_parts() {
 		// Arrange.
-		$resolver = new Widget_Type_Resolver( new Xml_Parser() );
+		$this->act_as_admin();
+		$post_id = $this->create_document();
 
 		// Act.
-		$config = $resolver->resolve_type_config( Widget_Instance_Expander::TAG );
+		$result = $this->make_ability()->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-widget configuration-id="list"/>',
+			'element_config' => [
+				'list' => [ 'widget_id' => Composite_Widgets_Registry_Factory::REPEATER_WIDGET_ID ],
+				'list.item_title' => [ 'title' => 'Every item' ],
+			],
+			'style' => [ 'list.items' => 'gap: 4px;' ],
+		] );
 
 		// Assert.
-		$this->assertWPError( $config );
-		$this->assertSame( 'elementor_unknown_type', $config->get_error_code() );
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : '' );
+		$this->assertSame( [ Widget_Instance_Expander::PART_REPEATED_WARNING ], array_column( $result['warning_details'], 'code' ) );
+
+		$items = $this->get_saved_elements( $post_id )[0]['elements'][0];
+		$this->assertSame( 'items', $items[ Widget_Markers::PART_KEY ] );
+		$this->assertSame( [ 'item', 'item' ], array_column( $items['elements'], Widget_Markers::PART_KEY ) );
+		$this->assertSame( [ 'gap' ], $this->get_local_style_prop_names( $items ) );
+	}
+
+	public function test_execute__gives_two_instances_of_a_widget_their_own_element_and_style_ids() {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->create_document();
+
+		// Act.
+		$result = $this->make_ability()->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-flexbox configuration-id="row"><e-widget configuration-id="first"/><e-widget configuration-id="second"/></e-flexbox>',
+			'element_config' => [
+				'first' => [ 'widget_id' => Composite_Widgets_Registry_Factory::CODE_WIDGET_ID ],
+				'second' => [ 'widget_id' => Composite_Widgets_Registry_Factory::CODE_WIDGET_ID ],
+			],
+			'style' => [
+				'first.title' => 'color: #ff0000;',
+				'second.title' => 'color: #0000ff;',
+			],
+		] );
+
+		// Assert.
+		$this->assertIsArray( $result, is_wp_error( $result ) ? $result->get_error_message() : '' );
+
+		$instances = $this->get_saved_elements( $post_id )[0]['elements'];
+		$elements = array_merge( ...array_map( [ $this, 'flatten' ], $instances ) );
+		$element_ids = array_column( $elements, 'id' );
+		$style_ids = array_merge( ...array_map( fn ( $element ) => array_keys( $element['styles'] ?? [] ), $elements ) );
+
+		$this->assertSame( $element_ids, array_unique( $element_ids ) );
+		$this->assertSame( $style_ids, array_unique( $style_ids ) );
+
+		foreach ( $instances as $instance ) {
+			$title = $instance['elements'][0];
+			$this->assertSame( array_keys( $title['styles'] ), $title['settings']['classes']['value'] );
+		}
+	}
+
+	public function test_compile__treats_the_widget_tag_as_unknown_without_an_expander() {
+		// Act.
+		$result = Composition_Compiler::make()->compile( [
+			'xml_structure' => '<e-widget configuration-id="card"/>',
+			'element_config' => [ 'card' => [ 'widget_id' => Composite_Widgets_Registry_Factory::CODE_WIDGET_ID ] ],
+		] );
+
+		// Assert.
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_unknown_type', $result->get_error_code() );
 	}
 
 	private function make_ability(): Build_Composition_Ability {
@@ -299,6 +360,13 @@ class Test_Widget_Instance_Expander extends Elementor_Test_Base {
 		$elements = Plugin::$instance->documents->get( $post_id, false )->get_elements_data();
 
 		return is_array( $elements ) ? $elements : [];
+	}
+
+	/**
+	 * @return array[] The element and all its descendants.
+	 */
+	private function flatten( array $element ): array {
+		return array_merge( [ $element ], ...array_map( [ $this, 'flatten' ], $element['elements'] ?? [] ) );
 	}
 
 	/**
