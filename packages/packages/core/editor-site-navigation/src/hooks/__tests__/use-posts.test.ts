@@ -75,7 +75,7 @@ describe( '@elementor/site-settings/use-posts', () => {
 
 		// Assert.
 		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
-		const expectedPath = `/wp/v2/pages?status=any&order=asc&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
+		const expectedPath = `/wp/v2/pages?status=any&order=asc&orderby=date&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
 
 		expect( apiFetch ).toHaveBeenCalledWith( {
 			parse: false,
@@ -96,7 +96,7 @@ describe( '@elementor/site-settings/use-posts', () => {
 		const { component } = renderHookWithQuery( () => usePosts( 'page', 'about' ) );
 
 		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
-		const expectedPath = `/wp/v2/pages?status=any&order=asc&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }&search=about`;
+		const expectedPath = `/wp/v2/pages?status=any&order=asc&orderby=date&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }&search=about`;
 
 		await waitFor( () => {
 			expect( apiFetch ).toHaveBeenCalledWith( {
@@ -119,7 +119,7 @@ describe( '@elementor/site-settings/use-posts', () => {
 		);
 
 		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
-		const expectedPath = `/wp/v2/pages?status=draft&order=asc&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
+		const expectedPath = `/wp/v2/pages?status=draft&order=asc&orderby=date&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
 
 		await waitFor( () => {
 			expect( apiFetch ).toHaveBeenCalledWith( {
@@ -143,7 +143,47 @@ describe( '@elementor/site-settings/use-posts', () => {
 		);
 
 		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
-		const expectedPath = `/wp/v2/pages?status=publish%2Cdraft&order=asc&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
+		const expectedPath = `/wp/v2/pages?status=publish%2Cdraft&order=asc&orderby=date&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
+
+		await waitFor( () => {
+			expect( apiFetch ).toHaveBeenCalledWith( {
+				parse: false,
+				path: expectedPath,
+			} );
+		} );
+
+		await waitFor( () => {
+			expect( component.result.current.isLoading ).toBeFalsy();
+		} );
+	} );
+
+	it( 'passes newest sort to the REST request', async () => {
+		const { component } = renderHookWithQuery( () =>
+			usePosts( 'page', '', EMPTY_SITE_CONTENT_STATUS_FILTERS, 'newest' )
+		);
+
+		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
+		const expectedPath = `/wp/v2/pages?status=any&order=desc&orderby=date&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
+
+		await waitFor( () => {
+			expect( apiFetch ).toHaveBeenCalledWith( {
+				parse: false,
+				path: expectedPath,
+			} );
+		} );
+
+		await waitFor( () => {
+			expect( component.result.current.isLoading ).toBeFalsy();
+		} );
+	} );
+
+	it( 'passes edited sort to the REST request', async () => {
+		const { component } = renderHookWithQuery( () =>
+			usePosts( 'page', '', EMPTY_SITE_CONTENT_STATUS_FILTERS, 'edited' )
+		);
+
+		const expectedFields = encodeURIComponent( 'id,type,title,link,status,user_can' );
+		const expectedPath = `/wp/v2/pages?status=any&order=desc&orderby=modified&page=1&per_page=${ POST_PER_PAGE }&_fields=${ expectedFields }`;
 
 		await waitFor( () => {
 			expect( apiFetch ).toHaveBeenCalledWith( {
