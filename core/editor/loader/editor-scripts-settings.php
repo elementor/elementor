@@ -63,7 +63,7 @@ class Editor_Scripts_Settings {
 			'fa4_to_fa5_mapping_url' => ELEMENTOR_ASSETS_URL . 'lib/font-awesome/migration/mapping.js',
 			'settings' => $settings,
 			'wp_editor' => static::get_wp_editor_config(),
-			'settings_page_link' => Settings::get_url(),
+			'settings_page_link' => Settings::get_settings_page_url(),
 			'tools_page_link' => Tools::get_url(),
 			'tools_page_nonce' => wp_create_nonce( 'tools-page-from-editor' ),
 			'elementor_site' => 'https://go.elementor.com/about-elementor/',
