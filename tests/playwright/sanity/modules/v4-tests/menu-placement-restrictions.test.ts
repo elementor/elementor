@@ -1,8 +1,9 @@
-import { expect, type BrowserContext, type Locator } from '@playwright/test';
+import { expect, type BrowserContext, type Locator, type TestInfo } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import { wpCli } from '../../../assets/wp-cli';
+import ContextMenu from '../../../pages/widgets/context-menu';
 
 type Container = { id: string; children: Container[] };
 
@@ -25,6 +26,7 @@ test.describe( 'Menu placement restrictions @atomic-widgets', () => {
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;
+	let testInfo: TestInfo;
 
 	const getMenus = ( parentId: string ): Locator => {
 		return editor.getPreviewFrame().locator( `[data-id="${ parentId }"] [data-element_type="e-menu"]` );
@@ -49,24 +51,29 @@ test.describe( 'Menu placement restrictions @atomic-widgets', () => {
 		return divId;
 	};
 
-	const createMenuIn = async ( containerId: string ) => {
-		await editor.page.evaluate( ( id ) => {
-			const { $e, elementor } = window as unknown as EditorWindow;
+	const clickMenuInPanelWith = async ( containerId: string ) => {
+		await editor.selectElement( containerId );
+		await editor.openElementsPanel();
+		await editor.page.locator( `#elementor-panel-category-v4-elements [data-library-element-type="e-menu"]` ).click();
+	};
 
-			$e.run( 'document/elements/create', {
-				container: elementor.getContainer( id ),
-				model: { elType: 'e-menu' },
-			} );
-		}, containerId );
+	const addMenuIn = async ( containerId: string ) => {
+		await editor.selectElement( containerId );
+		await addMenu();
+	};
+
+	const addMenuInNewDivBlock = async (): Promise<string> => {
+		const divId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+		await addMenuIn( divId );
+
+		return await getMenus( divId ).first().getAttribute( 'data-id' ) as string;
 	};
 
 	const copyAndPasteInto = async ( sourceId: string, targetId: string ) => {
-		await editor.page.evaluate( ( [ source, target ] ) => {
-			const { $e, elementor } = window as unknown as EditorWindow;
+		const contextMenu = new ContextMenu( editor.page, testInfo );
 
-			$e.run( 'document/elements/copy', { containers: [ elementor.getContainer( source ) ] } );
-			$e.run( 'document/ui/paste', { container: elementor.getContainer( target ) } );
-		}, [ sourceId, targetId ] );
+		await contextMenu.copyElement( sourceId );
+		await contextMenu.pasteElement( `[data-id="${ targetId }"]` );
 	};
 
 	const moveInto = async ( sourceId: string, targetId: string ) => {
@@ -87,7 +94,8 @@ test.describe( 'Menu placement restrictions @atomic-widgets', () => {
 			.getAttribute( 'data-id' ) as string;
 	};
 
-	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
+	test.beforeEach( async ( { browser, apiRequests }, info ) => {
+		testInfo = info;
 		await wpCli( 'wp elementor experiments activate e_atomic_elements,e_nav_menu' );
 
 		context = await browser.newContext();
@@ -107,7 +115,7 @@ test.describe( 'Menu placement restrictions @atomic-widgets', () => {
 		const divId = await addLinkedDivBlock();
 
 		// Act
-		await createMenuIn( divId );
+		await clickMenuInPanelWith( divId );
 
 		// Assert
 		await expect( editor.page.getByText( MENU_IN_LINK_MESSAGE ) ).toBeVisible();
@@ -119,7 +127,7 @@ test.describe( 'Menu placement restrictions @atomic-widgets', () => {
 		const divId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 
 		// Act
-		await createMenuIn( divId );
+		await addMenuIn( divId );
 
 		// Assert
 		await expect( getMenus( divId ) ).toHaveCount( 1 );
@@ -155,7 +163,7 @@ test.describe( 'Menu placement restrictions @atomic-widgets', () => {
 	test( 'A Menu cannot be pasted into another Menu', async () => {
 		// Arrange
 		const sourceMenuId = await addMenu();
-		const targetMenuId = await addMenu();
+		const targetMenuId = await addMenuInNewDivBlock();
 		const itemId = await getMenuItemId( targetMenuId );
 
 		// Act
@@ -169,7 +177,7 @@ test.describe( 'Menu placement restrictions @atomic-widgets', () => {
 	test( 'A container holding a Menu cannot get a link', async () => {
 		// Arrange
 		const divId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
-		await createMenuIn( divId );
+		await addMenuIn( divId );
 		await expect( getMenus( divId ) ).toHaveCount( 1 );
 
 		// Act
@@ -185,7 +193,7 @@ test.describe( 'Menu placement restrictions @atomic-widgets', () => {
 		const menuId = await addMenu();
 		const itemId = await getMenuItemId( menuId );
 		const paragraphId = await editor.getPreviewFrame()
-			.locator( `[data-id="${ itemId }"] [data-element_type="e-paragraph"]` )
+			.locator( `[data-id="${ itemId }"] [data-widget_type="e-paragraph.default"]` )
 			.first()
 			.getAttribute( 'data-id' ) as string;
 
