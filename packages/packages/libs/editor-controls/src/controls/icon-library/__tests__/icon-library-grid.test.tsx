@@ -72,6 +72,7 @@ describe( 'IconLibraryGrid', () => {
 		const searchConfigs = capturedConfigs.slice( firstSearchRender );
 
 		expect( searchConfigs.length ).toBeGreaterThan( 0 );
+		expect( searchConfigs[ 0 ].count ).toBe( 1 );
 
 		searchConfigs.forEach( ( config ) => {
 			getRequestedRows( config ).forEach( ( row ) => {
