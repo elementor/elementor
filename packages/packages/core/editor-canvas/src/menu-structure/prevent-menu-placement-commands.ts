@@ -9,7 +9,10 @@ import { clipboardContainsMenu, containersContainMenu, isInsideLink, isInsideMen
 
 const MENU_IN_LINK_NOTIFICATION: NotificationData = {
 	type: 'default',
-	message: __( "A Menu can't be placed inside a link. Remove the link from the parent container first.", 'elementor' ),
+	message: __(
+		"A Menu can't be placed inside a link. Remove the link from the parent container first.",
+		'elementor'
+	),
 	id: 'menu-in-link-blocked',
 	additionalActionProps: [ learnMoreActionProps ],
 };
