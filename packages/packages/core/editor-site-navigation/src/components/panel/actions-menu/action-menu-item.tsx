@@ -3,12 +3,13 @@ import { type ComponentType } from 'react';
 import { ListItemIcon, ListItemText, MenuItem, type MenuItemProps as MenuItemPropsType } from '@elementor/ui';
 
 type Props = {
-	title: string;
+	description?: string;
 	icon: ComponentType;
 	MenuItemProps: MenuItemPropsType;
+	title: string;
 };
 
-export default function ActionMenuItem( { title, icon: Icon, MenuItemProps }: Props ) {
+export default function ActionMenuItem( { description, icon: Icon, MenuItemProps, title }: Props ) {
 	return (
 		<MenuItem { ...MenuItemProps }>
 			<ListItemIcon
@@ -18,7 +19,7 @@ export default function ActionMenuItem( { title, icon: Icon, MenuItemProps }: Pr
 			>
 				<Icon />
 			</ListItemIcon>
-			<ListItemText primary={ title } />
+			<ListItemText primary={ title } secondary={ description } />
 		</MenuItem>
 	);
 }
