@@ -85,24 +85,28 @@ export default function ListItemView( { post }: { post: Post } ) {
 	const isRowDisabled = isEditBlocked || isTrashed;
 	const menuTriggerProps = bindTrigger( popupState );
 	const hasListItemActions = useSiteContentListItemActionsInjections().length > 0;
-	const showListItemActions = isActive && ! isDisabled && hasListItemActions;
+	const showListItemActions =
+		isActive && post.user_can.edit && ! isTrashed && hasListItemActions;
 
 	const listRow = (
 		<ListItem
 			disablePadding
-			sx={ contentPanelListRowPaddingSx }
+			sx={ getContentPanelListItemSx( showListItemActions ) }
 			secondaryAction={
-				<IconButton
-					aria-label={ __( 'More actions', 'elementor' ) }
-					size="tiny"
-					{ ...menuTriggerProps }
-					onClick={ ( event: React.MouseEvent ) => {
-						event.stopPropagation();
-						menuTriggerProps.onClick?.( event );
-					} }
-				>
-					<DotsVerticalIcon fontSize="tiny" />
-				</IconButton>
+				<Stack alignItems="center" direction="row" spacing={ 0 }>
+					{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
+					<IconButton
+						aria-label={ __( 'More actions', 'elementor' ) }
+						size="tiny"
+						{ ...menuTriggerProps }
+						onClick={ ( event: React.MouseEvent ) => {
+							event.stopPropagation();
+							menuTriggerProps.onClick?.( event );
+						} }
+					>
+						<DotsVerticalIcon fontSize="tiny" />
+					</IconButton>
+				</Stack>
 			}
 		>
 			<ListItemButton
