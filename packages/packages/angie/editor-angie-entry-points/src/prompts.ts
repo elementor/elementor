@@ -16,6 +16,9 @@ type SiteContentActiveDocumentPromptParams = {
 	title: string;
 };
 
+const sanitizeAngiePromptQuotedLabel = ( label: string ): string =>
+	label.replace( /[\r\n]+/g, ' ' ).trim().replace( /"/g, "'" );
+
 type AngiePromptBuilders = {
 	backgroundImage: ( elementId: string ) => string;
 	classManager: () => string;
@@ -68,7 +71,7 @@ export const ANGIE_PROMPTS: AngiePromptBuilders = {
 	interactions: ( { elementId }: InteractionsHeaderProps ) => `At element ${ elementId }, interactions, I want: `,
 	namedImage: ( elementId: string, bind: string ) => `At element ${ elementId }, image "${ bind }", I want: `,
 	siteContentActiveDocument: ( { postId, postType, title }: SiteContentActiveDocumentPromptParams ) =>
-		`For ${ postType } "${ title }" (document id ${ postId }), I want: `,
+		`For ${ postType } "${ sanitizeAngiePromptQuotedLabel( title ) }" (document id ${ postId }), I want: `,
 	styleTab: ( { elementId }: StyleTabHeaderProps ) => `At element ${ elementId }, styles, I want: `,
 	text: ( elementId: string ) => `At element ${ elementId } I want: `,
 	variableForm: ( { variableType, label }: VariableFormHeaderProps ) => {

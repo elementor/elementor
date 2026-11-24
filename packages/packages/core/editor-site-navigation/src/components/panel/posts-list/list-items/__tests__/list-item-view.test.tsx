@@ -6,7 +6,10 @@ import { fireEvent, screen } from '@testing-library/react';
 import { PostListContextProvider } from '../../../../../contexts/post-list-context';
 import { type Post } from '../../../../../types';
 import ListItemView from '../list-item-view';
-import { injectIntoSiteContentListItemActions } from '../site-content-list-item-actions-location';
+import {
+	injectIntoSiteContentListItemActions,
+	type SiteContentListItemActionsProps,
+} from '../site-content-list-item-actions-location';
 
 jest.mock( '@elementor/editor-documents', () => ( {
 	__useActiveDocument: jest.fn( () => null ),
@@ -42,6 +45,29 @@ describe( 'ListItemView', () => {
 		const { __useActiveDocument } = jest.requireMock( '@elementor/editor-documents' );
 		__useActiveDocument.mockReturnValue( null );
 		jest.clearAllMocks();
+	} );
+
+	it( 'passes the live active document title into the list item action slot', () => {
+		const { __useActiveDocument } = jest.requireMock( '@elementor/editor-documents' );
+		__useActiveDocument.mockReturnValue( {
+			id: pagePost.id,
+			status: { value: 'publish' },
+			title: 'Renamed in editor',
+		} );
+
+		const TitleProbe = ( { title }: SiteContentListItemActionsProps ) => (
+			<span data-testid="slot-title">{ title }</span>
+		);
+
+		injectIntoSiteContentListItemActions( { id: 'title-probe', component: TitleProbe } );
+
+		renderWithQuery(
+			<PostListContextProvider type="page" setError={ () => {} }>
+				<ListItemView post={ pagePost } />
+			</PostListContextProvider>
+		);
+
+		expect( screen.getByTestId( 'slot-title' ) ).toHaveTextContent( 'Renamed in editor' );
 	} );
 
 	it( 'renders list item action slot only for the active editable row', () => {

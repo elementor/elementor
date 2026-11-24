@@ -1,6 +1,8 @@
 const CONTENT_PANEL_INSET_SPACING = 2;
 const CONTENT_PANEL_LIST_ROW_GAP = 0.5;
 const CONTENT_PANEL_LIST_ROW_INSET_INLINE = 0.75;
+const CONTENT_PANEL_LIST_ROW_MENU_SECONDARY_INSET = 6;
+const CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_INSET = 10;
 const CONTENT_PANEL_LIST_ROW_TITLE_FONT_SIZE = '0.75rem';
 const CONTENT_PANEL_LIST_SECTION_BOTTOM_SPACING = 1;
 
@@ -14,6 +16,14 @@ export const contentPanelInsetPaddingSx = {
 
 export const contentPanelListRowPaddingSx = {
 	...contentPanelInsetPaddingSx,
+};
+
+export const contentPanelListRowMenuSecondaryInsetSx = {
+	paddingRight: CONTENT_PANEL_LIST_ROW_MENU_SECONDARY_INSET,
+};
+
+export const contentPanelListRowActiveSecondaryInsetSx = {
+	paddingRight: CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_INSET,
 };
 
 export const contentPanelHeaderStackSx = {
