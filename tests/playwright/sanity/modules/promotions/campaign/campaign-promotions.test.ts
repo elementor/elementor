@@ -12,12 +12,21 @@ import {
 	assertScenarioFetched,
 	cdnFieldOrDefault,
 	readEditorPromotion,
+	UPSELL_PATH,
+	V4_PROMOTIONS_PATH,
 	readFirstFullNotification,
+	readHiddenNotificationLinks,
 	readSidebarPromotion,
+	readUpsellImage,
+	readV4Promotions,
 	useCdnScenario,
 } from './cdn-scenario';
 
-const CAMPAIGN_SCENARIO = process.env.E2E_CDN_SCENARIO || ACTIVE_CAMPAIGN_SCENARIO;
+// active-campaign always runs. E2E_CDN_SCENARIO adds another scenario, e.g. `live` on the nightly run.
+const CAMPAIGN_SCENARIOS = [ ...new Set( [
+	ACTIVE_CAMPAIGN_SCENARIO,
+	...( process.env.E2E_CDN_SCENARIO ? [ process.env.E2E_CDN_SCENARIO ] : [] ),
+] ) ];
 
 const CORE_DEFAULTS = {
 	pluginsPage: { label: 'Get Elementor Pro', url: 'https://go.elementor.com/go-pro-wp-plugins/' },
@@ -38,6 +47,8 @@ const CORE_DEFAULTS = {
 
 const FREE_LICENSE = 'free';
 const CONVERSION_BANNER_UNLOCK_OPTION = 'elementor_conversion_banner_unlocked';
+const CONVERSION_BANNER_UNLOCK_BACKUP_OPTION = `e2e_backup_${ CONVERSION_BANNER_UNLOCK_OPTION }`;
+const MISSING_OPTION = 'e2e-missing-option';
 const CONVERSION_BANNER_DISMISS_KEY = 'conversion_banner_go_pro';
 const POINTER_DISMISS_KEY_PREFIX = 'promotional_pointer';
 const POINTER_SEEN_TODAY_TRANSIENT_PREFIX = '_elementor_promotional_pointer_';
@@ -48,10 +59,29 @@ const resetIntroductionKey = ( key: string ) =>
 const resetPointerSeenToday = () =>
 	wpCli( `wp eval foreach(get_users(["fields"=>"ID"])as$id){delete_transient("${ POINTER_SEEN_TODAY_TRANSIENT_PREFIX }".$id);}` );
 
+// `wp eval` code has no spaces, the command line is split on them.
+const backupConversionBannerUnlock = () =>
+	wpCli( `wp eval update_option("${ CONVERSION_BANNER_UNLOCK_BACKUP_OPTION }",get_option("${ CONVERSION_BANNER_UNLOCK_OPTION }","${ MISSING_OPTION }"),false);` );
+
+const restoreConversionBannerUnlock = () =>
+	wpCli( `wp eval $v=get_option("${ CONVERSION_BANNER_UNLOCK_BACKUP_OPTION }");"${ MISSING_OPTION }"===$v?delete_option("${ CONVERSION_BANNER_UNLOCK_OPTION }"):update_option("${ CONVERSION_BANNER_UNLOCK_OPTION }",$v);delete_option("${ CONVERSION_BANNER_UNLOCK_BACKUP_OPTION }");` );
+
+// The active-campaign fixture is the proof that the mock answered, so a fixture that lost a value fails instead of passing empty.
+const assertActiveCampaignFixture = ( scenario: string, isValid: boolean, requirement: string ): void => {
+	if ( ACTIVE_CAMPAIGN_SCENARIO === scenario && ! isValid ) {
+		throw new Error( `The ${ ACTIVE_CAMPAIGN_SCENARIO } fixture must ${ requirement }` );
+	}
+};
+
+type EditorWindow = {
+	elementor?: { config?: { v4Promotions?: Record<string, { title?: string }> } };
+	elementorPromotionsData?: Record<string, { image?: string }>;
+};
+
 const getPointerDismissKey = ( campaignId: unknown ): string =>
 	'string' === typeof campaignId && campaignId ? `${ POINTER_DISMISS_KEY_PREFIX }_${ campaignId }` : POINTER_DISMISS_KEY_PREFIX;
 
-for ( const scenario of [ CAMPAIGN_SCENARIO, NO_PROMOTION_SCENARIO ] ) {
+for ( const scenario of [ ...CAMPAIGN_SCENARIOS, NO_PROMOTION_SCENARIO ] ) {
 	test.describe( `Editor promotions from CDN - ${ scenario } @promotions`, () => {
 		test.beforeEach( async ( { page, baseURL } ) => {
 			assertScenarioFetched( scenario, EDITOR_PROMOTION_PATHS );
@@ -89,6 +119,7 @@ for ( const scenario of [ CAMPAIGN_SCENARIO, NO_PROMOTION_SCENARIO ] ) {
 			// Arrange.
 			const promotion = readEditorPromotion( scenario, 'conversion-banner' );
 			const isCdnBanner = Boolean( promotion.is_active && promotion.title && promotion.cta_url );
+			await backupConversionBannerUnlock();
 			await wpCli( `wp option update ${ CONVERSION_BANNER_UNLOCK_OPTION } 1` );
 			await resetIntroductionKey( CONVERSION_BANNER_DISMISS_KEY );
 
@@ -107,7 +138,7 @@ for ( const scenario of [ CAMPAIGN_SCENARIO, NO_PROMOTION_SCENARIO ] ) {
 				await expect( button )
 					.toHaveAttribute( 'href', isCdnBanner ? String( promotion.cta_url ) : CORE_DEFAULTS.conversionBanner.ctaUrl );
 			} finally {
-				await wpCli( `wp option delete ${ CONVERSION_BANNER_UNLOCK_OPTION }` );
+				await restoreConversionBannerUnlock();
 			}
 		} );
 
@@ -164,49 +195,84 @@ for ( const scenario of [ CAMPAIGN_SCENARIO, NO_PROMOTION_SCENARIO ] ) {
 			await expect( button ).toHaveText( cdnFieldOrDefault( promotion, 'button_text', CORE_DEFAULTS.themeBuilder.buttonText ), { timeout: timeouts.longAction } );
 			await expect( button ).toHaveAttribute( 'href', cdnFieldOrDefault( promotion, 'url', CORE_DEFAULTS.themeBuilder.url ) );
 		} );
+
+		test( 'V4 promotions and widget upsell images', async ( { page, apiRequests }, testInfo ) => {
+			// Arrange.
+			assertScenarioFetched( scenario, [ V4_PROMOTIONS_PATH, UPSELL_PATH ] );
+			const expectedTitle = readV4Promotions( scenario ).attributes?.title;
+			const expectedImage = readUpsellImage( scenario, 'animated_headline' );
+			assertActiveCampaignFixture( scenario, !! expectedTitle?.includes( 'E2E campaign' ), 'have an e2e attributes V4 promotion' );
+			assertActiveCampaignFixture( scenario, !! expectedImage?.includes( 'e2e-campaign' ), 'have an e2e animated_headline upsell image' );
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			await wpAdmin.openNewPage();
+
+			// Act.
+			const actual = await page.evaluate( () => {
+				const editorWindow = window as unknown as EditorWindow;
+
+				return {
+					title: editorWindow.elementor?.config?.v4Promotions?.attributes?.title,
+					image: editorWindow.elementorPromotionsData?.animated_headline?.image,
+				};
+			} );
+
+			// Assert.
+			expect( actual ).toEqual( { title: expectedTitle, image: expectedImage } );
+		} );
 	} );
 }
 
-test.describe( `Campaign content from CDN - ${ CAMPAIGN_SCENARIO } @promotions`, () => {
-	test.beforeEach( async ( { page, baseURL } ) => {
-		assertScenarioFetched( CAMPAIGN_SCENARIO, [ NOTIFICATIONS_PATH, HOME_SCREEN_PATH ] );
-		await useCdnScenario( page.context(), baseURL, CAMPAIGN_SCENARIO );
+for ( const scenario of CAMPAIGN_SCENARIOS ) {
+	test.describe( `Campaign content from CDN - ${ scenario } @promotions`, () => {
+		test.beforeEach( async ( { page, baseURL } ) => {
+			assertScenarioFetched( scenario, [ NOTIFICATIONS_PATH, HOME_SCREEN_PATH ] );
+			await useCdnScenario( page.context(), baseURL, scenario );
+		} );
+
+		test( 'What\'s New card', async ( { page, apiRequests }, testInfo ) => {
+			// Arrange.
+			const notification = readFirstFullNotification( scenario, false );
+			const proOnlyLinks = readHiddenNotificationLinks( scenario, false );
+			assertActiveCampaignFixture( scenario, !! notification, 'have a What\'s New card for Free' );
+			assertActiveCampaignFixture( scenario, proOnlyLinks.length > 0, 'have a Pro-only What\'s New card' );
+			// The Free card shows that the drawer has loaded, so the hidden cards are checked only after it.
+			test.skip( ! notification, 'The CDN has no What\'s New card for Free users' );
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			await wpAdmin.openNewPage();
+
+			// Act.
+			await page.getByRole( 'button', { name: 'What\'s New' } ).click();
+
+			// Assert.
+			const drawer = page.locator( '.MuiDrawer-paper' );
+			await expect( drawer.getByText( notification.title, { exact: true } ).first() ).toBeVisible( { timeout: timeouts.longAction } );
+
+			if ( notification.description ) {
+				await expect( drawer.getByText( notification.description ).first() ).toBeVisible();
+			}
+
+			if ( notification.cta && notification.ctaLink ) {
+				await expect( drawer.locator( `a[href="${ notification.ctaLink }"]` ).filter( { hasText: notification.cta } ).first() ).toBeVisible();
+			}
+
+			for ( const link of proOnlyLinks ) {
+				await expect( drawer.locator( `a[href="${ link }"]` ) ).toHaveCount( 0 );
+			}
+		} );
+
+		test( 'Home screen sidebar banner', async ( { page } ) => {
+			// Arrange.
+			const variant = readSidebarPromotion( scenario, FREE_LICENSE );
+			assertActiveCampaignFixture( scenario, !! variant?.data.link?.includes( 'e2e-campaign' ), 'have an e2e sidebar banner for Free' );
+			test.skip( ! variant, 'The CDN has no enabled sidebar banner for Free users' );
+
+			// Act.
+			await page.goto( '/wp-admin/admin.php?page=elementor' );
+
+			// Assert.
+			const banner = page.locator( `#e-home-screen a[href="${ variant.data.link }"]` );
+			await expect( banner ).toBeVisible( { timeout: timeouts.longAction } );
+			await expect( banner.locator( 'img' ) ).toHaveAttribute( 'src', variant.data.image );
+		} );
 	} );
-
-	test( 'What\'s New card', async ( { page, apiRequests }, testInfo ) => {
-		// Arrange.
-		const notification = readFirstFullNotification( CAMPAIGN_SCENARIO, false );
-		test.skip( ! notification, 'The CDN has no What\'s New card for Free users' );
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.openNewPage();
-
-		// Act.
-		await page.getByRole( 'button', { name: 'What\'s New' } ).click();
-
-		// Assert.
-		const drawer = page.locator( '.MuiDrawer-paper' );
-		await expect( drawer.getByText( notification.title, { exact: true } ).first() ).toBeVisible( { timeout: timeouts.longAction } );
-
-		if ( notification.description ) {
-			await expect( drawer.getByText( notification.description ).first() ).toBeVisible();
-		}
-
-		if ( notification.cta && notification.ctaLink ) {
-			await expect( drawer.locator( `a[href="${ notification.ctaLink }"]` ).filter( { hasText: notification.cta } ).first() ).toBeVisible();
-		}
-	} );
-
-	test( 'Home screen sidebar banner', async ( { page } ) => {
-		// Arrange.
-		const variant = readSidebarPromotion( CAMPAIGN_SCENARIO, FREE_LICENSE );
-		test.skip( ! variant, 'The CDN has no enabled sidebar banner for Free users' );
-
-		// Act.
-		await page.goto( '/wp-admin/admin.php?page=elementor' );
-
-		// Assert.
-		const banner = page.locator( `#e-home-screen a[href="${ variant.data.link }"]` );
-		await expect( banner ).toBeVisible( { timeout: timeouts.longAction } );
-		await expect( banner.locator( 'img' ) ).toHaveAttribute( 'src', variant.data.image );
-	} );
-} );
+}

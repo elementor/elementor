@@ -126,7 +126,7 @@ jobs:
           cat tests/playwright/.playwright-wp-lite-env.json | grep phpVersion
 
       - name: Setup CDN promotion fixtures
-        uses: elementor/elementor-editor-github-actions/actions/fetch-cdn-scenario@2f929431ac9b693f70d5cde32a1cac58e3fa781e
+        uses: elementor/elementor-editor-github-actions/actions/fetch-cdn-scenario@43a334db216f075873789701646bcdc6f20388f5
         with:
           output-dir: tests/playwright/mu-plugins/editor-assets-cdn/live
           mu-plugins-dir: tests/playwright/mu-plugins

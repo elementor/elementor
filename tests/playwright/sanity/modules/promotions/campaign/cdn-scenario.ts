@@ -24,6 +24,8 @@ const getEditorPromotionPath = ( name: EditorPromotionName ): string => `editor-
 export const EDITOR_PROMOTION_PATHS = EDITOR_PROMOTION_NAMES.map( getEditorPromotionPath );
 export const NOTIFICATIONS_PATH = 'notifications/v1/notifications.json';
 export const HOME_SCREEN_PATH = 'home-screen/v1/home-screen.json';
+export const V4_PROMOTIONS_PATH = 'packages/v1/promotions.json';
+export const UPSELL_PATH = 'free-to-pro-upsell/v1/free-to-pro-upsell.json';
 
 export type EditorPromotion = {
 	is_active?: boolean;
@@ -46,6 +48,18 @@ export type Notification = {
 	ctaLink?: string;
 	featured?: boolean;
 	conditions?: NotificationCondition[][];
+};
+
+export type V4Promotion = {
+	title?: string;
+	content?: string;
+	ctaUrl?: string;
+	image?: string;
+};
+
+export type UpsellAsset = {
+	id: string;
+	imageSrc: string;
 };
 
 export type SidebarPromotionVariant = {
@@ -89,8 +103,11 @@ const isNotificationShown = ( notification: Notification, hasPro: boolean ): boo
 
 const isImageOnly = ( notification: Notification ): boolean => ! notification.title && ! notification.description;
 
+const readNotifications = ( scenario: string ): Notification[] =>
+	readFixture<Notification[]>( scenario, NOTIFICATIONS_PATH, 'notifications' ) ?? [];
+
 export const readFirstFullNotification = ( scenario: string, hasPro: boolean ): Notification | undefined => {
-	const notifications = readFixture<Notification[]>( scenario, NOTIFICATIONS_PATH, 'notifications' ) ?? [];
+	const notifications = readNotifications( scenario );
 	const mayBeShown = notifications.filter( ( notification ) => ! hasOnlyProConditions( notification ) || isNotificationShown( notification, hasPro ) );
 	const hasFeatured = mayBeShown.some( ( notification ) => notification.featured );
 
@@ -112,3 +129,22 @@ export const cdnFieldOrDefault = ( promotion: EditorPromotion, field: string, co
 
 	return promotion.is_active && 'string' === typeof value && value ? value : coreDefault;
 };
+
+// Links of the cards that the Pro condition hides, except links that a shown card also uses.
+export const readHiddenNotificationLinks = ( scenario: string, hasPro: boolean ): string[] => {
+	const notifications = readNotifications( scenario );
+	const isHidden = ( notification: Notification ) => hasOnlyProConditions( notification ) && ! isNotificationShown( notification, hasPro );
+	const shownLinks = new Set( notifications.filter( ( notification ) => ! isHidden( notification ) ).map( ( notification ) => notification.ctaLink ) );
+
+	return [ ...new Set( notifications
+		.filter( isHidden )
+		.map( ( notification ) => notification.ctaLink )
+		.filter( ( link ): link is string => !! link && ! shownLinks.has( link ) ) ) ];
+};
+
+// Core merges every promotions entry into `elementor.config.v4Promotions`, so later entries win.
+export const readV4Promotions = ( scenario: string ): Record<string, V4Promotion> =>
+	Object.assign( {}, ...( readFixture<Record<string, V4Promotion>[]>( scenario, V4_PROMOTIONS_PATH, 'promotions' ) ?? [] ) );
+
+export const readUpsellImage = ( scenario: string, id: string ): string | undefined =>
+	readFixture<UpsellAsset[]>( scenario, UPSELL_PATH, 'free-to-pro-upsell' )?.find( ( asset ) => id === asset.id )?.imageSrc;

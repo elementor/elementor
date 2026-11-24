@@ -25,6 +25,8 @@ const ELEMENTOR_E2E_CDN_CACHE_OPTIONS = [
 	'elementor_theme_builder_promotion_assets_data',
 	'_elementor_notifications_data',
 	'_elementor_home_screen_data',
+	'_elementor_v4_promotions',
+	'_elementor_free_to_pro_upsell',
 ];
 
 function elementor_e2e_cdn_scenario(): string {
