@@ -1,5 +1,4 @@
 import { AngieMcpSdk } from '@elementor-external/angie-sdk';
-export { getAngieIframe, MessageEventType } from '@elementor-external/angie-sdk';
 
 export const EDITOR_ANGIE_APP_ID = 'elementor-editor-core';
 
@@ -51,50 +50,27 @@ const isMcpDisabled = () =>
 	// @ts-ignore - QUnit fails this
 	!! ( globalThis as Record< string, unknown > ).__ELEMENTOR_MCP_DISABLED__;
 
-let notifySdkReady: () => void;
-
-const sdkReady = new Promise< void >( ( resolve ) => {
-	notifySdkReady = resolve;
-} );
-
-export const createSDK = (): AngieMcpSdk => {
+export const getAngieSdk = (): AngieMcpSdk => {
 	if ( isMcpDisabled() ) {
 		return {} as unknown as AngieMcpSdk;
 	}
 
-	return new RetriableAngieSDK( { appId: EDITOR_ANGIE_APP_ID } );
+	sdk ??= new RetriableAngieSDK( { appId: EDITOR_ANGIE_APP_ID } );
+
+	return sdk;
 };
 
-export const setSDK = ( instance: AngieMcpSdk ) => {
-	sdk = instance;
-	notifySdkReady();
-};
-
-export const refreshSdkIfDetectionExpired = () => {
+export const refreshAngieSdkIfDetectionExpired = () => {
 	if ( ! ( sdk instanceof RetriableAngieSDK ) || ! sdk.hasDetectionExpired() ) {
 		return false;
 	}
 
 	sdk.destroy();
-	setSDK( createSDK() );
+	sdk = undefined;
 
 	return true;
 };
 
-export const getSDK = (): AngieMcpSdk => {
-	if ( ! sdk ) {
-		throw new Error( 'Angie SDK was not provided by editor-angie yet' );
-	}
-
-	return sdk;
-};
-
-export const waitForSDK = async () => {
-	await sdkReady;
-
-	return getSDK();
-};
-
-export const resetSdkForTests = () => {
+export const resetAngieSdkForTests = () => {
 	sdk = undefined;
 };

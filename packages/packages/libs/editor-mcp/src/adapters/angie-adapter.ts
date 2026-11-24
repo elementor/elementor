@@ -1,4 +1,4 @@
-import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
+import { type AngieMcpSdk } from '@elementor/editor-angie-sdk';
 
 import { type getRegisteredMcpServers as _getRegisteredMcpServers } from '../mcp-registry';
 import { toMCPTitle } from '../utils/to-mcp-title';

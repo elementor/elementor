@@ -1,4 +1,4 @@
-import type { AngieLocalServerConfig, AngieMcpSdk } from '@elementor/editor-mcp';
+import type { AngieLocalServerConfig, AngieMcpSdk } from '@elementor/editor-angie-sdk';
 import { WpSearchMcpServer } from '@elementor-external/wp-search-mcp';
 
 import { isAngiePluginActive } from './is-angie-plugin-active';

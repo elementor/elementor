@@ -1,12 +1,4 @@
-import {
-	createSDK,
-	EDITOR_ANGIE_APP_ID,
-	getSDK,
-	refreshSdkIfDetectionExpired,
-	resetSdkForTests,
-	setSDK,
-	waitForSDK,
-} from '../get-sdk';
+import { EDITOR_ANGIE_APP_ID, getAngieSdk, refreshAngieSdkIfDetectionExpired, resetAngieSdkForTests } from '../get-sdk';
 
 const mockConstructor = jest.fn();
 const mockDestroy = jest.fn();
@@ -29,8 +21,6 @@ jest.mock( '@elementor-external/angie-sdk', () => ( {
 			mockDestroy();
 		}
 	},
-	getAngieIframe: jest.fn(),
-	MessageEventType: {},
 } ) );
 
 const GLOBAL_MCP_DISABLED_FLAG = '__ELEMENTOR_MCP_DISABLED__';
@@ -40,10 +30,10 @@ const settleDetection = async ( result: { isReady: boolean } ) => {
 	await Promise.resolve();
 };
 
-describe( 'get-sdk', () => {
+describe( 'getAngieSdk', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		resetSdkForTests();
+		resetAngieSdkForTests();
 		( globalThis as Record< string, unknown > )[ GLOBAL_MCP_DISABLED_FLAG ] = false;
 	} );
 
@@ -51,53 +41,23 @@ describe( 'get-sdk', () => {
 		( globalThis as Record< string, unknown > )[ GLOBAL_MCP_DISABLED_FLAG ] = true;
 	} );
 
-	it( 'should create an SDK bound to the editor app id', () => {
+	it( 'should create a single SDK instance bound to the editor app id', () => {
 		// Act
-		createSDK();
+		const first = getAngieSdk();
+		const second = getAngieSdk();
 
 		// Assert
+		expect( second ).toBe( first );
 		expect( mockConstructor ).toHaveBeenCalledTimes( 1 );
 		expect( mockConstructor ).toHaveBeenCalledWith( { appId: EDITOR_ANGIE_APP_ID } );
 	} );
 
-	it( 'should return the SDK provided by editor-angie', () => {
-		// Arrange
-		const provided = createSDK();
-		setSDK( provided );
-
-		// Act
-		const first = getSDK();
-		const second = getSDK();
-
-		// Assert
-		expect( first ).toBe( provided );
-		expect( second ).toBe( provided );
-		expect( mockConstructor ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	it( 'should throw when no SDK was provided yet', () => {
-		// Act & Assert
-		expect( () => getSDK() ).toThrow( 'Angie SDK was not provided by editor-angie yet' );
-	} );
-
-	it( 'should resolve waiters with the provided SDK', async () => {
-		// Arrange
-		const provided = createSDK();
-		setSDK( provided );
-
-		// Act
-		const resolved = await waitForSDK();
-
-		// Assert
-		expect( resolved ).toBe( provided );
-	} );
-
-	it( 'should create an empty SDK when MCP is disabled', () => {
+	it( 'should return an empty SDK when MCP is disabled', () => {
 		// Arrange
 		( globalThis as Record< string, unknown > )[ GLOBAL_MCP_DISABLED_FLAG ] = true;
 
 		// Act
-		const sdk = createSDK();
+		const sdk = getAngieSdk();
 
 		// Assert
 		expect( sdk ).toEqual( {} );
@@ -105,10 +65,10 @@ describe( 'get-sdk', () => {
 	} );
 } );
 
-describe( 'refreshSdkIfDetectionExpired', () => {
+describe( 'refreshAngieSdkIfDetectionExpired', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		resetSdkForTests();
+		resetAngieSdkForTests();
 		( globalThis as Record< string, unknown > )[ GLOBAL_MCP_DISABLED_FLAG ] = false;
 	} );
 
@@ -118,55 +78,52 @@ describe( 'refreshSdkIfDetectionExpired', () => {
 
 	it( 'should replace the SDK when Angie detection gave up', async () => {
 		// Arrange
-		const expired = createSDK();
-		setSDK( expired );
+		const expired = getAngieSdk();
 		await settleDetection( { isReady: false } );
 
 		// Act
-		const wasRefreshed = refreshSdkIfDetectionExpired();
+		const wasRefreshed = refreshAngieSdkIfDetectionExpired();
 
 		// Assert
 		expect( wasRefreshed ).toBe( true );
 		expect( mockDestroy ).toHaveBeenCalledTimes( 1 );
-		expect( getSDK() ).not.toBe( expired );
+		expect( getAngieSdk() ).not.toBe( expired );
 	} );
 
 	it( 'should keep the SDK when Angie was detected', async () => {
 		// Arrange
-		const ready = createSDK();
-		setSDK( ready );
+		const ready = getAngieSdk();
 		await settleDetection( { isReady: true } );
 
 		// Act
-		const wasRefreshed = refreshSdkIfDetectionExpired();
+		const wasRefreshed = refreshAngieSdkIfDetectionExpired();
 
 		// Assert
 		expect( wasRefreshed ).toBe( false );
 		expect( mockDestroy ).not.toHaveBeenCalled();
-		expect( getSDK() ).toBe( ready );
+		expect( getAngieSdk() ).toBe( ready );
 	} );
 
 	it( 'should keep the SDK while detection is still running', () => {
 		// Arrange
-		const detecting = createSDK();
-		setSDK( detecting );
+		const detecting = getAngieSdk();
 
 		// Act
-		const wasRefreshed = refreshSdkIfDetectionExpired();
+		const wasRefreshed = refreshAngieSdkIfDetectionExpired();
 
 		// Assert
 		expect( wasRefreshed ).toBe( false );
 		expect( mockDestroy ).not.toHaveBeenCalled();
-		expect( getSDK() ).toBe( detecting );
+		expect( getAngieSdk() ).toBe( detecting );
 	} );
 
 	it( 'should not fail when MCP is disabled', () => {
 		// Arrange
 		( globalThis as Record< string, unknown > )[ GLOBAL_MCP_DISABLED_FLAG ] = true;
-		setSDK( createSDK() );
+		getAngieSdk();
 
 		// Act
-		const wasRefreshed = refreshSdkIfDetectionExpired();
+		const wasRefreshed = refreshAngieSdkIfDetectionExpired();
 
 		// Assert
 		expect( wasRefreshed ).toBe( false );

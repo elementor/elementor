@@ -1,10 +1,10 @@
+import { setAngieInteractionMode } from '@elementor/editor-angie-sdk';
 import type {
 	OpenAngieCommonProperties,
 	OpenAngiePluginProperties,
 	OpenAngieRequest,
 	OpenAngieSdkProperties,
 } from '@elementor/editor-mcp';
-import { setAngieInteractionMode } from '@elementor/editor-mcp';
 
 import { bootAngieSdk, EDITOR_ANGIE_APP_ID } from './boot-angie-sdk';
 import { openInstalledAngieSidebar } from './open-installed-angie';

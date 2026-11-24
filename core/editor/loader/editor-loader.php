@@ -37,6 +37,7 @@ final class Editor_Loader {
 		'editor-current-user',
 		'editor-elements-panel-notice',
 		'elementor-mcp-common',
+		'editor-angie-sdk',
 		'editor-embedded-documents-manager',
 	];
 

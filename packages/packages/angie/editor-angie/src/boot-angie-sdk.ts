@@ -7,7 +7,7 @@ import {
 	type LoadSidebarV2Options,
 	refreshAngieSdkIfDetectionExpired,
 	toggleAngieSidebar,
-} from '@elementor/editor-mcp';
+} from '@elementor/editor-angie-sdk';
 
 import { attachEditorMcpServers } from './attach-editor-mcp-servers';
 import { ensureHelpCenterAbility } from './help-center-ability';

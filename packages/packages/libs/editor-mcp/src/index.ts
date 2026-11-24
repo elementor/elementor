@@ -1,19 +1,19 @@
 import './types/open-angie-request';
 
-import { type AngieMcpSdk as AngieMcpSdkType } from '@elementor-external/angie-sdk';
-
-import { createSDK, getSDK, refreshSdkIfDetectionExpired, setSDK } from './utils/get-sdk';
-export { EDITOR_ANGIE_APP_ID, getAngieIframe, MessageEventType as AngieMessageEvenetType } from './utils/get-sdk';
 export {
 	type AngieLocalServerConfig,
 	AngieInteractionMode,
 	type AngieMcpSdk,
+	EDITOR_ANGIE_APP_ID,
+	getAngieIframe,
+	getAngieSdk,
 	isAngiePluginAvailable,
 	LAYOUT_SIDEBAR,
 	type LoadSidebarV2Options,
+	MessageEventType as AngieMessageEvenetType,
 	setAngieInteractionMode,
 	toggleAngieSidebar,
-} from '@elementor-external/angie-sdk';
+} from '@elementor/editor-angie-sdk';
 
 export {
 	McpServer,
@@ -45,11 +45,7 @@ export { redirectToInstallation } from './utils/redirect-to-installation';
 export { redirectToAppAdmin } from './utils/redirect-to-app-admin';
 export { installAngiePlugin, type InstallAngieResult } from './utils/install-angie-plugin';
 export { saveAngieConsent } from './utils/save-angie-consent';
-export const getAngieSdk = () => getSDK();
 export { registerServerOnAngiePlugin } from './utils/register-server-on-angie-plugin';
-export const createAngieSdk = () => createSDK();
-export const setAngieSdk = ( sdk: AngieMcpSdkType ) => setSDK( sdk );
-export const refreshAngieSdkIfDetectionExpired = () => refreshSdkIfDetectionExpired();
 export * from './init';
 export {
 	dispatchMcpStylesAppliedEvent,
