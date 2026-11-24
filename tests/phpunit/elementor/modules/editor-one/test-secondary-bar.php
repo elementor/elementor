@@ -24,8 +24,12 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 
 	private array $handlers = [];
 
+	private $original_screen;
+
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->original_screen = $GLOBALS['current_screen'] ?? null;
 
 		$this->reset_menu_data_provider();
 		$this->provider = Menu_Data_Provider::instance();
@@ -41,6 +45,8 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 		}
 
 		wp_deregister_script( Secondary_Bar_Handler::SCRIPT_HANDLE );
+		remove_filter( 'elementor/editor-one/admin-edit-post-types', [ $this, 'filter_editor_one_post_types' ] );
+		$GLOBALS['current_screen'] = $this->original_screen;
 		$this->reset_menu_data_provider();
 		parent::tearDown();
 	}
@@ -180,6 +186,7 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 
 	public function test_render_container__prints_the_root_only_when_there_is_a_bar() {
 		// Arrange
+		$this->act_on_an_editor_one_page();
 		$with_bar = $this->create_handler( $this->create_bar() );
 		$without_bar = $this->create_handler( [] );
 
@@ -200,6 +207,7 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 
 	public function test_render_container__prints_the_tabs_as_plain_links_inside_the_root() {
 		// Arrange
+		$this->act_on_an_editor_one_page();
 		$handler = $this->create_handler( [
 			'label' => 'Settings',
 			'tabs' => [
@@ -227,6 +235,7 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 
 	public function test_render_container__escapes_the_tab_labels_tags_and_urls() {
 		// Arrange
+		$this->act_on_an_editor_one_page();
 		$handler = $this->create_handler( [
 			'label' => 'Settings',
 			'tabs' => [
@@ -263,6 +272,7 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 
 	public function test_render_container__prints_a_tag_only_for_tabs_that_have_one() {
 		// Arrange
+		$this->act_on_an_editor_one_page();
 		$handler = $this->create_handler( [
 			'label' => 'Settings',
 			'tabs' => [
@@ -284,6 +294,7 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 
 	public function test_render_container__reserves_the_addons_and_finder_slots_only_when_they_are_shown() {
 		// Arrange
+		$this->act_on_an_editor_one_page();
 		$bar = $this->create_bar();
 		$with_actions = $this->create_handler(
 			array_merge( $bar, [ 'addons' => [ [ 'id' => 'addon', 'label' => 'Addon', 'url' => 'https://example.org/addon' ] ] ] ),
@@ -314,6 +325,7 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 
 	public function test_render_container__prints_nothing_when_the_package_is_missing() {
 		// Arrange
+		$this->act_on_an_editor_one_page();
 		$handler = $this->create_handler( $this->create_bar(), null );
 
 		// Act
@@ -323,6 +335,20 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( '', $html );
+	}
+
+	public function test_render_container__prints_only_the_root_outside_editor_one_pages() {
+		// Arrange
+		$GLOBALS['current_screen'] = \WP_Screen::get( 'post' );
+		$handler = $this->create_handler( $this->create_bar() );
+
+		// Act
+		ob_start();
+		$handler->render_container();
+		$html = ob_get_clean();
+
+		// Assert
+		$this->assertSame( '<div id="editor-one-secondary-bar"></div>', $html );
 	}
 
 	public function test_register_container__renders_at_the_top_of_the_notices() {
@@ -400,6 +426,17 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 		$item->method( 'get_position' )->willReturn( $position );
 
 		$this->provider->register_level4_item( $item );
+	}
+
+	private function act_on_an_editor_one_page(): void {
+		$GLOBALS['current_screen'] = \WP_Screen::get( 'post' );
+		add_filter( 'elementor/editor-one/admin-edit-post-types', [ $this, 'filter_editor_one_post_types' ] );
+	}
+
+	public function filter_editor_one_post_types( array $post_types ): array {
+		$post_types[] = 'post';
+
+		return $post_types;
 	}
 
 	private function reset_menu_data_provider(): void {

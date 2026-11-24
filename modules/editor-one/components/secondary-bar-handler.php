@@ -69,8 +69,13 @@ class Secondary_Bar_Handler {
 			return;
 		}
 
+		// The placeholder is styled by the Editor One stylesheets, which are enqueued only on Editor One admin pages.
+		$placeholder = Menu_Data_Provider::instance()->is_editor_one_admin_page()
+			? $this->get_placeholder_markup( $bar )
+			: '';
+
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Markup is escaped in get_placeholder_markup().
-		echo '<div id="editor-one-secondary-bar">' . $this->get_placeholder_markup( $bar ) . '</div>';
+		echo '<div id="editor-one-secondary-bar">' . $placeholder . '</div>';
 	}
 
 	/**
