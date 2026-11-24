@@ -41,7 +41,7 @@ export type StorageContent = {
 	};
 };
 
-const learnMoreActionProps: Partial< ButtonProps > = {
+export const learnMoreActionProps: Partial< ButtonProps > = {
 	href: 'https://go.elementor.com/element-link-inside-link-infotip',
 	target: '_blank',
 	color: 'inherit',
