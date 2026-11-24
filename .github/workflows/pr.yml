@@ -2,6 +2,8 @@ name: PR
 
 on:
   pull_request:
+    # labeled is kept so run-tests / full-browser-compatibility still start CI.
+    # Other labels must not rerun install/build/lint/jest/phpunit/Playwright (ED-26492).
     types: [opened, synchronize, reopened, ready_for_review, labeled]
     branches:
       - main
@@ -22,7 +24,8 @@ jobs:
     name: Set Pending Playwright Status on Draft
     if: |
       github.event.pull_request.draft == true &&
-      github.event.action != 'ready_for_review'
+      github.event.action != 'ready_for_review' &&
+      (github.event.action != 'labeled' || contains(fromJSON('["run-tests","full-browser-compatibility"]'), github.event.label.name))
     runs-on: ubuntu-22.04
     permissions:
       statuses: write
@@ -43,7 +46,9 @@ jobs:
   detect-changes:
     name: Detect changes
     runs-on: ubuntu-22.04
-    if: startsWith( github.repository, 'elementor/' )
+    if: |
+      startsWith( github.repository, 'elementor/' ) &&
+      (github.event.action != 'labeled' || contains(fromJSON('["run-tests","full-browser-compatibility"]'), github.event.label.name))
     outputs:
       js: ${{ steps.filter.outputs.js }}
       php: ${{ steps.filter.outputs.php }}
@@ -566,8 +571,14 @@ jobs:
       - playwright
     if: always() && !cancelled()
     steps:
+      - name: Skip aggregation for non-CI labels
+        if: github.event.action == 'labeled' && !contains(fromJSON('["run-tests","full-browser-compatibility"]'), github.event.label.name)
+        run: echo "Label '${{ github.event.label.name }}' does not request CI; required checks keep the previous run for this SHA."
+
       - name: Resolve pending Playwright commit status
-        if: github.event.pull_request.draft == false
+        if: |
+          github.event.pull_request.draft == false &&
+          (github.event.action != 'labeled' || contains(fromJSON('["run-tests","full-browser-compatibility"]'), github.event.label.name))
         continue-on-error: true
         uses: actions/github-script@v7
         env:
@@ -602,6 +613,7 @@ jobs:
               target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
             });
       - name: Validate required checks
+        if: github.event.action != 'labeled' || contains(fromJSON('["run-tests","full-browser-compatibility"]'), github.event.label.name)
         env:
           DETECT_CHANGES_RESULT: ${{ needs.detect-changes.result }}
           INSTALL_RESULT: ${{ needs.install.result }}
