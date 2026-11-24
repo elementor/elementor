@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ThemeProvider } from '@elementor/ui';
-import { render } from '@testing-library/react';
 import { type Range, type VirtualizerOptions } from '@tanstack/react-virtual';
+import { render } from '@testing-library/react';
 
 import { IconLibraryGrid } from '../icon-library-grid';
 
