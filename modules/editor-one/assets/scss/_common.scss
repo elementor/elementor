@@ -394,6 +394,12 @@
 		}
 	}
 
+	#elementor-system-info > h2,
+	#elementor-role-manager > h2 {
+		font-weight: 500;
+		font-size: 20px;
+	}
+
 	.elementor-settings-form-page h2 ~ p {
 		margin-block: 1em;
 		font-size: 1em;

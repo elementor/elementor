@@ -12,9 +12,7 @@ export function FinderButton() {
 				height: '100%',
 				flexShrink: 0,
 				display: 'flex',
-				alignItems: 'center',
-				paddingInlineStart: '27px',
-				paddingInlineEnd: '16px',
+				alignItems: 'stretch',
 			} }
 		>
 			<Box
@@ -36,14 +34,17 @@ export function FinderButton() {
 				disableRipple
 				onClick={ () => window.$e?.route?.( 'finder' ) }
 				sx={ {
-					padding: 0,
+					height: '100%',
+					paddingBlock: 0,
+					paddingInlineStart: '25px',
+					paddingInlineEnd: '14px',
 					borderRadius: 0,
 					'&:hover': {
 						backgroundColor: 'transparent',
 					},
 				} }
 			>
-				<SearchIcon fontSize="small" />
+				<SearchIcon sx={ { fontSize: 18 } } />
 			</IconButton>
 		</Box>
 	);
