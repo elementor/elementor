@@ -82,7 +82,7 @@ export const IconLibraryGrid = ( {
 			const rowIndexes = defaultRangeExtractor( range );
 			const focusedRow = Math.floor( focusedIndex / columnCount );
 
-			if ( items.length === 0 || rowIndexes.includes( focusedRow ) ) {
+			if ( focusedRow >= range.count || rowIndexes.includes( focusedRow ) ) {
 				return rowIndexes;
 			}
 
