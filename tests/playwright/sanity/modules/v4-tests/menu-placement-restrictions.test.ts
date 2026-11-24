@@ -72,8 +72,10 @@ test.describe( 'Menu placement restrictions @atomic-widgets', () => {
 	const copyAndPasteInto = async ( sourceId: string, targetId: string ) => {
 		const contextMenu = new ContextMenu( editor.page, testInfo );
 
-		await contextMenu.copyElement( sourceId );
-		await contextMenu.pasteElement( `[data-id="${ targetId }"]` );
+		await editor.openStructurePanel();
+		await editor.expandAllStructureNodes();
+		await contextMenu.copyElementFromNavigator( sourceId );
+		await contextMenu.pasteElementInNavigator( targetId );
 	};
 
 	const moveInto = async ( sourceId: string, targetId: string ) => {
