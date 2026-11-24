@@ -24,10 +24,10 @@ jest.mock( '@elementor/editor-mcp', () => {
 		registerTool = ( ...args: unknown[] ) => mockRegisterTool( ...args );
 	}
 	return {
-		registerServerOnAngiePlugin: async ( config: unknown ) => {
-			await mockWaitForReady();
-			mockRegisterLocalServer( config );
-		},
+		getAngieSdk: () => ( {
+			waitForReady: mockWaitForReady,
+			registerLocalServer: mockRegisterLocalServer,
+		} ),
 		McpServer: MockMcpServer,
 		ResourceTemplate: MockResourceTemplate,
 	};

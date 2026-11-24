@@ -37,7 +37,7 @@ class RetriableAngieSDK extends AngieMcpSdk {
 				await sleep();
 			}
 		}
-		throw new Error( 'Angie is not available' );
+		return new Promise( () => {} ); // never resolves
 	}
 }
 

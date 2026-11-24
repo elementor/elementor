@@ -45,7 +45,6 @@ export { redirectToInstallation } from './utils/redirect-to-installation';
 export { redirectToAppAdmin } from './utils/redirect-to-app-admin';
 export { installAngiePlugin, type InstallAngieResult } from './utils/install-angie-plugin';
 export { saveAngieConsent } from './utils/save-angie-consent';
-export { registerServerOnAngiePlugin } from './utils/register-server-on-angie-plugin';
 export * from './init';
 export {
 	dispatchMcpStylesAppliedEvent,

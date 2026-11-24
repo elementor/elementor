@@ -1,4 +1,4 @@
-import { registerServerOnAngiePlugin } from '@elementor/editor-mcp';
+import { getAngieSdk } from '@elementor/editor-mcp';
 import { waitForElementorEditor } from '@elementor/elementor-mcp-common';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
@@ -41,12 +41,9 @@ export async function createElementorServer(): Promise< McpServer > {
 
 	setupEditorSelectionListener( server );
 
-	await registerServerOnAngiePlugin( {
-		server,
-		version: VERSION,
-		description: SHORT_DESCRIPTION,
-		name: 'Elementor',
-	} );
+	const sdk = getAngieSdk();
+	await sdk.waitForReady();
+	sdk.registerLocalServer( { server, version: VERSION, description: SHORT_DESCRIPTION, name: 'Elementor' } );
 
 	return server;
 }
