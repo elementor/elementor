@@ -99,15 +99,16 @@ export default class extends Marionette.CompositeView {
 		return elementor.hooks.applyFilters( 'navigator/element/title', this.model.getTitle(), this.model );
 	}
 
+	getNavigatorIcon() {
+		return elementor.hooks.applyFilters( 'navigator/element/icon', this.model.getIcon(), this.model );
+	}
+
 	templateHelpers() {
 		const helpers = {};
 
 		if ( ! this.isNavigatorContainer() ) {
 			helpers.title = this.getNavigatorTitle();
-
-			helpers.icon = 'section' === this.model.get( 'elType' )
-				? ''
-				: elementor.hooks.applyFilters( 'navigator/element/icon', this.model.getIcon(), this.model );
+			helpers.icon = 'section' === this.model.get( 'elType' ) ? '' : this.getNavigatorIcon();
 		}
 
 		return helpers;
@@ -448,7 +449,7 @@ export default class extends Marionette.CompositeView {
 		}
 
 		if ( undefined !== settingsModel.changed.presetIcon ) {
-			this.ui.icon.html( `<i class="${ this.model.attributes.icon }"></i>` );
+			this.ui.icon.html( `<i class="${ this.getNavigatorIcon() }"></i>` );
 		}
 
 		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
