@@ -27,8 +27,24 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency:
+  group: create-version-change-${{ github.repository }}
+  cancel-in-progress: false
+
 jobs:
+  guard-main-only:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-22.04
+    permissions: {}
+    steps:
+      - name: Fail if not run from main
+        run: |
+          echo "::error::Run this workflow from main"
+          exit 1
+
   create-version-change:
+    if: github.ref == 'refs/heads/main'
+    environment: release-owners
     runs-on: ubuntu-22.04
     env:
       GH_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
@@ -36,6 +52,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
+          ref: main
           fetch-depth: 0
           token: ${{ secrets.MAINTAIN_TOKEN }}
           persist-credentials: true
@@ -150,17 +167,20 @@ jobs:
           echo "Branch $DEV_BRANCH pushed successfully"
 
       - name: Create pull request
+        id: create-pr
         if: github.event.inputs.dry_run != 'true'
         run: |
           DEV_BRANCH="${{ steps.calculate.outputs.dev_branch }}"
           NEXT_VERSION="${{ steps.calculate.outputs.next_version }}"
 
-          if gh pr list --head "$DEV_BRANCH" --base main --state open | grep -q .; then
+          EXISTING_PR_URL=$(gh pr list --head "$DEV_BRANCH" --base main --state open --json url --jq '.[0].url // empty')
+          if [ -n "$EXISTING_PR_URL" ]; then
+            echo "pr_url=$EXISTING_PR_URL" >> "$GITHUB_OUTPUT"
             echo "PR already exists for branch $DEV_BRANCH"
             exit 0
           fi
 
-          gh pr create \
+          PR_URL=$(gh pr create \
             --base main \
             --head "$DEV_BRANCH" \
             --title "chore: bump version to $NEXT_VERSION" \
@@ -172,7 +192,20 @@ jobs:
           - Updated version in packages
 
           **Created by:** GitHub Actions workflow
-          **Branch:** \`$DEV_BRANCH\`"
+          **Branch:** \`$DEV_BRANCH\`")
 
+          echo "pr_url=$PR_URL" >> "$GITHUB_OUTPUT"
           echo "PR created successfully for $DEV_BRANCH"
+
+      - name: Announce beta branch-out to Slack
+        if: ${{ !cancelled() && steps.run-script.outputs.beta_reset == 'true' && github.event.inputs.dry_run != 'true' }}
+        continue-on-error: true
+        uses: elementor/elementor-editor-github-actions/actions/announce-branch-structure@main
+        with:
+          event: beta-branch-out
+          slack-token: ${{ secrets.SLACK_TOKEN }}
+          slack-channel: ${{ secrets.SLACK_CHANNEL_BRANCH_OUT }}
+          beta-version: ${{ steps.run-script.outputs.beta_version }}
+          main-version: ${{ steps.calculate.outputs.next_version }}
+          bump-pr-outcome: ${{ steps.create-pr.outcome }}
 
