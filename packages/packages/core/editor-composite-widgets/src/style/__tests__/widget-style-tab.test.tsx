@@ -38,8 +38,16 @@ jest.mock( '@elementor/editor-editing-panel', () => {
 		children: React.ReactNode;
 	} ) => createElement( 'section', { 'aria-label': `Style ${ id } @ ${ meta.breakpoint }` }, children );
 
+	const getElementLocalStyle = ( elementId: string ) => {
+		const { getElementStyles } = jest.requireActual( '@elementor/editor-elements' );
+		const [ styleId ] = Object.keys( getElementStyles( elementId ) ?? {} );
+
+		return styleId ? { styleId, provider: null } : null;
+	};
+
 	return {
 		...actual,
+		getElementLocalStyle,
 		StyleTab: () => createElement( 'div', null, 'Root style tab' ),
 		StyleProvider: StyleProviderProbe,
 		StyleInheritanceProvider: ( { children }: { children: React.ReactNode } ) => children,

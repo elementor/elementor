@@ -1,10 +1,10 @@
-import { type ElementID, getContainer, styleRerenderEvents } from '@elementor/editor-elements';
+import { getElementClassesProp, getElementLocalStyle } from '@elementor/editor-editing-panel';
+import { type ElementID, getContainer, styleRerenderEvents, type V1Element } from '@elementor/editor-elements';
 import { type StyleDefinitionID } from '@elementor/editor-styles';
 import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 
-import { findWidgetParts } from '../general/find-widget-part';
+import { findWidgetPart } from '../general/find-widget-part';
 import { toWidgetPartElement, type WidgetPartElement } from '../general/use-widget-part-elements';
-import { getClassesProp, getLocalStyleId } from './update-local-styles';
 
 export type QuickEditTargets = {
 	readTarget: WidgetPartElement;
@@ -32,10 +32,12 @@ function getQuickEditTargets( rootId: ElementID, parts: string[] ): QuickEditTar
 		return null;
 	}
 
-	const containers = parts.flatMap( ( part ) => findWidgetParts( root, part ) );
+	const containers = parts
+		.map( ( part ) => findWidgetPart( root, part ) )
+		.filter( ( container ): container is V1Element => !! container );
 	const [ firstContainer ] = containers;
 	const readTarget = firstContainer ? toWidgetPartElement( firstContainer ) : null;
-	const classesProp = firstContainer ? getClassesProp( firstContainer.id ) : null;
+	const classesProp = firstContainer ? getElementClassesProp( firstContainer.id ) : null;
 
 	if ( ! readTarget || ! classesProp ) {
 		return null;
@@ -43,7 +45,7 @@ function getQuickEditTargets( rootId: ElementID, parts: string[] ): QuickEditTar
 
 	return {
 		readTarget,
-		readStyleId: getLocalStyleId( firstContainer.id ),
+		readStyleId: getElementLocalStyle( firstContainer.id )?.styleId ?? null,
 		classesProp,
 		elementIds: containers.map( ( container ) => container.id ),
 	};

@@ -11,12 +11,14 @@ import { renderHook } from '@testing-library/react';
 import { useClassesProp } from '../../contexts/classes-prop-context';
 import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
-import { StylesFieldsWriteProvider } from '../../contexts/styles-fields-write-context';
+import { StylesFieldTargetsProvider } from '../../contexts/styles-field-targets-context';
+import { getElementClassesProp, getElementLocalStyle } from '../../utils/element-local-style';
 import { useStylesFields } from '../use-styles-fields';
 
 jest.mock( '../../contexts/element-context' );
 jest.mock( '../../contexts/style-context' );
 jest.mock( '../../contexts/classes-prop-context' );
+jest.mock( '../../utils/element-local-style' );
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
 	deleteElementStyle: jest.fn(),
@@ -202,30 +204,127 @@ describe( 'useStylesFields', () => {
 		expect( result.current.values?.[ 'prop-1' ] ).toBe( 'updated-value' );
 	} );
 
-	it( 'should hand the change to the write provider instead of writing the element style', () => {
-		// Arrange.
-		jest.mocked( useStyle ).mockReturnValue( {
-			id: null,
-			provider: null,
-			meta: { breakpoint: null, state: null },
-		} as StyleValue );
+	describe( 'with a targets context', () => {
+		const LOCAL_STYLE_ID = 'target-a-local-style';
+		const CREATED_STYLE_ID = 'target-b-local-style';
+		const META = { breakpoint: null, state: null };
 
-		jest.mocked( useClassesProp ).mockReturnValue( 'test-classes-prop' );
+		const createLocalStylesProvider = () =>
+			createMockStylesProvider( { key: 'document-elements-1' }, [
+				{
+					id: LOCAL_STYLE_ID,
+					type: 'class',
+					label: 'local',
+					variants: [ { meta: META, props: { 'test-prop': 'previous-value' }, custom_css: null } ],
+				},
+			] );
 
-		const write = jest.fn();
+		const renderWithTargets = ( elementIds: string[] ) =>
+			renderHook( () => useStylesFields< { 'test-prop': string } >( [ 'test-prop' ] ), {
+				wrapper: ( { children } ) => createElement( StylesFieldTargetsProvider, { elementIds }, children ),
+			} );
 
-		const { result } = renderHook( () => useStylesFields< { 'test-prop': string } >( [ 'test-prop' ] ), {
-			wrapper: ( { children } ) => createElement( StylesFieldsWriteProvider, { write }, children ),
+		beforeEach( () => {
+			jest.mocked( useClassesProp ).mockReturnValue( 'test-classes-prop' );
+			jest.mocked( getElementClassesProp ).mockReturnValue( 'classes' );
+			jest.mocked( createElementStyle ).mockReturnValue( CREATED_STYLE_ID );
 		} );
 
-		// Act.
-		result.current.setValues( { 'test-prop': 'test-value' }, { history: { propDisplayName: 'Test Prop' } } );
+		it( "should update one target's local style and create the other's in one history item, undo both and redo with the created id", () => {
+			// Arrange.
+			const localProvider = createLocalStylesProvider();
 
-		jest.runAllTimers();
+			jest.mocked( useStyle ).mockReturnValue( {
+				id: LOCAL_STYLE_ID,
+				provider: localProvider,
+				meta: META,
+				setId: jest.fn(),
+				setMetaState: jest.fn(),
+			} );
+			jest.mocked( getElementLocalStyle ).mockImplementation( ( elementId ) =>
+				elementId === 'target-a' ? { styleId: LOCAL_STYLE_ID, provider: localProvider } : null
+			);
+			jest.mocked( getElementLabel ).mockImplementation( ( id ) => ( id === 'target-a' ? 'Target A' : '' ) );
 
-		// Assert.
-		expect( write ).toHaveBeenCalledWith( { 'test-prop': 'test-value' }, { propDisplayName: 'Test Prop' } );
-		expect( createElementStyle ).not.toHaveBeenCalled();
-		expect( historyMock.instance.get() ).toBeNull();
+			const { result } = renderWithTargets( [ 'target-a', 'target-b' ] );
+
+			// Act.
+			act( () => {
+				result.current.setValues( { 'test-prop': 'new-value' }, { history: { propDisplayName: 'Test Prop' } } );
+			} );
+
+			jest.runAllTimers();
+
+			// Assert.
+			expect( localProvider.actions.updateProps ).toHaveBeenCalledWith(
+				{ id: LOCAL_STYLE_ID, meta: META, props: { 'test-prop': 'new-value' } },
+				{ elementId: 'target-a' }
+			);
+			expect( createElementStyle ).toHaveBeenCalledWith( {
+				elementId: 'target-b',
+				classesProp: 'classes',
+				meta: META,
+				label: 'local',
+				props: { 'test-prop': 'new-value' },
+			} );
+			expect( historyMock.instance.get()?.title ).toBe( 'Target A' );
+			expect( historyMock.instance.get()?.subTitle ).toBe( 'Test Prop edited' );
+
+			// Act.
+			act( () => {
+				historyMock.instance.undo();
+			} );
+
+			// Assert.
+			expect( localProvider.actions.updateProps ).toHaveBeenLastCalledWith(
+				{ id: LOCAL_STYLE_ID, meta: META, props: { 'test-prop': 'previous-value' }, mode: 'replace' },
+				{ elementId: 'target-a' }
+			);
+			expect( deleteElementStyle ).toHaveBeenCalledWith( 'target-b', CREATED_STYLE_ID );
+
+			// Act.
+			act( () => {
+				historyMock.instance.redo();
+			} );
+
+			// Assert.
+			expect( createElementStyle ).toHaveBeenLastCalledWith(
+				expect.objectContaining( { elementId: 'target-b', styleId: CREATED_STYLE_ID } )
+			);
+		} );
+
+		it( "should write the targets' local styles, not the selected global class", () => {
+			// Arrange.
+			const globalProvider = createMockStylesProvider( { key: 'global-classes' }, [
+				{
+					id: 'global-class',
+					type: 'class',
+					label: 'global',
+					variants: [ { meta: META, props: {}, custom_css: null } ],
+				},
+			] );
+
+			jest.mocked( useStyle ).mockReturnValue( {
+				id: 'global-class',
+				provider: globalProvider,
+				meta: META,
+				setId: jest.fn(),
+				setMetaState: jest.fn(),
+			} );
+			jest.mocked( getElementLocalStyle ).mockReturnValue( null );
+
+			const { result } = renderWithTargets( [ 'target-a' ] );
+
+			// Act.
+			act( () => {
+				result.current.setValues( { 'test-prop': 'new-value' }, { history: { propDisplayName: 'Test Prop' } } );
+			} );
+
+			jest.runAllTimers();
+
+			// Assert.
+			expect( globalProvider.actions.updateProps ).not.toHaveBeenCalled();
+			expect( createElementStyle ).toHaveBeenCalledWith( expect.objectContaining( { elementId: 'target-a' } ) );
+		} );
 	} );
 } );
