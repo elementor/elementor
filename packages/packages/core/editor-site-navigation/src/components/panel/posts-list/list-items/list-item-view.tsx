@@ -91,9 +91,7 @@ export default function ListItemView( { post }: { post: Post } ) {
 					sx={ getContentPanelListItemSx( showListItemActions ) }
 					secondaryAction={
 						<Stack alignItems="center" direction="row" spacing={ 0 }>
-							{ showListItemActions && (
-								<SiteContentListItemActionsSlot post={ post } title={ title } />
-							) }
+							{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
 							<IconButton
 								aria-label={ __( 'More actions', 'elementor' ) }
 								size="tiny"
