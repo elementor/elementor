@@ -44,7 +44,9 @@ describe( '<SecondaryBar />', () => {
 		render( <SecondaryBar config={ createConfig( { tabs } ) } /> );
 
 		// Assert
-		expect( within( screen.getByRole( 'link', { name: /Readiness Score/ } ) ).getByText( 'Beta' ) ).toBeInTheDocument();
+		expect(
+			within( screen.getByRole( 'link', { name: /Readiness Score/ } ) ).getByText( 'Beta' )
+		).toBeInTheDocument();
 		expect( within( screen.getByRole( 'link', { name: 'Tools' } ) ).queryByText( 'Beta' ) ).not.toBeInTheDocument();
 		expect( screen.getAllByText( 'Beta' ) ).toHaveLength( 1 );
 	} );

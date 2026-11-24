@@ -64,7 +64,9 @@ export function SecondaryBar( { config }: Props ) {
 						sx={ getTabSx( tab.is_active ) }
 					>
 						{ tab.label }
-						{ tab.tag && <Chip size="tiny" shape="rounded" variant="outlined" label={ tab.tag } sx={ { ml: 1 } } /> }
+						{ tab.tag && (
+							<Chip size="tiny" shape="rounded" variant="outlined" label={ tab.tag } sx={ { ml: 1 } } />
+						) }
 					</Link>
 				) ) }
 			</Stack>
