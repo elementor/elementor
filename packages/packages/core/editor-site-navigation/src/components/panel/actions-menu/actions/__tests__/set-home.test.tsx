@@ -148,4 +148,35 @@ describe( '@elementor/editor-site-navigation - SetHome', () => {
 		const button = screen.getByRole( 'menuitem' );
 		expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
 	} );
+
+	it( 'should render Remove as homepage disabled when the user cant manage options', () => {
+		jest.mocked( useUser ).mockReturnValue( {
+			isLoading: false,
+			data: {
+				capabilities: {
+					manage_options: false,
+				},
+			},
+		} as unknown as ReturnType< typeof useUser > );
+
+		const post: Post = {
+			id: 1,
+			title: {
+				rendered: 'Test Page',
+			},
+			status: 'publish',
+			type: 'page',
+			link: 'https://example.local/test-page',
+			isHome: true,
+			user_can: {
+				edit: true,
+				delete: true,
+			},
+		};
+
+		renderWithTheme( <SetHome post={ post } closeMenu={ () => {} } /> );
+
+		const button = screen.getByRole( 'menuitem', { name: 'Remove as homepage' } );
+		expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
+	} );
 } );
