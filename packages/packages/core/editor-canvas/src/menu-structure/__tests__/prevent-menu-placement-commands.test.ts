@@ -1,4 +1,4 @@
-import { createHooksRegistry, setupHooksRegistry } from 'test-utils';
+import { createHooksRegistry, createMockElement, setupHooksRegistry } from 'test-utils';
 import { getAnchoredAncestorId, isElementAnchored, type V1Element } from '@elementor/editor-elements';
 import { notify } from '@elementor/editor-notifications';
 
@@ -24,11 +24,7 @@ const MENU_IN_MENU_ID = 'menu-in-menu-blocked';
 let nextId = 0;
 
 function createElement( type: string, children: V1Element[] = [] ): V1Element {
-	const element = {
-		id: `${ type }-${ nextId++ }`,
-		model: { get: ( key: string ) => ( 'elType' === key ? type : undefined ) },
-		children,
-	} as unknown as V1Element;
+	const element = createMockElement( { model: { id: `${ type }-${ nextId++ }`, elType: type }, children } );
 
 	children.forEach( ( child ) => {
 		child.parent = element;
