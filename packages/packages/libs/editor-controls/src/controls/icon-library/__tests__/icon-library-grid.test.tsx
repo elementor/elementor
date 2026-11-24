@@ -24,7 +24,6 @@ jest.mock( '@tanstack/react-virtual', () => ( {
 	} ),
 } ) );
 
-
 const TOTAL_ICONS = 40;
 const SELECTED_ICON_INDEX = 30;
 const SEARCH_RESULT_COUNT = 2;
