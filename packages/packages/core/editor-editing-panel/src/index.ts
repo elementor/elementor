@@ -10,7 +10,7 @@ export { ControlLabel } from './components/control-label';
 export { injectIntoClassSelectorActions } from './components/css-classes/css-class-selector';
 export { CustomCssIndicator } from './components/custom-css-indicator';
 export { injectIntoPanelHeaderTop } from './components/editing-panel';
-export { EditingPanelTabs, injectIntoSettingsTab } from './components/editing-panel-tabs';
+export { EditingPanelTabs, injectIntoSettingsTab, injectIntoStyleTabContent } from './components/editing-panel-tabs';
 export { Section } from './components/section';
 export { SectionContent } from './components/section-content';
 export { SectionsList } from './components/sections-list';
@@ -18,7 +18,7 @@ export { SettingsControl } from './components/settings-control';
 export { SettingsTab } from './components/settings-tab';
 export { SettingsField } from './controls-registry/settings-field';
 export { StyleIndicator } from './components/style-indicator';
-export { injectIntoStyleTab, StyleTabSlot } from './components/style-tab';
+export { injectIntoStyleTab, StyleTab, StyleTabSlot } from './components/style-tab';
 export { StyleSections } from './components/style-sections';
 export {
 	STYLE_SECTION_NAMES,
@@ -41,6 +41,7 @@ export { ClassesPropProvider, useClassesProp } from './contexts/classes-prop-con
 export { ElementProvider, useElement } from './contexts/element-context';
 export { StyleProvider, useStyle } from './contexts/style-context';
 export { StyleInheritanceProvider } from './contexts/styles-inheritance-context';
+export { StylesFieldTargetsProvider } from './contexts/styles-field-targets-context';
 export { Control as BaseControl } from './controls-registry/control';
 export { ControlTypeContainer } from './controls-registry/control-type-container';
 export { controlsRegistry, type ControlType } from './controls-registry/controls-registry';
@@ -55,6 +56,7 @@ export { init } from './init';
 export { usePanelActions, usePanelStatus } from './panel';
 export { registerStyleProviderToColors } from './provider-colors-registry';
 export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-indicators-registry';
+export { getStylesFieldComponent, type StylesFieldComponent } from './styles-field-registry';
 export { registerEditingPanelReplacement } from './editing-panel-replacement-registry';
 export { registerElementPanelDefaults, type ElementPanelDefaults } from './hooks/use-default-panel-settings';
 
@@ -69,6 +71,7 @@ export {
 	getUpdatedValues,
 	extractOrderedDependencies,
 } from './utils/prop-dependency-utils';
+export { getElementClassesProp, getElementLocalStyle } from './utils/element-local-style';
 export {
 	registerSubmenuToggle,
 	type SubmenuToggleProps,
