@@ -9,6 +9,8 @@ const mockLoadSidebarV2 = jest.fn();
 const mockTriggerAngie = jest.fn();
 const mockWaitForReady = jest.fn();
 const mockResetIfExpired = jest.fn();
+const mockCreateAngieSdk = jest.fn();
+const mockSetAngieSdk = jest.fn();
 const mockRegisterLocalServer = jest.fn();
 const mockSetAngieInteractionMode = jest.fn();
 const mockToggleAngieSidebar = jest.fn();
@@ -36,7 +38,9 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 		waitForReady: () => mockWaitForReady(),
 		registerLocalServer: ( ...args: unknown[] ) => mockRegisterLocalServer( ...args ),
 	} ) ),
-	resetAngieSdkIfDetectionExpired: () => mockResetIfExpired(),
+	createAngieSdk: () => mockCreateAngieSdk(),
+	setAngieSdk: ( ...args: unknown[] ) => mockSetAngieSdk( ...args ),
+	refreshAngieSdkIfDetectionExpired: () => mockResetIfExpired(),
 	LAYOUT_SIDEBAR: 'sidebar',
 	AngieInteractionMode: {
 		ASK: 'ask',
@@ -416,8 +420,16 @@ describe( 'editor angie host', () => {
 		expect( mockTriggerAngie ).not.toHaveBeenCalled();
 	} );
 
-	it( 'does not boot the SDK when the library initializes', () => {
+	it( 'provides the SDK to editor-mcp when the library initializes without booting it', () => {
+		// Arrange
+		const created = {};
+		mockCreateAngieSdk.mockReturnValueOnce( created );
+
+		// Act
 		init();
+
+		// Assert
+		expect( mockSetAngieSdk ).toHaveBeenCalledWith( created );
 
 		expect( AngieMcpSdkMock ).not.toHaveBeenCalled();
 	} );

@@ -47,25 +47,54 @@ const sleep = ( ms = 10_000 ) =>
 		setTimeout( resolve, ms );
 	} );
 
-export const resetSdkIfDetectionExpired = () => {
+const isMcpDisabled = () =>
+	// @ts-ignore - QUnit fails this
+	!! ( globalThis as Record< string, unknown > ).__ELEMENTOR_MCP_DISABLED__;
+
+let notifySdkReady: () => void;
+
+const sdkReady = new Promise< void >( ( resolve ) => {
+	notifySdkReady = resolve;
+} );
+
+export const createSDK = (): AngieMcpSdk => {
+	if ( isMcpDisabled() ) {
+		return {} as unknown as AngieMcpSdk;
+	}
+
+	return new RetriableAngieSDK( { appId: EDITOR_ANGIE_APP_ID } );
+};
+
+export const setSDK = ( instance: AngieMcpSdk ) => {
+	sdk = instance;
+	notifySdkReady();
+};
+
+export const refreshSdkIfDetectionExpired = () => {
 	if ( ! ( sdk instanceof RetriableAngieSDK ) || ! sdk.hasDetectionExpired() ) {
 		return false;
 	}
 
 	sdk.destroy();
-	sdk = undefined;
+	setSDK( createSDK() );
 
 	return true;
 };
 
-export const getSDK = () => {
-	// @ts-ignore - QUnit fails this
-	const isMCPDisabled = !! ( globalThis as Record< string, unknown > ).__ELEMENTOR_MCP_DISABLED__;
-	if ( isMCPDisabled ) {
-		return {} as unknown as AngieMcpSdk;
-	}
+export const getSDK = (): AngieMcpSdk => {
 	if ( ! sdk ) {
-		sdk = new RetriableAngieSDK( { appId: EDITOR_ANGIE_APP_ID } );
+		throw new Error( 'Angie SDK was not provided by editor-angie yet' );
 	}
+
 	return sdk;
+};
+
+export const waitForSDK = async () => {
+	await sdkReady;
+
+	return getSDK();
+};
+
+export const resetSdkForTests = () => {
+	sdk = undefined;
 };

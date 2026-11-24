@@ -1,6 +1,6 @@
 import { type AngieLocalServerConfig } from '@elementor-external/angie-sdk';
 
-import { getSDK } from './get-sdk';
+import { waitForSDK } from './get-sdk';
 
 type AngiePluginWindow = Window & {
 	elementorEditorAngie?: { isAngiePluginActive?: boolean };
@@ -12,7 +12,7 @@ export const registerServerOnAngiePlugin = async ( config: AngieLocalServerConfi
 	}
 
 	try {
-		const sdk = getSDK();
+		const sdk = await waitForSDK();
 
 		await sdk.waitForReady();
 		await sdk.registerLocalServer( config );

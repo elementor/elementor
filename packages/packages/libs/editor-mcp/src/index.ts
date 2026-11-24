@@ -1,6 +1,8 @@
 import './types/open-angie-request';
 
-import { getSDK } from './utils/get-sdk';
+import { type AngieMcpSdk as AngieMcpSdkType } from '@elementor-external/angie-sdk';
+
+import { createSDK, getSDK, refreshSdkIfDetectionExpired, setSDK } from './utils/get-sdk';
 export { EDITOR_ANGIE_APP_ID, getAngieIframe, MessageEventType as AngieMessageEvenetType } from './utils/get-sdk';
 export {
 	type AngieLocalServerConfig,
@@ -45,7 +47,9 @@ export { installAngiePlugin, type InstallAngieResult } from './utils/install-ang
 export { saveAngieConsent } from './utils/save-angie-consent';
 export const getAngieSdk = () => getSDK();
 export { registerServerOnAngiePlugin } from './utils/register-server-on-angie-plugin';
-export { resetSdkIfDetectionExpired as resetAngieSdkIfDetectionExpired } from './utils/get-sdk';
+export const createAngieSdk = () => createSDK();
+export const setAngieSdk = ( sdk: AngieMcpSdkType ) => setSDK( sdk );
+export const refreshAngieSdkIfDetectionExpired = () => refreshSdkIfDetectionExpired();
 export * from './init';
 export {
 	dispatchMcpStylesAppliedEvent,
