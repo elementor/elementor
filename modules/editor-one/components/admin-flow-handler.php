@@ -53,11 +53,36 @@ class Admin_Flow_Handler {
 		$redirect_url = $this->get_redirect_url( $page );
 
 		if ( empty( $redirect_url ) ) {
+			$redirect_url = $this->get_quick_start_redirect_url( $page );
+		}
+
+		if ( empty( $redirect_url ) ) {
 			return;
 		}
 
 		wp_safe_redirect( $redirect_url );
 		exit;
+	}
+
+	/**
+	 * The legacy Quick Start screen is not a destination in the new navigation, so it lands on Home.
+	 * Edit-posts-only users are skipped: they are sent to the templates list by the menu manager,
+	 * and they cannot access Home.
+	 */
+	public function get_quick_start_redirect_url( string $page ): string {
+		if ( Menu_Config::ELEMENTOR_MENU_SLUG !== $page ) {
+			return '';
+		}
+
+		if ( Menu_Data_Provider::get_current_user_capabilities()['is_edit_posts_user'] ) {
+			return '';
+		}
+
+		if ( ! current_user_can( Menu_Config::CAPABILITY_MANAGE_OPTIONS ) ) {
+			return '';
+		}
+
+		return Menu_Config::get_elementor_home_url();
 	}
 
 	/**
