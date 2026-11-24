@@ -8,6 +8,7 @@ import { openAngie, registerAngiePanelOpener, resetAngiePanelOpenerForTests } fr
 const mockLoadSidebarV2 = jest.fn();
 const mockTriggerAngie = jest.fn();
 const mockWaitForReady = jest.fn();
+const mockResetIfExpired = jest.fn();
 const mockRegisterLocalServer = jest.fn();
 const mockSetAngieInteractionMode = jest.fn();
 const mockToggleAngieSidebar = jest.fn();
@@ -35,6 +36,7 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 		waitForReady: () => mockWaitForReady(),
 		registerLocalServer: ( ...args: unknown[] ) => mockRegisterLocalServer( ...args ),
 	} ) ),
+	resetAngieSdkIfDetectionExpired: () => mockResetIfExpired(),
 	LAYOUT_SIDEBAR: 'sidebar',
 	AngieInteractionMode: {
 		ASK: 'ask',
@@ -228,6 +230,24 @@ describe( 'editor angie host', () => {
 
 		expect( mockWpSearchMcpServer ).not.toHaveBeenCalled();
 		expect( mockRegisterLocalServer ).not.toHaveBeenCalled();
+	} );
+
+	it( 'drops an expired SDK before it fetches the instance to boot', async () => {
+		// Arrange
+		mountIframe();
+		const calls: string[] = [];
+		mockResetIfExpired.mockImplementationOnce( () => calls.push( 'reset' ) );
+		AngieMcpSdkMock.mockImplementationOnce( () => {
+			calls.push( 'get' );
+
+			return { loadSidebarV2: mockLoadSidebarV2 };
+		} );
+
+		// Act
+		await bootAngieSdk();
+
+		// Assert
+		expect( calls ).toEqual( [ 'reset', 'get' ] );
 	} );
 
 	it( 'fails boot when the Angie container is missing', async () => {

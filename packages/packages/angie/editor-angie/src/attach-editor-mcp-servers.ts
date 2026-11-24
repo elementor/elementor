@@ -17,8 +17,7 @@ export const resetEditorMcpServersAttachmentForTests = (): void => {
 /**
  * Registers every editor MCP server on the Angie SDK booted by Core, once.
  * No plugin check here: Core only boots its SDK after `canUseAngiePluginSidebar()` said the plugin
- * sidebar does not host Angie, so that helper stays the single decision point. A startup Angie adapter
- * wraps editor-mcp's own SDK copy, not this instance, so it cannot stand in for this attach.
+ * sidebar does not host Angie, so that helper stays the single decision point.
  *
  * @param sdk - Angie SDK instance whose sidebar was loaded by Core.
  */

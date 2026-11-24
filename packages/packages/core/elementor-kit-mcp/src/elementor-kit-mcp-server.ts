@@ -1,4 +1,4 @@
-import { getAngieSdk, McpServer, ResourceTemplate } from '@elementor/editor-mcp';
+import { McpServer, registerServerOnAngiePlugin, ResourceTemplate } from '@elementor/editor-mcp';
 import { callWpApi, requireConfirmationMessage, waitForElementorEditor } from '@elementor/elementor-mcp-common';
 import { z } from '@elementor/schema';
 
@@ -371,9 +371,7 @@ The tool will permanently update the site's global design settings and return a 
 		}
 	);
 
-	const sdk = getAngieSdk();
-	await sdk.waitForReady();
-	sdk.registerLocalServer( {
+	await registerServerOnAngiePlugin( {
 		server,
 		version: VERSION,
 		description: SERVER_INSTRUCTIONS,

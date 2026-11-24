@@ -44,6 +44,8 @@ export { redirectToAppAdmin } from './utils/redirect-to-app-admin';
 export { installAngiePlugin, type InstallAngieResult } from './utils/install-angie-plugin';
 export { saveAngieConsent } from './utils/save-angie-consent';
 export const getAngieSdk = () => getSDK();
+export { registerServerOnAngiePlugin } from './utils/register-server-on-angie-plugin';
+export { resetSdkIfDetectionExpired as resetAngieSdkIfDetectionExpired } from './utils/get-sdk';
 export * from './init';
 export {
 	dispatchMcpStylesAppliedEvent,
