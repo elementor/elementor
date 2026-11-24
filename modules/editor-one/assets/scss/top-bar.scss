@@ -39,6 +39,28 @@
 	}
 }
 
+// Cross-document view transitions keep the bars in place while the next page loads, so mainly the content
+// changes. A transition runs only when both pages opt in, and this stylesheet is enqueued only on Editor One
+// admin pages, so navigating to or from any other admin page is unaffected. Unsupported browsers ignore it.
+@media (prefers-reduced-motion: no-preference) {
+	@view-transition {
+		navigation: auto;
+	}
+}
+
+#editor-one-top-bar > header {
+	view-transition-name: e-one-top-bar;
+}
+
+#editor-one-secondary-bar {
+	view-transition-name: e-one-secondary-bar;
+}
+
+::view-transition-group(e-one-top-bar),
+::view-transition-group(e-one-secondary-bar) {
+	animation-duration: 0s;
+}
+
 // Static stand-in printed by `Top_Bar_Handler::render_top_bar_container()` until React mounts `ElementorOneHeader`.
 // Values mirror the mounted header so the swap is not visible.
 .e-one-top-bar-placeholder {
