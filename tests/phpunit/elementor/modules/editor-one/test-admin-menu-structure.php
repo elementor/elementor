@@ -84,27 +84,58 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		$this->assertSame( $expected, $result );
 	}
 
-	public function test_construct__does_not_move_elementor_menu_item() {
+	public function test_move_to_position__places_elementor_right_before_hello() {
 		// Arrange
-		$GLOBALS['menu'] = [
+		$menu = [
+			'2' => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_HOME_MENU_SLUG ],
 			'20' => [ 'Pages', 'edit_pages', 'edit.php?post_type=page' ],
-			'58.5' => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_HOME_MENU_SLUG ],
+			'59.9' => [ 'Hello', 'manage_options', 'hello-elementor' ],
 		];
 
 		// Act
-		foreach ( $GLOBALS['wp_filter']['admin_menu']->callbacks as $callbacks ) {
-			foreach ( $callbacks as $callback ) {
-				$function = $callback['function'];
-
-				if ( is_array( $function ) && $this->structure === $function[0] ) {
-					call_user_func( $function );
-				}
-			}
-		}
+		$menu = $this->structure->move_to_position( $menu, Menu_Config::ELEMENTOR_HOME_MENU_SLUG, Menu_Config::MENU_POSITION );
+		uksort( $menu, fn( $a, $b ) => (float) $a <=> (float) $b );
 
 		// Assert
-		$this->assertSame( Menu_Config::ELEMENTOR_HOME_MENU_SLUG, $GLOBALS['menu']['58.5'][2] );
-		$this->assertArrayNotHasKey( '21', $GLOBALS['menu'] );
+		$this->assertArrayNotHasKey( '2', $menu );
+		$this->assertSame( Menu_Config::ELEMENTOR_HOME_MENU_SLUG, $menu['58.5'][2] );
+		$this->assertSame( [ '20', '58.5', '59.9' ], array_map( 'strval', array_keys( $menu ) ) );
+	}
+
+	public function test_move_to_position__uses_a_free_key_below_hello_when_position_is_taken() {
+		// Arrange
+		$other = [ 'Other', 'read', 'other' ];
+		$menu = [
+			'2' => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_HOME_MENU_SLUG ],
+			'58.5' => $other,
+			'59.9' => [ 'Hello', 'manage_options', 'hello-elementor' ],
+		];
+
+		// Act
+		$menu = $this->structure->move_to_position( $menu, Menu_Config::ELEMENTOR_HOME_MENU_SLUG, Menu_Config::MENU_POSITION );
+
+		// Assert
+		$this->assertSame( $other, $menu['58.5'] );
+		$this->assertSame( Menu_Config::ELEMENTOR_HOME_MENU_SLUG, $menu['58.51'][2] );
+		$this->assertArrayNotHasKey( '2', $menu );
+	}
+
+	public function test_move_to_position__leaves_the_menu_when_elementor_is_missing() {
+		// Arrange
+		$menu = [
+			'20' => [ 'Pages', 'edit_pages', 'edit.php?post_type=page' ],
+		];
+
+		// Act
+		$updated = $this->structure->move_to_position( $menu, Menu_Config::ELEMENTOR_HOME_MENU_SLUG, Menu_Config::MENU_POSITION );
+
+		// Assert
+		$this->assertSame( $menu, $updated );
+	}
+
+	public function test_place_elementor_above_hello__is_registered_late_on_admin_menu() {
+		// Assert
+		$this->assertSame( 10020, has_action( 'admin_menu', [ $this->structure, 'place_elementor_above_hello' ] ) );
 	}
 
 	public function test_build_submenu__orders_groups_and_keeps_upgrade_against_account() {
