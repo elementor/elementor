@@ -45,6 +45,16 @@ export type CompositeWidgetRepeater = {
 
 export type CompositeWidgetGeneralEntry = CompositeWidgetGeneralSection | CompositeWidgetRepeater;
 
+export type CompositeWidgetQuickEdit = {
+	label: string;
+	style_prop: string;
+	targets: string[];
+};
+
+export type CompositeWidgetStyle = {
+	quick_edit?: CompositeWidgetQuickEdit[];
+};
+
 export type CompositeWidgetDefinition = {
 	id: string;
 	version: number;
@@ -52,6 +62,7 @@ export type CompositeWidgetDefinition = {
 	icon?: string;
 	template: CompositeWidgetTemplateNode;
 	general?: CompositeWidgetGeneralEntry[];
+	style?: CompositeWidgetStyle;
 	archived?: boolean;
 };
 
