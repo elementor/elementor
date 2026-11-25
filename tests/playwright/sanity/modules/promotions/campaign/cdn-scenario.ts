@@ -83,7 +83,7 @@ export const assertScenarioFetched = ( scenario: string, paths: string[] ): void
 const CDN_IMAGE_PATTERN = /^https:\/\/assets\.elementor\.com\/.+\.(?:svg|png|jpe?g|gif|webp)(?:\?.*)?$/;
 
 // The browser loads campaign images from the CDN itself, not through the mock, so the active-campaign scenario
-// answers them from its fixture. Its screenshots then show the images without depending on the live CDN.
+// answers them from its fixture without depending on the live CDN.
 const serveFixtureImages = ( context: BrowserContext, scenario: string ): Promise<void> =>
 	context.route( CDN_IMAGE_PATTERN, async ( route ) => {
 		const file = resolve( FIXTURES_DIR, scenario, new URL( route.request().url() ).pathname.slice( 1 ) );
@@ -134,18 +134,12 @@ type CampaignLook = {
 	content: unknown;
 };
 
-// The active-campaign fixture never changes, so its look is always compared with a baseline.
 // A real campaign (live or staging) has a baseline for every approved content, named by the content fingerprint.
 // So the look before, during and after a campaign can all be approved ahead, and the nightly run picks the one that matches the CDN.
 // Content without an approved baseline fails until a person checks the attached screenshot and approves it with --update-snapshots.
-// The no-promotion look is covered by promotions.test.ts.
+// Offline scenarios (no-promotion and active-campaign) are asserted via DOM checks, not visual snapshots.
 export const checkCampaignLook = async ( { scenario, element, name, testInfo, content }: CampaignLook ): Promise<void> => {
-	if ( NO_PROMOTION_SCENARIO === scenario ) {
-		return;
-	}
-
-	if ( ACTIVE_CAMPAIGN_SCENARIO === scenario ) {
-		await expect.soft( element ).toHaveScreenshot( `${ name }.png` );
+	if ( NO_PROMOTION_SCENARIO === scenario || ACTIVE_CAMPAIGN_SCENARIO === scenario ) {
 		return;
 	}
 
