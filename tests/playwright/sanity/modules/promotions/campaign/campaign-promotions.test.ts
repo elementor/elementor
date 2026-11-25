@@ -11,6 +11,7 @@ import {
 	NO_PROMOTION_SCENARIO,
 	assertScenarioFetched,
 	cdnFieldOrDefault,
+	checkCampaignLook,
 	readEditorPromotion,
 	UPSELL_PATH,
 	V4_PROMOTIONS_PATH,
@@ -115,7 +116,7 @@ for ( const scenario of [ ...CAMPAIGN_SCENARIOS, NO_PROMOTION_SCENARIO ] ) {
 			expect( redirect.headers().location ).toBe( cdnFieldOrDefault( promotion, 'url', CORE_DEFAULTS.sideMenu.url ) );
 		} );
 
-		test( 'Conversion banner', async ( { page } ) => {
+		test( 'Conversion banner', async ( { page }, testInfo ) => {
 			// Arrange.
 			const promotion = readEditorPromotion( scenario, 'conversion-banner' );
 			const isCdnBanner = Boolean( promotion.is_active && promotion.title && promotion.cta_url );
@@ -137,12 +138,13 @@ for ( const scenario of [ ...CAMPAIGN_SCENARIOS, NO_PROMOTION_SCENARIO ] ) {
 					.toHaveText( isCdnBanner ? cdnFieldOrDefault( promotion, 'cta_text', CORE_DEFAULTS.conversionBanner.ctaText ) : CORE_DEFAULTS.conversionBanner.ctaText );
 				await expect( button )
 					.toHaveAttribute( 'href', isCdnBanner ? String( promotion.cta_url ) : CORE_DEFAULTS.conversionBanner.ctaUrl );
+				await checkCampaignLook( scenario, banner, 'conversion-banner', testInfo, [ banner.locator( 'img' ) ] );
 			} finally {
 				await restoreConversionBannerUnlock();
 			}
 		} );
 
-		test( 'Dashboard pointer', async ( { page } ) => {
+		test( 'Dashboard pointer', async ( { page }, testInfo ) => {
 			// Arrange.
 			const promotion = readEditorPromotion( scenario, 'pointer' );
 			const isPointerShown = Boolean( promotion.is_active && promotion.title && promotion.cta_url );
@@ -165,6 +167,7 @@ for ( const scenario of [ ...CAMPAIGN_SCENARIOS, NO_PROMOTION_SCENARIO ] ) {
 			await expect( pointer.locator( 'p' ).first() ).toHaveText( cdnFieldOrDefault( promotion, 'text', '' ) );
 			await expect( pointer.locator( 'a.button-primary' ) ).toHaveText( cdnFieldOrDefault( promotion, 'cta_text', CORE_DEFAULTS.pointerCtaText ) );
 			await expect( pointer.locator( 'a.button-primary' ) ).toHaveAttribute( 'href', String( promotion.cta_url ) );
+			await checkCampaignLook( scenario, pointer, 'dashboard-pointer', testInfo, [ pointer.locator( 'img' ) ] );
 		} );
 
 		test( 'Editor widgets panel sticky footer', async ( { page, apiRequests }, testInfo ) => {
@@ -181,9 +184,10 @@ for ( const scenario of [ ...CAMPAIGN_SCENARIOS, NO_PROMOTION_SCENARIO ] ) {
 			await expect( sticky ).toContainText( cdnFieldOrDefault( promotion, 'message', CORE_DEFAULTS.stickyPanel.message ) );
 			await expect( link ).toHaveText( cdnFieldOrDefault( promotion, 'button_text', CORE_DEFAULTS.stickyPanel.buttonText ) );
 			await expect( link ).toHaveAttribute( 'href', cdnFieldOrDefault( promotion, 'url', CORE_DEFAULTS.stickyPanel.url ) );
+			await checkCampaignLook( scenario, page.locator( '#elementor-panel-get-pro-elements-sticky' ), 'widgets-panel-sticky-footer', testInfo );
 		} );
 
-		test( 'Theme Builder promotion header button', async ( { page } ) => {
+		test( 'Theme Builder promotion header button', async ( { page }, testInfo ) => {
 			// Arrange.
 			const promotion = readEditorPromotion( scenario, 'theme-builder' );
 
@@ -194,6 +198,7 @@ for ( const scenario of [ ...CAMPAIGN_SCENARIOS, NO_PROMOTION_SCENARIO ] ) {
 			const button = page.locator( '.e-site-editor__promotion .page-header' ).getByRole( 'link' );
 			await expect( button ).toHaveText( cdnFieldOrDefault( promotion, 'button_text', CORE_DEFAULTS.themeBuilder.buttonText ), { timeout: timeouts.longAction } );
 			await expect( button ).toHaveAttribute( 'href', cdnFieldOrDefault( promotion, 'url', CORE_DEFAULTS.themeBuilder.url ) );
+			await checkCampaignLook( scenario, page.locator( '.e-site-editor__promotion .page-header' ), 'theme-builder-header', testInfo );
 		} );
 
 		test( 'V4 promotions and widget upsell images', async ( { page, apiRequests }, testInfo ) => {
@@ -258,9 +263,11 @@ for ( const scenario of CAMPAIGN_SCENARIOS ) {
 			for ( const link of proOnlyLinks ) {
 				await expect( drawer.locator( `a[href="${ link }"]` ) ).toHaveCount( 0 );
 			}
+
+			await checkCampaignLook( scenario, drawer, 'whats-new-drawer', testInfo, [ drawer.locator( 'img' ) ] );
 		} );
 
-		test( 'Home screen sidebar banner', async ( { page } ) => {
+		test( 'Home screen sidebar banner', async ( { page }, testInfo ) => {
 			// Arrange.
 			const variant = readSidebarPromotion( scenario, FREE_LICENSE );
 			assertActiveCampaignFixture( scenario, !! variant?.data.link?.includes( 'e2e-campaign' ), 'have an e2e sidebar banner for Free' );
@@ -273,6 +280,7 @@ for ( const scenario of CAMPAIGN_SCENARIOS ) {
 			const banner = page.locator( `#e-home-screen a[href="${ variant.data.link }"]` );
 			await expect( banner ).toBeVisible( { timeout: timeouts.longAction } );
 			await expect( banner.locator( 'img' ) ).toHaveAttribute( 'src', variant.data.image );
+			await checkCampaignLook( scenario, banner, 'home-sidebar-banner', testInfo, [ banner.locator( 'img' ) ] );
 		} );
 	} );
 }

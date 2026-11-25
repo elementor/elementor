@@ -1,6 +1,6 @@
 import { readFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
-import { type BrowserContext } from '@playwright/test';
+import { type BrowserContext, type Locator, type TestInfo, expect } from '@playwright/test';
 
 export const ACTIVE_CAMPAIGN_SCENARIO = 'active-campaign';
 export const NO_PROMOTION_SCENARIO = 'no-promotion';
@@ -81,6 +81,22 @@ export const assertScenarioFetched = ( scenario: string, paths: string[] ): void
 
 export const useCdnScenario = async ( context: BrowserContext, baseURL: string, scenario: string ): Promise<void> => {
 	await context.addCookies( [ { name: SCENARIO_COOKIE, value: scenario, url: baseURL } ] );
+};
+
+// The active-campaign fixture never changes, so its look is compared with a baseline, with remote images masked.
+// Other campaign scenarios, like `live`, change with every campaign, so their look is attached to the report for a person to check.
+// The no-promotion look is covered by promotions.test.ts.
+export const checkCampaignLook = async ( scenario: string, element: Locator, name: string, testInfo: TestInfo, images: Locator[] = [] ): Promise<void> => {
+	if ( NO_PROMOTION_SCENARIO === scenario ) {
+		return;
+	}
+
+	if ( ACTIVE_CAMPAIGN_SCENARIO === scenario ) {
+		await expect.soft( element ).toHaveScreenshot( `${ name }.png`, { mask: images } );
+		return;
+	}
+
+	await testInfo.attach( `${ scenario }-${ name }`, { body: await element.screenshot(), contentType: 'image/png' } );
 };
 
 export const readEditorPromotion = ( scenario: string, name: EditorPromotionName ): EditorPromotion =>
