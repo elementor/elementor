@@ -334,7 +334,7 @@ class Admin extends App {
 	 * @return array An array of plugin action links.
 	 */
 	public function plugin_action_links( $links ) {
-		$settings_link = sprintf( '<a href="%1$s">%2$s</a>', admin_url( 'admin.php?page=' . Settings::PAGE_ID ), esc_html__( 'Settings', 'elementor' ) );
+		$settings_link = sprintf( '<a href="%1$s">%2$s</a>', Settings::get_settings_page_url(), esc_html__( 'Settings', 'elementor' ) );
 
 		array_unshift( $links, $settings_link );
 
@@ -1063,7 +1063,7 @@ class Admin extends App {
 
 		$settings = [
 			'home_url' => home_url(),
-			'settings_url' => Settings::get_url(),
+			'settings_url' => Settings::get_settings_page_url(),
 			'user' => [
 				'introduction' => User::get_introduction_meta(),
 				'restrictions' => Plugin::$instance->role_manager->get_user_restrictions_array(),

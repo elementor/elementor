@@ -150,7 +150,7 @@ $editing_panel_sticky_promotion = $show_editing_panel_sticky_promotion ? Sticky_
 		printf(
 			/* translators: %1$s Link open tag, %2$s: Link close tag. */
 			esc_html__( 'You can enable it from the %1$sElementor settings page%2$s.', 'elementor' ),
-			'<a href="' . esc_url( Settings::get_url() ) . '" target="_blank">',
+			'<a href="' . esc_url( Settings::get_settings_page_url() ) . '" target="_blank">',
 			'</a>'
 		);
 		?></div>
