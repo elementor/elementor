@@ -1,15 +1,7 @@
 import * as React from 'react';
+import { ConfirmationDialog } from '@elementor/editor-ui';
 import { HomeIcon } from '@elementor/icons';
-import {
-	Button,
-	CircularProgress,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
-	Divider,
-} from '@elementor/ui';
+import { CircularProgress, DialogTitle } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { usePostListContext } from '../../../../contexts/post-list-context';
@@ -83,22 +75,6 @@ export function RemoveHomepageDialog( { open, onClose }: RemoveHomepageDialogPro
 		return null;
 	}
 
-	const dialogTitle = __( 'Remove this page as your homepage?', 'elementor' );
-	const dialogBody = __(
-		'Your homepage will go back to showing your latest posts. You can set a page as your homepage again at any time.',
-		'elementor'
-	);
-
-	const handleRemove = async () => {
-		try {
-			await updateSettingsMutation.mutateAsync( { show_on_front: 'posts' } );
-			onClose();
-		} catch {
-			setError();
-			onClose();
-		}
-	};
-
 	const handleCancel = () => {
 		if ( updateSettingsMutation.isPending ) {
 			return;
@@ -107,30 +83,40 @@ export function RemoveHomepageDialog( { open, onClose }: RemoveHomepageDialogPro
 		onClose();
 	};
 
+	const handleConfirm = () => {
+		if ( updateSettingsMutation.isPending ) {
+			return;
+		}
+
+		void updateSettingsMutation
+			.mutateAsync( { show_on_front: 'posts' } )
+			.then( () => onClose() )
+			.catch( () => {
+				setError();
+				onClose();
+			} );
+	};
+
 	return (
-		<Dialog open onClose={ handleCancel } aria-labelledby="remove-homepage-dialog">
-			<DialogTitle noWrap>{ dialogTitle }</DialogTitle>
-			<Divider />
-			<DialogContent>
-				<DialogContentText>{ dialogBody }</DialogContentText>
-			</DialogContent>
-			<DialogActions>
-				<Button
-					variant="contained"
-					color="secondary"
-					onClick={ handleCancel }
-					disabled={ updateSettingsMutation.isPending }
-				>
-					{ __( 'Cancel', 'elementor' ) }
-				</Button>
-				<Button variant="contained" onClick={ handleRemove } disabled={ updateSettingsMutation.isPending }>
-					{ ! updateSettingsMutation.isPending ? (
-						__( 'Remove as homepage', 'elementor' )
-					) : (
-						<CircularProgress />
+		<ConfirmationDialog open onClose={ handleCancel }>
+			<DialogTitle noWrap sx={ { lineHeight: 1 } }>
+				{ __( 'Remove this page as your homepage?', 'elementor' ) }
+			</DialogTitle>
+			<ConfirmationDialog.Content>
+				<ConfirmationDialog.ContentText>
+					{ __(
+						'Your homepage will go back to showing your latest posts. You can set a page as your homepage again at any time.',
+						'elementor'
 					) }
-				</Button>
-			</DialogActions>
-		</Dialog>
+				</ConfirmationDialog.ContentText>
+			</ConfirmationDialog.Content>
+			<ConfirmationDialog.Actions
+				cancelLabel={ __( 'Cancel', 'elementor' ) }
+				color="secondary"
+				confirmLabel={ __( 'Remove as homepage', 'elementor' ) }
+				onClose={ handleCancel }
+				onConfirm={ handleConfirm }
+			/>
+		</ConfirmationDialog>
 	);
 }
