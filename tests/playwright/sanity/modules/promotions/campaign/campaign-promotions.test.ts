@@ -54,6 +54,7 @@ const MISSING_OPTION = 'e2e-missing-option';
 const CONVERSION_BANNER_DISMISS_KEY = 'conversion_banner_go_pro';
 const POINTER_DISMISS_KEY_PREFIX = 'promotional_pointer';
 const POINTER_SEEN_TODAY_TRANSIENT_PREFIX = '_elementor_promotional_pointer_';
+const ONBOARDING_PENDING_OPTION = 'elementor_onboarding_pending';
 
 const resetIntroductionKey = ( key: string ) =>
 	wpCli( `wp eval foreach(get_users(["fields"=>"ID"])as$id){$m=(array)get_user_meta($id,"elementor_introduction",true);unset($m["${ key }"]);update_user_meta($id,"elementor_introduction",$m);}` );
@@ -82,6 +83,11 @@ type EditorWindow = {
 
 const getPointerDismissKey = ( campaignId: unknown ): string =>
 	'string' === typeof campaignId && campaignId ? `${ POINTER_DISMISS_KEY_PREFIX }_${ campaignId }` : POINTER_DISMISS_KEY_PREFIX;
+
+// A fresh site redirects the first admin page to the onboarding, so the first test would not see its page.
+test.beforeAll( async () => {
+	await wpCli( `wp eval delete_option("${ ONBOARDING_PENDING_OPTION }");` );
+} );
 
 for ( const scenario of [ ...CAMPAIGN_SCENARIOS, NO_PROMOTION_SCENARIO ] ) {
 	test.describe( `Editor promotions from CDN - ${ scenario } @promotions`, () => {
