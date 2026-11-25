@@ -3,7 +3,7 @@ import { type ToggleButtonGroupItem, ToggleControl } from '@elementor/editor-con
 import { __ } from '@wordpress/i18n';
 
 import { useStylesInheritanceChain } from '../../../contexts/styles-inheritance-context';
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
 type Displays = 'block' | 'flex' | 'grid' | 'inline-block' | 'inline-flex' | 'none';
@@ -49,12 +49,12 @@ const displayFieldItems: ToggleButtonGroupItem< Displays >[] = [
 	},
 ];
 
-export const DisplayField = () => {
+export const DisplayField = ( { label = DISPLAY_LABEL }: StylesFieldLabelProps ) => {
 	const placeholder = useDisplayPlaceholderValue();
 
 	return (
-		<StylesField bind="display" propDisplayName={ DISPLAY_LABEL } placeholder={ placeholder }>
-			<StylesFieldLayout label={ DISPLAY_LABEL } direction="column">
+		<StylesField bind="display" propDisplayName={ label } placeholder={ placeholder }>
+			<StylesFieldLayout label={ label } direction="column">
 				<ToggleControl options={ displayFieldItems } maxItems={ 4 } fullWidth={ true } />
 			</StylesFieldLayout>
 		</StylesField>

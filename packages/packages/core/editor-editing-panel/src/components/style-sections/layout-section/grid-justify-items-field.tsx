@@ -9,7 +9,7 @@ import {
 import { withDirection } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { UiProviders } from '../../../styles-inheritance/components/ui-providers';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
@@ -47,10 +47,10 @@ const options: ToggleButtonGroupItem< JustifyItems >[] = [
 	},
 ];
 
-export const GridJustifyItemsField = () => (
-	<StylesField bind="justify-items" propDisplayName={ JUSTIFY_ITEMS_LABEL }>
+export const GridJustifyItemsField = ( { label = JUSTIFY_ITEMS_LABEL }: StylesFieldLabelProps ) => (
+	<StylesField bind="justify-items" propDisplayName={ label }>
 		<UiProviders>
-			<StylesFieldLayout label={ JUSTIFY_ITEMS_LABEL }>
+			<StylesFieldLayout label={ label }>
 				<ToggleControl options={ options } />
 			</StylesFieldLayout>
 		</UiProviders>
