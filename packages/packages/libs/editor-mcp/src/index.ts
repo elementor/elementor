@@ -1,19 +1,6 @@
 import './types/open-angie-request';
 
-export {
-	type AngieLocalServerConfig,
-	AngieInteractionMode,
-	type AngieMcpSdk,
-	EDITOR_ANGIE_APP_ID,
-	getAngieIframe,
-	getAngieSdk,
-	isAngiePluginAvailable,
-	LAYOUT_SIDEBAR,
-	type LoadSidebarV2Options,
-	MessageEventType as AngieMessageEvenetType,
-	setAngieInteractionMode,
-	toggleAngieSidebar,
-} from '@elementor/editor-angie-sdk';
+export { getAngieIframe, getAngieSdk, MessageEventType as AngieMessageEvenetType } from '@elementor/editor-angie-sdk';
 
 export {
 	McpServer,

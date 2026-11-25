@@ -65,6 +65,7 @@ export const refreshAngieSdkIfDetectionExpired = () => {
 		return false;
 	}
 
+	// destroy() only clears the registration queue; the old instance keeps its window message listeners.
 	sdk.destroy();
 	sdk = undefined;
 
