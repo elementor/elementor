@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ConfirmationDialog } from '@elementor/editor-ui';
 import { HomeIcon } from '@elementor/icons';
-import { CircularProgress, DialogTitle } from '@elementor/ui';
+import { Button, CircularProgress, DialogActions } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { usePostListContext } from '../../../../contexts/post-list-context';
@@ -97,11 +97,14 @@ export function RemoveHomepageDialog( { open, onClose }: RemoveHomepageDialogPro
 		}
 	};
 
+	const isPending = updateSettingsMutation.isPending;
+	const removeHomepageLabel = __( 'Remove as homepage', 'elementor' );
+
 	return (
 		<ConfirmationDialog open onClose={ handleCancel }>
-			<DialogTitle noWrap sx={ { lineHeight: 1 } }>
+			<ConfirmationDialog.Title iconColor="secondary">
 				{ __( 'Remove this page as your homepage?', 'elementor' ) }
-			</DialogTitle>
+			</ConfirmationDialog.Title>
 			<ConfirmationDialog.Content>
 				<ConfirmationDialog.ContentText>
 					{ __(
@@ -110,12 +113,21 @@ export function RemoveHomepageDialog( { open, onClose }: RemoveHomepageDialogPro
 					) }
 				</ConfirmationDialog.ContentText>
 			</ConfirmationDialog.Content>
-			<ConfirmationDialog.Actions
-				color="secondary"
-				confirmLabel={ __( 'Remove as homepage', 'elementor' ) }
-				onClose={ handleCancel }
-				onConfirm={ handleConfirm }
-			/>
+			<DialogActions>
+				<Button variant="contained" color="secondary" onClick={ handleCancel } disabled={ isPending }>
+					{ __( 'Not now', 'elementor' ) }
+				</Button>
+				<Button
+					autoFocus
+					variant="contained"
+					color="secondary"
+					onClick={ () => void handleConfirm() }
+					disabled={ isPending }
+					sx={ { ml: 1 } }
+				>
+					{ ! isPending ? removeHomepageLabel : <CircularProgress /> }
+				</Button>
+			</DialogActions>
 		</ConfirmationDialog>
 	);
 }
