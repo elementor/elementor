@@ -20,10 +20,6 @@ jest.mock( '../mcp-registry', () => ( {
 	createAndRegisterAdapters: () => mockCreateAndRegisterAdapters(),
 } ) );
 
-jest.mock( '../utils/get-sdk', () => ( {
-	getSDK: jest.fn(),
-} ) );
-
 jest.mock( '../utils/is-angie-available', () => ( {
 	isAngieAvailable: jest.fn( () => false ),
 } ) );
