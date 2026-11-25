@@ -543,7 +543,7 @@ describe( 'link-restriction', () => {
 			// Assert
 			expect( result ).toEqual( {
 				shouldRestrict: true,
-				reason: 'descendant',
+				reason: 'menu',
 				elementId: 'menu',
 			} );
 		} );
@@ -562,7 +562,7 @@ describe( 'link-restriction', () => {
 			// Assert
 			expect( result ).toEqual( {
 				shouldRestrict: true,
-				reason: 'descendant',
+				reason: 'menu',
 				elementId: 'menu',
 			} );
 		} );

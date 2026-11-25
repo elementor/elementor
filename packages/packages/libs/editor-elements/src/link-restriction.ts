@@ -11,7 +11,7 @@ type LinkValue = LinkPropValue[ 'value' ];
 export type LinkInLinkRestriction =
 	| {
 			shouldRestrict: true;
-			reason: 'ancestor' | 'descendant';
+			reason: 'ancestor' | 'descendant' | 'menu';
 			elementId: string | null;
 	  }
 	| {
@@ -46,7 +46,7 @@ export function getLinkInLinkRestriction( elementId: string, resolvedValue?: Lin
 	if ( menuDescendantId ) {
 		return {
 			shouldRestrict: true as const,
-			reason: 'descendant' as const,
+			reason: 'menu' as const,
 			elementId: menuDescendantId,
 		};
 	}
