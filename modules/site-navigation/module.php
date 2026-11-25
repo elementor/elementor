@@ -17,6 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends Module_Base {
 	const PAGES_PANEL_EXPERIMENT_NAME = 'pages_panel';
+
+	private const POPUP_UPGRADE_URL = 'https://go.elementor.com/go-pro-advanced-popups/';
 	const PACKAGES = [
 		'editor-site-navigation',
 	];
@@ -39,6 +41,10 @@ class Module extends Module_Base {
 				'is_pages_panel_active' => Plugin::$instance->experiments->is_feature_active(
 					self::PAGES_PANEL_EXPERIMENT_NAME
 				),
+				'popups' => [
+					'can_use' => false,
+					'upgrade_url' => self::POPUP_UPGRADE_URL,
+				],
 			];
 
 			return $env;

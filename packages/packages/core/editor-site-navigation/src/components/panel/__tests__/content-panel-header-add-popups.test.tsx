@@ -5,15 +5,6 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { ContentPanelCoordinatorProvider } from '../../../contexts/content-panel-coordinator';
 import ContentPanelHeaderAdd from '../content-panel-header-add';
 
-jest.mock( '../../../env', () => ( {
-	env: {
-		popups: {
-			can_use: false,
-			upgrade_url: 'https://example.com/upgrade',
-		},
-	},
-} ) );
-
 jest.mock( '../../../hooks/use-accessible-panel-post-types', () => ( {
 	__esModule: true,
 	default: jest.fn( () => ( {

@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 
 import { postTypesMap, type Slug } from '../../api/post';
 import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
-import { env } from '../../env';
 import useAccessiblePanelPostTypes from '../../hooks/use-accessible-panel-post-types';
 import useCanCreate from '../../hooks/use-can-create';
 import { POPUPS_SITE_CONTENT_SECTION_ID } from '../../popups/constants';
@@ -41,8 +40,7 @@ export default function ContentPanelHeaderAdd() {
 		popupId: 'elementor-content-panel-header-add',
 	} );
 	const headerCreateItems = getSiteContentHeaderCreateItems();
-	const showPopupHeaderItem = env.popups !== undefined;
-	const canAddAny = accessibleSlugs.length > 0 || headerCreateItems.length > 0 || showPopupHeaderItem;
+	const canAddAny = true;
 
 	const buttonProps = bindTrigger( popupState );
 	const menuProps = bindMenu( popupState );
@@ -72,7 +70,7 @@ export default function ContentPanelHeaderAdd() {
 				{ accessibleSlugs.map( ( slug ) => (
 					<HeaderAddMenuItem key={ slug } onSelect={ handleSelectType } slug={ slug } />
 				) ) }
-				{ showPopupHeaderItem && <PopupHeaderCreateMenuItem onSelect={ handleSelectPopup } /> }
+				<PopupHeaderCreateMenuItem onSelect={ handleSelectPopup } />
 				{ headerCreateItems.map( ( item ) => (
 					<React.Fragment key={ item.id }>
 						{ item.renderMenuItem( () => {
