@@ -9,11 +9,12 @@ import {
 } from '@elementor/editor-editing-panel';
 import { type ElementID } from '@elementor/editor-elements';
 import { CollapseIcon } from '@elementor/editor-ui';
-import { Box, Button } from '@elementor/ui';
+import { Box, Button, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useWidgetDefinition } from '../general/use-widget-definition';
 import { type CompositeWidgetQuickEdit } from '../types';
+import { AppearanceSection } from './appearance/appearance-section';
 import { QuickEditField } from './quick-edit-field';
 
 export function WidgetStyleTab() {
@@ -23,6 +24,10 @@ export function WidgetStyleTab() {
 
 	return (
 		<>
+			<Typography component="p" variant="caption" color="text.secondary" sx={ { px: 2, pt: 1.5 } }>
+				{ __( 'Select an element to edit its style', 'elementor' ) }
+			</Typography>
+			<AppearanceSection rootId={ element.id } presets={ definition?.style?.appearance ?? [] } />
 			<QuickEditSection rootId={ element.id } quickEdits={ definition?.style?.quick_edit ?? [] } />
 			<Box sx={ { px: 2, py: 1.5 } }>
 				<Button

@@ -50,7 +50,7 @@ export { createTopLevelObjectType } from './controls-registry/create-top-level-o
 export { useControlsByWidgetType } from './hooks/use-controls-by-widget-type';
 export { useCustomCss } from './hooks/use-custom-css';
 export { useStateByElement } from './hooks/use-state-by-element';
-export { getSubtitle, getTitle, HISTORY_DEBOUNCE_WAIT } from './hooks/use-styles-fields';
+export { HISTORY_DEBOUNCE_WAIT } from './hooks/use-styles-fields';
 export { useStylesRerender } from './hooks/use-styles-rerender';
 export { init } from './init';
 export { usePanelActions, usePanelStatus } from './panel';
@@ -72,6 +72,15 @@ export {
 	extractOrderedDependencies,
 } from './utils/prop-dependency-utils';
 export { getElementClassesProp, getElementLocalStyle } from './utils/element-local-style';
+export { isEqual } from './utils/is-equal';
+export {
+	createUndoableUpdateStyles,
+	getLocalStyleTargets,
+	getSubtitle,
+	getTitle,
+	type StyleTarget,
+	type StyleWrite,
+} from './utils/styles-history';
 export {
 	registerSubmenuToggle,
 	type SubmenuToggleProps,

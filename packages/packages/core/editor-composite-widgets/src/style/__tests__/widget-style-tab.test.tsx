@@ -13,7 +13,12 @@ import {
 	WIDGET_DEFINITION,
 	WIDGET_ID,
 } from '../../closed-structure/__tests__/closed-structure-fixture';
-import { type CompositeWidgetQuickEdit } from '../../types';
+import {
+	type CompositeWidgetPreset,
+	type CompositeWidgetPresetOption,
+	type CompositeWidgetQuickEdit,
+} from '../../types';
+import { applyPreset } from '../appearance/apply-preset';
 import { WidgetStyleTab } from '../widget-style-tab';
 
 const REGISTERED_STYLE_PROP = 'gap';
@@ -38,16 +43,37 @@ jest.mock( '@elementor/editor-editing-panel', () => {
 		children: React.ReactNode;
 	} ) => createElement( 'section', { 'aria-label': `Style ${ id } @ ${ meta.breakpoint }` }, children );
 
+	const { getElementStyles } = jest.requireActual( '@elementor/editor-elements' );
+
+	const elementStylesProvider = {
+		actions: {
+			get: ( styleId: string, { elementId }: { elementId: string } ) =>
+				getElementStyles( elementId )?.[ styleId ] ?? null,
+		},
+	};
+
 	const getElementLocalStyle = ( elementId: string ) => {
-		const { getElementStyles } = jest.requireActual( '@elementor/editor-elements' );
 		const [ styleId ] = Object.keys( getElementStyles( elementId ) ?? {} );
 
-		return styleId ? { styleId, provider: null } : null;
+		return styleId ? { styleId, provider: elementStylesProvider } : null;
 	};
+
+	const getLocalStyleTargets = ( elementIds: string[] ) =>
+		elementIds.map( ( elementId ) => {
+			const localStyle = getElementLocalStyle( elementId );
+
+			return {
+				elementId,
+				classesProp: 'classes',
+				styleId: localStyle?.styleId ?? null,
+				provider: localStyle?.provider ?? null,
+			};
+		} );
 
 	return {
 		...actual,
 		getElementLocalStyle,
+		getLocalStyleTargets,
 		StyleTab: () => createElement( 'div', null, 'Root style tab' ),
 		StyleProvider: StyleProviderProbe,
 		StyleInheritanceProvider: ( { children }: { children: React.ReactNode } ) => children,
@@ -58,7 +84,14 @@ jest.mock( '@elementor/editor-editing-panel', () => {
 jest.mock( '@elementor/editor-responsive', () => ( {
 	...jest.requireActual( '@elementor/editor-responsive' ),
 	useActiveBreakpoint: () => 'tablet',
+	getBreakpointsTree: () => ( {
+		id: 'desktop',
+		label: 'Desktop',
+		children: [ { id: 'tablet', label: 'Tablet', children: [] } ],
+	} ),
 } ) );
+
+jest.mock( '../appearance/apply-preset' );
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
@@ -68,8 +101,28 @@ jest.mock( '@elementor/editor-elements', () => ( {
 const CLASSES_PROP_TYPE = { kind: 'plain', key: 'classes' } as PropType;
 const LABEL_STYLE_ID = 'e-label-style';
 
-const renderTab = ( fixture: ClosedStructureFixture, quickEdit: CompositeWidgetQuickEdit[] ) => {
-	setCompositeWidgetDefinitions( { [ WIDGET_ID ]: { ...WIDGET_DEFINITION, style: { quick_edit: quickEdit } } } );
+const color = ( value: string ) => ( { $$type: 'color', value } );
+
+const presetOption = ( id: string, label: string, labelColor: string ): CompositeWidgetPresetOption => ( {
+	id,
+	label,
+	set: [ { part: 'label', style: { desktop: { color: color( labelColor ) } } } ],
+} );
+
+const LABEL_COLOR_PRESET: CompositeWidgetPreset = {
+	id: 'label_color',
+	label: 'Label color',
+	options: [ presetOption( 'light', 'Light', '#ffffff' ), presetOption( 'dark', 'Dark', '#111111' ) ],
+};
+
+const renderTab = (
+	fixture: ClosedStructureFixture,
+	quickEdit: CompositeWidgetQuickEdit[],
+	appearance: CompositeWidgetPreset[] = []
+) => {
+	setCompositeWidgetDefinitions( {
+		[ WIDGET_ID ]: { ...WIDGET_DEFINITION, style: { appearance, quick_edit: quickEdit } },
+	} );
 
 	const element = { id: fixture.root.id, type: 'e-flexbox' };
 	const elementType = createMockElementType( { key: 'e-flexbox', propsSchema: { classes: CLASSES_PROP_TYPE } } );
@@ -155,6 +208,70 @@ describe( '<WidgetStyleTab />', () => {
 
 		// Assert
 		expect( screen.queryByText( 'Quick edit' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should select the preset option whose values the parts resolve to at the current breakpoint', () => {
+		// Arrange
+		fixture.label.model.set( 'styles', {
+			[ LABEL_STYLE_ID ]: {
+				id: LABEL_STYLE_ID,
+				type: 'class',
+				label: 'local',
+				variants: [
+					{
+						meta: { breakpoint: 'desktop', state: null },
+						props: { color: color( '#111111' ) },
+						custom_css: null,
+					},
+				],
+			},
+		} );
+
+		// Act
+		renderTab( fixture, [], [ LABEL_COLOR_PRESET ] );
+
+		// Assert
+		expect( screen.getByText( 'Appearance' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Dark' } ) ).toHaveAttribute( 'aria-pressed', 'true' );
+		expect( screen.getByRole( 'button', { name: 'Light' } ) ).toHaveAttribute( 'aria-pressed', 'false' );
+		expect( screen.queryByText( 'Custom' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should show Custom when no option matches, and apply the clicked option at the current breakpoint', () => {
+		// Arrange
+		renderTab( fixture, [], [ LABEL_COLOR_PRESET ] );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Light' } ) );
+
+		// Assert
+		expect( screen.getByText( 'Custom' ) ).toBeInTheDocument();
+		expect( applyPreset ).toHaveBeenCalledWith( {
+			rootId: fixture.root.id,
+			preset: LABEL_COLOR_PRESET,
+			optionId: 'light',
+			breakpoint: 'tablet',
+		} );
+	} );
+
+	it( 'should render a select for a preset with four or more options', () => {
+		// Arrange
+		const preset: CompositeWidgetPreset = {
+			...LABEL_COLOR_PRESET,
+			options: [
+				presetOption( 'one', 'One', '#000001' ),
+				presetOption( 'two', 'Two', '#000002' ),
+				presetOption( 'three', 'Three', '#000003' ),
+				presetOption( 'four', 'Four', '#000004' ),
+			],
+		};
+
+		// Act
+		renderTab( fixture, [], [ preset ] );
+
+		// Assert
+		expect( screen.getByRole( 'combobox', { name: 'Label color' } ) ).toHaveTextContent( 'Custom' );
+		expect( screen.queryByRole( 'button', { name: 'One' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( "should show the root's own style tab only after Edit container is opened", () => {
