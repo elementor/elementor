@@ -7,8 +7,11 @@ import { postTypesMap, type Slug } from '../../api/post';
 import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
 import useAccessiblePanelPostTypes from '../../hooks/use-accessible-panel-post-types';
 import useCanCreate from '../../hooks/use-can-create';
+import { env } from '../../env';
+import { POPUPS_SITE_CONTENT_SECTION_ID } from '../../popups/constants';
 import { getSiteContentHeaderCreateItems } from '../../site-content-header-create-items';
 import ContentPanelAddIconButton from './content-panel-add-icon-button';
+import PopupHeaderCreateMenuItem from './popups/popup-header-create-menu-item';
 
 const typeIcons: Record< Slug, typeof PageTypeIcon > = {
 	page: PageTypeIcon,
@@ -38,7 +41,8 @@ export default function ContentPanelHeaderAdd() {
 		popupId: 'elementor-content-panel-header-add',
 	} );
 	const headerCreateItems = getSiteContentHeaderCreateItems();
-	const canAddAny = accessibleSlugs.length > 0 || headerCreateItems.length > 0;
+	const showPopupHeaderItem = env.popups !== undefined;
+	const canAddAny = accessibleSlugs.length > 0 || headerCreateItems.length > 0 || showPopupHeaderItem;
 
 	const buttonProps = bindTrigger( popupState );
 	const menuProps = bindMenu( popupState );
@@ -47,6 +51,13 @@ export default function ContentPanelHeaderAdd() {
 		popupState.close();
 		requestAnimationFrame( () => {
 			requestCreate( slug );
+		} );
+	};
+
+	const handleSelectPopup = () => {
+		popupState.close();
+		requestAnimationFrame( () => {
+			requestCreate( POPUPS_SITE_CONTENT_SECTION_ID );
 		} );
 	};
 
@@ -61,6 +72,7 @@ export default function ContentPanelHeaderAdd() {
 				{ accessibleSlugs.map( ( slug ) => (
 					<HeaderAddMenuItem key={ slug } onSelect={ handleSelectType } slug={ slug } />
 				) ) }
+				{ showPopupHeaderItem && <PopupHeaderCreateMenuItem onSelect={ handleSelectPopup } /> }
 				{ headerCreateItems.map( ( item ) => (
 					<React.Fragment key={ item.id }>
 						{ item.renderMenuItem( () => {

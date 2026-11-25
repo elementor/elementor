@@ -30,6 +30,12 @@ export {
 export { default as ContentPanelAddIconButton } from './components/panel/content-panel-add-icon-button';
 export { default as SiteContentPageTitleAndStatus } from './components/shared/page-title-and-status';
 export {
+	PopupSectionAddButton,
+	type PopupSectionAddButtonRef,
+} from './components/panel/popups/popup-section-add-button';
+export { POPUPS_SITE_CONTENT_SECTION_ID } from './popups/constants';
+export { env, type PopupsSiteContentEnv } from './env';
+export {
 	injectIntoSiteContentListItemActions,
 	SiteContentListItemActionsSlot,
 	type SiteContentListItemActionsProps,
