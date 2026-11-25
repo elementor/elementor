@@ -64,7 +64,10 @@ describe( 'insertElement', () => {
 
 	it( 'should not insert on multi-selection', () => {
 		// Arrange.
-		setEditor( [ { id: 'a', model: { get: () => 'widget' } }, { id: 'b', model: { get: () => 'widget' } } ] );
+		setEditor( [
+			{ id: 'a', model: { get: () => 'widget' } },
+			{ id: 'b', model: { get: () => 'widget' } },
+		] );
 
 		// Act.
 		insertElement( tile );

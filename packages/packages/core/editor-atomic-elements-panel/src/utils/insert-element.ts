@@ -31,8 +31,8 @@ export function insertElement( tile: ElementTile ) {
 		if ( result ) {
 			trackAddElement( model );
 		}
-	} catch ( error ) {
-		console.warn( error );
+	} catch {
+		// A failed drop must leave the document untouched, so there is nothing to recover.
 	}
 }
 
