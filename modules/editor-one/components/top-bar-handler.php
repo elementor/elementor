@@ -65,7 +65,7 @@ class Top_Bar_Handler {
 			'elementorOneTopBarConfig',
 			[
 				'version' => ELEMENTOR_VERSION,
-				'title' => __( 'website builder', 'elementor' ),
+				'title' => $this->get_title(),
 				'environment' => apply_filters( 'elementor/environment', 'production' ),
 				'locale' => $wordpress_locale,
 				'localeLanguageBaseUrls' => $locale_language_base_urls,
@@ -90,7 +90,11 @@ class Top_Bar_Handler {
 		return sprintf(
 			'<header class="e-one-top-bar-placeholder" aria-hidden="true"><span class="e-one-top-bar-placeholder__brand">%1$s<span class="e-one-top-bar-placeholder__title">%2$s</span></span></header>',
 			self::LOGO_SVG,
-			esc_html__( 'website builder', 'elementor' )
+			esc_html( $this->get_title() )
 		);
+	}
+
+	private function get_title(): string {
+		return __( 'website builder', 'elementor' );
 	}
 }

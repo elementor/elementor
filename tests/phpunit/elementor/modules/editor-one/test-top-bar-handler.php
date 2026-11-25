@@ -27,6 +27,7 @@ class Test_Top_Bar_Handler extends Elementor_Test_Base {
 		remove_action( 'admin_enqueue_scripts', [ $this->handler, 'enqueue_assets' ] );
 		remove_action( 'in_admin_header', [ $this->handler, 'render_top_bar_container' ] );
 		remove_filter( 'script_loader_tag', [ Top_Bar_Locale_Assets::class, 'filter_locale_json_script_tag' ], 10 );
+		remove_filter( 'elementor/editor-one/admin-edit-post-types', [ $this, 'filter_editor_one_post_types' ] );
 		$GLOBALS['current_screen'] = $this->original_screen;
 
 		parent::tearDown();
@@ -63,5 +64,33 @@ class Test_Top_Bar_Handler extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( '', $html );
+	}
+
+	public function test_render_top_bar_container__prints_the_placeholder_inside_the_root_on_editor_one_pages() {
+		// Arrange
+		$this->act_on_an_editor_one_page();
+
+		// Act
+		ob_start();
+		$this->handler->render_top_bar_container();
+		$html = ob_get_clean();
+
+		// Assert
+		$this->assertStringStartsWith(
+			'<div id="editor-one-top-bar"><header class="e-one-top-bar-placeholder" aria-hidden="true">',
+			$html
+		);
+		$this->assertStringEndsWith( '</header></div>', $html );
+	}
+
+	private function act_on_an_editor_one_page(): void {
+		$GLOBALS['current_screen'] = \WP_Screen::get( 'post' );
+		add_filter( 'elementor/editor-one/admin-edit-post-types', [ $this, 'filter_editor_one_post_types' ] );
+	}
+
+	public function filter_editor_one_post_types( array $post_types ): array {
+		$post_types[] = 'post';
+
+		return $post_types;
 	}
 }
