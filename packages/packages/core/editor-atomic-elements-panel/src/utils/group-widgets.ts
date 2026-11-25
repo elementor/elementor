@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 
-import { type WidgetsCache } from './get-atomic-widgets';
+import { type WidgetConfig, type WidgetsCache } from './get-atomic-widgets';
 
 export type ElementTile = {
 	elType: string;
@@ -10,7 +10,7 @@ export type ElementTile = {
 	keywords?: string[];
 	settings?: Record< string, unknown >;
 	categories?: string[];
-	custom?: unknown;
+	custom?: WidgetConfig[ 'custom' ];
 	editable?: boolean;
 	showInPanel?: boolean;
 	hideOnSearch?: boolean;

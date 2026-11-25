@@ -1,6 +1,6 @@
 import { type V1ElementConfig } from '@elementor/editor-elements';
 
-type WidgetConfig = V1ElementConfig< {
+export type WidgetConfig = V1ElementConfig< {
 	categories?: string[];
 	keywords?: string[];
 	editable?: boolean;

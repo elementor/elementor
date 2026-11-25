@@ -1,26 +1,8 @@
 import { dropElement } from '@elementor/editor-elements';
 
+import { type ExtendedWindow } from '../types';
 import { buildElementModel } from './build-element-model';
 import { type ElementTile } from './group-widgets';
-
-type SelectedContainer = {
-	id: string;
-	parent?: { id: string; model: { get: ( key: string ) => { findIndex: ( model: unknown ) => number } } };
-	model: { get: ( key: string ) => unknown };
-	view?: { $el?: Array< Node > };
-};
-
-type ExtendedWindow = {
-	elementor?: {
-		selection?: { getElements: () => SelectedContainer[] };
-		getPreviewContainer?: () => { id: string } | undefined;
-		documents?: { getCurrent?: () => { $element?: Array< Node > } | undefined };
-		userCan?: ( capability: string ) => boolean;
-	};
-	elementorCommon?: {
-		eventsManager?: { dispatchEvent?: ( name: string, data: Record< string, unknown > ) => void };
-	};
-};
 
 const getElementor = () => ( window as unknown as ExtendedWindow ).elementor;
 
