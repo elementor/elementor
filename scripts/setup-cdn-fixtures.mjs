@@ -18,7 +18,7 @@ import { parseArgs } from 'node:util';
 const __dirname = dirname( fileURLToPath( import.meta.url ) );
 const FIXTURES_BASE = resolve( __dirname, '../tests/playwright/mu-plugins/editor-assets-cdn' );
 // Keep in sync with the fetch-cdn-scenario action pinned in the workflows.
-const ACTION_SHA = '2844c6e9cadd7bd338fc06afaf331471ac85a6c4';
+const ACTION_SHA = '6c808e75218f62c883a77a67c6bbc21bfbd48a94';
 const ACTION_BASE_URL = `https://raw.githubusercontent.com/elementor/elementor-editor-github-actions/${ ACTION_SHA }/actions/fetch-cdn-scenario`;
 const SHARED_SCENARIOS = [ 'no-promotion', 'active-campaign' ];
 const HTTP_NOT_FOUND = 404;
