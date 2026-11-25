@@ -2,7 +2,13 @@ import * as React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { insertElement } from '../../utils/insert-element';
 import { ElementTile } from '../element-tile';
+
+jest.mock( '../../utils/insert-element', () => ( {
+	canInsertElements: () => true,
+	insertElement: jest.fn(),
+} ) );
 
 const tile = { elType: 'widget', widgetType: 'e-form', title: 'Form' };
 
@@ -60,5 +66,16 @@ describe( 'ElementTile', () => {
 		// Assert.
 		expect( withoutCrown ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'img', { name: 'Upgrade' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'should insert the element when a regular tile is clicked', () => {
+		// Arrange.
+		render( <ElementTile tile={ tile } groupId="form" /> );
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'button' ) );
+
+		// Assert.
+		expect( insertElement ).toHaveBeenCalledWith( tile );
 	} );
 } );
