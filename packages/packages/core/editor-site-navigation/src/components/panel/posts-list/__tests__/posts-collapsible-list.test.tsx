@@ -355,7 +355,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 				posts: [],
 				total: 0,
 			},
-		} as ReturnType< typeof usePosts > );
+		} as unknown as ReturnType< typeof usePosts > );
 
 		renderList(
 			<PostListContextProvider type={ 'page' } setError={ () => {} }>

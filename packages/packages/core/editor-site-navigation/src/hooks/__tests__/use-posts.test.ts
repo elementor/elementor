@@ -195,7 +195,7 @@ describe( '@elementor/site-settings/use-posts', () => {
 			};
 			const paginatedPages = pagesByNumber[ page ] ?? [];
 
-			return {
+			return Promise.resolve( {
 				json: () => Promise.resolve( paginatedPages ),
 				headers: {
 					get: ( header: string ) => {
@@ -209,7 +209,7 @@ describe( '@elementor/site-settings/use-posts', () => {
 						}
 					},
 				},
-			};
+			} );
 		} );
 
 		const { component } = renderHookWithQuery( () => usePosts( 'page' ) );
@@ -218,14 +218,16 @@ describe( '@elementor/site-settings/use-posts', () => {
 			expect( component.result.current.isLoading ).toBeFalsy();
 		} );
 
-		expect( component.result.current.data.posts.map( ( post ) => post.id ) ).toEqual( [ 1, 2 ] );
+		const postsAfterFirstPage = component.result.current.data.posts ?? [];
+		expect( postsAfterFirstPage.map( ( post ) => post.id ) ).toEqual( [ 1, 2 ] );
 
 		await act( async () => {
 			await component.result.current.fetchNextPage();
 		} );
 
 		await waitFor( () => {
-			expect( component.result.current.data.posts.map( ( post ) => post.id ) ).toEqual( [ 1, 2, 3 ] );
+			const posts = component.result.current.data.posts ?? [];
+			expect( posts.map( ( post ) => post.id ) ).toEqual( [ 1, 2, 3 ] );
 		} );
 	} );
 } );
