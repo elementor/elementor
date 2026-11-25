@@ -92,9 +92,11 @@ const PageTitle = ( { title }: { title: string } ) => {
 			noWrap
 			sx={ {
 				...contentPanelListRowTitleSx,
-				flex: 1,
 				flexBasis: 'auto',
+				flexShrink: 1,
 				minWidth: 0,
+				overflow: 'hidden',
+				textOverflow: 'ellipsis',
 			} }
 		>
 			{ modifiedTitle }
@@ -104,7 +106,7 @@ const PageTitle = ( { title }: { title: string } ) => {
 
 export default function PageTitleAndStatus( { title, status }: { title: string; status: string } ) {
 	return (
-		<Box alignItems="center" display="flex" minWidth={ 0 }>
+		<Box alignItems="center" display="flex" minWidth={ 0 } sx={ { overflow: 'hidden' } }>
 			<PageTitle title={ title } />
 			<PageStatus status={ status } />
 		</Box>
