@@ -1,6 +1,7 @@
 export type SecondaryBarTab = {
 	id: string;
 	label: string;
+	tag?: string;
 	url: string;
 	is_active: boolean;
 };
