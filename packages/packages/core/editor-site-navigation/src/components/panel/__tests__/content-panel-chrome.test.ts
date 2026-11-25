@@ -17,7 +17,7 @@ describe( 'getContentPanelListItemSx', () => {
 		expect( sx ).toEqual( {
 			paddingInline: 2,
 			'&& > .MuiListItemButton-root': {
-				paddingInlineEnd: 10,
+				paddingInlineEnd: 11,
 				paddingRight: 'unset',
 			},
 		} );

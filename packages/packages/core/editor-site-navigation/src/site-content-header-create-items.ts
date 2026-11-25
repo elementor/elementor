@@ -15,9 +15,12 @@ export function registerSiteContentHeaderCreateItem( item: SiteContentHeaderCrea
 }
 
 export function getSiteContentHeaderCreateItems(): SiteContentHeaderCreateItem[] {
-	return Array.from( registeredHeaderCreateItems.values() ).sort(
-		( first, second ) => ( first.priority ?? DEFAULT_HEADER_CREATE_PRIORITY ) - ( second.priority ?? DEFAULT_HEADER_CREATE_PRIORITY )
-	);
+	return Array.from( registeredHeaderCreateItems.values() ).sort( ( first, second ) => {
+		const firstPriority = first.priority ?? DEFAULT_HEADER_CREATE_PRIORITY;
+		const secondPriority = second.priority ?? DEFAULT_HEADER_CREATE_PRIORITY;
+
+		return firstPriority - secondPriority;
+	} );
 }
 
 export function resetSiteContentHeaderCreateItems() {
