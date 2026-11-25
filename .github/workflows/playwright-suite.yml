@@ -174,7 +174,7 @@ jobs:
           jq '.config.WP_DEBUG = true | .config.WP_DEBUG_LOG = true | .config.WP_DEBUG_DISPLAY = false' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
 
       - name: Setup CDN promotion fixtures
-        uses: elementor/elementor-editor-github-actions/actions/fetch-cdn-scenario@6c808e75218f62c883a77a67c6bbc21bfbd48a94
+        uses: elementor/elementor-editor-github-actions/actions/fetch-cdn-scenario@main
         with:
           output-dir: tests/playwright/mu-plugins/editor-assets-cdn/live
           mu-plugins-dir: tests/playwright/mu-plugins
