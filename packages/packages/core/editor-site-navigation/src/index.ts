@@ -27,6 +27,7 @@ export { type Post } from './types';
 export { contentPanelListItemButtonSx, contentPanelListRowPaddingSx } from './components/panel/content-panel-chrome';
 export { default as ContentPanelAddIconButton } from './components/panel/content-panel-add-icon-button';
 export { default as SiteContentPageTitleAndStatus } from './components/shared/page-title-and-status';
+export { default as SiteContentEditModeTemplate } from './components/panel/posts-list/list-items/edit-mode-template';
 export {
 	PopupSectionAddButton,
 	type PopupSectionAddButtonRef,

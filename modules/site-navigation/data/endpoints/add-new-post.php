@@ -24,6 +24,15 @@ class Add_New_Post extends Endpoint {
 				},
 				'validate_callback' => 'rest_validate_request_arg',
 			],
+			'title' => [
+				'description' => 'Post title',
+				'type' => 'string',
+				'required' => false,
+				'sanitize_callback' => function ( $value ) {
+					return sanitize_text_field( $value );
+				},
+				'validate_callback' => 'rest_validate_request_arg',
+			],
 		];
 
 		$this->register_items_route( \WP_REST_Server::CREATABLE, $args );
@@ -55,7 +64,14 @@ class Add_New_Post extends Endpoint {
 		// Temporary solution for the fact that documents creation not using the actual registered post types.
 		$post_type = $this->map_post_type( $post_type );
 
-		$document = Plugin::$instance->documents->create( $post_type );
+		$post_data = [];
+		$title = $request->get_param( 'title' );
+
+		if ( is_string( $title ) && '' !== trim( $title ) ) {
+			$post_data['post_title'] = $title;
+		}
+
+		$document = Plugin::$instance->documents->create( $post_type, $post_data );
 
 		if ( is_wp_error( $document ) ) {
 			$sanitized_post_type = esc_html( str_replace( '%', '%%', $post_type ) );
