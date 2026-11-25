@@ -3,9 +3,10 @@ import { type V1ElementSettingsProps } from '@elementor/editor-elements';
 import { type ElementTile } from './group-widgets';
 
 export function buildElementModel( tile: ElementTile ) {
+	const { promotionType, settings, ...model } = tile;
+
 	return {
-		elType: tile.elType,
-		widgetType: tile.widgetType,
-		...( tile.settings && { settings: tile.settings as V1ElementSettingsProps } ),
+		...model,
+		...( settings && { settings: settings as V1ElementSettingsProps } ),
 	};
 }

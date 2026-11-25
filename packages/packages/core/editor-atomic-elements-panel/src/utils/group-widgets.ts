@@ -9,6 +9,12 @@ export type ElementTile = {
 	icon?: string;
 	keywords?: string[];
 	settings?: Record< string, unknown >;
+	categories?: string[];
+	custom?: unknown;
+	editable?: boolean;
+	showInPanel?: boolean;
+	hideOnSearch?: boolean;
+	atomic?: boolean;
 	promotionType?: string;
 };
 
@@ -61,6 +67,12 @@ export function groupWidgets( widgets: WidgetsCache, lockedTiles: PromotionTile[
 				icon: widget.icon,
 				keywords: widget.keywords,
 				settings: widget.custom?.isPreset ? widget.custom.preset_settings : undefined,
+				categories: widget.categories,
+				custom: widget.custom,
+				editable: widget.editable,
+				showInPanel: widget.show_in_panel,
+				hideOnSearch: widget.hide_on_search,
+				atomic: !! widget.atomic,
 			},
 		} ) ),
 		...lockedTiles.map( ( { tile, categories } ) => ( {
