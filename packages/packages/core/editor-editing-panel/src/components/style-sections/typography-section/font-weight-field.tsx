@@ -2,7 +2,7 @@ import * as React from 'react';
 import { SelectControl } from '@elementor/editor-controls';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
 const FONT_WEIGHT_LABEL = __( 'Font weight', 'elementor' );
@@ -19,10 +19,10 @@ const fontWeightOptions = [
 	{ value: '900', label: __( '900 - Black', 'elementor' ) },
 ];
 
-export const FontWeightField = () => {
+export const FontWeightField = ( { label = FONT_WEIGHT_LABEL }: StylesFieldLabelProps ) => {
 	return (
-		<StylesField bind="font-weight" propDisplayName={ FONT_WEIGHT_LABEL }>
-			<StylesFieldLayout label={ FONT_WEIGHT_LABEL }>
+		<StylesField bind="font-weight" propDisplayName={ label }>
+			<StylesFieldLayout label={ label }>
 				<SelectControl options={ fontWeightOptions } />
 			</StylesFieldLayout>
 		</StylesField>

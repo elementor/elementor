@@ -3,17 +3,17 @@ import { useRef } from 'react';
 import { SizeControl } from '@elementor/editor-controls';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
 const OPACITY_LABEL = __( 'Opacity', 'elementor' );
 
-export const OpacityControlField = () => {
+export const OpacityControlField = ( { label = OPACITY_LABEL }: StylesFieldLabelProps ) => {
 	const rowRef = useRef< HTMLDivElement | null >( null );
 
 	return (
-		<StylesField bind={ 'opacity' } propDisplayName={ OPACITY_LABEL }>
-			<StylesFieldLayout ref={ rowRef } label={ OPACITY_LABEL }>
+		<StylesField bind={ 'opacity' } propDisplayName={ label }>
+			<StylesFieldLayout ref={ rowRef } label={ label }>
 				<SizeControl units={ [ '%' ] } anchorRef={ rowRef } defaultUnit="%" />
 			</StylesFieldLayout>
 		</StylesField>
