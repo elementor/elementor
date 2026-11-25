@@ -250,5 +250,107 @@ describe( 'prevent menu placement', () => {
 			// Assert
 			expect( result ).toBe( true );
 		} );
+
+		describe( 'an entry whose Submenu holds a Menu', () => {
+			const ENTRY_WITH_NESTED_MENU_MODEL = {
+				elType: 'e-menu-entry',
+				elements: [ { elType: 'e-menu-submenu', elements: [ MENU_MODEL ] } ],
+			};
+
+			function createEntryWithNestedMenu() {
+				const tree = createMenuTree();
+				const { menu: nestedMenu } = createMenuTree();
+				tree.submenuChild.children = [ nestedMenu ];
+				nestedMenu.parent = tree.submenuChild;
+
+				return tree;
+			}
+
+			it( 'allows moving it within its Menu', () => {
+				// Arrange
+				const { menu, entry } = createEntryWithNestedMenu();
+
+				// Act
+				const result = isAllowed( MOVE_COMMAND, { containers: [ entry ], target: menu } );
+
+				// Assert
+				expect( result ).toBe( true );
+				expect( notify ).not.toHaveBeenCalled();
+			} );
+
+			it( 'allows re-creating it in its Menu', () => {
+				// Arrange
+				const { menu } = createMenuTree();
+
+				// Act
+				const result = isAllowed( CREATE_COMMAND, { container: menu, model: ENTRY_WITH_NESTED_MENU_MODEL } );
+
+				// Assert
+				expect( result ).toBe( true );
+				expect( notify ).not.toHaveBeenCalled();
+			} );
+
+			it( 'allows pasting it into a Menu', () => {
+				// Arrange
+				const { menu } = createMenuTree();
+				setClipboard( [ ENTRY_WITH_NESTED_MENU_MODEL ] );
+
+				// Act
+				const result = isAllowed( PASTE_COMMAND, { container: menu, storageType: 'localstorage' } );
+
+				// Assert
+				expect( result ).toBe( true );
+				expect( notify ).not.toHaveBeenCalled();
+			} );
+		} );
+	} );
+
+	describe( 'a linked source that holds a Menu', () => {
+		const LINKED_DIV_WITH_MENU_MODEL = {
+			elType: 'e-div-block',
+			settings: {
+				link: { $$type: 'link', value: { destination: { $$type: 'url', value: 'https://example.com' } } },
+			},
+			elements: [ MENU_MODEL ],
+		};
+
+		it( 'blocks creating it in an unlinked container', () => {
+			// Arrange
+			const div = createElement( 'e-div-block' );
+
+			// Act
+			const result = isAllowed( CREATE_COMMAND, { container: div, model: LINKED_DIV_WITH_MENU_MODEL } );
+
+			// Assert
+			expect( result ).toBe( false );
+			expect( notify ).toHaveBeenCalledWith( expect.objectContaining( { id: MENU_IN_LINK_ID } ) );
+		} );
+
+		it( 'blocks pasting it into an unlinked container', () => {
+			// Arrange
+			const div = createElement( 'e-div-block' );
+			setClipboard( [ LINKED_DIV_WITH_MENU_MODEL ] );
+
+			// Act
+			const result = isAllowed( PASTE_COMMAND, { container: div, storageType: 'localstorage' } );
+
+			// Assert
+			expect( result ).toBe( false );
+			expect( notify ).toHaveBeenCalledWith( expect.objectContaining( { id: MENU_IN_LINK_ID } ) );
+		} );
+
+		it( 'allows creating an unlinked container that holds a Menu', () => {
+			// Arrange
+			const div = createElement( 'e-div-block' );
+
+			// Act
+			const result = isAllowed( CREATE_COMMAND, {
+				container: div,
+				model: { elType: 'e-div-block', settings: { link: null }, elements: [ MENU_MODEL ] },
+			} );
+
+			// Assert
+			expect( result ).toBe( true );
+		} );
 	} );
 } );

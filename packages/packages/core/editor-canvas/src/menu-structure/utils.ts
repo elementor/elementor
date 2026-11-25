@@ -1,32 +1,69 @@
-import { getAnchoredAncestorId, isElementAnchored, type V1Element } from '@elementor/editor-elements';
+import { type V1Element } from '@elementor/editor-elements';
 
-import {
-	type ClipboardElement,
-	getElementType,
-	hasClipboardElementType,
-	hasElementType,
-	hasModelElementType,
-} from '../form-structure/utils';
+import { getElementType } from '../form-structure/utils';
 
 export const MENU_ELEMENT_TYPE = 'e-menu';
 export const SUBMENU_ELEMENT_TYPE = 'e-menu-submenu';
 
-type Model = Parameters< typeof hasModelElementType >[ 0 ];
+export type ElementData = {
+	elType?: string;
+	widgetType?: string;
+	elements?: ElementData[];
+	settings?: { link?: { value?: { destination?: unknown } | null } | null };
+};
 
-export function modelContainsMenu( model?: Model ): boolean {
-	return hasModelElementType( model, MENU_ELEMENT_TYPE );
+type Search = {
+	skipSubmenus?: boolean;
+	onlyUnderLink?: boolean;
+};
+
+export function dataContainsMenu( elements: ( ElementData | undefined )[], search: Search = {} ): boolean {
+	return elements.some( ( element ) => dataNodeContainsMenu( element, search, false ) );
 }
 
-export function containersContainMenu( containers: ( V1Element | undefined )[] ): boolean {
-	return containers.some( ( container ) => ( container ? hasElementType( container, MENU_ELEMENT_TYPE ) : false ) );
+function dataNodeContainsMenu( element: ElementData | undefined, search: Search, isUnderLink: boolean ): boolean {
+	if ( ! element ) {
+		return false;
+	}
+
+	const type = element.widgetType || element.elType;
+
+	if ( type === MENU_ELEMENT_TYPE && ( ! search.onlyUnderLink || isUnderLink ) ) {
+		return true;
+	}
+
+	if ( type === SUBMENU_ELEMENT_TYPE && search.skipSubmenus ) {
+		return false;
+	}
+
+	const isLinked = isUnderLink || !! element.settings?.link?.value?.destination;
+
+	return ( element.elements ?? [] ).some( ( child ) => dataNodeContainsMenu( child, search, isLinked ) );
 }
 
-export function clipboardContainsMenu( elements: ClipboardElement[] ): boolean {
-	return hasClipboardElementType( elements, MENU_ELEMENT_TYPE );
+export function containersContainMenu(
+	containers: ( V1Element | undefined )[],
+	search: Pick< Search, 'skipSubmenus' > = {}
+): boolean {
+	return containers.some( ( container ) => containerContainsMenu( container, search ) );
 }
 
-export function isInsideLink( target?: V1Element ): boolean {
-	return target?.id ? isElementAnchored( target.id ) || !! getAnchoredAncestorId( target.id ) : false;
+function containerContainsMenu( container: V1Element | undefined, search: Pick< Search, 'skipSubmenus' > ): boolean {
+	if ( ! container ) {
+		return false;
+	}
+
+	const type = getElementType( container );
+
+	if ( type === MENU_ELEMENT_TYPE ) {
+		return true;
+	}
+
+	if ( type === SUBMENU_ELEMENT_TYPE && search.skipSubmenus ) {
+		return false;
+	}
+
+	return ( container.children ?? [] ).some( ( child ) => containerContainsMenu( child, search ) );
 }
 
 export function isInsideMenu( target?: V1Element ): boolean {

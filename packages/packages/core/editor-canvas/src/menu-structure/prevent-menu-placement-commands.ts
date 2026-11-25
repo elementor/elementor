@@ -3,9 +3,10 @@ import { type NotificationData, notify } from '@elementor/editor-notifications';
 import { blockCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
-import { type CreateArgs, type MoveArgs, type PasteArgs, type StorageContent } from '../form-structure/utils';
-import { learnMoreActionProps } from '../prevent-link-in-link-commands';
-import { clipboardContainsMenu, containersContainMenu, isInsideLink, isInsideMenu, modelContainsMenu } from './utils';
+import { type CreateArgs, type MoveArgs, type PasteArgs } from '../form-structure/utils';
+import { isInsideLink, learnMoreActionProps } from '../prevent-link-in-link-commands';
+import { getLocalClipboardElements } from '../utils/get-local-clipboard-elements';
+import { containersContainMenu, dataContainsMenu, type ElementData, isInsideMenu } from './utils';
 
 const MENU_IN_LINK_NOTIFICATION: NotificationData = {
 	type: 'default',
@@ -40,46 +41,55 @@ export function initMenuPlacementPrevention() {
 	} );
 }
 
-function blockMenuCreate( args: CreateArgs ): boolean {
-	if ( ! modelContainsMenu( args.model ) ) {
-		return false;
-	}
+type MenuSource = {
+	hasMenu: boolean;
+	hasMenuOutsideSubmenus: boolean;
+	hasLinkedMenu: boolean;
+};
 
-	return blockIfMisplaced( args.containers ?? [ args.container ] );
+function blockMenuCreate( args: CreateArgs ): boolean {
+	return blockIfMisplaced( describeData( [ args.model ] ), args.containers ?? [ args.container ] );
 }
 
 function blockMenuMove( args: MoveArgs ): boolean {
-	if ( ! containersContainMenu( args.containers ?? [ args.container ] ) ) {
-		return false;
-	}
+	const containers = args.containers ?? [ args.container ];
 
-	return blockIfMisplaced( [ args.target ] );
+	return blockIfMisplaced(
+		{
+			hasMenu: containersContainMenu( containers ),
+			hasMenuOutsideSubmenus: containersContainMenu( containers, { skipSubmenus: true } ),
+			hasLinkedMenu: false,
+		},
+		[ args.target ]
+	);
 }
 
 function blockMenuPaste( args: PasteArgs & { containers?: V1Element[] } ): boolean {
-	if ( args.storageType !== 'localstorage' ) {
+	const clipboardElements = getLocalClipboardElements( args.storageType );
+
+	if ( ! clipboardElements ) {
 		return false;
 	}
 
-	const data = (
-		window as { elementorCommon?: { storage?: { get: () => StorageContent } } }
-	 )?.elementorCommon?.storage?.get();
-
-	if ( ! data?.clipboard?.elements || ! clipboardContainsMenu( data.clipboard.elements ) ) {
-		return false;
-	}
-
-	return blockIfMisplaced( args.containers ?? [ args.container ] );
+	return blockIfMisplaced( describeData( clipboardElements ), args.containers ?? [ args.container ] );
 }
 
-function blockIfMisplaced( targets: ( V1Element | undefined )[] ): boolean {
-	if ( targets.some( isInsideLink ) ) {
+function describeData( elements: ( ElementData | undefined )[] ): MenuSource {
+	return {
+		hasMenu: dataContainsMenu( elements ),
+		hasMenuOutsideSubmenus: dataContainsMenu( elements, { skipSubmenus: true } ),
+		hasLinkedMenu: dataContainsMenu( elements, { onlyUnderLink: true } ),
+	};
+}
+
+function blockIfMisplaced( source: MenuSource, targets: ( V1Element | undefined )[] ): boolean {
+	if ( source.hasLinkedMenu || ( source.hasMenu && targets.some( isInsideLink ) ) ) {
 		notify( MENU_IN_LINK_NOTIFICATION );
 
 		return true;
 	}
 
-	if ( targets.some( isInsideMenu ) ) {
+	if ( source.hasMenuOutsideSubmenus && targets.some( isInsideMenu ) ) {
 		notify( MENU_IN_MENU_NOTIFICATION );
 
 		return true;
