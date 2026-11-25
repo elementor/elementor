@@ -7,6 +7,7 @@ import { postTypesMap, type Slug } from '../../api/post';
 import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
 import useAccessiblePanelPostTypes from '../../hooks/use-accessible-panel-post-types';
 import useCanCreate from '../../hooks/use-can-create';
+import { getSiteContentHeaderCreateItems } from '../../site-content-header-create-items';
 import ContentPanelAddIconButton from './content-panel-add-icon-button';
 
 const typeIcons: Record< Slug, typeof PageTypeIcon > = {
@@ -36,7 +37,8 @@ export default function ContentPanelHeaderAdd() {
 		variant: 'popover',
 		popupId: 'elementor-content-panel-header-add',
 	} );
-	const canAddAny = accessibleSlugs.length > 0;
+	const headerCreateItems = getSiteContentHeaderCreateItems();
+	const canAddAny = accessibleSlugs.length > 0 || headerCreateItems.length > 0;
 
 	const buttonProps = bindTrigger( popupState );
 	const menuProps = bindMenu( popupState );
@@ -58,6 +60,16 @@ export default function ContentPanelHeaderAdd() {
 			<Menu { ...menuProps }>
 				{ accessibleSlugs.map( ( slug ) => (
 					<HeaderAddMenuItem key={ slug } onSelect={ handleSelectType } slug={ slug } />
+				) ) }
+				{ headerCreateItems.map( ( item ) => (
+					<React.Fragment key={ item.id }>
+						{ item.renderMenuItem( () => {
+							popupState.close();
+							requestAnimationFrame( () => {
+								requestCreate( item.id );
+							} );
+						} ) }
+					</React.Fragment>
 				) ) }
 			</Menu>
 		</>
