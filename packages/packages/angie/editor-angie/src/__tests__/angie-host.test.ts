@@ -1,4 +1,4 @@
-import { AngieInteractionMode, AngieMcpSdk } from '@elementor-external/angie-sdk';
+import { AngieInteractionMode, getAngieSdk } from '@elementor/editor-angie-sdk';
 
 import { bootAngieSdk, resetAngieSdkForTests } from '../boot-angie-sdk';
 import { resetHelpCenterAbilityForTests } from '../help-center-ability';
@@ -8,6 +8,7 @@ import { openAngie, registerAngiePanelOpener, resetAngiePanelOpenerForTests } fr
 const mockLoadSidebarV2 = jest.fn();
 const mockTriggerAngie = jest.fn();
 const mockWaitForReady = jest.fn();
+const mockResetIfExpired = jest.fn();
 const mockRegisterLocalServer = jest.fn();
 const mockSetAngieInteractionMode = jest.fn();
 const mockToggleAngieSidebar = jest.fn();
@@ -27,13 +28,15 @@ jest.mock( '@elementor-external/wp-search-mcp', () => ( {
 	},
 } ) );
 
-jest.mock( '@elementor-external/angie-sdk', () => ( {
-	AngieMcpSdk: jest.fn().mockImplementation( () => ( {
+jest.mock( '@elementor/editor-angie-sdk', () => ( {
+	EDITOR_ANGIE_APP_ID: 'elementor-editor-core',
+	getAngieSdk: jest.fn().mockImplementation( () => ( {
 		loadSidebarV2: ( ...args: unknown[] ) => mockLoadSidebarV2( ...args ),
 		triggerAngie: ( ...args: unknown[] ) => mockTriggerAngie( ...args ),
 		waitForReady: () => mockWaitForReady(),
 		registerLocalServer: ( ...args: unknown[] ) => mockRegisterLocalServer( ...args ),
 	} ) ),
+	refreshAngieSdkIfDetectionExpired: () => mockResetIfExpired(),
 	LAYOUT_SIDEBAR: 'sidebar',
 	AngieInteractionMode: {
 		ASK: 'ask',
@@ -61,7 +64,7 @@ jest.mock( '../attach-editor-mcp-servers', () => ( {
 	attachEditorMcpServers: ( ...args: unknown[] ) => mockAttachAngieSdk( ...args ),
 } ) );
 
-const AngieMcpSdkMock = AngieMcpSdk as jest.Mock;
+const AngieMcpSdkMock = getAngieSdk as jest.Mock;
 
 const mountIframe = () => {
 	const container = document.createElement( 'div' );
@@ -156,7 +159,6 @@ describe( 'editor angie host', () => {
 		await bootAngieSdk();
 
 		expect( AngieMcpSdkMock ).toHaveBeenCalledTimes( 1 );
-		expect( AngieMcpSdkMock ).toHaveBeenCalledWith( { appId: 'elementor-editor-core' } );
 		expect( mockLoadSidebarV2 ).toHaveBeenCalledWith( {
 			host: {
 				appId: 'elementor-editor-core',
@@ -228,6 +230,24 @@ describe( 'editor angie host', () => {
 
 		expect( mockWpSearchMcpServer ).not.toHaveBeenCalled();
 		expect( mockRegisterLocalServer ).not.toHaveBeenCalled();
+	} );
+
+	it( 'drops an expired SDK before it fetches the instance to boot', async () => {
+		// Arrange
+		mountIframe();
+		const calls: string[] = [];
+		mockResetIfExpired.mockImplementationOnce( () => calls.push( 'reset' ) );
+		AngieMcpSdkMock.mockImplementationOnce( () => {
+			calls.push( 'get' );
+
+			return { loadSidebarV2: mockLoadSidebarV2 };
+		} );
+
+		// Act
+		await bootAngieSdk();
+
+		// Assert
+		expect( calls ).toEqual( [ 'reset', 'get' ] );
 	} );
 
 	it( 'fails boot when the Angie container is missing', async () => {
