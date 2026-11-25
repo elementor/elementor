@@ -1,7 +1,15 @@
 import * as React from 'react';
-import { useState } from 'react';
 import { HomeIcon } from '@elementor/icons';
-import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider } from '@elementor/ui';
+import {
+	Button,
+	CircularProgress,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
+	Divider,
+} from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { usePostListContext } from '../../../../contexts/post-list-context';
@@ -10,11 +18,16 @@ import useUser from '../../../../hooks/use-user';
 import { type Post } from '../../../../types';
 import ActionMenuItem from '../action-menu-item';
 
-export default function SetHome( { post, closeMenu }: { post: Post; closeMenu: () => void } ) {
+type SetHomeProps = {
+	post: Post;
+	closeMenu: () => void;
+	onRequestRemoveHomepage?: () => void;
+};
+
+export default function SetHome( { post, closeMenu, onRequestRemoveHomepage }: SetHomeProps ) {
 	const { updateSettingsMutation } = useHomepageActions();
 	const { setError } = usePostListContext();
 	const { data: user } = useUser();
-	const [ isRemoveDialogOpen, setIsRemoveDialogOpen ] = useState( false );
 
 	const isPostHomepage = !! post.isHome;
 
@@ -30,7 +43,7 @@ export default function SetHome( { post, closeMenu }: { post: Post; closeMenu: (
 
 	const handleMenuClick = () => {
 		if ( isPostHomepage ) {
-			setIsRemoveDialogOpen( true );
+			onRequestRemoveHomepage?.();
 			closeMenu();
 			return;
 		}
@@ -46,48 +59,43 @@ export default function SetHome( { post, closeMenu }: { post: Post; closeMenu: (
 	const title = isPostHomepage ? __( 'Remove as homepage', 'elementor' ) : __( 'Set as homepage', 'elementor' );
 
 	return (
-		<>
-			<ActionMenuItem
-				title={ title }
-				icon={ ! updateSettingsMutation.isPending ? HomeIcon : CircularProgress }
-				MenuItemProps={ {
-					disabled: isDisabled,
-					onClick: handleMenuClick,
-				} }
-			/>
-			{ isRemoveDialogOpen && (
-				<RemoveHomepageDialog
-					setIsDialogOpen={ setIsRemoveDialogOpen }
-					updateSettingsMutation={ updateSettingsMutation }
-					setError={ setError }
-				/>
-			) }
-		</>
+		<ActionMenuItem
+			title={ title }
+			icon={ ! updateSettingsMutation.isPending ? HomeIcon : CircularProgress }
+			MenuItemProps={ {
+				disabled: isDisabled,
+				onClick: handleMenuClick,
+			} }
+		/>
 	);
 }
 
-function RemoveHomepageDialog( {
-	setIsDialogOpen,
-	updateSettingsMutation,
-	setError,
-}: {
-	setIsDialogOpen: React.Dispatch< React.SetStateAction< boolean > >;
-	updateSettingsMutation: ReturnType< typeof useHomepageActions >[ 'updateSettingsMutation' ];
-	setError: () => void;
-} ) {
-	const dialogTitle = __( 'Remove as homepage?', 'elementor' );
+type RemoveHomepageDialogProps = {
+	open: boolean;
+	onClose: () => void;
+};
+
+export function RemoveHomepageDialog( { open, onClose }: RemoveHomepageDialogProps ) {
+	const { updateSettingsMutation } = useHomepageActions();
+	const { setError } = usePostListContext();
+
+	if ( ! open ) {
+		return null;
+	}
+
+	const dialogTitle = __( 'Remove this page as your homepage?', 'elementor' );
 	const dialogBody = __(
-		'Your site will show your latest posts on the front page. You can set a static homepage again from any page row.',
+		'Your homepage will go back to showing your latest posts. You can set a page as your homepage again at any time.',
 		'elementor'
 	);
 
 	const handleRemove = async () => {
 		try {
 			await updateSettingsMutation.mutateAsync( { show_on_front: 'posts' } );
-			setIsDialogOpen( false );
+			onClose();
 		} catch {
 			setError();
-			setIsDialogOpen( false );
+			onClose();
 		}
 	};
 
@@ -96,7 +104,7 @@ function RemoveHomepageDialog( {
 			return;
 		}
 
-		setIsDialogOpen( false );
+		onClose();
 	};
 
 	return (
@@ -107,11 +115,20 @@ function RemoveHomepageDialog( {
 				<DialogContentText>{ dialogBody }</DialogContentText>
 			</DialogContent>
 			<DialogActions>
-				<Button variant="contained" color="secondary" onClick={ handleCancel } disabled={ updateSettingsMutation.isPending }>
+				<Button
+					variant="contained"
+					color="secondary"
+					onClick={ handleCancel }
+					disabled={ updateSettingsMutation.isPending }
+				>
 					{ __( 'Cancel', 'elementor' ) }
 				</Button>
 				<Button variant="contained" onClick={ handleRemove } disabled={ updateSettingsMutation.isPending }>
-					{ ! updateSettingsMutation.isPending ? __( 'Remove', 'elementor' ) : <CircularProgress /> }
+					{ ! updateSettingsMutation.isPending ? (
+						__( 'Remove as homepage', 'elementor' )
+					) : (
+						<CircularProgress />
+					) }
 				</Button>
 			</DialogActions>
 		</Dialog>

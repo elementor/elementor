@@ -5,9 +5,7 @@ export type Settings = {
 	show_on_front: 'page' | 'posts';
 };
 
-export type UpdateReadingSettings =
-	| { show_on_front: 'posts' }
-	| { show_on_front: 'page'; page_on_front: number };
+export type UpdateReadingSettings = { show_on_front: 'posts' } | { show_on_front: 'page'; page_on_front: number };
 
 type Homepage = number;
 

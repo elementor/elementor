@@ -4,7 +4,7 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import useUser from '../../../../../hooks/use-user';
 import { type Post } from '../../../../../types';
-import SetHome from '../set-home';
+import SetHome, { RemoveHomepageDialog } from '../set-home';
 
 const mockMutateAsync = jest.fn();
 jest.mock( '../../../../../hooks/use-homepage-actions', () => ( {
@@ -80,14 +80,29 @@ describe( '@elementor/editor-site-navigation - SetHome', () => {
 			},
 		};
 
-		renderWithTheme( <SetHome post={ post } closeMenu={ () => {} } /> );
+		const RemoveHomepageHarness = () => {
+			const [ isDialogOpen, setIsDialogOpen ] = React.useState( false );
+
+			return (
+				<>
+					<SetHome
+						post={ post }
+						closeMenu={ () => {} }
+						onRequestRemoveHomepage={ () => setIsDialogOpen( true ) }
+					/>
+					<RemoveHomepageDialog open={ isDialogOpen } onClose={ () => setIsDialogOpen( false ) } />
+				</>
+			);
+		};
+
+		renderWithTheme( <RemoveHomepageHarness /> );
 
 		const button = screen.getByRole( 'menuitem', { name: 'Remove as homepage' } );
 		expect( button ).not.toHaveAttribute( 'aria-disabled' );
 
 		fireEvent.click( button );
 
-		const confirmButton = screen.getByRole( 'button', { name: 'Remove' } );
+		const confirmButton = screen.getByRole( 'button', { name: 'Remove as homepage' } );
 		fireEvent.click( confirmButton );
 
 		expect( mockMutateAsync ).toHaveBeenCalledWith( { show_on_front: 'posts' } );
