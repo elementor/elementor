@@ -87,7 +87,10 @@ describe( '@elementor/editor-site-navigation - SetHome', () => {
 
 		fireEvent.click( button );
 
-		expect( mockMutateAsync ).toHaveBeenCalledWith( { show_on_front: 'posts', page_on_front: 0 } );
+		const confirmButton = screen.getByRole( 'button', { name: 'Remove' } );
+		fireEvent.click( confirmButton );
+
+		expect( mockMutateAsync ).toHaveBeenCalledWith( { show_on_front: 'posts' } );
 	} );
 
 	it( 'should render Set as homepage disabled when the page status is draft', () => {

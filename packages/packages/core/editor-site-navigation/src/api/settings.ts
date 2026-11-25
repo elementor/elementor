@@ -5,6 +5,10 @@ export type Settings = {
 	show_on_front: 'page' | 'posts';
 };
 
+export type UpdateReadingSettings =
+	| { show_on_front: 'posts' }
+	| { show_on_front: 'page'; page_on_front: number };
+
 type Homepage = number;
 
 export const getSettings = () => {
@@ -15,7 +19,7 @@ export const getSettings = () => {
 	return apiFetch< Homepage >( { path: uri } );
 };
 
-export const updateSettings = ( settings: Settings ) => {
+export const updateSettings = ( settings: UpdateReadingSettings ) => {
 	return apiFetch( {
 		path: '/wp/v2/settings',
 		method: 'POST',
