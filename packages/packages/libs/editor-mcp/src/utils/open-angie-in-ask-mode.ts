@@ -3,7 +3,7 @@ import {
 	getAngieIframe,
 	setAngieInteractionMode,
 	toggleAngieSidebar,
-} from '@elementor-external/angie-sdk';
+} from '@elementor/editor-angie-sdk';
 
 import { isAngieAvailable } from './is-angie-available';
 

@@ -3,7 +3,7 @@ import { type ToggleButtonGroupItem, ToggleControl } from '@elementor/editor-con
 import { TextDirectionLtrIcon, TextDirectionRtlIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
 type Direction = 'ltr' | 'rtl';
@@ -25,10 +25,10 @@ const options: ToggleButtonGroupItem< Direction >[] = [
 	},
 ];
 
-export const TextDirectionField = () => {
+export const TextDirectionField = ( { label = TEXT_DIRECTION_LABEL }: StylesFieldLabelProps ) => {
 	return (
-		<StylesField bind="direction" propDisplayName={ TEXT_DIRECTION_LABEL }>
-			<StylesFieldLayout label={ TEXT_DIRECTION_LABEL }>
+		<StylesField bind="direction" propDisplayName={ label }>
+			<StylesFieldLayout label={ label }>
 				<ToggleControl options={ options } />
 			</StylesFieldLayout>
 		</StylesField>

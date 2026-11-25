@@ -16,7 +16,9 @@ import { __ } from '@wordpress/i18n';
 import { useClassesProp } from '../contexts/classes-prop-context';
 import { useElement } from '../contexts/element-context';
 import { useStyle } from '../contexts/style-context';
+import { useStylesFieldTargets } from '../contexts/styles-field-targets-context';
 import { StyleNotFoundUnderProviderError, StylesProviderCannotUpdatePropsError } from '../errors';
+import { getElementClassesProp, getElementLocalStyle } from '../utils/element-local-style';
 import { useStylesRerender } from './use-styles-rerender';
 
 export const HISTORY_DEBOUNCE_WAIT = 800;
@@ -26,22 +28,49 @@ export function useStylesFields< T extends Props >( propNames: ( keyof T & strin
 		element: { id: elementId },
 	} = useElement();
 	const { id: styleId, meta, provider, canEdit } = useStyle();
+	const classesProp = useClassesProp();
+	const targetElementIds = useStylesFieldTargets();
 
-	const undoableUpdateStyle = useUndoableActions( { elementId, meta } );
+	const undoableUpdateStyle = useUndoableActions( { meta } );
 
 	useStylesRerender();
 
 	const values = getProps< T >( { elementId, styleId, provider, meta, propNames } );
 
 	const setValues = ( props: T, { history: { propDisplayName } }: { history: { propDisplayName: string } } ) => {
-		if ( ! styleId ) {
-			undoableUpdateStyle( { styleId: null, provider: null, props, propDisplayName } );
-		} else {
-			undoableUpdateStyle( { styleId, provider, props, propDisplayName } );
+		const targets = targetElementIds
+			? getLocalStyleTargets( targetElementIds )
+			: [ { elementId, classesProp, styleId, provider } ];
+
+		if ( ! targets.length ) {
+			return;
 		}
+
+		undoableUpdateStyle( { targets, props, propDisplayName } );
 	};
 
 	return { values, setValues, canEdit };
+}
+
+function getLocalStyleTargets( elementIds: ElementID[] ): StyleTarget[] {
+	return elementIds.flatMap( ( elementId ) => {
+		const classesProp = getElementClassesProp( elementId );
+
+		if ( ! classesProp ) {
+			return [];
+		}
+
+		const localStyle = getElementLocalStyle( elementId );
+
+		return [
+			{
+				elementId,
+				classesProp,
+				styleId: localStyle?.styleId ?? null,
+				provider: localStyle?.provider ?? null,
+			},
+		];
+	} );
 }
 
 type GetPropsArgs = {
@@ -74,18 +103,16 @@ function getProps< T extends Props >( { styleId, elementId, provider, meta, prop
 	) as NullableValues< T >;
 }
 
-type UpdateStyleArgs = {
-	styleId: StyleDefinition[ 'id' ];
-	provider: StylesProvider;
-	props: Props;
-	propDisplayName: string;
+type StyleTarget = {
+	elementId: ElementID;
+	classesProp: string;
+	styleId: StyleDefinition[ 'id' ] | null;
+	provider: StylesProvider | null;
 };
 
-type CreateStyleArgs = {
-	styleId: null;
-	provider: null;
-	props: Props;
-	propDisplayName: string;
+type UpdateStyleTarget = StyleTarget & {
+	styleId: StyleDefinition[ 'id' ];
+	provider: StylesProvider;
 };
 
 type UpdateStyleReturn = {
@@ -98,67 +125,73 @@ type CreateStyleReturn = {
 	createdStyleId: StyleDefinition[ 'id' ];
 };
 
-type UndoableUpdateStylePayload = UpdateStyleArgs | CreateStyleArgs;
-type UndoableUpdateStyleReturn = UpdateStyleReturn | CreateStyleReturn;
+type UndoableUpdateStylePayload = {
+	targets: StyleTarget[];
+	props: Props;
+	propDisplayName: string;
+};
 
-function useUndoableActions( {
-	elementId,
-	meta: { breakpoint, state },
-}: {
-	elementId: ElementID;
-	meta: StyleDefinitionVariant[ 'meta' ];
-} ) {
-	const classesProp = useClassesProp();
+type TargetReturn = UpdateStyleReturn | CreateStyleReturn;
 
+function useUndoableActions( { meta: { breakpoint, state } }: { meta: StyleDefinitionVariant[ 'meta' ] } ) {
 	return useMemo( () => {
 		const meta = { breakpoint, state };
 
-		const createStyleArgs = { elementId, classesProp, meta, label: ELEMENTS_STYLES_RESERVED_LABEL };
-
 		return undoable(
 			{
-				do: ( payload: UndoableUpdateStylePayload ): UndoableUpdateStyleReturn => {
-					if ( shouldCreateNewLocalStyle< StylesProvider >( payload ) ) {
-						return create( payload as CreateStyleArgs );
-					}
-					return update( payload as UpdateStyleArgs );
+				do: ( { targets, props }: UndoableUpdateStylePayload ): TargetReturn[] =>
+					targets.map( ( target ) =>
+						shouldCreateNewLocalStyle< StylesProvider >( target )
+							? create( target, props )
+							: update( target as UpdateStyleTarget, props )
+					),
+				undo: ( { targets }: UndoableUpdateStylePayload, doReturn: TargetReturn[] ) => {
+					targets.forEach( ( target, index ) => {
+						if ( shouldCreateNewLocalStyle< StylesProvider >( target ) ) {
+							undoCreate( target, doReturn[ index ] as CreateStyleReturn );
+						} else {
+							undo( target, doReturn[ index ] as UpdateStyleReturn );
+						}
+					} );
 				},
-				undo: ( payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn ) => {
-					const wasLocalStyleCreated = shouldCreateNewLocalStyle< StylesProvider >( payload );
-
-					if ( wasLocalStyleCreated ) {
-						return undoCreate( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
-					}
-					return undo( payload as UpdateStyleArgs, doReturn as UpdateStyleReturn );
-				},
-				redo: ( payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn ) => {
-					const wasLocalStyleCreated = shouldCreateNewLocalStyle< StylesProvider >( payload );
-
-					if ( wasLocalStyleCreated ) {
-						return create( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
-					}
-					return update( payload as UpdateStyleArgs );
-				},
+				redo: ( { targets, props }: UndoableUpdateStylePayload, doReturn: TargetReturn[] ): TargetReturn[] =>
+					targets.map( ( target, index ) =>
+						shouldCreateNewLocalStyle< StylesProvider >( target )
+							? create( target, props, doReturn[ index ] as CreateStyleReturn )
+							: update( target as UpdateStyleTarget, props )
+					),
 			},
 			{
-				title: ( { provider, styleId } ) => getTitle( { provider, styleId, elementId } ),
-				subtitle: ( { provider, styleId, propDisplayName } ) =>
+				title: ( { targets: [ { provider, styleId, elementId } ] } ) =>
+					getTitle( { provider, styleId, elementId } ),
+				subtitle: ( { targets: [ { provider, styleId, elementId } ], propDisplayName } ) =>
 					getSubtitle( { provider, styleId, elementId, propDisplayName } ),
 				debounce: { wait: HISTORY_DEBOUNCE_WAIT },
 			}
 		);
 
-		function create( { props }: CreateStyleArgs, redoArgs?: CreateStyleReturn ): CreateStyleReturn {
-			const createdStyle = createElementStyle( { ...createStyleArgs, props, styleId: redoArgs?.createdStyleId } );
+		function create(
+			{ elementId, classesProp }: StyleTarget,
+			props: Props,
+			redoArgs?: CreateStyleReturn
+		): CreateStyleReturn {
+			const createdStyle = createElementStyle( {
+				elementId,
+				classesProp,
+				meta,
+				label: ELEMENTS_STYLES_RESERVED_LABEL,
+				props,
+				styleId: redoArgs?.createdStyleId,
+			} );
 
 			return { createdStyleId: createdStyle };
 		}
 
-		function undoCreate( _: UndoableUpdateStylePayload, { createdStyleId }: CreateStyleReturn ) {
+		function undoCreate( { elementId }: StyleTarget, { createdStyleId }: CreateStyleReturn ) {
 			deleteElementStyle( elementId, createdStyleId );
 		}
 
-		function update( { provider, styleId, props }: UpdateStyleArgs ): UpdateStyleReturn {
+		function update( { elementId, provider, styleId }: UpdateStyleTarget, props: Props ): UpdateStyleReturn {
 			if ( ! provider.actions.updateProps ) {
 				throw new StylesProviderCannotUpdatePropsError( {
 					context: { providerKey: provider.getKey() },
@@ -173,10 +206,10 @@ function useUndoableActions( {
 			return { styleId, provider, prevProps };
 		}
 
-		function undo( _: UndoableUpdateStylePayload, { styleId, provider, prevProps }: UpdateStyleReturn ) {
+		function undo( { elementId }: StyleTarget, { styleId, provider, prevProps }: UpdateStyleReturn ) {
 			provider.actions.updateProps?.( { id: styleId, meta, props: prevProps, mode: 'replace' }, { elementId } );
 		}
-	}, [ elementId, breakpoint, state, classesProp ] );
+	}, [ breakpoint, state ] );
 }
 
 function getCurrentProps( style: StyleDefinition | null, meta: StyleDefinitionVariant[ 'meta' ] ) {

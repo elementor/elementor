@@ -15,8 +15,6 @@ class Admin_Menu_Structure {
 
 	const DIVIDER_CLASS = 'elementor-submenu-has-divider';
 
-	const PAGES_MENU_SLUG = 'edit.php?post_type=page';
-
 	const UPGRADE_SLUGS = [
 		'elementor-one-upgrade',
 		'go_elementor_pro',
@@ -33,7 +31,7 @@ class Admin_Menu_Structure {
 
 		add_action( 'admin_menu', [ $this, 'register_upgrade_submenu_page' ], 10007 );
 		add_action( 'admin_menu', [ $this, 'register_parent_aliases' ], 10008 );
-		add_action( 'admin_menu', [ $this, 'place_elementor_below_pages' ], 10020 );
+		add_action( 'admin_menu', [ $this, 'place_elementor_above_hello' ], 10020 );
 		add_action( 'admin_head', [ $this, 'rebuild_submenu' ], 20 );
 		add_filter( 'admin_body_class', [ $this, 'add_admin_navigation_body_class' ] );
 	}
@@ -85,14 +83,14 @@ class Admin_Menu_Structure {
 		}
 	}
 
-	public function place_elementor_below_pages(): void {
+	public function place_elementor_above_hello(): void {
 		if ( ! $this->should_apply() ) {
 			return;
 		}
 
 		global $menu;
 
-		$menu = $this->move_below_pages( (array) $menu, Menu_Config::ELEMENTOR_HOME_MENU_SLUG, self::PAGES_MENU_SLUG ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$menu = $this->move_to_position( (array) $menu, Menu_Config::ELEMENTOR_HOME_MENU_SLUG, Menu_Config::MENU_POSITION ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
 	public function rebuild_submenu(): void {
@@ -132,21 +130,23 @@ class Admin_Menu_Structure {
 		) );
 	}
 
-	public function move_below_pages( array $menu, string $item_slug, string $pages_slug ): array {
+	/**
+	 * Moves the top-level item to the given position. A taken position is resolved by stepping up by 0.01,
+	 * which keeps the item below Hello (59.9) as long as the position starts just under it.
+	 */
+	public function move_to_position( array $menu, string $item_slug, float $position ): array {
 		$slugs = array_map( fn( $item ) => $item[2] ?? '', $menu );
 		$item_key = array_search( $item_slug, $slugs, true );
-		$pages_key = array_search( $pages_slug, $slugs, true );
 
-		if ( false === $item_key || false === $pages_key ) {
+		if ( false === $item_key ) {
 			return $menu;
 		}
 
 		$item = $menu[ $item_key ];
 		unset( $menu[ $item_key ] );
-		$position = (float) $pages_key + 1;
 
 		while ( isset( $menu[ (string) $position ] ) ) {
-			++$position;
+			$position = round( $position + 0.01, 2 );
 		}
 
 		$menu[ (string) $position ] = $item;
