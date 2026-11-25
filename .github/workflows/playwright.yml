@@ -38,6 +38,9 @@ on:
       cdn_scenario:
         description: 'Extra CDN scenario for the promotion tests. Set to live to fetch and test the live CDN.'
         required: false
+      cdn_source:
+        description: 'CDN to fetch the live scenario from, e.g. https://assets.stg.elementor.red to check a campaign before the launch. Implies cdn_scenario=live.'
+        required: false
       environment:
         type: choice
         description: 'Target environment'
@@ -86,7 +89,8 @@ jobs:
       id-token: write
     if: ${{ github.event.inputs.tag }}
     env:
-      E2E_CDN_SCENARIO: ${{ github.event.inputs.cdn_scenario || '' }}
+      E2E_CDN_SCENARIO: ${{ github.event.inputs.cdn_source && 'live' || github.event.inputs.cdn_scenario || '' }}
+      E2E_CDN_SOURCE: ${{ github.event.inputs.cdn_source || '' }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -137,6 +141,7 @@ jobs:
           mu-plugins-dir: tests/playwright/mu-plugins
           copy-fixtures: true
           fetch-live: ${{ env.E2E_CDN_SCENARIO == 'live' }}
+          cdn-source: ${{ env.E2E_CDN_SOURCE }}
           allow-failure: true
       - name: Install WordPress environment
         run: |

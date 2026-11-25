@@ -1,5 +1,6 @@
-import { readFileSync, existsSync } from 'fs';
-import { resolve } from 'path';
+import { createHash } from 'crypto';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { dirname, resolve } from 'path';
 import { type BrowserContext, type Locator, type TestInfo, expect } from '@playwright/test';
 
 export const ACTIVE_CAMPAIGN_SCENARIO = 'active-campaign';
@@ -83,10 +84,39 @@ export const useCdnScenario = async ( context: BrowserContext, baseURL: string, 
 	await context.addCookies( [ { name: SCENARIO_COOKIE, value: scenario, url: baseURL } ] );
 };
 
-// The active-campaign fixture never changes, so its look is compared with a baseline, with remote images masked.
-// Other campaign scenarios, like `live`, change with every campaign, so their look is attached to the report for a person to check.
+const ASSETS_ORIGIN = 'https://assets.elementor.com';
+const STAGING_ASSETS_ORIGIN = 'https://assets.stg.elementor.red';
+const CAMPAIGN_BASELINE_PREFIX = 'campaign';
+const APPROVING_UPDATE_MODES = [ 'all', 'changed' ];
+
+// Staging serves its images from its own host, so a campaign approved on staging keeps its fingerprint after the launch.
+const getContentFingerprint = ( content: unknown ): string =>
+	createHash( 'sha256' ).update( JSON.stringify( content ?? null ).replaceAll( STAGING_ASSETS_ORIGIN, ASSETS_ORIGIN ) ).digest( 'hex' );
+
+const waitForImages = ( element: Locator ): Promise<unknown> =>
+	element.locator( 'img' ).evaluateAll( ( images: HTMLImageElement[] ) => Promise.all( images
+		.filter( ( image ) => ! image.complete )
+		.map( ( image ) => new Promise( ( done ) => {
+			image.addEventListener( 'load', done );
+			image.addEventListener( 'error', done );
+		} ) ) ) );
+
+type CampaignLook = {
+	scenario: string;
+	element: Locator;
+	name: string;
+	testInfo: TestInfo;
+	// The CDN data that the element shows, the baseline of a real campaign belongs to it.
+	content: unknown;
+	// Masked in the active-campaign baseline, because the browser loads them from the real CDN.
+	images?: Locator[];
+};
+
+// The active-campaign fixture never changes, so its look is always compared with a baseline.
+// A real campaign (live or staging) is compared only with a baseline approved for the same content.
+// New content fails until a person checks the attached screenshot and approves it with --update-snapshots.
 // The no-promotion look is covered by promotions.test.ts.
-export const checkCampaignLook = async ( scenario: string, element: Locator, name: string, testInfo: TestInfo, images: Locator[] = [] ): Promise<void> => {
+export const checkCampaignLook = async ( { scenario, element, name, testInfo, content, images = [] }: CampaignLook ): Promise<void> => {
 	if ( NO_PROMOTION_SCENARIO === scenario ) {
 		return;
 	}
@@ -96,7 +126,26 @@ export const checkCampaignLook = async ( scenario: string, element: Locator, nam
 		return;
 	}
 
+	await waitForImages( element );
 	await testInfo.attach( `${ scenario }-${ name }`, { body: await element.screenshot(), contentType: 'image/png' } );
+
+	const baselineName = `${ CAMPAIGN_BASELINE_PREFIX }-${ name }`;
+	const fingerprintPath = testInfo.snapshotPath( `${ baselineName }.sha256` );
+	const fingerprint = getContentFingerprint( content );
+
+	if ( APPROVING_UPDATE_MODES.includes( testInfo.config.updateSnapshots ) ) {
+		mkdirSync( dirname( fingerprintPath ), { recursive: true } );
+		writeFileSync( fingerprintPath, `${ fingerprint }\n` );
+	} else {
+		const approved = existsSync( fingerprintPath ) ? readFileSync( fingerprintPath, 'utf8' ).trim() : 'none';
+
+		if ( approved !== fingerprint ) {
+			expect.soft( approved, `The ${ scenario } CDN content of ${ name } is not approved. Check the attached ${ scenario }-${ name } screenshot, then approve it with Update Playwright Snapshots: test_grep="live @promotions" and the same cdn_source.` ).toBe( fingerprint );
+			return;
+		}
+	}
+
+	await expect.soft( element ).toHaveScreenshot( `${ baselineName }.png` );
 };
 
 export const readEditorPromotion = ( scenario: string, name: EditorPromotionName ): EditorPromotion =>
@@ -119,7 +168,7 @@ const isNotificationShown = ( notification: Notification, hasPro: boolean ): boo
 
 const isImageOnly = ( notification: Notification ): boolean => ! notification.title && ! notification.description;
 
-const readNotifications = ( scenario: string ): Notification[] =>
+export const readNotifications = ( scenario: string ): Notification[] =>
 	readFixture<Notification[]>( scenario, NOTIFICATIONS_PATH, 'notifications' ) ?? [];
 
 export const readFirstFullNotification = ( scenario: string, hasPro: boolean ): Notification | undefined => {

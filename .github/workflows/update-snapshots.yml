@@ -32,6 +32,16 @@ on:
         description: 'Delete baseline snapshots for the browser(s) selected above only (Firefox: *firefox*; Chromium: non-firefox files in *-snapshots)'
         required: false
         default: false
+      cdn_scenario:
+        description: 'Set to live to approve the campaign on the live CDN, with test_grep=@promotions.'
+        required: false
+      cdn_source:
+        description: 'CDN to approve the campaign from, e.g. https://assets.stg.elementor.red before the launch. Implies cdn_scenario=live.'
+        required: false
+
+env:
+  E2E_CDN_SCENARIO: ${{ inputs.cdn_source && 'live' || inputs.cdn_scenario || '' }}
+  E2E_CDN_SOURCE: ${{ inputs.cdn_source || '' }}
 
 permissions:
   contents: write
