@@ -3,7 +3,9 @@ import { CrownIcon, WidgetsIcon } from '@elementor/icons';
 import { ButtonBase, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useIsDragging } from '../hooks/use-is-dragging';
 import { type ElementTile as ElementTileData } from '../utils/group-widgets';
+import { canInsertElements, insertElement } from '../utils/insert-element';
 
 const ICON_SIZE = 28;
 
@@ -21,6 +23,7 @@ const CROWN_SX = {
 
 export function ElementTile( { tile, groupId }: { tile: ElementTileData; groupId: string } ) {
 	const isLocked = !! tile.promotionType;
+	const isDragging = useIsDragging();
 
 	const openPromotion = ( event: React.MouseEvent< HTMLElement > ) => {
 		document.dispatchEvent(
@@ -30,9 +33,21 @@ export function ElementTile( { tile, groupId }: { tile: ElementTileData; groupId
 		);
 	};
 
+	const onClick = ( event: React.MouseEvent< HTMLElement > ) => {
+		if ( isLocked ) {
+			openPromotion( event );
+
+			return;
+		}
+
+		if ( ! isDragging && canInsertElements() ) {
+			insertElement( tile );
+		}
+	};
+
 	return (
 		<ButtonBase
-			onClick={ isLocked ? openPromotion : undefined }
+			onClick={ onClick }
 			data-nav-item="tile"
 			data-group-id={ groupId }
 			data-el-type={ tile.elType }
