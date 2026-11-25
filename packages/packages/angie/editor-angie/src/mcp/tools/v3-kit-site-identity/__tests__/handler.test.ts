@@ -4,8 +4,15 @@ import {
 	resolveKitContainer,
 	setSiteIdentityValues,
 } from '../handler';
+import { fetchKitSettings, updateKitSettings } from '../kit-settings-api';
+
+jest.mock( '../kit-settings-api', () => ( {
+	fetchKitSettings: jest.fn(),
+	updateKitSettings: jest.fn(),
+} ) );
 
 const KIT_ID = 42;
+const OTHER_DOCUMENT_ID = 999;
 
 const createKitContainer = ( {
 	siteName = 'My Site',
@@ -78,7 +85,7 @@ describe( 'v3-kit-site-identity handler', () => {
 		expect( getContainer ).not.toHaveBeenCalled();
 	} );
 
-	it( 'rejects when the kit is not the current document', () => {
+	it( 'refuses to resolve the container when the kit is not the current document', () => {
 		// Arrange
 		const container = createKitContainer();
 		documentsGet.mockReturnValue( { container } );
@@ -87,13 +94,13 @@ describe( 'v3-kit-site-identity handler', () => {
 			writable: true,
 			value: {
 				config: { kit_id: KIT_ID },
-				documents: { get: documentsGet, getCurrentId: () => 999 },
+				documents: { get: documentsGet, getCurrentId: () => OTHER_DOCUMENT_ID },
 				getContainer,
 			},
 		} );
 
 		// Act / Assert
-		expect( () => resolveKitContainer() ).toThrow( /current document/ );
+		expect( () => resolveKitContainer() ).toThrow( /must be the current document/ );
 	} );
 
 	it( 'falls back to getContainer when the kit document has no container', () => {
@@ -110,13 +117,13 @@ describe( 'v3-kit-site-identity handler', () => {
 		expect( resolved ).toBe( container );
 	} );
 
-	it( 'reads selected site identity fields with normalized media values', () => {
+	it( 'reads selected site identity fields with normalized media values', async () => {
 		// Arrange
 		const container = createKitContainer();
 		documentsGet.mockReturnValue( { container } );
 
 		// Act
-		const result = getSiteIdentityValues( [ 'site_name', 'site_logo' ] );
+		const result = await getSiteIdentityValues( [ 'site_name', 'site_logo' ] );
 
 		// Assert
 		expect( result ).toEqual( {
@@ -239,5 +246,67 @@ describe( 'v3-kit-site-identity handler', () => {
 			} )
 		).rejects.toThrow( /Invalid media shape/ );
 		expect( run ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'when the kit is not the current document', () => {
+		beforeEach( () => {
+			Object.defineProperty( window, 'elementor', {
+				configurable: true,
+				writable: true,
+				value: {
+					config: { kit_id: KIT_ID },
+					documents: { get: documentsGet, getCurrentId: () => OTHER_DOCUMENT_ID },
+					getContainer,
+				},
+			} );
+		} );
+
+		it( 'reads site identity through the active kit settings API', async () => {
+			// Arrange
+			( fetchKitSettings as jest.Mock ).mockResolvedValue( {
+				site_name: 'Remote Site',
+				site_logo: { id: 7, url: 'https://example.com/remote.png' },
+			} );
+
+			// Act
+			const result = await getSiteIdentityValues( [ 'site_name', 'site_logo' ] );
+
+			// Assert
+			expect( fetchKitSettings ).toHaveBeenCalledWith( [ 'site_name', 'site_logo' ] );
+			expect( result ).toEqual( {
+				site_name: 'Remote Site',
+				site_logo: { id: 7, url: 'https://example.com/remote.png' },
+			} );
+		} );
+
+		it( 'writes through the active kit settings API and syncs the loaded kit model', async () => {
+			// Arrange
+			const container = { settings: { get: jest.fn(), set: jest.fn() } };
+			documentsGet.mockReturnValue( { container } );
+			( updateKitSettings as jest.Mock ).mockResolvedValue( {} );
+
+			// Act
+			const result = await setSiteIdentityValues( { site_name: 'Renamed' } );
+
+			// Assert
+			expect( updateKitSettings ).toHaveBeenCalledWith( { site_name: 'Renamed' } );
+			expect( container.settings.set ).toHaveBeenCalledWith( { site_name: 'Renamed' } );
+			expect( run ).not.toHaveBeenCalled();
+			expect( result ).toEqual( { success: true, site_name: 'Renamed' } );
+		} );
+
+		it( 'writes through the active kit settings API when the kit model is not loaded', async () => {
+			// Arrange
+			documentsGet.mockReturnValue( undefined );
+			getContainer.mockReturnValue( null );
+			( updateKitSettings as jest.Mock ).mockResolvedValue( {} );
+
+			// Act
+			const result = await setSiteIdentityValues( { site_name: 'Renamed' } );
+
+			// Assert
+			expect( updateKitSettings ).toHaveBeenCalledWith( { site_name: 'Renamed' } );
+			expect( result ).toEqual( { success: true, site_name: 'Renamed' } );
+		} );
 	} );
 } );

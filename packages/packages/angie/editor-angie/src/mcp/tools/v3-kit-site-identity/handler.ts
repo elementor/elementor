@@ -1,4 +1,5 @@
 import { applyDocumentElementSettings } from '../editor-api';
+import { fetchKitSettings, updateKitSettings } from './kit-settings-api';
 
 const TOOL_NAME = 'v3-kit-site-identity';
 
@@ -14,6 +15,7 @@ type MediaValue = {
 type ElementorContainer = {
 	settings?: {
 		get?: ( controlName: string ) => unknown;
+		set?: ( settings: Record< string, unknown > ) => unknown;
 	};
 };
 
@@ -113,7 +115,7 @@ const validateMediaPatch = ( value: unknown, fieldName: string ): MediaValue => 
 	};
 };
 
-export const resolveKitContainer = (): ElementorContainer => {
+const getKitId = (): number | string => {
 	const elementor = getElementor();
 
 	if ( ! elementor ) {
@@ -126,20 +128,28 @@ export const resolveKitContainer = (): ElementorContainer => {
 		throw new Error( 'Kit ID is missing from the editor configuration.' );
 	}
 
-	const currentDocumentId = elementor.documents?.getCurrentId?.();
+	return kitId;
+};
 
-	if ( Number( currentDocumentId ) !== Number( kitId ) ) {
-		throw new Error(
-			`Site Settings (kit) must be the current document for ${ TOOL_NAME }. Open Site Settings / Site Identity first, then retry.`
-		);
+const isKitCurrentDocument = (): boolean => {
+	const currentDocumentId = getElementor()?.documents?.getCurrentId?.();
+
+	return Number( currentDocumentId ) === Number( getKitId() );
+};
+
+const findLoadedKitContainer = (): ElementorContainer | undefined => {
+	const elementor = getElementor();
+	const kitId = getKitId();
+
+	return elementor?.documents?.get?.( kitId )?.container ?? elementor?.getContainer?.( String( kitId ) ) ?? undefined;
+};
+
+export const resolveKitContainer = (): ElementorContainer => {
+	if ( ! isKitCurrentDocument() ) {
+		throw new Error( `Kit must be the current document to use its container for ${ TOOL_NAME }.` );
 	}
 
-	const kitDocument = elementor.documents?.get?.( kitId );
-	let container = kitDocument?.container ?? undefined;
-
-	if ( ! container && elementor.getContainer ) {
-		container = elementor.getContainer( String( kitId ) ) ?? undefined;
-	}
+	const container = findLoadedKitContainer();
 
 	if ( ! container ) {
 		throw new Error( `Kit document container is not loaded for ${ TOOL_NAME }.` );
@@ -148,15 +158,27 @@ export const resolveKitContainer = (): ElementorContainer => {
 	return container;
 };
 
-export const getSiteIdentityValues = ( fields?: SiteIdentityField[] ): GetSiteIdentityResult => {
+const createSettingReader = async ( fields: SiteIdentityField[] ) => {
+	if ( isKitCurrentDocument() ) {
+		const container = resolveKitContainer();
+
+		return ( field: string ) => container.settings?.get?.( field );
+	}
+
+	const stored = await fetchKitSettings( fields );
+
+	return ( field: string ) => stored[ field ];
+};
+
+export const getSiteIdentityValues = async ( fields?: SiteIdentityField[] ): Promise< GetSiteIdentityResult > => {
 	const selectedFields = fields?.length ? fields : [ ...SITE_IDENTITY_FIELDS ];
 	assertAllowedFields( selectedFields );
 
-	const container = resolveKitContainer();
+	const readSetting = await createSettingReader( selectedFields );
 	const result: GetSiteIdentityResult = {};
 
 	for ( const field of selectedFields ) {
-		const raw = container.settings?.get?.( field );
+		const raw = readSetting( field );
 
 		if ( 'site_logo' === field || 'site_favicon' === field ) {
 			result[ field ] = normalizeMediaValue( raw );
@@ -177,7 +199,6 @@ export const setSiteIdentityValues = async ( patch: SiteIdentityPatch ): Promise
 
 	assertAllowedFields( patchKeys );
 
-	const container = resolveKitContainer();
 	const settings: Record< string, unknown > = {};
 	const applied: GetSiteIdentityResult = {};
 
@@ -206,7 +227,12 @@ export const setSiteIdentityValues = async ( patch: SiteIdentityPatch ): Promise
 		throw new Error( 'patch must include at least one site identity field for set action.' );
 	}
 
-	await applyDocumentElementSettings( container, settings );
+	if ( isKitCurrentDocument() ) {
+		await applyDocumentElementSettings( resolveKitContainer(), settings );
+	} else {
+		await updateKitSettings( settings );
+		findLoadedKitContainer()?.settings?.set?.( settings );
+	}
 
 	return {
 		success: true,

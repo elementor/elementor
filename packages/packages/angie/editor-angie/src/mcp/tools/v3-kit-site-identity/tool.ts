@@ -16,7 +16,7 @@ export const initV3KitSiteIdentityTool = ( reg: MCPRegistryEntry ): void => {
 	addTool( {
 		name: 'v3-kit-site-identity',
 		description:
-			'Read or update Site Identity on the active kit (site name, description, logo, favicon). Writes live kit editor state via document/elements/settings (undoable). Site Settings / the kit document must be open as the current document. Intentionally separate from update-elementor-kit-settings-colors-and-fonts / elementor-kit-mcp, which patch via REST /angie/v1/elementor-kit for colors, fonts, and optional patchObject. Prefer this tool for Site Identity logo spark flows when the kit panel is open.',
+			'Read or update Site Identity on the active kit (site name, description, logo, favicon). Works from any open document. When Site Settings is the current document the change is applied live and is undoable; otherwise it is saved through the active kit settings REST API (elementor/v1/kits/active/settings) and is not undoable. Separate from update-elementor-kit-settings-colors-and-fonts / elementor-kit-mcp, which handle colors and fonts.',
 		schema: {
 			action: z
 				.enum( [ 'get', 'set' ] )
