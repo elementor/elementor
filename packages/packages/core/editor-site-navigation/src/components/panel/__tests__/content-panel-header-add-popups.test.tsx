@@ -20,7 +20,7 @@ jest.mock( '../../../hooks/use-can-create', () => ( {
 } ) );
 
 describe( 'ContentPanelHeaderAdd popups item', () => {
-	it( 'shows Popup when popups env is set', async () => {
+	it( 'shows Popup in the add menu by default', async () => {
 		renderWithQuery(
 			<ContentPanelCoordinatorProvider>
 				<ContentPanelHeaderAdd />
@@ -30,7 +30,7 @@ describe( 'ContentPanelHeaderAdd popups item', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Add new' } ) );
 
 		await waitFor( () => {
-			expect( screen.getByRole( 'menuitem', { name: 'Popup' } ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Popup' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRef } from 'react';
 import { PopupTemplateIcon } from '@elementor/icons';
-import { ListItemIcon, ListItemText, MenuItem, Typography } from '@elementor/ui';
+import { Box, ListItemIcon, ListItemText, MenuItem } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { env } from '../../../env';
@@ -29,7 +29,7 @@ export default function PopupHeaderCreateMenuItem( { onSelect }: PopupHeaderCrea
 	};
 
 	return (
-		<MenuItem onClick={ handleClick } sx={ { gap: 1.5 } }>
+		<MenuItem onClick={ handleClick }>
 			<ListItemIcon>
 				<PopupTemplateIcon fontSize="small" color={ canCreate ? 'action' : 'disabled' } />
 			</ListItemIcon>
@@ -41,10 +41,9 @@ export default function PopupHeaderCreateMenuItem( { onSelect }: PopupHeaderCrea
 				} }
 			/>
 			{ ! canCreate && (
-				<>
-					<Typography component="span" sx={ { flexGrow: 1 } } />
+				<Box sx={ { flexShrink: 0, ml: 'auto', pl: 1 } }>
 					<SiteContentPopupsPromotionChip ref={ promotionRef } />
-				</>
+				</Box>
 			) }
 		</MenuItem>
 	);

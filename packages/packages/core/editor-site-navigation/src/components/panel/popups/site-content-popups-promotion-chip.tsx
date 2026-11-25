@@ -6,7 +6,7 @@ import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { env } from '../../../env';
-import { POPUP_UPGRADE_URL_FALLBACK } from '../../../popups/constants';
+import { POPUP_SITE_CONTENT_UPGRADE_URL } from '../../../popups/constants';
 
 const TRACKING_DATA: PromotionTrackingData = {
 	target_name: 'popups',
@@ -17,48 +17,46 @@ export type SiteContentPopupsPromotionChipRef = {
 	toggle: () => void;
 };
 
-export const SiteContentPopupsPromotionChip = forwardRef< SiteContentPopupsPromotionChipRef >(
-	( _, ref ) => {
-		const [ isOpen, setIsOpen ] = useState( false );
-		const upgradeUrl = env.popups?.upgrade_url ?? POPUP_UPGRADE_URL_FALLBACK;
+export const SiteContentPopupsPromotionChip = forwardRef< SiteContentPopupsPromotionChipRef >( ( _, ref ) => {
+	const [ isOpen, setIsOpen ] = useState( false );
+	const upgradeUrl = env.popups?.upgrade_url ?? POPUP_SITE_CONTENT_UPGRADE_URL;
 
-		useCanvasClickHandler( isOpen, () => setIsOpen( false ) );
+	useCanvasClickHandler( isOpen, () => setIsOpen( false ) );
 
-		const toggle = useCallback( () => {
-			setIsOpen( ( previous ) => {
-				if ( ! previous ) {
-					trackViewPromotion( TRACKING_DATA );
-				}
+	const toggle = useCallback( () => {
+		setIsOpen( ( previous ) => {
+			if ( ! previous ) {
+				trackViewPromotion( TRACKING_DATA );
+			}
 
-				return ! previous;
-			} );
-		}, [] );
+			return ! previous;
+		} );
+	}, [] );
 
-		useImperativeHandle( ref, () => ( { toggle } ), [ toggle ] );
+	useImperativeHandle( ref, () => ( { toggle } ), [ toggle ] );
 
-		return (
-			<PromotionPopover
-				open={ isOpen }
-				title={ __( 'Popups', 'elementor' ) }
-				content={ __( 'Upgrade to continue creating and editing popups.', 'elementor' ) }
-				ctaText={ __( 'Upgrade now', 'elementor' ) }
-				ctaUrl={ upgradeUrl }
-				onClose={ ( event: MouseEvent ) => {
+	return (
+		<PromotionPopover
+			open={ isOpen }
+			title={ __( 'Popups', 'elementor' ) }
+			content={ __( 'Upgrade to continue creating and editing popups.', 'elementor' ) }
+			ctaText={ __( 'Upgrade now', 'elementor' ) }
+			ctaUrl={ upgradeUrl }
+			onClose={ ( event: MouseEvent ) => {
+				event.stopPropagation();
+				setIsOpen( false );
+			} }
+			onCtaClick={ () => trackUpgradePromotionClick( TRACKING_DATA ) }
+		>
+			<Box
+				onClick={ ( event: MouseEvent ) => {
 					event.stopPropagation();
-					setIsOpen( false );
+					toggle();
 				} }
-				onCtaClick={ () => trackUpgradePromotionClick( TRACKING_DATA ) }
+				sx={ { cursor: 'pointer', display: 'inline-flex' } }
 			>
-				<Box
-					onClick={ ( event: MouseEvent ) => {
-						event.stopPropagation();
-						toggle();
-					} }
-					sx={ { cursor: 'pointer', display: 'inline-flex' } }
-				>
-					<PromotionChip />
-				</Box>
-			</PromotionPopover>
-		);
-	}
-);
+				<PromotionChip />
+			</Box>
+		</PromotionPopover>
+	);
+} );
