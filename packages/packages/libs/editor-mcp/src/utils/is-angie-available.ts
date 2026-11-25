@@ -1,4 +1,4 @@
-import { getAngieIframe } from '@elementor-external/angie-sdk';
+import { getAngieIframe } from '@elementor/editor-angie-sdk';
 
 export const isAngieAvailable = (): boolean => {
 	return !! getAngieIframe();
