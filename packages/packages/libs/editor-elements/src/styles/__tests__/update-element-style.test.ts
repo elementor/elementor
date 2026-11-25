@@ -90,6 +90,61 @@ describe( 'updateElementStyle', () => {
 		);
 	} );
 
+	it( 'should replace the variant props in replace mode', () => {
+		// Arrange.
+		const existingStyle: StyleDefinition = {
+			id: 'existing-style-id',
+			label: 'Existing Style',
+			type: 'class',
+			variants: [
+				{
+					meta: { breakpoint: null, state: null },
+					props: { color: 'red', opacity: '30%' },
+					custom_css: null,
+				},
+			],
+		};
+
+		const element = createMockElement( {
+			model: {
+				id: 'test-element-id',
+				styles: {
+					[ existingStyle.id ]: existingStyle,
+				},
+			},
+			settings: {
+				classes: {
+					$$type: 'classes',
+					value: [ existingStyle.id ],
+				},
+			},
+		} );
+
+		jest.mocked( getContainer ).mockImplementation( ( elementId ) => {
+			return elementId === 'test-element-id' ? element : null;
+		} );
+
+		// Act.
+		updateElementStyle( {
+			elementId: 'test-element-id',
+			styleId: existingStyle.id,
+			meta: { breakpoint: null, state: null },
+			props: { color: 'blue' },
+			mode: 'replace',
+		} );
+
+		// Assert.
+		const updatedStyle = ( element.model.get( 'styles' ) ?? {} )[ existingStyle.id ];
+
+		expect( updatedStyle.variants ).toStrictEqual( [
+			{
+				meta: { breakpoint: null, state: null },
+				props: { color: 'blue' },
+				custom_css: null,
+			},
+		] );
+	} );
+
 	it( 'should not call updateElementSettings when no classes were removed', () => {
 		// Arrange.
 		const existingStyle: StyleDefinition = {
