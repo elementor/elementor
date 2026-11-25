@@ -24,9 +24,17 @@ const flattenData = ( data?: { pages: PostsResponse[] } ) => {
 	}
 
 	const flattened: Post[] = [];
+	const seenIds = new Set< number >();
 
 	data.pages.forEach( ( page ) => {
-		flattened.push( ...page.data );
+		page.data.forEach( ( post ) => {
+			if ( seenIds.has( post.id ) ) {
+				return;
+			}
+
+			seenIds.add( post.id );
+			flattened.push( post );
+		} );
 	} );
 
 	return flattened;

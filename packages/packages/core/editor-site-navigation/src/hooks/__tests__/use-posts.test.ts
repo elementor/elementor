@@ -1,5 +1,5 @@
 import { renderHookWithQuery } from 'test-utils';
-import { waitFor } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import apiFetch from '@wordpress/api-fetch';
 
 import { POST_PER_PAGE } from '../../api/post';
@@ -174,6 +174,58 @@ describe( '@elementor/site-settings/use-posts', () => {
 
 		await waitFor( () => {
 			expect( component.result.current.isLoading ).toBeFalsy();
+		} );
+	} );
+
+	it( 'dedupes posts by id across paginated pages', async () => {
+		const pagePost = ( id: number ) => ( {
+			id,
+			type: 'page',
+			title: { rendered: `Page ${ id }` },
+			status: 'publish',
+			link: 'www.test.demo',
+		} );
+
+		jest.mocked( apiFetch ).mockImplementation( ( param ) => {
+			const url = new URL( 'http://example.com' + param.path );
+			const page = Number( url.searchParams.get( 'page' ) );
+			const pagesByNumber: Record< number, ReturnType< typeof pagePost >[] > = {
+				1: [ pagePost( 1 ), pagePost( 2 ) ],
+				2: [ pagePost( 2 ), pagePost( 3 ) ],
+			};
+			const paginatedPages = pagesByNumber[ page ] ?? [];
+
+			return {
+				json: () => Promise.resolve( paginatedPages ),
+				headers: {
+					get: ( header: string ) => {
+						switch ( header ) {
+							case 'x-wp-totalpages':
+								return '2';
+							case 'x-wp-total':
+								return '3';
+							default:
+								return null;
+						}
+					},
+				},
+			};
+		} );
+
+		const { component } = renderHookWithQuery( () => usePosts( 'page' ) );
+
+		await waitFor( () => {
+			expect( component.result.current.isLoading ).toBeFalsy();
+		} );
+
+		expect( component.result.current.data.posts.map( ( post ) => post.id ) ).toEqual( [ 1, 2 ] );
+
+		await act( async () => {
+			await component.result.current.fetchNextPage();
+		} );
+
+		await waitFor( () => {
+			expect( component.result.current.data.posts.map( ( post ) => post.id ) ).toEqual( [ 1, 2, 3 ] );
 		} );
 	} );
 } );

@@ -348,19 +348,14 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		);
 	} );
 
-	it( 'shows empty state when non-default sort returns no posts', async () => {
-		jest.mocked( usePosts ).mockImplementation( ( ...callArgs ) => {
-			const sort = callArgs[ 3 ] ?? 'oldest';
-			const isEmptyForSort = sort === 'newest';
-
-			return {
-				isLoading: false,
-				data: {
-					posts: isEmptyForSort ? [] : defaultUsePostsValue.data.posts,
-					total: isEmptyForSort ? 0 : defaultUsePostsValue.data.total,
-				},
-			} as ReturnType< typeof usePosts >;
-		} );
+	it( 'does not show no-results empty state when only sort is non-default', async () => {
+		jest.mocked( usePosts ).mockReturnValue( {
+			isLoading: false,
+			data: {
+				posts: [],
+				total: 0,
+			},
+		} as ReturnType< typeof usePosts > );
 
 		renderList(
 			<PostListContextProvider type={ 'page' } setError={ () => {} }>
@@ -371,7 +366,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Sort newest' } ) );
 
 		await waitFor( () => {
-			expect( screen.getByText( 'No results found' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'No results found' ) ).not.toBeInTheDocument();
 		} );
 	} );
 

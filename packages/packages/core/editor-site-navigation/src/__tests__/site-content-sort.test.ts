@@ -3,10 +3,8 @@ import {
 	getRestOrderForSiteContentSort,
 	getSiteContentSortLabel,
 	hasActiveSiteContentSort,
-	isSiteContentListRefinedByToolbar,
 	shouldPinHomepageForSiteContentSort,
 } from '../site-content-sort';
-import { EMPTY_SITE_CONTENT_STATUS_FILTERS } from '../site-content-status-filter';
 
 describe( 'site-content-sort', () => {
 	it( 'maps oldest to publish date ascending', () => {
@@ -26,16 +24,6 @@ describe( 'site-content-sort', () => {
 	it( 'treats oldest as the default sort without a chip', () => {
 		expect( hasActiveSiteContentSort( DEFAULT_SITE_CONTENT_SORT ) ).toBe( false );
 		expect( hasActiveSiteContentSort( 'newest' ) ).toBe( true );
-	} );
-
-	it( 'treats active sort as refining the list for empty-state and expand', () => {
-		expect(
-			isSiteContentListRefinedByToolbar( EMPTY_SITE_CONTENT_STATUS_FILTERS, '', DEFAULT_SITE_CONTENT_SORT )
-		).toBe( false );
-		expect( isSiteContentListRefinedByToolbar( EMPTY_SITE_CONTENT_STATUS_FILTERS, '', 'newest' ) ).toBe( true );
-		expect( isSiteContentListRefinedByToolbar( EMPTY_SITE_CONTENT_STATUS_FILTERS, 'about', 'oldest' ) ).toBe(
-			true
-		);
 	} );
 
 	it( 'pins the homepage only for oldest', () => {
