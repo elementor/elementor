@@ -17,7 +17,8 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 
 const __dirname = dirname( fileURLToPath( import.meta.url ) );
-const FIXTURES_BASE = resolve( __dirname, '../tests/playwright/mu-plugins/editor-assets-cdn' );
+const MU_PLUGINS_DIR = resolve( __dirname, '../tests/playwright/mu-plugins' );
+const FIXTURES_BASE = resolve( MU_PLUGINS_DIR, 'editor-assets-cdn' );
 // The same ref of the fetch-cdn-scenario action as in the workflows.
 const ACTION_REF = 'main';
 const ACTION_BASE_URL = `https://raw.githubusercontent.com/elementor/elementor-editor-github-actions/${ ACTION_REF }/actions/fetch-cdn-scenario`;
@@ -82,6 +83,15 @@ const saveFile = async ( path, content ) => {
 	await mkdir( dirname( path ), { recursive: true } );
 	await writeFile( path, content );
 };
+
+console.log( 'Downloading mock-editor-assets-cdn.php...' );
+const muPlugin = await fetchText( `${ ACTION_BASE_URL }/mock-editor-assets-cdn.php` );
+
+if ( null === muPlugin ) {
+	throw new Error( `The action at ${ ACTION_REF } has no mock-editor-assets-cdn.php` );
+}
+
+await saveFile( resolve( MU_PLUGINS_DIR, 'mock-editor-assets-cdn.php' ), muPlugin );
 
 for ( const scenario of SHARED_SCENARIOS ) {
 	console.log( `Downloading the shared ${ scenario } fixtures...` );
