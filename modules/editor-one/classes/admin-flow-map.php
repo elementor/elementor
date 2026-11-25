@@ -3,6 +3,7 @@
 namespace Elementor\Modules\EditorOne\Classes;
 
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Tag_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -44,6 +45,7 @@ class Admin_Flow_Map {
 			$tabs[ $tab_id ] = [
 				'id' => $tab_id,
 				'label' => $item->get_label(),
+				'tag' => $item instanceof Menu_Item_With_Tag_Interface ? $item->get_tag() : '',
 				'url' => $this->resolve_tab_url( $tab, $item_url ),
 				'parent' => $tab['parent'],
 				'routes' => $this->get_tab_routes( $tab, $item_url ),
