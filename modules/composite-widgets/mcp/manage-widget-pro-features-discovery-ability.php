@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Manage_Widget_Pro_Features_Discovery_Ability extends Abstract_Ability {
 	const ABILITY_ID = 'elementor/manage-widget';
-	const ACTIONS = [ 'create', 'update', 'list', 'get', 'archive', 'delete' ];
+	const ACTIONS = [ 'create', 'update', 'archive', 'delete' ];
 
 	protected function get_ability_id(): string {
 		return self::ABILITY_ID;
@@ -24,7 +24,7 @@ class Manage_Widget_Pro_Features_Discovery_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elementor Saved Widgets', 'elementor' ),
-			__( 'Save a block as a site widget (a ready-made widget placed on any page with the same structure and design, with its own simple content and style controls), and list, read, update, archive or delete saved widgets. Saved widgets are an Elementor Pro feature: without Pro every call returns pro_license_required with an upgrade link. When the user asks to save a block as a reusable widget, call this tool anyway and relay the message as given.', 'elementor' ),
+			__( 'Save a block as a site widget (a ready-made widget placed on any page with the same structure and design, with its own simple content and style controls), and update, archive or delete saved widgets. Saved widgets are an Elementor Pro feature: without Pro every call returns pro_license_required with an upgrade link. When the user asks to save a block as a reusable widget, call this tool anyway and relay the message as given.', 'elementor' ),
 			'elementor',
 			[ 'type' => 'object' ],
 			[
