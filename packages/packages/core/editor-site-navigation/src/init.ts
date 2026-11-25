@@ -6,13 +6,11 @@ import { panel } from './components/panel/panel';
 import RecentlyEdited from './components/top-bar/recently-edited';
 import { env } from './env';
 import { useToggleButtonProps } from './hooks/use-toggle-button-props';
-import { registerPopupsSiteContentSection } from './register-popups-site-content-section';
 
 export function init() {
 	registerTopBarMenuItems();
 	// TODO 06/06/2023 :  remove if when we are production ready
 	if ( env.is_pages_panel_active && env.can_access_site_content_panel ) {
-		registerPopupsSiteContentSection();
 		registerPanel( panel );
 		registerButton();
 	}

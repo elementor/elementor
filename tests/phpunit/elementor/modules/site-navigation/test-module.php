@@ -57,11 +57,6 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		// Assert.
 		$env = apply_filters( 'elementor/editor/v2/scripts/env', [] );
 		$this->assertTrue( $env['@elementor/editor-site-navigation']['is_pages_panel_active'] );
-		$this->assertSame( false, $env['@elementor/editor-site-navigation']['popups']['can_use'] );
-		$this->assertSame(
-			'https://go.elementor.com/go-pro-advanced-popups/',
-			$env['@elementor/editor-site-navigation']['popups']['upgrade_url']
-		);
 	}
 
 	public function test_can_access_site_content_panel_admin() {
