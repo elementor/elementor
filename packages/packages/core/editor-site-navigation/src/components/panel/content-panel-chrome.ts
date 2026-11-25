@@ -1,10 +1,8 @@
 const CONTENT_PANEL_INSET_SPACING = 2;
 const CONTENT_PANEL_LIST_ROW_GAP = 0.5;
 const CONTENT_PANEL_LIST_ROW_INSET_INLINE = 0.75;
-const CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_ACTIONS_COUNT = 2;
 const CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_ACTION_SLOT_WIDTH = 5.5;
-const CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_INSET =
-	CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_ACTIONS_COUNT * CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_ACTION_SLOT_WIDTH;
+const CONTENT_PANEL_LIST_ITEM_MENU_SLOT_COUNT = 1;
 const CONTENT_PANEL_LIST_ROW_TITLE_FONT_SIZE = '0.75rem';
 const CONTENT_PANEL_LIST_SECTION_BOTTOM_SPACING = 1;
 
@@ -20,21 +18,37 @@ export const contentPanelListRowPaddingSx = {
 	...contentPanelInsetPaddingSx,
 };
 
-const contentPanelListItemActiveActionsInsetSx = {
-	'&& > .MuiListItemButton-root': {
-		paddingInlineEnd: CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_INSET,
-		paddingRight: 'unset',
-	},
-};
+export function getContentPanelListItemSecondarySlotCount( options: {
+	hasHomeIcon: boolean;
+	hasRowActions: boolean;
+} ): number {
+	let count = CONTENT_PANEL_LIST_ITEM_MENU_SLOT_COUNT;
 
-export function getContentPanelListItemSx( hasActiveRowActions: boolean ) {
-	if ( ! hasActiveRowActions ) {
+	if ( options.hasRowActions ) {
+		count += 1;
+	}
+
+	if ( options.hasHomeIcon ) {
+		count += 1;
+	}
+
+	return count;
+}
+
+export function getContentPanelListItemSx( secondaryActionSlotCount: number ) {
+	if ( secondaryActionSlotCount <= CONTENT_PANEL_LIST_ITEM_MENU_SLOT_COUNT ) {
 		return contentPanelListRowPaddingSx;
 	}
 
+	const paddingInlineEnd =
+		secondaryActionSlotCount * CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_ACTION_SLOT_WIDTH;
+
 	return {
 		...contentPanelListRowPaddingSx,
-		...contentPanelListItemActiveActionsInsetSx,
+		'&& > .MuiListItemButton-root': {
+			paddingInlineEnd,
+			paddingRight: 'unset',
+		},
 	};
 }
 

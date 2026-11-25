@@ -81,14 +81,15 @@ const PageStatus = ( { status }: { status: string } ) => {
 	);
 };
 
-const PageTitle = ( { title }: { title: string } ) => {
+const PageTitle = ( { status, title }: { status: string; title: string } ) => {
 	const modifiedTitle = useReverseHtmlEntities( title );
+	const titleColor = 'trash' === status ? 'text.disabled' : 'text.secondary';
 
 	return (
 		<Typography
 			component="span"
 			variant="body2"
-			color="text.secondary"
+			color={ titleColor }
 			noWrap
 			sx={ {
 				...contentPanelListRowTitleSx,
@@ -107,7 +108,7 @@ const PageTitle = ( { title }: { title: string } ) => {
 export default function PageTitleAndStatus( { title, status }: { title: string; status: string } ) {
 	return (
 		<Box alignItems="center" display="flex" minWidth={ 0 } sx={ { overflow: 'hidden' } }>
-			<PageTitle title={ title } />
+			<PageTitle status={ status } title={ title } />
 			<PageStatus status={ status } />
 		</Box>
 	);

@@ -26,13 +26,21 @@ type Props = {
 };
 
 export default function ContentPanelStatusFilterList( { loadCounts }: Props ) {
-	const { clearStatusFilters, statusFilters, statusFilterCountSlugs, toggleStatusFilter } =
-		useSiteContentSectionToolbar();
-	const shouldLoadCounts = loadCounts && statusFilterCountSlugs.length > 0;
-	const { data: statusCounts, isPending: isLoadingCounts } = useSiteContentStatusFilterCounts(
+	const {
+		clearStatusFilters,
 		statusFilterCountSlugs,
-		shouldLoadCounts
+		statusFilterCounts: presetStatusCounts,
+		statusFilterCountsPending,
+		statusFilters,
+		toggleStatusFilter,
+	} = useSiteContentSectionToolbar();
+	const shouldLoadPostTypeCounts = loadCounts && statusFilterCountSlugs.length > 0 && ! presetStatusCounts;
+	const { data: fetchedStatusCounts, isPending: isFetchingStatusCounts } = useSiteContentStatusFilterCounts(
+		statusFilterCountSlugs,
+		shouldLoadPostTypeCounts
 	);
+	const statusCounts = presetStatusCounts ?? fetchedStatusCounts;
+	const isLoadingCounts = presetStatusCounts ? statusFilterCountsPending : isFetchingStatusCounts;
 
 	const isAllSelected = ! hasActiveSiteContentStatusFilters( statusFilters );
 
@@ -40,7 +48,11 @@ export default function ContentPanelStatusFilterList( { loadCounts }: Props ) {
 		statusFilterCountSlugs.length === 0
 			? SITE_CONTENT_SELECTABLE_STATUS_FILTERS
 			: SITE_CONTENT_SELECTABLE_STATUS_FILTERS.filter( ( filter ) =>
-					shouldShowSiteContentStatusFilterRow( statusCounts?.[ filter ], isLoadingCounts, statusFilters[ filter ] )
+					shouldShowSiteContentStatusFilterRow(
+						statusCounts?.[ filter ],
+						isLoadingCounts,
+						statusFilters[ filter ]
+					)
 			  );
 
 	return (

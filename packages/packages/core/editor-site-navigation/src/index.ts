@@ -32,6 +32,8 @@ export {
 	EMPTY_SITE_CONTENT_STATUS_FILTERS,
 	getRestStatusForSiteContentFilters,
 	hasActiveSiteContentStatusFilters,
+	isSiteContentListNarrowed,
+	isSiteContentTrashFilterActive,
 	serializeSiteContentStatusFilters,
 	type SiteContentStatusFilters,
 } from './site-content-status-filter';

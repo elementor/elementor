@@ -6,9 +6,12 @@ import {
 	type SiteContentSectionListControls,
 	useSiteContentSectionListControls,
 } from '../hooks/use-site-content-section-list-controls';
+import { type SiteContentSelectableStatus } from '../site-content-status-filter';
 
 type SiteContentSectionToolbarContextValue = SiteContentSectionListControls & {
 	statusFilterCountSlugs: Slug[];
+	statusFilterCounts?: Partial< Record< SiteContentSelectableStatus, number > >;
+	statusFilterCountsPending?: boolean;
 };
 
 const SiteContentSectionToolbarContext = createContext< SiteContentSectionToolbarContextValue | null >( null );
@@ -16,17 +19,26 @@ const SiteContentSectionToolbarContext = createContext< SiteContentSectionToolba
 type ProviderProps = {
 	children: ReactNode;
 	statusFilterCountSlugs?: Slug[];
+	statusFilterCounts?: Partial< Record< SiteContentSelectableStatus, number > >;
+	statusFilterCountsPending?: boolean;
 };
 
-export function SiteContentSectionToolbarProvider( { children, statusFilterCountSlugs = [] }: ProviderProps ) {
+export function SiteContentSectionToolbarProvider( {
+	children,
+	statusFilterCountSlugs = [],
+	statusFilterCounts,
+	statusFilterCountsPending = false,
+}: ProviderProps ) {
 	const controls = useSiteContentSectionListControls();
 
 	const value = useMemo(
 		() => ( {
 			...controls,
 			statusFilterCountSlugs,
+			statusFilterCounts,
+			statusFilterCountsPending,
 		} ),
-		[ controls, statusFilterCountSlugs ]
+		[ controls, statusFilterCountSlugs, statusFilterCounts, statusFilterCountsPending ]
 	);
 
 	return (

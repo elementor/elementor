@@ -32,7 +32,11 @@ import Rename from '../../actions-menu/actions/rename';
 import Restore from '../../actions-menu/actions/restore';
 import SetHome, { RemoveHomepageDialog } from '../../actions-menu/actions/set-home';
 import View from '../../actions-menu/actions/view';
-import { contentPanelListItemButtonSx, getContentPanelListItemSx } from '../../content-panel-chrome';
+import {
+	contentPanelListItemButtonSx,
+	getContentPanelListItemSecondarySlotCount,
+	getContentPanelListItemSx,
+} from '../../content-panel-chrome';
 import {
 	SiteContentListItemActionsSlot,
 	useSiteContentListItemActionsInjections,
@@ -88,14 +92,19 @@ export default function ListItemView( { post }: { post: Post } ) {
 	const menuTriggerProps = bindTrigger( popupState );
 	const hasListItemActions = useSiteContentListItemActionsInjections().length > 0;
 	const showListItemActions = isActive && post.user_can.edit && ! isTrashed && hasListItemActions;
+	const secondaryActionSlotCount = getContentPanelListItemSecondarySlotCount( {
+		hasHomeIcon: Boolean( post.isHome ),
+		hasRowActions: showListItemActions,
+	} );
 
 	const listRow = (
 		<ListItem
 			disablePadding
-			sx={ getContentPanelListItemSx( showListItemActions ) }
+			sx={ getContentPanelListItemSx( secondaryActionSlotCount ) }
 			secondaryAction={
 				<Stack alignItems="center" direction="row" spacing={ 0 }>
 					{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
+					{ post.isHome && <HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" fontSize="tiny" /> }
 					<IconButton
 						aria-label={ __( 'More actions', 'elementor' ) }
 						size="tiny"
@@ -128,7 +137,6 @@ export default function ListItemView( { post }: { post: Post } ) {
 				<ListItemText disableTypography sx={ { flex: 1, minWidth: 0 } }>
 					<PageTitleAndStatus title={ title } status={ status } />
 				</ListItemText>
-				{ post.isHome && <HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" /> }
 			</ListItemButton>
 		</ListItem>
 	);

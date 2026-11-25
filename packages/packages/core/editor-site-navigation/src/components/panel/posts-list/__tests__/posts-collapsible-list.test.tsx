@@ -193,7 +193,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		const addNewButton = screen.getByRole( 'button', { name: 'New Page' } );
 		fireEvent.click( addNewButton );
 
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByDisplayValue( 'New Page' );
 
 		if ( ! input || ! ( input instanceof HTMLInputElement ) ) {
 			throw new Error( 'No input field found.' );
@@ -253,7 +253,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		fireEvent.click( duplicateButton );
 
 		// Assert.
-		const input = await screen.findByRole( 'textbox' );
+		const input = await screen.findByDisplayValue( 'Home copy' );
 
 		expect( input ).toHaveValue( 'Home copy' );
 	} );
