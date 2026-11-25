@@ -3,7 +3,7 @@ import { type ToggleButtonGroupItem, ToggleControl } from '@elementor/editor-con
 import { LetterCaseIcon, LetterCaseLowerIcon, LetterCaseUpperIcon, MinusIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
 type Transforms = 'none' | 'capitalize' | 'uppercase' | 'lowercase';
@@ -37,9 +37,9 @@ const options: ToggleButtonGroupItem< Transforms >[] = [
 	},
 ];
 
-export const TransformField = () => (
-	<StylesField bind="text-transform" propDisplayName={ TEXT_TRANSFORM_LABEL }>
-		<StylesFieldLayout label={ TEXT_TRANSFORM_LABEL }>
+export const TransformField = ( { label = TEXT_TRANSFORM_LABEL }: StylesFieldLabelProps ) => (
+	<StylesField bind="text-transform" propDisplayName={ label }>
+		<StylesFieldLayout label={ label }>
 			<ToggleControl options={ options } />
 		</StylesFieldLayout>
 	</StylesField>

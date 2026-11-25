@@ -2,14 +2,14 @@ import * as React from 'react';
 import { GapControl } from '@elementor/editor-controls';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 
 const GAPS_LABEL = __( 'Gaps', 'elementor' );
 
-export const GapControlField = () => {
+export const GapControlField = ( { label = GAPS_LABEL }: StylesFieldLabelProps ) => {
 	return (
-		<StylesField bind={ 'gap' } propDisplayName={ GAPS_LABEL }>
-			<GapControl label={ GAPS_LABEL } />
+		<StylesField bind={ 'gap' } propDisplayName={ label }>
+			<GapControl label={ label } />
 		</StylesField>
 	);
 };

@@ -1,19 +1,22 @@
 import { keepPreviousData, useInfiniteQuery } from '@elementor/query';
 
-import { getRequest, type PostsResponse, type Slug } from '../api/post';
+import { getRequest, POST_PER_PAGE, type PostsResponse, type Slug } from '../api/post';
+import { DEFAULT_SITE_CONTENT_SORT, type SiteContentSortOption } from '../site-content-sort';
+import {
+	EMPTY_SITE_CONTENT_STATUS_FILTERS,
+	getRestStatusForSiteContentFilters,
+	type SiteContentStatusFilters,
+} from '../site-content-status-filter';
 import { type Post } from '../types';
 
 export const postsQueryKeyBase = ( postTypeSlug: string ) => [ 'site-navigation', 'posts', postTypeSlug ];
 
-export const postsQueryKey = ( postTypeSlug: string, search = '' ) => {
-	const trimmedSearch = search.trim();
-
-	if ( ! trimmedSearch ) {
-		return postsQueryKeyBase( postTypeSlug );
-	}
-
-	return [ ...postsQueryKeyBase( postTypeSlug ), trimmedSearch ];
-};
+export const postsQueryKey = (
+	postTypeSlug: string,
+	trimmedSearch = '',
+	restStatus = 'any',
+	sort: SiteContentSortOption = DEFAULT_SITE_CONTENT_SORT
+) => [ ...postsQueryKeyBase( postTypeSlug ), restStatus, trimmedSearch, sort ];
 
 const flattenData = ( data?: { pages: PostsResponse[] } ) => {
 	if ( ! data ) {
@@ -21,22 +24,37 @@ const flattenData = ( data?: { pages: PostsResponse[] } ) => {
 	}
 
 	const flattened: Post[] = [];
+	const seenIds = new Set< number >();
 
 	data.pages.forEach( ( page ) => {
-		flattened.push( ...page.data );
+		page.data.forEach( ( post ) => {
+			if ( seenIds.has( post.id ) ) {
+				return;
+			}
+
+			seenIds.add( post.id );
+			flattened.push( post );
+		} );
 	} );
 
 	return flattened;
 };
 
-export function usePosts( postTypeSlug: Slug, search = '' ) {
+export function usePosts(
+	postTypeSlug: Slug,
+	search = '',
+	statusFilters: SiteContentStatusFilters = EMPTY_SITE_CONTENT_STATUS_FILTERS,
+	sort: SiteContentSortOption = DEFAULT_SITE_CONTENT_SORT
+) {
 	const trimmedSearch = search.trim();
+	const restStatus = getRestStatusForSiteContentFilters( statusFilters );
 
 	const query = useInfiniteQuery( {
-		queryKey: postsQueryKey( postTypeSlug, trimmedSearch ),
-		queryFn: ( { pageParam = 1 } ) => getRequest( postTypeSlug, pageParam, trimmedSearch ),
+		queryKey: postsQueryKey( postTypeSlug, trimmedSearch, restStatus, sort ),
+		queryFn: ( { pageParam = 1 } ) =>
+			getRequest( postTypeSlug, pageParam as number, trimmedSearch, restStatus, POST_PER_PAGE, sort ),
 		initialPageParam: 1,
-		getNextPageParam: ( lastPage ) => {
+		getNextPageParam: ( lastPage: PostsResponse ) => {
 			return lastPage.currentPage < lastPage.totalPages ? lastPage.currentPage + 1 : undefined;
 		},
 		placeholderData: keepPreviousData,

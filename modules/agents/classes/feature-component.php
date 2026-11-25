@@ -10,7 +10,7 @@ abstract class Feature_Component {
 
 	/**
 	 * Stable string identifier, e.g. 'markdown_endpoint'.
-	 * Used as the registry key and audit-log channel.
+	 * Used as the registry key.
 	 */
 	abstract public function get_id(): string;
 

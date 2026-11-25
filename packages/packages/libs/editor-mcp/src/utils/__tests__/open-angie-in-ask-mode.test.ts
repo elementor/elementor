@@ -6,7 +6,7 @@ const mockToggleAngieSidebar = jest.fn();
 const mockSetAngieInteractionMode = jest.fn();
 const mockAngieIframe = document.createElement( 'iframe' );
 
-jest.mock( '@elementor-external/angie-sdk', () => ( {
+jest.mock( '@elementor/editor-angie-sdk', () => ( {
 	AngieInteractionMode: {
 		ASK: 'ask',
 		AGENT: 'agent',

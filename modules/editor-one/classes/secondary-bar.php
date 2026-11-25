@@ -61,6 +61,7 @@ class Secondary_Bar {
 			$prepared[] = [
 				'id' => $tab_id,
 				'label' => $label,
+				'tag' => $this->plain_label( $tab['tag'] ?? '' ),
 				'url' => esc_url_raw( $tab['url'] ),
 				'is_active' => $tab_id === $active_tab_id,
 			];

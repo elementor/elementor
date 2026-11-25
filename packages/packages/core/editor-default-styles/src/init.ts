@@ -7,7 +7,7 @@ import { __registerSlice as registerSlice } from '@elementor/store';
 import { GlobalStylesImportListener } from './components/global-styles-import-listener';
 import { PopulateStore } from './components/populate-store';
 import { defaultStylesStylesProvider } from './default-styles-provider';
-import { initMcp } from './mcp';
+import { DEFAULT_STYLES_MCP_NAMESPACE, initMcp } from './mcp';
 import { slice } from './store';
 
 export function init() {
@@ -33,7 +33,7 @@ export function init() {
 	} );
 
 	initMcp(
-		getMCPByDomain( 'default-styles', {
+		getMCPByDomain( DEFAULT_STYLES_MCP_NAMESPACE, {
 			instructions: 'MCP server for management of Elementor default styles',
 			docs: `Everything related to V4 ( Atomic ) site-wide default styles.
 # Default styles

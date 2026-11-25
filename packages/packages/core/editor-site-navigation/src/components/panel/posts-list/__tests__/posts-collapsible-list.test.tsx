@@ -65,6 +65,13 @@ jest.mock( '../../../../hooks/use-posts', () => ( {
 	} ) ),
 } ) );
 
+jest.mock( '../../../../hooks/use-posts-baseline-total', () => ( {
+	__esModule: true,
+	usePostsBaselineTotal: jest.fn( () => ( {
+		data: undefined,
+	} ) ),
+} ) );
+
 jest.mock( '../../../../hooks/use-homepage', () => ( {
 	__esModule: true,
 	useHomepage: jest.fn( () => ( {
@@ -100,6 +107,19 @@ function SearchHarness() {
 		<>
 			<button type="button" onClick={ () => setSearchQuery( 'missing' ) }>
 				Search missing
+			</button>
+			<PostsCollapsibleList isOpenByDefault />
+		</>
+	);
+}
+
+function SortHarness() {
+	const { setSiteContentSort } = useContentPanelCoordinator();
+
+	return (
+		<>
+			<button type="button" onClick={ () => setSiteContentSort( 'newest' ) }>
+				Sort newest
 			</button>
 			<PostsCollapsibleList isOpenByDefault />
 		</>
@@ -326,6 +346,28 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 			},
 			{ timeout: 500 }
 		);
+	} );
+
+	it( 'does not show no-results empty state when only sort is non-default', async () => {
+		jest.mocked( usePosts ).mockReturnValue( {
+			isLoading: false,
+			data: {
+				posts: [],
+				total: 0,
+			},
+		} as unknown as ReturnType< typeof usePosts > );
+
+		renderList(
+			<PostListContextProvider type={ 'page' } setError={ () => {} }>
+				<SortHarness />
+			</PostListContextProvider>
+		);
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Sort newest' } ) );
+
+		await waitFor( () => {
+			expect( screen.queryByText( 'No results found' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	it( 'renders Load more when more items exist than the first page', () => {

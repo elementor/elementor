@@ -6,13 +6,18 @@ const MENU_ELEMENT_TYPE = 'e-menu';
 const ITEM_ELEMENT_TYPE = 'e-menu-item';
 const MENU_SELECTOR = '[data-element_type="e-menu"]';
 const ITEM_SELECTOR = '[data-element_type="e-menu-item"]';
+const ENTRY_SELECTOR = '[data-element_type="e-menu-entry"]';
 const CURRENT_CLASS = 'e--current';
+const CURRENT_ANCESTOR_CLASS = 'e--current-ancestor';
 const PREVIEW_STATE_ATTRIBUTE = 'data-e-preview-state';
+const CURRENT_CHANGE_EVENT = 'elementor/menu/current-change';
+
+function getOwnItems( menu ) {
+	return [ ...menu.querySelectorAll( ITEM_SELECTOR ) ].filter( ( item ) => item.closest( MENU_SELECTOR ) === menu );
+}
 
 function getLinkedItems( menu ) {
-	return [ ...menu.querySelectorAll( ITEM_SELECTOR ) ].filter(
-		( item ) => item.matches( 'a[href]' ) && item.closest( MENU_SELECTOR ) === menu,
-	);
+	return getOwnItems( menu ).filter( ( item ) => item.matches( 'a[href]' ) );
 }
 
 function findAnchorEntries( items ) {
@@ -21,6 +26,27 @@ function findAnchorEntries( items ) {
 		const target = anchorId ? document.getElementById( anchorId ) : null;
 
 		return target ? [ { item, target } ] : [];
+	} );
+}
+
+function getEntryItem( entry ) {
+	return [ ...entry.children ].find( ( child ) => child.matches( ITEM_SELECTOR ) ) ?? null;
+}
+
+function setCurrentAncestors( menu ) {
+	const ancestorItems = new Set();
+
+	menu.querySelectorAll( `${ ITEM_SELECTOR }[aria-current]` ).forEach( ( item ) => {
+		let entry = item.closest( ENTRY_SELECTOR )?.parentElement?.closest( ENTRY_SELECTOR );
+
+		while ( entry && menu.contains( entry ) ) {
+			ancestorItems.add( getEntryItem( entry ) );
+			entry = entry.parentElement?.closest( ENTRY_SELECTOR );
+		}
+	} );
+
+	getOwnItems( menu ).forEach( ( item ) => {
+		item.classList.toggle( CURRENT_ANCESTOR_CLASS, ancestorItems.has( item ) );
 	} );
 }
 
@@ -59,6 +85,9 @@ register( {
 						setCurrent( item, null );
 					}
 				} );
+
+				setCurrentAncestors( element );
+				element.dispatchEvent( new CustomEvent( CURRENT_CHANGE_EVENT, { bubbles: true } ) );
 			};
 
 			render( new Set() );
@@ -72,6 +101,12 @@ register( {
 			anchorLinks = new AnchorLinks( anchorEntries, render );
 			anchorLinks.initialize();
 		};
+
+		element.addEventListener( CURRENT_CHANGE_EVENT, ( event ) => {
+			if ( event.target !== element ) {
+				setCurrentAncestors( element );
+			}
+		}, { signal } );
 
 		setup();
 

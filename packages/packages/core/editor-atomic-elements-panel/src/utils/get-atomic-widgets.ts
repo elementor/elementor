@@ -1,8 +1,10 @@
 import { type V1ElementConfig } from '@elementor/editor-elements';
 
-type WidgetConfig = V1ElementConfig< {
+export type WidgetConfig = V1ElementConfig< {
 	categories?: string[];
 	keywords?: string[];
+	editable?: boolean;
+	hide_on_search?: boolean;
 	deprecation?: { replacement?: string };
 	custom?: { isPreset?: boolean; preset_settings?: Record< string, unknown > };
 } >;
