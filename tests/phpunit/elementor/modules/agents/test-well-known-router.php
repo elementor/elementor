@@ -212,6 +212,7 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( Mcp_Discovery::get_server_url(), $content );
 		$this->assertStringNotContainsString( 'with every MCP request', $content );
 		$this->assertStringNotContainsString( '## Audit Log', $content );
+		$this->assertStringNotContainsString( 'retained for 30 days', $content );
 	}
 
 	public function test_auth_md__includes_mcp_sections_when_advertised() {
@@ -233,7 +234,8 @@ class Test_Well_Known_Router extends Elementor_Test_Base {
 		$this->assertStringContainsString( '## MCP Endpoint', $content );
 		$this->assertStringContainsString( Mcp_Discovery::get_server_url(), $content );
 		$this->assertStringContainsString( 'with every MCP request', $content );
-		$this->assertStringContainsString( '## Audit Log', $content );
+		$this->assertStringNotContainsString( '## Audit Log', $content );
+		$this->assertStringNotContainsString( 'retained for 30 days', $content );
 		$this->assertLessThan(
 			strpos( $content, '## Authentication Methods' ),
 			strpos( $content, '## MCP Endpoint' )

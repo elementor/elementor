@@ -49,7 +49,6 @@ class Auth_Md extends Abstract_Well_Known_Endpoint {
 		$metadata      = $this->metadata_lines( $home, $advertise_mcp );
 		$mcp_section   = $advertise_mcp ? $this->mcp_endpoint_section() : '';
 		$usage_target  = $advertise_mcp ? ' with every MCP request' : '';
-		$audit_log     = $advertise_mcp ? $this->audit_log_section() : '';
 
 		/* phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped */
 		$markdown = <<<MD
@@ -90,7 +89,6 @@ Authorization: Basic base64(username:application_password)
 WordPress user it belongs to. There is no separate Elementor role or scope to
 assign. The discovery documents and Markdown page variants on this site are
 public and require no credentials.
-{$audit_log}
 MD;
 		/* phpcs:enable */
 
@@ -138,20 +136,6 @@ MD;
 | HTTPS     | {$is_ssl} |
 
 ---
-
-MD;
-	}
-
-	private function audit_log_section(): string {
-		return <<<'MD'
-
----
-
-## Audit Log
-
-All authenticated MCP tool invocations are logged with timestamp, tool name,
-agent label (Application Password name), anonymised IP hash, response status,
-and duration. Logs are retained for 30 days by default.
 
 MD;
 	}
