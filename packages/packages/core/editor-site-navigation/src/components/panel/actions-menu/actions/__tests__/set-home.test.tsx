@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { renderWithTheme } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
 
@@ -29,8 +30,18 @@ jest.mock( '../../../../../hooks/use-user', () => ( {
 	__esModule: true,
 } ) );
 
+jest.mock( '../../../../../contexts/post-list-context', () => ( {
+	usePostListContext: () => ( {
+		setError: jest.fn(),
+	} ),
+} ) );
+
 describe( '@elementor/editor-site-navigation - SetHome', () => {
-	afterAll( () => {
+	beforeEach( () => {
+		mockMutateAsync.mockResolvedValue( undefined );
+	} );
+
+	afterEach( () => {
 		jest.clearAllMocks();
 	} );
 
@@ -81,7 +92,7 @@ describe( '@elementor/editor-site-navigation - SetHome', () => {
 		};
 
 		const RemoveHomepageHarness = () => {
-			const [ isDialogOpen, setIsDialogOpen ] = React.useState( false );
+			const [ isDialogOpen, setIsDialogOpen ] = useState( false );
 
 			return (
 				<>

@@ -83,18 +83,18 @@ export function RemoveHomepageDialog( { open, onClose }: RemoveHomepageDialogPro
 		onClose();
 	};
 
-	const handleConfirm = () => {
+	const handleConfirm = async () => {
 		if ( updateSettingsMutation.isPending ) {
 			return;
 		}
 
-		void updateSettingsMutation
-			.mutateAsync( { show_on_front: 'posts' } )
-			.then( () => onClose() )
-			.catch( () => {
-				setError();
-				onClose();
-			} );
+		try {
+			await updateSettingsMutation.mutateAsync( { show_on_front: 'posts' } );
+			onClose();
+		} catch {
+			setError();
+			onClose();
+		}
 	};
 
 	return (
