@@ -270,6 +270,49 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		$this->assertNull( $link );
 	}
 
+	public function test_build_singular_vary_header__returns_vary_accept_for_published_post() {
+		// Arrange
+		$post = get_post( $this->factory()->post->create( [
+			'post_status' => 'publish',
+			'post_title'  => 'Vary Header Page',
+		] ) );
+
+		// Act
+		$header = $this->link_headers->build_singular_vary_header( $post );
+
+		// Assert
+		$this->assertSame( 'Vary: Accept', $header );
+	}
+
+	public function test_build_singular_vary_header__omits_draft_post() {
+		// Arrange
+		$post = get_post( $this->factory()->post->create( [
+			'post_status' => 'draft',
+			'post_title'  => 'Draft Vary Header Page',
+		] ) );
+
+		// Act
+		$header = $this->link_headers->build_singular_vary_header( $post );
+
+		// Assert
+		$this->assertNull( $header );
+	}
+
+	public function test_build_singular_vary_header__omits_post_when_markdown_is_disabled() {
+		// Arrange
+		$post = get_post( $this->factory()->post->create( [
+			'post_status' => 'publish',
+			'post_title'  => 'Disabled Markdown Vary Header Page',
+		] ) );
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, 'enabled', false );
+
+		// Act
+		$header = $this->link_headers->build_singular_vary_header( $post );
+
+		// Assert
+		$this->assertNull( $header );
+	}
+
 	public function test_is_enabled__returns_true_when_activated() {
 		$this->assertTrue( $this->link_headers->is_enabled() );
 	}
