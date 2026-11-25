@@ -39,14 +39,18 @@ export function insertElement( tile: ElementTile ) {
 
 	const model = buildElementModel( tile );
 
-	const result = dropElement( {
-		containerId: target.containerId,
-		model,
-		options: { at: target.at, scrollIntoView: true },
-	} );
+	try {
+		const result = dropElement( {
+			containerId: target.containerId,
+			model,
+			options: { at: target.at, scrollIntoView: true },
+		} );
 
-	if ( result ) {
-		trackAddElement( model );
+		if ( result ) {
+			trackAddElement( model );
+		}
+	} catch {
+		return;
 	}
 }
 
@@ -67,10 +71,9 @@ function resolveTarget() {
 	}
 
 	if ( element.model.get( 'elType' ) === 'widget' && element.parent ) {
-		return {
-			containerId: element.parent.id,
-			at: element.parent.model.get( 'elements' ).findIndex( element.model ) + 1,
-		};
+		const index = element.parent.model.get( 'elements' ).findIndex( element.model );
+
+		return { containerId: element.parent.id, at: index === -1 ? undefined : index + 1 };
 	}
 
 	return { containerId: element.id, at: undefined };

@@ -72,4 +72,34 @@ describe( 'insertElement', () => {
 		// Assert.
 		expect( dropElement ).not.toHaveBeenCalled();
 	} );
+
+	it( 'should do nothing when the drop throws', () => {
+		// Arrange.
+		setEditor( [] );
+		jest.mocked( dropElement ).mockImplementation( () => {
+			throw new Error( 'Container not found' );
+		} );
+
+		// Act & Assert.
+		expect( () => insertElement( tile ) ).not.toThrow();
+	} );
+
+	it( 'should append to the parent when the selected widget is not found in it', () => {
+		// Arrange.
+		setEditor( [
+			{
+				id: 'w1',
+				model: { get: () => 'widget' },
+				parent: { id: 'box', model: { get: () => ( { findIndex: () => -1 } ) } },
+			},
+		] );
+
+		// Act.
+		insertElement( tile );
+
+		// Assert.
+		expect( dropElement ).toHaveBeenCalledWith(
+			expect.objectContaining( { containerId: 'box', options: { at: undefined, scrollIntoView: true } } )
+		);
+	} );
 } );
