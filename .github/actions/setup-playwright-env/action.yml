@@ -66,7 +66,7 @@ runs:
         jq --arg php_version "$PHP_VERSION" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
 
     - name: Setup CDN promotion fixtures
-      uses: elementor/elementor-editor-github-actions/actions/fetch-cdn-scenario@43a334db216f075873789701646bcdc6f20388f5
+      uses: elementor/elementor-editor-github-actions/actions/fetch-cdn-scenario@2844c6e9cadd7bd338fc06afaf331471ac85a6c4
       with:
         output-dir: tests/playwright/mu-plugins/editor-assets-cdn/live
         mu-plugins-dir: tests/playwright/mu-plugins
