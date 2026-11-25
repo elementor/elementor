@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Files\Fonts\Google_Font;
+use Elementor\Modules\Home\Module as Home_Module;
 use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Modules\EditorOne\Classes\Admin_Page_Title;
@@ -87,6 +88,15 @@ class Settings extends Settings_Page {
 			'',
 			'58.5'
 		);
+	}
+
+	/**
+	 * Get the URL of the Settings page (not the legacy Quick Start page).
+	 *
+	 * @return string
+	 */
+	public static function get_settings_page_url(): string {
+		return admin_url( 'admin.php?page=' . Home_Module::get_elementor_settings_page_id() );
 	}
 
 	public function display_home_screen() {

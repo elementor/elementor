@@ -17,6 +17,10 @@ const createConfig = ( overrides: Partial< SecondaryBarConfig > = {} ): Secondar
 
 const addons = [ { id: 'dev-tools', label: 'Dev Tools', url: '/dev-tools' } ];
 
+const getFinderDivider = ( finder: HTMLElement ) =>
+	// eslint-disable-next-line testing-library/no-node-access
+	finder.parentElement?.querySelector( '[aria-hidden="true"]' ) ?? null;
+
 describe( '<SecondaryBar />', () => {
 	afterEach( () => {
 		delete window.$e;
@@ -102,12 +106,26 @@ describe( '<SecondaryBar />', () => {
 		expect( () => fireEvent.click( screen.getByRole( 'button', { name: 'Finder' } ) ) ).not.toThrow();
 	} );
 
-	it( 'should render the finder in a fixed-width slot when addons are shown', () => {
+	it( 'should render the finder divider when addons are shown', () => {
 		// Act
 		render( <SecondaryBar config={ createConfig( { addons } ) } /> );
 
 		// Assert
-		expect( screen.getByRole( 'button', { name: 'Finder' } ) ).toBeInTheDocument();
+		const finder = screen.getByRole( 'button', { name: 'Finder' } );
+
+		expect( finder ).toBeInTheDocument();
+		expect( getFinderDivider( finder ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render the finder divider even when there are no addons', () => {
+		// Act
+		render( <SecondaryBar config={ createConfig( { addons: [] } ) } /> );
+
+		// Assert
+		const finder = screen.getByRole( 'button', { name: 'Finder' } );
+
+		expect( finder ).toBeInTheDocument();
+		expect( getFinderDivider( finder ) ).toBeInTheDocument();
 	} );
 
 	it( 'should hide Finder when it is not available', () => {
