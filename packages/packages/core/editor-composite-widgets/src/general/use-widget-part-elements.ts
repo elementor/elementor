@@ -53,10 +53,10 @@ function getWidgetPartElements( rootId: ElementID, definition: CompositeWidgetDe
 function getWidgetPartElement( root: V1Element, part: string ): WidgetPartElement | null {
 	const container = findWidgetPart( root, part );
 
-	if ( ! container ) {
-		return null;
-	}
+	return container ? toWidgetPartElement( container ) : null;
+}
 
+export function toWidgetPartElement( container: V1Element ): WidgetPartElement | null {
 	const type = container.model.get( 'widgetType' ) || container.model.get( 'elType' );
 	const elementType = getElementType( type );
 

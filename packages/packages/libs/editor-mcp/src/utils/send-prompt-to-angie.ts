@@ -1,4 +1,4 @@
-import { AngieInteractionMode, getAngieIframe, toggleAngieSidebar } from '@elementor-external/angie-sdk';
+import { AngieInteractionMode, getAngieIframe, toggleAngieSidebar } from '@elementor/editor-angie-sdk';
 
 import { openLoadedEditorAngie } from './open-angie-in-ask-mode';
 

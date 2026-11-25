@@ -2,7 +2,7 @@ import * as React from 'react';
 import { SelectControl } from '@elementor/editor-controls';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
 const BORDER_TYPE_LABEL = __( 'Border type', 'elementor' );
@@ -19,9 +19,9 @@ const borderStyles = [
 	{ value: 'outset', label: __( 'Outset', 'elementor' ) },
 ];
 
-export const BorderStyleField = () => (
-	<StylesField bind="border-style" propDisplayName={ BORDER_TYPE_LABEL }>
-		<StylesFieldLayout label={ BORDER_TYPE_LABEL }>
+export const BorderStyleField = ( { label = BORDER_TYPE_LABEL }: StylesFieldLabelProps ) => (
+	<StylesField bind="border-style" propDisplayName={ label }>
+		<StylesFieldLayout label={ label }>
 			<SelectControl options={ borderStyles } />
 		</StylesFieldLayout>
 	</StylesField>

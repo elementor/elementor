@@ -4,7 +4,7 @@ import { AlignCenterIcon, AlignJustifiedIcon, AlignLeftIcon, AlignRightIcon } fr
 import { withDirection } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { UiProviders } from '../../../styles-inheritance/components/ui-providers';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
@@ -42,11 +42,11 @@ const options: ToggleButtonGroupItem< Alignments >[] = [
 	},
 ];
 
-export const TextAlignmentField = () => {
+export const TextAlignmentField = ( { label = TEXT_ALIGNMENT_LABEL }: StylesFieldLabelProps ) => {
 	return (
-		<StylesField bind="text-align" propDisplayName={ TEXT_ALIGNMENT_LABEL }>
+		<StylesField bind="text-align" propDisplayName={ label }>
 			<UiProviders>
-				<StylesFieldLayout label={ TEXT_ALIGNMENT_LABEL }>
+				<StylesFieldLayout label={ label }>
 					<ToggleControl options={ options } />
 				</StylesFieldLayout>
 			</UiProviders>
