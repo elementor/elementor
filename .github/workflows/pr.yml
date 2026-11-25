@@ -592,6 +592,37 @@ jobs:
               job.name === 'detect-changes' || job.name === 'Detect changes';
             const isValidate = (job) => job.name === 'Pull Request Validations';
 
+            const isFullRunFromJobs = (jobList) => {
+              if (!jobList?.length) {
+                return false;
+              }
+              const detect = jobList.find(isDetectChanges);
+              if (!detect) {
+                return false;
+              }
+              return detect.conclusion !== 'skipped' && detect.conclusion !== 'cancelled';
+            };
+
+            for (const run of data.workflow_runs) {
+              if (run.id === context.runId || run.status === 'completed') {
+                continue;
+              }
+
+              const inProgressJobs = await github.rest.actions.listJobsForWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: run.id,
+                per_page: 100,
+              });
+
+              if (isFullRunFromJobs(inProgressJobs.data.jobs)) {
+                core.setFailed(
+                  `Full pr.yml run ${run.html_url} is still in progress; re-run this check when it finishes`
+                );
+                return;
+              }
+            }
+
             let fullRun;
             let validateConclusion;
 
@@ -607,8 +638,7 @@ jobs:
                 per_page: 100,
               });
 
-              const detect = jobs.data.jobs.find(isDetectChanges);
-              if (!detect || detect.conclusion === 'skipped' || detect.conclusion === 'cancelled') {
+              if (!isFullRunFromJobs(jobs.data.jobs)) {
                 continue;
               }
 
