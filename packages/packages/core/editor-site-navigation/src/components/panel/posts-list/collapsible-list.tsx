@@ -11,6 +11,7 @@ import {
 
 type Props = {
 	count: number;
+	countChipLabel?: string;
 	headerRef?: Ref< HTMLDivElement >;
 	isOpen: boolean;
 	onOpenChange: ( isOpen: boolean ) => void;
@@ -28,12 +29,13 @@ const sectionHeaderListItemButtonSx = {
 	'&.Mui-focusVisible': { backgroundColor: 'transparent' },
 };
 
-function getSectionHeaderAriaLabel( title: string, count: number ) {
-	return `${ title } (${ count.toString() })`;
+function getSectionHeaderAriaLabel( title: string, countLabel: string ) {
+	return `${ title } (${ countLabel })`;
 }
 
 export default function CollapsibleList( {
 	count,
+	countChipLabel,
 	headerRef,
 	isOpen,
 	onOpenChange,
@@ -44,7 +46,8 @@ export default function CollapsibleList( {
 	const id = useId();
 	const labelId = `label-${ id }`;
 	const contentId = `content-${ id }`;
-	const sectionHeaderAriaLabel = getSectionHeaderAriaLabel( title, count );
+	const chipLabel = countChipLabel ?? count.toString();
+	const sectionHeaderAriaLabel = getSectionHeaderAriaLabel( title, chipLabel );
 
 	const handleClick = () => onOpenChange( ! isOpen );
 
@@ -82,7 +85,7 @@ export default function CollapsibleList( {
 								} }
 								sx={ { flexGrow: 0, flexShrink: 1, marginInlineEnd: 1 } }
 							/>
-							<Chip label={ count } size="tiny" />
+							<Chip label={ chipLabel } size="tiny" />
 						</Stack>
 						<CollapseIcon color="secondary" fontSize="tiny" open={ isOpen } sx={ { flexShrink: 0 } } />
 					</Stack>

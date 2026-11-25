@@ -4,7 +4,7 @@ import { ArrowDownSmallIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpSmallIcon } f
 import { withDirection } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { UiProviders } from '../../../styles-inheritance/components/ui-providers';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
@@ -45,11 +45,11 @@ const options: ToggleButtonGroupItem< FlexDirection >[] = [
 	},
 ];
 
-export const FlexDirectionField = () => {
+export const FlexDirectionField = ( { label = FLEX_DIRECTION_LABEL }: StylesFieldLabelProps ) => {
 	return (
-		<StylesField bind="flex-direction" propDisplayName={ FLEX_DIRECTION_LABEL }>
+		<StylesField bind="flex-direction" propDisplayName={ label }>
 			<UiProviders>
-				<StylesFieldLayout label={ FLEX_DIRECTION_LABEL }>
+				<StylesFieldLayout label={ label }>
 					<ToggleControl options={ options } />
 				</StylesFieldLayout>
 			</UiProviders>

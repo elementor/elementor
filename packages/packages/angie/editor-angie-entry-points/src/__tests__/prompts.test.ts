@@ -174,6 +174,28 @@ describe( 'ANGIE_PROMPTS', () => {
 		} );
 	} );
 
+	it( 'builds the site content active document prompt', () => {
+		// Act
+		const prompt = ANGIE_PROMPTS.siteContentActiveDocument( {
+			postId: 42,
+			postType: 'page',
+			title: 'Menu',
+		} );
+
+		// Assert
+		expect( prompt ).toBe( 'For page "Menu" (document id 42), I want: ' );
+	} );
+
+	it( 'sanitizes quotes and newlines in the site content active document title', () => {
+		const prompt = ANGIE_PROMPTS.siteContentActiveDocument( {
+			postId: 7,
+			postType: 'page',
+			title: 'Say "hello"\nworld',
+		} );
+
+		expect( prompt ).toBe( `For page "Say 'hello' world" (document id 7), I want: ` );
+	} );
+
 	it( 'builds the variables manager prompt', () => {
 		// Act
 		const prompt = ANGIE_PROMPTS.variablesManager();
