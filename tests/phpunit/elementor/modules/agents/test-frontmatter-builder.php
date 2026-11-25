@@ -64,6 +64,65 @@ class Test_Frontmatter_Builder extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( '&#038;', $yaml );
 	}
 
+	public function test_build_includes_author_when_display_name_differs_from_login() {
+		$user_id = $this->factory()->user->create( [
+			'user_login'   => 'siteadmin',
+			'display_name' => 'Jane Doe',
+			'role'         => 'administrator',
+		] );
+
+		$post_id = $this->factory()->post->create( [
+			'post_author'  => $user_id,
+			'post_status'  => 'publish',
+			'post_title'   => 'Author Privacy',
+			'post_content' => 'Body with enough characters for extraction.',
+		] );
+
+		$yaml = ( new Frontmatter_Builder() )->build( get_post( $post_id ) );
+
+		$this->assertStringContainsString( 'author: "Jane Doe"', $yaml );
+	}
+
+	public function test_build_omits_author_when_display_name_matches_login_without_first_name() {
+		$user_id = $this->factory()->user->create( [
+			'user_login'   => 'siteadmin',
+			'display_name' => 'siteadmin',
+			'role'         => 'administrator',
+		] );
+
+		$post_id = $this->factory()->post->create( [
+			'post_author'  => $user_id,
+			'post_status'  => 'publish',
+			'post_title'   => 'Author Privacy',
+			'post_content' => 'Body with enough characters for extraction.',
+		] );
+
+		$yaml = ( new Frontmatter_Builder() )->build( get_post( $post_id ) );
+
+		$this->assertStringNotContainsString( 'author:', $yaml );
+	}
+
+	public function test_build_uses_first_name_when_display_name_matches_login() {
+		$user_id = $this->factory()->user->create( [
+			'user_login'   => 'siteadmin',
+			'display_name' => 'siteadmin',
+			'first_name'   => 'Jane',
+			'role'         => 'administrator',
+		] );
+
+		$post_id = $this->factory()->post->create( [
+			'post_author'  => $user_id,
+			'post_status'  => 'publish',
+			'post_title'   => 'Author Privacy',
+			'post_content' => 'Body with enough characters for extraction.',
+		] );
+
+		$yaml = ( new Frontmatter_Builder() )->build( get_post( $post_id ) );
+
+		$this->assertStringContainsString( 'author: "Jane"', $yaml );
+		$this->assertStringNotContainsString( 'siteadmin', $yaml );
+	}
+
 	public function test_build_keeps_ampersand_in_featured_image() {
 		$image_url = 'https://cdn.example.test/img.jpg?w=800&h=600';
 		$id_filter = static function () {
