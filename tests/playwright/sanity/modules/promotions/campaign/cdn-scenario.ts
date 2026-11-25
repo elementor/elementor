@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
-import { dirname, resolve } from 'path';
+import { existsSync, readFileSync } from 'fs';
+import { resolve } from 'path';
 import { type BrowserContext, type Locator, type TestInfo, expect } from '@playwright/test';
 
 export const ACTIVE_CAMPAIGN_SCENARIO = 'active-campaign';
@@ -87,11 +87,15 @@ export const useCdnScenario = async ( context: BrowserContext, baseURL: string, 
 const ASSETS_ORIGIN = 'https://assets.elementor.com';
 const STAGING_ASSETS_ORIGIN = 'https://assets.stg.elementor.red';
 const CAMPAIGN_BASELINE_PREFIX = 'campaign';
+const FINGERPRINT_LENGTH = 12;
 const APPROVING_UPDATE_MODES = [ 'all', 'changed' ];
 
 // Staging serves its images from its own host, so a campaign approved on staging keeps its fingerprint after the launch.
 const getContentFingerprint = ( content: unknown ): string =>
-	createHash( 'sha256' ).update( JSON.stringify( content ?? null ).replaceAll( STAGING_ASSETS_ORIGIN, ASSETS_ORIGIN ) ).digest( 'hex' );
+	createHash( 'sha256' )
+		.update( JSON.stringify( content ?? null ).replaceAll( STAGING_ASSETS_ORIGIN, ASSETS_ORIGIN ) )
+		.digest( 'hex' )
+		.slice( 0, FINGERPRINT_LENGTH );
 
 const waitForImages = ( element: Locator ): Promise<unknown> =>
 	element.locator( 'img' ).evaluateAll( ( images: HTMLImageElement[] ) => Promise.all( images
@@ -113,8 +117,9 @@ type CampaignLook = {
 };
 
 // The active-campaign fixture never changes, so its look is always compared with a baseline.
-// A real campaign (live or staging) is compared only with a baseline approved for the same content.
-// New content fails until a person checks the attached screenshot and approves it with --update-snapshots.
+// A real campaign (live or staging) has a baseline for every approved content, named by the content fingerprint.
+// So the look before, during and after a campaign can all be approved ahead, and the nightly run picks the one that matches the CDN.
+// Content without an approved baseline fails until a person checks the attached screenshot and approves it with --update-snapshots.
 // The no-promotion look is covered by promotions.test.ts.
 export const checkCampaignLook = async ( { scenario, element, name, testInfo, content, images = [] }: CampaignLook ): Promise<void> => {
 	if ( NO_PROMOTION_SCENARIO === scenario ) {
@@ -126,26 +131,18 @@ export const checkCampaignLook = async ( { scenario, element, name, testInfo, co
 		return;
 	}
 
+	const baseline = `${ CAMPAIGN_BASELINE_PREFIX }-${ name }-${ getContentFingerprint( content ) }.png`;
 	await waitForImages( element );
-	await testInfo.attach( `${ scenario }-${ name }`, { body: await element.screenshot(), contentType: 'image/png' } );
+	await testInfo.attach( `${ scenario }-${ baseline }`, { body: await element.screenshot(), contentType: 'image/png' } );
 
-	const baselineName = `${ CAMPAIGN_BASELINE_PREFIX }-${ name }`;
-	const fingerprintPath = testInfo.snapshotPath( `${ baselineName }.sha256` );
-	const fingerprint = getContentFingerprint( content );
+	const isApproving = APPROVING_UPDATE_MODES.includes( testInfo.config.updateSnapshots );
 
-	if ( APPROVING_UPDATE_MODES.includes( testInfo.config.updateSnapshots ) ) {
-		mkdirSync( dirname( fingerprintPath ), { recursive: true } );
-		writeFileSync( fingerprintPath, `${ fingerprint }\n` );
-	} else {
-		const approved = existsSync( fingerprintPath ) ? readFileSync( fingerprintPath, 'utf8' ).trim() : 'none';
-
-		if ( approved !== fingerprint ) {
-			expect.soft( approved, `The ${ scenario } CDN content of ${ name } is not approved. Check the attached ${ scenario }-${ name } screenshot, then approve it with Update Playwright Snapshots: test_grep="live @promotions" and the same cdn_source.` ).toBe( fingerprint );
-			return;
-		}
+	if ( ! isApproving && ! existsSync( testInfo.snapshotPath( baseline, { kind: 'screenshot' } ) ) ) {
+		expect.soft( baseline, `The ${ scenario } CDN content of ${ name } is not approved. Check the attached ${ scenario }-${ baseline } screenshot, then approve it with Update Playwright Snapshots: test_grep="live @promotions" and the same cdn_source.` ).toBe( 'approved' );
+		return;
 	}
 
-	await expect.soft( element ).toHaveScreenshot( `${ baselineName }.png` );
+	await expect.soft( element ).toHaveScreenshot( baseline );
 };
 
 export const readEditorPromotion = ( scenario: string, name: EditorPromotionName ): EditorPromotion =>

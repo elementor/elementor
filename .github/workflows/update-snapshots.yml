@@ -33,7 +33,7 @@ on:
         required: false
         default: false
       cdn_scenario:
-        description: 'Set to live to approve the campaign on the live CDN, with test_grep=@promotions.'
+        description: 'Set to live to approve the campaign on the live CDN, with test_grep="live @promotions".'
         required: false
       cdn_source:
         description: 'CDN to approve the campaign from, e.g. https://assets.stg.elementor.red before the launch. Implies cdn_scenario=live.'
