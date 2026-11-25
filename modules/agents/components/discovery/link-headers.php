@@ -115,6 +115,10 @@ class Link_Headers extends Feature_Component {
 			$this->send_header( $this->build_singular_vary_header( $post ) );
 		}
 
+		if ( is_404() ) {
+			$this->send_header( $this->build_not_found_vary_header() );
+		}
+
 		$this->send_link_headers( $links );
 		$this->emitted = true;
 	}
@@ -240,6 +244,12 @@ class Link_Headers extends Feature_Component {
 	 */
 	public function build_singular_vary_header( $post ): ?string {
 		return null === $this->build_singular_markdown_link( $post ) ? null : self::VARY_ACCEPT_HEADER;
+	}
+
+	public function build_not_found_vary_header(): ?string {
+		return $this->settings->is_module_active( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT )
+			? self::VARY_ACCEPT_HEADER
+			: null;
 	}
 
 	private function resolve_markdown_url( \WP_Post $post ): ?string {

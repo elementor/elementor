@@ -313,6 +313,25 @@ class Test_Link_Headers extends Elementor_Test_Base {
 		$this->assertNull( $header );
 	}
 
+	public function test_build_not_found_vary_header__returns_vary_accept_when_markdown_is_active() {
+		// Act
+		$header = $this->link_headers->build_not_found_vary_header();
+
+		// Assert
+		$this->assertSame( 'Vary: Accept', $header );
+	}
+
+	public function test_build_not_found_vary_header__omits_header_when_markdown_is_disabled() {
+		// Arrange
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT, 'enabled', false );
+
+		// Act
+		$header = $this->link_headers->build_not_found_vary_header();
+
+		// Assert
+		$this->assertNull( $header );
+	}
+
 	public function test_is_enabled__returns_true_when_activated() {
 		$this->assertTrue( $this->link_headers->is_enabled() );
 	}
