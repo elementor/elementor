@@ -111,7 +111,6 @@ export function RemoveHomepageDialog( { open, onClose }: RemoveHomepageDialogPro
 				</ConfirmationDialog.ContentText>
 			</ConfirmationDialog.Content>
 			<ConfirmationDialog.Actions
-				cancelLabel={ __( 'Cancel', 'elementor' ) }
 				color="secondary"
 				confirmLabel={ __( 'Remove as homepage', 'elementor' ) }
 				onClose={ handleCancel }
