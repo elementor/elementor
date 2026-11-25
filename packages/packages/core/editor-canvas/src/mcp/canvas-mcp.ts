@@ -14,6 +14,7 @@ import { initBuildCompositionTool } from './tools/build-composition/tool';
 import { initConfigureElementTool } from './tools/configure-element/tool';
 import { initFindIconsTool } from './tools/find-icons/tool';
 import { initGetPageStructureTool } from './tools/get-page-structure/tool';
+import { initUploadMediaTool } from './tools/upload-media/tool';
 import { getDynamicTagNamesByCategories } from './utils/resolve-dynamic-tag';
 
 export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
@@ -31,6 +32,7 @@ export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
 	initBestPracticesResource( reg );
 	initConfigureElementTool( reg );
 	initFindIconsTool( reg );
+	initUploadMediaTool( reg );
 	initGetPageStructureTool( reg );
 	initBuildCompositionTool( reg );
 	initBreakpointsResource( reg );
