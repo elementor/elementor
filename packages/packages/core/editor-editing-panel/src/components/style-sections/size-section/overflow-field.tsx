@@ -3,7 +3,7 @@ import { type ToggleButtonGroupItem, ToggleControl } from '@elementor/editor-con
 import { EyeIcon, EyeOffIcon, LetterAIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
 type Overflows = 'visible' | 'hidden' | 'auto';
@@ -31,10 +31,10 @@ const options: ToggleButtonGroupItem< Overflows >[] = [
 	},
 ];
 
-export const OverflowField = () => {
+export const OverflowField = ( { label = OVERFLOW_LABEL }: StylesFieldLabelProps ) => {
 	return (
-		<StylesField bind="overflow" propDisplayName={ OVERFLOW_LABEL }>
-			<StylesFieldLayout label={ OVERFLOW_LABEL }>
+		<StylesField bind="overflow" propDisplayName={ label }>
+			<StylesFieldLayout label={ label }>
 				<ToggleControl options={ options } />
 			</StylesFieldLayout>
 		</StylesField>

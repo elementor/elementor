@@ -2,7 +2,7 @@ import * as React from 'react';
 import { SelectControl } from '@elementor/editor-controls';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
 const BLEND_MODE_LABEL = __( 'Blend mode', 'elementor' );
@@ -26,10 +26,10 @@ const blendModeOptions = [
 	{ label: __( 'Hard light', 'elementor' ), value: 'hard-light' },
 ];
 
-export const BlendModeField = () => {
+export const BlendModeField = ( { label = BLEND_MODE_LABEL }: StylesFieldLabelProps ) => {
 	return (
-		<StylesField bind="mix-blend-mode" propDisplayName={ BLEND_MODE_LABEL }>
-			<StylesFieldLayout label={ BLEND_MODE_LABEL }>
+		<StylesField bind="mix-blend-mode" propDisplayName={ label }>
+			<StylesFieldLayout label={ label }>
 				<SelectControl options={ blendModeOptions } />
 			</StylesFieldLayout>
 		</StylesField>

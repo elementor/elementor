@@ -8,6 +8,7 @@ use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Tag_Interface;
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\EditorOne\Classes\Admin_Page_Title;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Module as Editor_One_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -67,7 +68,7 @@ class Editor_One_Agents_Ready_Menu implements Menu_Item_Third_Level_Interface, M
 
 	public function render() {
 		echo '<div class="wrap">';
-		Admin_Page_Title::render( __( 'Agent Ready', 'elementor' ) );
+		Admin_Page_Title::render( __( 'Agent Ready', 'elementor' ), Editor_One_Module::is_admin_navigation_active() );
 		echo '<div id="' . esc_attr( Module::SCANNER_MOUNT_ID ) . '"></div>';
 		echo '</div>';
 	}
