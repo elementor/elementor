@@ -5,8 +5,8 @@ import { PromotionChip, PromotionPopover, useCanvasClickHandler } from '@element
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { POPUP_UPGRADE_URL_FALLBACK } from '../../../popups/constants';
 import { env } from '../../../env';
+import { POPUP_UPGRADE_URL_FALLBACK } from '../../../popups/constants';
 
 const TRACKING_DATA: PromotionTrackingData = {
 	target_name: 'popups',
@@ -17,7 +17,7 @@ export type SiteContentPopupsPromotionChipRef = {
 	toggle: () => void;
 };
 
-export const SiteContentPopupsPromotionChip = forwardRef< SiteContentPopupsPromotionChipRef, Record< string, never > >(
+export const SiteContentPopupsPromotionChip = forwardRef< SiteContentPopupsPromotionChipRef >(
 	( _, ref ) => {
 		const [ isOpen, setIsOpen ] = useState( false );
 		const upgradeUrl = env.popups?.upgrade_url ?? POPUP_UPGRADE_URL_FALLBACK;

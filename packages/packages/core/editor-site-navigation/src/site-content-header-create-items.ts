@@ -16,9 +16,7 @@ export function registerSiteContentHeaderCreateItem( item: SiteContentHeaderCrea
 
 export function getSiteContentHeaderCreateItems(): SiteContentHeaderCreateItem[] {
 	return Array.from( registeredHeaderCreateItems.values() ).sort(
-		( first, second ) =>
-			( first.priority ?? DEFAULT_HEADER_CREATE_PRIORITY ) -
-			( second.priority ?? DEFAULT_HEADER_CREATE_PRIORITY )
+		( first, second ) => ( first.priority ?? DEFAULT_HEADER_CREATE_PRIORITY ) - ( second.priority ?? DEFAULT_HEADER_CREATE_PRIORITY )
 	);
 }
 

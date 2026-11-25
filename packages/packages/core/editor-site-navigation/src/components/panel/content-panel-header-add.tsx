@@ -5,9 +5,9 @@ import { __ } from '@wordpress/i18n';
 
 import { postTypesMap, type Slug } from '../../api/post';
 import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
+import { env } from '../../env';
 import useAccessiblePanelPostTypes from '../../hooks/use-accessible-panel-post-types';
 import useCanCreate from '../../hooks/use-can-create';
-import { env } from '../../env';
 import { POPUPS_SITE_CONTENT_SECTION_ID } from '../../popups/constants';
 import { getSiteContentHeaderCreateItems } from '../../site-content-header-create-items';
 import ContentPanelAddIconButton from './content-panel-add-icon-button';

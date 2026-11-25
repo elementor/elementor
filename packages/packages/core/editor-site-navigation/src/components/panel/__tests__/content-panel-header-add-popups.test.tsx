@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { renderWithQuery } from 'test-utils';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { ContentPanelCoordinatorProvider } from '../../../contexts/content-panel-coordinator';
 import ContentPanelHeaderAdd from '../content-panel-header-add';
@@ -29,15 +29,17 @@ jest.mock( '../../../hooks/use-can-create', () => ( {
 } ) );
 
 describe( 'ContentPanelHeaderAdd popups item', () => {
-	it( 'shows Popup when popups env is set', () => {
+	it( 'shows Popup when popups env is set', async () => {
 		renderWithQuery(
 			<ContentPanelCoordinatorProvider>
 				<ContentPanelHeaderAdd />
 			</ContentPanelCoordinatorProvider>
 		);
 
-		screen.getByRole( 'button', { name: 'Add new' } ).click();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Add new' } ) );
 
-		expect( screen.getByRole( 'menuitem', { name: 'Popup' } ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByRole( 'menuitem', { name: 'Popup' } ) ).toBeInTheDocument();
+		} );
 	} );
 } );

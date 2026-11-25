@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 
-import {
-	getSiteContentSections,
-	registerSiteContentSection,
-	resetSiteContentSections,
-} from '../site-content-sections';
+import { getSiteContentSections, registerSiteContentSection, resetSiteContentSections } from '../site-content-sections';
 
 describe( 'site-content-sections', () => {
 	afterEach( () => {
