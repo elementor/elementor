@@ -7,6 +7,7 @@ use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interfac
 use Elementor\Modules\Agents\Module;
 use Elementor\Modules\EditorOne\Classes\Admin_Page_Title;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Module as Editor_One_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -58,7 +59,7 @@ class Editor_One_Agent_Access_Menu implements Menu_Item_Third_Level_Interface, A
 
 	public function render() {
 		echo '<div class="wrap">';
-		Admin_Page_Title::render( __( 'Agent Access', 'elementor' ) );
+		Admin_Page_Title::render( __( 'Agent Access', 'elementor' ), Editor_One_Module::is_admin_navigation_active() );
 		echo '<div id="' . esc_attr( Module::MOUNT_ID ) . '"></div>';
 		echo '</div>';
 	}
