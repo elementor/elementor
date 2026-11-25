@@ -6,7 +6,10 @@ import { __, sprintf } from '@wordpress/i18n';
 import { postTypesMap } from '../../../api/post';
 import { useContentPanelCoordinator } from '../../../contexts/content-panel-coordinator';
 import { usePostListContext } from '../../../contexts/post-list-context';
-import { SiteContentSectionToolbarProvider, useSiteContentSectionToolbar } from '../../../contexts/site-content-section-toolbar';
+import {
+	SiteContentSectionToolbarProvider,
+	useSiteContentSectionToolbar,
+} from '../../../contexts/site-content-section-toolbar';
 import { useHomepage } from '../../../hooks/use-homepage';
 import { usePostListPagination } from '../../../hooks/use-post-list-pagination';
 import { usePosts } from '../../../hooks/use-posts';

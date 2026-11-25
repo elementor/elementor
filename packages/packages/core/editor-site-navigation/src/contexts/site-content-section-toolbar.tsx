@@ -30,7 +30,9 @@ export function SiteContentSectionToolbarProvider( { children, statusFilterCount
 	);
 
 	return (
-		<SiteContentSectionToolbarContext.Provider value={ value }>{ children }</SiteContentSectionToolbarContext.Provider>
+		<SiteContentSectionToolbarContext.Provider value={ value }>
+			{ children }
+		</SiteContentSectionToolbarContext.Provider>
 	);
 }
 
