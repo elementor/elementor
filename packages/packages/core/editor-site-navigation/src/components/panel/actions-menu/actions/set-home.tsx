@@ -114,16 +114,15 @@ export function RemoveHomepageDialog( { open, onClose }: RemoveHomepageDialogPro
 				</ConfirmationDialog.ContentText>
 			</ConfirmationDialog.Content>
 			<DialogActions>
-				<Button variant="contained" color="secondary" onClick={ handleCancel } disabled={ isPending }>
+				<Button color="secondary" disabled={ isPending } onClick={ handleCancel }>
 					{ __( 'Not now', 'elementor' ) }
 				</Button>
 				<Button
-					autoFocus
-					variant="contained"
 					color="secondary"
-					onClick={ () => void handleConfirm() }
 					disabled={ isPending }
+					onClick={ () => void handleConfirm() }
 					sx={ { ml: 1 } }
+					variant="contained"
 				>
 					{ ! isPending ? removeHomepageLabel : <CircularProgress /> }
 				</Button>
