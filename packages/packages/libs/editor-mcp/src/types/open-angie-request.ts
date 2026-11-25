@@ -1,4 +1,4 @@
-import type { AngieInteractionMode, AngieTriggerRequest } from '@elementor-external/angie-sdk';
+import type { AngieInteractionMode, AngieTriggerRequest } from '@elementor/editor-angie-sdk';
 
 export type OpenAngieCommonProperties = {
 	prompt: string;
