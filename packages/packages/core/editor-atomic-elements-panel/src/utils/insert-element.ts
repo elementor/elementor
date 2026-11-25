@@ -31,8 +31,8 @@ export function insertElement( tile: ElementTile ) {
 		if ( result ) {
 			trackAddElement( model );
 		}
-	} catch {
-		return;
+	} catch ( error ) {
+		console.warn( error );
 	}
 }
 

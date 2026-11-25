@@ -1,16 +1,17 @@
 import { dropElement } from '@elementor/editor-elements';
 
-import { insertElement } from '../insert-element';
+import { canInsertElements, insertElement } from '../insert-element';
 
 jest.mock( '@elementor/editor-elements', () => ( { dropElement: jest.fn() } ) );
 
 const tile = { elType: 'widget', widgetType: 'e-heading', title: 'Heading' };
 const PREVIEW_ID = 'document';
 
-const setEditor = ( selected: unknown[] ) => {
+const setEditor = ( selected: unknown[], userCan = true ) => {
 	( window as never as Record< string, unknown > ).elementor = {
 		selection: { getElements: () => selected },
 		getPreviewContainer: () => ( { id: PREVIEW_ID } ),
+		userCan: () => userCan,
 	};
 	( window as never as Record< string, unknown > ).elementorCommon = {
 		eventsManager: { dispatchEvent: jest.fn() },
@@ -44,11 +45,10 @@ describe( 'insertElement', () => {
 
 	it( 'should insert after a selected widget in its parent', () => {
 		// Arrange.
-		const model = {};
 		setEditor( [
 			{
 				id: 'w1',
-				model: { get: () => 'widget', ...model },
+				model: { get: () => 'widget' },
 				parent: { id: 'box', model: { get: () => ( { findIndex: () => 2 } ) } },
 			},
 		] );
@@ -101,5 +101,62 @@ describe( 'insertElement', () => {
 		expect( dropElement ).toHaveBeenCalledWith(
 			expect.objectContaining( { containerId: 'box', options: { at: undefined, scrollIntoView: true } } )
 		);
+	} );
+
+	it( 'should pass the custom data to the drop', () => {
+		// Arrange.
+		const custom = { isPreset: true, preset_settings: { title: 'Preset' } };
+		setEditor( [] );
+
+		// Act.
+		insertElement( { ...tile, custom } );
+
+		// Assert.
+		expect( dropElement ).toHaveBeenCalledWith(
+			expect.objectContaining( { model: expect.objectContaining( { custom } ) } )
+		);
+	} );
+
+	it( 'should track the add only when the drop succeeds', () => {
+		// Arrange.
+		setEditor( [] );
+		const track = ( window as never as { elementorCommon: { eventsManager: { dispatchEvent: jest.Mock } } } )
+			.elementorCommon.eventsManager.dispatchEvent;
+
+		// Act.
+		jest.mocked( dropElement ).mockReturnValueOnce( undefined as never );
+		insertElement( tile );
+		jest.mocked( dropElement ).mockReturnValueOnce( {} as never );
+		insertElement( tile );
+
+		// Assert.
+		expect( track ).toHaveBeenCalledTimes( 1 );
+		expect( track ).toHaveBeenCalledWith( 'add_element', expect.objectContaining( { widget_type: 'e-heading' } ) );
+	} );
+} );
+
+describe( 'canInsertElements', () => {
+	it( 'should allow inserting when the preview exists and the user can design', () => {
+		// Arrange.
+		setEditor( [] );
+
+		// Act & Assert.
+		expect( canInsertElements() ).toBe( true );
+	} );
+
+	it( 'should not allow inserting without the design capability', () => {
+		// Arrange.
+		setEditor( [], false );
+
+		// Act & Assert.
+		expect( canInsertElements() ).toBe( false );
+	} );
+
+	it( 'should not allow inserting before the editor is ready', () => {
+		// Arrange.
+		( window as never as Record< string, unknown > ).elementor = undefined;
+
+		// Act & Assert.
+		expect( canInsertElements() ).toBe( false );
 	} );
 } );

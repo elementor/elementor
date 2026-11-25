@@ -29,6 +29,10 @@ export type ExtendedWindow = {
 		documents?: { getCurrent?: () => { $element?: Array< Node > } | undefined };
 		userCan?: ( capability: string ) => boolean;
 		channels?: { panelElements?: PanelChannel };
+		hooks?: {
+			addAction: ( name: string, callback: () => void ) => void;
+			removeAction: ( name: string, callback: () => void ) => void;
+		};
 		config?: { atomicWidgetPromotions?: AtomicWidgetPromotion[] };
 	};
 	elementorCommon?: {
