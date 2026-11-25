@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ccce0256f91a000a93adbc23d3d4c288",
+    "content-hash": "e8e2e48d4d26f9456baddbf78bfc512e",
     "packages": [
         {
             "name": "automattic/jetpack-autoloader",
@@ -145,10 +145,10 @@
         },
         {
             "name": "elementor/wp-one-package",
-            "version": "1.0.74",
+            "version": "1.0.75",
             "dist": {
                 "type": "zip",
-                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.74"
+                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.75"
             },
             "require": {
                 "elementor/wp-notifications-package": "^1.2"
@@ -175,7 +175,7 @@
                     "vendor/bin/phpcbf ."
                 ]
             },
-            "time": "2026-11-04T09:17:51+00:00"
+            "time": "2026-11-25T14:19:48+00:00"
         },
         {
             "name": "wordpress/mcp-adapter",
