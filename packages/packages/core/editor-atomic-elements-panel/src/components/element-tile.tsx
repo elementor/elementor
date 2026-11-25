@@ -3,7 +3,8 @@ import { CrownIcon, WidgetsIcon } from '@elementor/icons';
 import { ButtonBase, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useIsDragging } from '../hooks/use-is-dragging';
+import { endTileDrag, isDraggableTile, startTileDrag } from '../utils/drag-element';
+import { isPanelDragging } from '../utils/drag-state';
 import { type ElementTile as ElementTileData } from '../utils/group-widgets';
 import { canInsertElements, insertElement } from '../utils/insert-element';
 
@@ -23,7 +24,6 @@ const CROWN_SX = {
 
 export function ElementTile( { tile, groupId }: { tile: ElementTileData; groupId: string } ) {
 	const isLocked = !! tile.promotionType;
-	const isDragging = useIsDragging();
 
 	const openPromotion = ( event: React.MouseEvent< HTMLElement > ) => {
 		document.dispatchEvent(
@@ -40,14 +40,19 @@ export function ElementTile( { tile, groupId }: { tile: ElementTileData; groupId
 			return;
 		}
 
-		if ( ! isDragging && canInsertElements() ) {
+		if ( ! isPanelDragging() && canInsertElements() ) {
 			insertElement( tile );
 		}
 	};
 
+	const draggable = isDraggableTile( tile );
+
 	return (
 		<ButtonBase
 			onClick={ onClick }
+			draggable={ draggable }
+			onDragStart={ draggable ? ( event: React.DragEvent ) => startTileDrag( tile, event ) : undefined }
+			onDragEnd={ draggable ? endTileDrag : undefined }
 			data-nav-item="tile"
 			data-group-id={ groupId }
 			data-el-type={ tile.elType }
