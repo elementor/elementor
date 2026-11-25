@@ -1,7 +1,6 @@
 import { injectIntoSettingsTab } from '@elementor/editor-editing-panel';
-import { type Element, getContainer } from '@elementor/editor-elements';
 
-import { isRegisteredWidgetRoot } from '../closed-structure/find-locking-widget-root';
+import { isSelectedWidgetRoot } from '../closed-structure/is-selected-widget-root';
 import { WidgetGeneralTab } from './widget-general-tab';
 
 export function initWidgetGeneral() {
@@ -10,10 +9,4 @@ export function initWidgetGeneral() {
 		condition: ( { element } ) => isSelectedWidgetRoot( element ),
 		component: WidgetGeneralTab,
 	} );
-}
-
-function isSelectedWidgetRoot( element: Element ): boolean {
-	const container = getContainer( element.id );
-
-	return !! container && isRegisteredWidgetRoot( container );
 }

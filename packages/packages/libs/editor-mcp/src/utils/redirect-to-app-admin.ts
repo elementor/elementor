@@ -1,4 +1,4 @@
-import { ANGIE_SIDEBAR_STATE_OPEN, saveState, setReferrerRedirect } from '@elementor-external/angie-sdk';
+import { ANGIE_SIDEBAR_STATE_OPEN, saveState, setReferrerRedirect } from '@elementor/editor-angie-sdk';
 
 const ANGIE_APP_URL = '/wp-admin/admin.php?page=angie-app';
 

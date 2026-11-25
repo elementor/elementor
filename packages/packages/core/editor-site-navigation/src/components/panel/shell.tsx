@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
+import { isSidebarEnabled } from '@elementor/editor-sidebar';
 import { Divider, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -13,6 +14,7 @@ import ErrorSnackbar from './error-snackbar';
 import ShellPanelBodyContent from './shell-panel-body-content';
 
 const Shell = () => {
+	const sidebarPanelChrome = isSidebarEnabled();
 	const [ isErrorSnackbarOpen, setIsErrorSnackbarOpen ] = useState( false );
 	const { accessiblePostTypes, isUserPending, showUserLoadError } = useAccessiblePanelPostTypes();
 
@@ -26,6 +28,7 @@ const Shell = () => {
 						spacing={ 0.5 }
 						sx={ {
 							...contentPanelHeaderStackSx,
+							...( sidebarPanelChrome ? {} : { p: 1, pl: 2 } ),
 						} }
 					>
 						<PanelHeaderTitle sx={ { flex: 1, minWidth: 0, textAlign: 'start' } }>
