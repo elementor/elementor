@@ -3,7 +3,7 @@
  * Setup CDN fixtures for local Playwright testing, the same way CI does with the fetch-cdn-scenario action.
  *
  * This script:
- * 1. Downloads the shared no-promotion and active-campaign fixtures from the pinned action commit
+ * 1. Downloads the mock CDN mu-plugin (`mock-editor-assets-cdn.php`) and shared `no-promotion` / `active-campaign` fixtures from the pinned action ref
  * 2. Fetches the live CDN into the `live` scenario with the action's own fetch script
  *
  * Usage: node scripts/setup-cdn-fixtures.mjs [--skip-live]
