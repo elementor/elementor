@@ -4,13 +4,13 @@ import { ArrowsSortIcon } from '@elementor/icons';
 import { bindPopover, bindToggle, Divider, Popover, ToggleButton, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
+import { useSiteContentSectionToolbar } from '../../contexts/site-content-section-toolbar';
 import { hasActiveSiteContentSort, SITE_CONTENT_SORT_POPOVER_WIDTH_PX } from '../../site-content-sort';
 import ContentPanelClearFiltersButton from './content-panel-clear-filters-button';
 import ContentPanelSortList from './content-panel-sort-list';
 
 export default function ContentPanelSort() {
-	const { clearSiteContentSort, siteContentSort } = useContentPanelCoordinator();
+	const { clearSiteContentSort, siteContentSort } = useSiteContentSectionToolbar();
 	const popupState = usePopupState( {
 		variant: 'popover',
 		disableAutoFocus: true,

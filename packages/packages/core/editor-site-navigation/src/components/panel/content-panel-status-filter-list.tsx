@@ -2,8 +2,7 @@ import * as React from 'react';
 import { CheckIcon } from '@elementor/icons';
 import { MenuItem, MenuList, Stack, Typography } from '@elementor/ui';
 
-import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
-import useAccessiblePanelPostTypes from '../../hooks/use-accessible-panel-post-types';
+import { useSiteContentSectionToolbar } from '../../contexts/site-content-section-toolbar';
 import { useSiteContentStatusFilterCounts } from '../../hooks/use-site-content-status-filter-counts';
 import {
 	getSiteContentStatusFilterLabel,
@@ -27,18 +26,22 @@ type Props = {
 };
 
 export default function ContentPanelStatusFilterList( { loadCounts }: Props ) {
-	const { clearStatusFilters, statusFilters, toggleStatusFilter } = useContentPanelCoordinator();
-	const { accessiblePostTypes } = useAccessiblePanelPostTypes();
+	const { clearStatusFilters, statusFilters, statusFilterCountSlugs, toggleStatusFilter } =
+		useSiteContentSectionToolbar();
+	const shouldLoadCounts = loadCounts && statusFilterCountSlugs.length > 0;
 	const { data: statusCounts, isPending: isLoadingCounts } = useSiteContentStatusFilterCounts(
-		accessiblePostTypes,
-		loadCounts
+		statusFilterCountSlugs,
+		shouldLoadCounts
 	);
 
 	const isAllSelected = ! hasActiveSiteContentStatusFilters( statusFilters );
 
-	const visibleFilters = SITE_CONTENT_SELECTABLE_STATUS_FILTERS.filter( ( filter ) =>
-		shouldShowSiteContentStatusFilterRow( statusCounts?.[ filter ], isLoadingCounts, statusFilters[ filter ] )
-	);
+	const visibleFilters =
+		statusFilterCountSlugs.length === 0
+			? SITE_CONTENT_SELECTABLE_STATUS_FILTERS
+			: SITE_CONTENT_SELECTABLE_STATUS_FILTERS.filter( ( filter ) =>
+					shouldShowSiteContentStatusFilterRow( statusCounts?.[ filter ], isLoadingCounts, statusFilters[ filter ] )
+			  );
 
 	return (
 		<MenuList dense>
