@@ -145,7 +145,7 @@ for ( const scenario of [ ...CAMPAIGN_SCENARIOS, NO_PROMOTION_SCENARIO ] ) {
 					.toHaveText( isCdnBanner ? cdnFieldOrDefault( promotion, 'cta_text', CORE_DEFAULTS.conversionBanner.ctaText ) : CORE_DEFAULTS.conversionBanner.ctaText );
 				await expect( button )
 					.toHaveAttribute( 'href', isCdnBanner ? String( promotion.cta_url ) : CORE_DEFAULTS.conversionBanner.ctaUrl );
-				await checkCampaignLook( { scenario, element: banner, name: 'conversion-banner', testInfo, content: promotion, images: [ banner.locator( 'img' ) ] } );
+				await checkCampaignLook( { scenario, element: banner, name: 'conversion-banner', testInfo, content: promotion } );
 			} finally {
 				await restoreConversionBannerUnlock();
 			}
@@ -174,7 +174,7 @@ for ( const scenario of [ ...CAMPAIGN_SCENARIOS, NO_PROMOTION_SCENARIO ] ) {
 			await expect( pointer.locator( 'p' ).first() ).toHaveText( cdnFieldOrDefault( promotion, 'text', '' ) );
 			await expect( pointer.locator( 'a.button-primary' ) ).toHaveText( cdnFieldOrDefault( promotion, 'cta_text', CORE_DEFAULTS.pointerCtaText ) );
 			await expect( pointer.locator( 'a.button-primary' ) ).toHaveAttribute( 'href', String( promotion.cta_url ) );
-			await checkCampaignLook( { scenario, element: pointer, name: 'dashboard-pointer', testInfo, content: promotion, images: [ pointer.locator( 'img' ) ] } );
+			await checkCampaignLook( { scenario, element: pointer, name: 'dashboard-pointer', testInfo, content: promotion } );
 		} );
 
 		test( 'Editor widgets panel sticky footer', async ( { page, apiRequests }, testInfo ) => {
@@ -271,7 +271,7 @@ for ( const scenario of CAMPAIGN_SCENARIOS ) {
 				await expect( drawer.locator( `a[href="${ link }"]` ) ).toHaveCount( 0 );
 			}
 
-			await checkCampaignLook( { scenario, element: drawer, name: 'whats-new-drawer', testInfo, content: readNotifications( scenario ), images: [ drawer.locator( 'img' ) ] } );
+			await checkCampaignLook( { scenario, element: drawer, name: 'whats-new-drawer', testInfo, content: readNotifications( scenario ) } );
 		} );
 
 		test( 'Home screen sidebar banner', async ( { page }, testInfo ) => {
@@ -287,7 +287,7 @@ for ( const scenario of CAMPAIGN_SCENARIOS ) {
 			const banner = page.locator( `#e-home-screen a[href="${ variant.data.link }"]` );
 			await expect( banner ).toBeVisible( { timeout: timeouts.longAction } );
 			await expect( banner.locator( 'img' ) ).toHaveAttribute( 'src', variant.data.image );
-			await checkCampaignLook( { scenario, element: banner, name: 'home-sidebar-banner', testInfo, content: variant, images: [ banner.locator( 'img' ) ] } );
+			await checkCampaignLook( { scenario, element: banner, name: 'home-sidebar-banner', testInfo, content: variant } );
 		} );
 	} );
 }

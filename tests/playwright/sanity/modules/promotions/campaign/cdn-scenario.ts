@@ -80,8 +80,28 @@ export const assertScenarioFetched = ( scenario: string, paths: string[] ): void
 	}
 };
 
+const CDN_IMAGE_PATTERN = /^https:\/\/assets\.elementor\.com\/.+\.(?:svg|png|jpe?g|gif|webp)(?:\?.*)?$/;
+
+// The browser loads campaign images from the CDN itself, not through the mock, so the active-campaign scenario
+// answers them from its fixture. Its screenshots then show the images without depending on the live CDN.
+const serveFixtureImages = ( context: BrowserContext, scenario: string ): Promise<void> =>
+	context.route( CDN_IMAGE_PATTERN, async ( route ) => {
+		const file = resolve( FIXTURES_DIR, scenario, new URL( route.request().url() ).pathname.slice( 1 ) );
+
+		if ( existsSync( file ) ) {
+			await route.fulfill( { path: file } );
+			return;
+		}
+
+		await route.fallback();
+	} );
+
 export const useCdnScenario = async ( context: BrowserContext, baseURL: string, scenario: string ): Promise<void> => {
 	await context.addCookies( [ { name: SCENARIO_COOKIE, value: scenario, url: baseURL } ] );
+
+	if ( ACTIVE_CAMPAIGN_SCENARIO === scenario ) {
+		await serveFixtureImages( context, scenario );
+	}
 };
 
 const ASSETS_ORIGIN = 'https://assets.elementor.com';
@@ -112,8 +132,6 @@ type CampaignLook = {
 	testInfo: TestInfo;
 	// The CDN data that the element shows, the baseline of a real campaign belongs to it.
 	content: unknown;
-	// Masked in the active-campaign baseline, because the browser loads them from the real CDN.
-	images?: Locator[];
 };
 
 // The active-campaign fixture never changes, so its look is always compared with a baseline.
@@ -121,13 +139,13 @@ type CampaignLook = {
 // So the look before, during and after a campaign can all be approved ahead, and the nightly run picks the one that matches the CDN.
 // Content without an approved baseline fails until a person checks the attached screenshot and approves it with --update-snapshots.
 // The no-promotion look is covered by promotions.test.ts.
-export const checkCampaignLook = async ( { scenario, element, name, testInfo, content, images = [] }: CampaignLook ): Promise<void> => {
+export const checkCampaignLook = async ( { scenario, element, name, testInfo, content }: CampaignLook ): Promise<void> => {
 	if ( NO_PROMOTION_SCENARIO === scenario ) {
 		return;
 	}
 
 	if ( ACTIVE_CAMPAIGN_SCENARIO === scenario ) {
-		await expect.soft( element ).toHaveScreenshot( `${ name }.png`, { mask: images } );
+		await expect.soft( element ).toHaveScreenshot( `${ name }.png` );
 		return;
 	}
 

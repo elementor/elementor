@@ -8,6 +8,7 @@
  *
  * Usage: node scripts/setup-cdn-fixtures.mjs [--skip-live]
  */
+import { Buffer } from 'node:buffer';
 import { spawnSync } from 'node:child_process';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -18,7 +19,7 @@ import { parseArgs } from 'node:util';
 const __dirname = dirname( fileURLToPath( import.meta.url ) );
 const FIXTURES_BASE = resolve( __dirname, '../tests/playwright/mu-plugins/editor-assets-cdn' );
 // The same ref of the fetch-cdn-scenario action as in the workflows.
-const ACTION_REF = 'main';
+const ACTION_REF = 'a826ea6077df7c82428ea1784767797620889777';
 const ACTION_BASE_URL = `https://raw.githubusercontent.com/elementor/elementor-editor-github-actions/${ ACTION_REF }/actions/fetch-cdn-scenario`;
 const SHARED_SCENARIOS = [ 'no-promotion', 'active-campaign' ];
 const HTTP_NOT_FOUND = 404;
@@ -46,9 +47,9 @@ const { values: { 'skip-live': skipLive = false } } = parseArgs( {
 
 /**
  * @param {string} url
- * @return {Promise<string | null>} The body, or null when the file does not exist.
+ * @return {Promise<Response | null>} The response, or null when the file does not exist.
  */
-const fetchText = async ( url ) => {
+const fetchFile = async ( url ) => {
 	const response = await fetch( url, { cache: 'no-store', signal: AbortSignal.timeout( REQUEST_TIMEOUT_MS ) } );
 
 	if ( HTTP_NOT_FOUND === response.status ) {
@@ -59,8 +60,23 @@ const fetchText = async ( url ) => {
 		throw new Error( `${ url } answered ${ response.status }` );
 	}
 
-	return response.text();
+	return response;
 };
+
+/**
+ * @param {string} url
+ * @return {Promise<string | null>} The body, or null when the file does not exist.
+ */
+const fetchText = async ( url ) => ( await fetchFile( url ) )?.text() ?? null;
+
+// The tests answer the browser's CDN image requests from the fixture, so a fixture keeps the images its JSON uses.
+const CDN_IMAGE_URL = /https:\/\/assets\.elementor\.com\/([^"?]+\.(?:svg|png|jpe?g|gif|webp))/g;
+
+/**
+ * @param {string[]} jsonFiles
+ * @return {string[]} The CDN paths of the images that the files use.
+ */
+const getImagePaths = ( jsonFiles ) => [ ...new Set( jsonFiles.flatMap( ( json ) => [ ...json.matchAll( CDN_IMAGE_URL ) ].map( ( [ , path ] ) => path ) ) ) ];
 
 const saveFile = async ( path, content ) => {
 	await mkdir( dirname( path ), { recursive: true } );
@@ -72,6 +88,8 @@ for ( const scenario of SHARED_SCENARIOS ) {
 
 	await rm( resolve( FIXTURES_BASE, scenario ), { recursive: true, force: true } );
 
+	const jsonFiles = [];
+
 	for ( const path of CDN_PATHS ) {
 		const json = await fetchText( `${ ACTION_BASE_URL }/fixtures/${ scenario }/${ path }` );
 
@@ -79,7 +97,20 @@ for ( const scenario of SHARED_SCENARIOS ) {
 			continue;
 		}
 
+		jsonFiles.push( json );
 		await saveFile( resolve( FIXTURES_BASE, scenario, path ), json );
+		console.log( `  ${ scenario }/${ path }` );
+	}
+
+	// Most images are not part of the fixture, the browser then loads them from the CDN.
+	for ( const path of getImagePaths( jsonFiles ) ) {
+		const image = await fetchFile( `${ ACTION_BASE_URL }/fixtures/${ scenario }/${ path }` );
+
+		if ( null === image ) {
+			continue;
+		}
+
+		await saveFile( resolve( FIXTURES_BASE, scenario, path ), Buffer.from( await image.arrayBuffer() ) );
 		console.log( `  ${ scenario }/${ path }` );
 	}
 }
