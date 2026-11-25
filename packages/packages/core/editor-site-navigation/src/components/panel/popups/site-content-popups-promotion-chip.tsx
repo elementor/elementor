@@ -10,7 +10,7 @@ import { env } from '../../../env';
 
 const TRACKING_DATA: PromotionTrackingData = {
 	target_name: 'popups',
-	target_location: 'variables_manager',
+	target_location: 'widget_panel',
 };
 
 export type SiteContentPopupsPromotionChipRef = {

@@ -19,6 +19,7 @@ export {
 	type ContentPanelSectionId,
 } from './contexts/content-panel-coordinator';
 export { default as SiteContentCollapsibleList } from './components/panel/posts-list/collapsible-list';
+export { default as SiteContentListErrorState } from './components/panel/posts-list/error-state';
 export { default as SiteContentPaginationActions } from './components/panel/posts-list/post-list-pagination-actions';
 export { usePostListPagination } from './hooks/use-post-list-pagination';
 export { POST_PER_PAGE } from './api/post';
