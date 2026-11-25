@@ -3,10 +3,8 @@ import { EDITOR_ANGIE_APP_ID, getAngieSdk, resetAngieSdkForTests } from '../get-
 const mockConstructor = jest.fn();
 
 jest.mock( '@elementor-external/angie-sdk', () => ( {
-	AngieMcpSdk: class {
-		constructor( ...args: unknown[] ) {
-			mockConstructor( ...args );
-		}
+	AngieMcpSdk: function ( ...args: unknown[] ) {
+		mockConstructor( ...args );
 	},
 } ) );
 
