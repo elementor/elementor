@@ -9,7 +9,7 @@ import { blockCommand } from '@elementor/editor-v1-adapters';
 import { type ButtonProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type CanvasExtendedWindow } from './sync/types';
+import { getLocalClipboardElements } from './utils/get-local-clipboard-elements';
 
 export function initLinkInLinkPrevention() {
 	blockCommand( {
@@ -35,13 +35,7 @@ type MoveArgs = {
 	target?: V1Element;
 };
 
-export type StorageContent = {
-	clipboard?: {
-		elements?: { id?: string }[];
-	};
-};
-
-const learnMoreActionProps: Partial< ButtonProps > = {
+export const learnMoreActionProps: Partial< ButtonProps > = {
 	href: 'https://go.elementor.com/element-link-inside-link-infotip',
 	target: '_blank',
 	color: 'inherit',
@@ -53,20 +47,13 @@ const learnMoreActionProps: Partial< ButtonProps > = {
 };
 
 function blockLinkInLinkPaste( args: PasteArgs ): boolean {
-	const { containers = [ args.container ], storageType } = args;
+	const { containers = [ args.container ] } = args;
 	const targetElements = containers;
+	const sourceElements = getLocalClipboardElements( args.storageType );
 
-	if ( storageType !== 'localstorage' ) {
+	if ( ! sourceElements ) {
 		return false;
 	}
-
-	const data = ( window as CanvasExtendedWindow )?.elementorCommon?.storage?.get();
-
-	if ( ! data?.clipboard?.elements ) {
-		return false;
-	}
-
-	const sourceElements = data.clipboard.elements;
 
 	const notification: NotificationData = {
 		type: 'default',
@@ -124,9 +111,9 @@ function shouldBlock(
 		return false;
 	}
 
-	const isTargetContainsAnAnchor = targetElements.some( ( target ) => {
-		return target?.id ? isElementAnchored( target.id ) || !! getAnchoredAncestorId( target.id ) : false;
-	} );
+	return targetElements.some( isInsideLink );
+}
 
-	return isTargetContainsAnAnchor;
+export function isInsideLink( target?: V1Element ): boolean {
+	return target?.id ? isElementAnchored( target.id ) || !! getAnchoredAncestorId( target.id ) : false;
 }
