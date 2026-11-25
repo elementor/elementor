@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Tag_Interface;
 use Elementor\Modules\EditorOne\Classes\Admin_Flow_Config;
 use Elementor\Modules\EditorOne\Classes\Admin_Flow_Map;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
@@ -167,6 +168,22 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( [ 'Settings & More' ], array_column( $bar['tabs'], 'label' ) );
+	}
+
+	public function test_get_bar__tabs_carry_the_tag_of_their_item() {
+		// Arrange
+		$this->register_item( 'elementor-settings', 'Settings' );
+		$this->register_tagged_item( 'elementor-tools', 'Tools', '<b>Beta</b>' );
+
+		// Act
+		$bar = $this->secondary_bar->get_bar( $this->create_map(), $this->provider, [
+			'parent' => Admin_Flow_Config::PARENT_SETTINGS,
+			'group' => Admin_Flow_Config::GROUP_SETTINGS,
+			'tab' => 'settings',
+		] );
+
+		// Assert
+		$this->assertSame( [ 'settings' => '', 'tools' => 'Beta' ], array_column( $bar['tabs'], 'tag', 'id' ) );
 	}
 
 	public function test_get_bar__unknown_parent_falls_back_to_the_default_label() {
@@ -437,6 +454,54 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 		$post_types[] = 'post';
 
 		return $post_types;
+	}
+
+	private function register_tagged_item( string $slug, string $label, string $tag ): void {
+		$item = new class( $slug, $label, $tag ) implements Menu_Item_Interface, Menu_Item_With_Tag_Interface {
+			private string $slug;
+			private string $label;
+			private string $tag;
+
+			public function __construct( string $slug, string $label, string $tag ) {
+				$this->slug = $slug;
+				$this->label = $label;
+				$this->tag = $tag;
+			}
+
+			public function get_capability(): string {
+				return 'manage_options';
+			}
+
+			public function get_label(): string {
+				return $this->label;
+			}
+
+			public function get_parent_slug(): string {
+				return Menu_Config::ELEMENTOR_MENU_SLUG;
+			}
+
+			public function is_visible(): bool {
+				return true;
+			}
+
+			public function get_position(): int {
+				return 10;
+			}
+
+			public function get_slug(): string {
+				return $this->slug;
+			}
+
+			public function get_group_id(): string {
+				return 'test-group';
+			}
+
+			public function get_tag(): string {
+				return $this->tag;
+			}
+		};
+
+		$this->provider->register_level4_item( $item );
 	}
 
 	private function reset_menu_data_provider(): void {
