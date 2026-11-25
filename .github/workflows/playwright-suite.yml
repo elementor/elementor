@@ -85,9 +85,9 @@ jobs:
     env:
       RUN_SUFFIX: ${{ format('{0}{1}', inputs.php_version && format('-php{0}', inputs.php_version) || '', inputs.wp_core && format('-wp{0}', inputs.wp_core) || '') }}
       WP_NIGHTLY: ${{ inputs.php_version == '' && (github.event_name == 'schedule' || github.event.inputs.run_mode == 'nightly') }}
-      # Scheduled runs also check the promotion tests against the live CDN, PR runs stay offline.
-      E2E_CDN_SCENARIO: ${{ github.event_name == 'schedule' && 'live' || github.event.inputs.cdn_source && 'live' || github.event.inputs.cdn_scenario || '' }}
-      E2E_CDN_SOURCE: ${{ github.event_name != 'schedule' && github.event.inputs.cdn_source || '' }}
+      # The live CDN is checked by its own nightly run in playwright.yml, PR runs stay offline.
+      E2E_CDN_SCENARIO: ${{ github.event.inputs.cdn_source && 'live' || github.event.inputs.cdn_scenario || '' }}
+      E2E_CDN_SOURCE: ${{ github.event.inputs.cdn_source || '' }}
     if: |
       always() &&
       (needs.build-plugin.result == 'success' || needs.prepare-caller-build.result == 'success')

@@ -4,6 +4,8 @@ on:
   merge_group:
   schedule:
     - cron: '0 2 * * 0,1,2,3,4,5'
+    # Checks the promotions of the live CDN, and reports a failure to the test automation channel.
+    - cron: '30 4 * * *'
   workflow_dispatch:
     inputs:
       fail_fast:
@@ -74,6 +76,7 @@ jobs:
     needs: [build-plugin, get-php-version]
     if: |
       (github.event.inputs.tag == '' || github.event.inputs.tag == null) &&
+      github.event.schedule != '30 4 * * *' &&
       needs.build-plugin.result == 'success'
     uses: ./.github/workflows/playwright-suite.yml
     with:
@@ -87,9 +90,9 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    if: ${{ github.event.inputs.tag }}
+    if: ${{ github.event.inputs.tag || github.event.schedule == '30 4 * * *' }}
     env:
-      E2E_CDN_SCENARIO: ${{ github.event.inputs.cdn_source && 'live' || github.event.inputs.cdn_scenario || '' }}
+      E2E_CDN_SCENARIO: ${{ (github.event.schedule == '30 4 * * *' || github.event.inputs.cdn_source) && 'live' || github.event.inputs.cdn_scenario || '' }}
       E2E_CDN_SOURCE: ${{ github.event.inputs.cdn_source || '' }}
     steps:
       - name: Checkout source code
@@ -186,7 +189,7 @@ jobs:
       - name: Run Playwright tests
         env:
           REPEAT_EACH: ${{ github.event.inputs.repeat_each }}
-          TEST_TAG: ${{ github.event.inputs.tag }}
+          TEST_TAG: ${{ github.event.inputs.tag || 'live @promotions' }}
         run: |
           PROJECT_ARG=""
           if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
@@ -231,3 +234,29 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
           retention-days: 2
+      - name: Post To Slack
+        if: failure() && github.event.schedule == '30 4 * * *'
+        uses: ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
+          PAYLOAD: |
+            {
+              "text": "Elementor Core: Playwright CDN promotions (live CDN): failure\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Elementor Core: Playwright CDN promotions (live CDN): failure\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "\"not approved\" means new CDN content: check the attached screenshots, then approve them with Update Playwright Snapshots (test_grep: live @promotions, cdn_scenario: live)."
+                  }
+                }
+              ]
+            }
