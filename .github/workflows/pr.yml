@@ -11,7 +11,7 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}${{ github.event.action == 'labeled' && github.event.label.name != 'run-tests' && github.event.label.name != 'full-browser-compatibility' && '-label' || '' }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' && (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'full-browser-compatibility') }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action != 'ready_for_review' && (github.event.action != 'labeled' || github.event.label.name == 'run-tests' || github.event.label.name == 'full-browser-compatibility') }}
 
 permissions:
   contents: read
