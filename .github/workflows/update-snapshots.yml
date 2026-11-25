@@ -118,7 +118,8 @@ jobs:
           matrix.shardIndex != 'elements-regression-core' &&
           matrix.shardIndex != 'elements-regression-atomic'
           }}
-        continue-on-error: true
+        # Approving a campaign writes missing baselines, so any test failure there is real and must fail the run.
+        continue-on-error: ${{ env.E2E_CDN_SCENARIO != 'live' }}
         env:
           BROWSERS: ${{ steps.setup.outputs.browsers }}
         run: |
@@ -204,7 +205,8 @@ jobs:
         run: echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
 
       - name: Update snapshots for "${{ inputs.test_grep }}"
-        continue-on-error: true
+        # Approving a campaign writes missing baselines, so any test failure there is real and must fail the run.
+        continue-on-error: ${{ env.E2E_CDN_SCENARIO != 'live' }}
         env:
           BROWSERS: ${{ steps.setup.outputs.browsers }}
           TEST_GREP: ${{ inputs.test_grep }}
@@ -228,7 +230,12 @@ jobs:
     name: Commit updated snapshots
     runs-on: ubuntu-22.04
     needs: [update-snapshots, update-snapshots-targeted]
-    if: always() && (needs.update-snapshots.result != 'skipped' || needs.update-snapshots-targeted.result != 'skipped')
+    # A failed campaign approval commits nothing, so a partly approved campaign never lands.
+    if: |
+      always() &&
+      (needs.update-snapshots.result != 'skipped' || needs.update-snapshots-targeted.result != 'skipped') &&
+      !( ( inputs.cdn_scenario == 'live' || inputs.cdn_source != '' ) &&
+        ( needs.update-snapshots.result == 'failure' || needs.update-snapshots-targeted.result == 'failure' ) )
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
