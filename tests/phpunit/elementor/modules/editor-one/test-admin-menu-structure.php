@@ -23,6 +23,8 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 
 	private $original_submenu;
 
+	private $original_menu;
+
 	private ?string $page_hook = null;
 
 	public function setUp(): void {
@@ -32,11 +34,13 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 
 		$this->act_as_admin();
 		$this->original_submenu = $GLOBALS['submenu'] ?? null;
+		$this->original_menu = $GLOBALS['menu'] ?? null;
 		$this->structure = new Admin_Menu_Structure( new Admin_Flow_Handler() );
 	}
 
 	public function tearDown(): void {
 		$GLOBALS['submenu'] = $this->original_submenu;
+		$GLOBALS['menu'] = $this->original_menu;
 
 		if ( $this->page_hook ) {
 			remove_all_actions( $this->page_hook );
@@ -80,63 +84,58 @@ class Test_Admin_Menu_Structure extends Elementor_Test_Base {
 		$this->assertSame( $expected, $result );
 	}
 
-	public function test_move_below_pages__places_elementor_directly_after_pages() {
+	public function test_move_to_position__places_elementor_right_before_hello() {
 		// Arrange
 		$menu = [
-			2 => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_HOME_MENU_SLUG ],
-			5 => [ 'Posts', 'edit_posts', 'edit.php' ],
-			20 => [ 'Pages', 'edit_pages', Admin_Menu_Structure::PAGES_MENU_SLUG ],
-			25 => [ 'Comments', 'moderate_comments', 'edit-comments.php' ],
+			'2' => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_HOME_MENU_SLUG ],
+			'20' => [ 'Pages', 'edit_pages', 'edit.php?post_type=page' ],
+			'59.9' => [ 'Hello', 'manage_options', 'hello-elementor' ],
 		];
 
 		// Act
-		$menu = $this->structure->move_below_pages(
-			$menu,
-			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-			Admin_Menu_Structure::PAGES_MENU_SLUG
-		);
+		$menu = $this->structure->move_to_position( $menu, Menu_Config::ELEMENTOR_HOME_MENU_SLUG, Menu_Config::MENU_POSITION );
+		uksort( $menu, fn( $a, $b ) => (float) $a <=> (float) $b );
 
 		// Assert
-		$this->assertArrayNotHasKey( 2, $menu );
-		$this->assertSame( Menu_Config::ELEMENTOR_HOME_MENU_SLUG, $menu[21][2] );
-		$this->assertSame( Admin_Menu_Structure::PAGES_MENU_SLUG, $menu[20][2] );
+		$this->assertArrayNotHasKey( '2', $menu );
+		$this->assertSame( Menu_Config::ELEMENTOR_HOME_MENU_SLUG, $menu['58.5'][2] );
+		$this->assertSame( [ '20', '58.5', '59.9' ], array_map( 'strval', array_keys( $menu ) ) );
 	}
 
-	public function test_move_below_pages__skips_a_taken_position() {
+	public function test_move_to_position__uses_a_free_key_below_hello_when_position_is_taken() {
 		// Arrange
+		$other = [ 'Other', 'read', 'other' ];
 		$menu = [
-			2 => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_HOME_MENU_SLUG ],
-			20 => [ 'Pages', 'edit_pages', Admin_Menu_Structure::PAGES_MENU_SLUG ],
-			21 => [ 'Other', 'read', 'other' ],
+			'2' => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_HOME_MENU_SLUG ],
+			'58.5' => $other,
+			'59.9' => [ 'Hello', 'manage_options', 'hello-elementor' ],
 		];
 
 		// Act
-		$menu = $this->structure->move_below_pages(
-			$menu,
-			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-			Admin_Menu_Structure::PAGES_MENU_SLUG
-		);
+		$menu = $this->structure->move_to_position( $menu, Menu_Config::ELEMENTOR_HOME_MENU_SLUG, Menu_Config::MENU_POSITION );
 
 		// Assert
-		$this->assertSame( 'other', $menu[21][2] );
-		$this->assertSame( Menu_Config::ELEMENTOR_HOME_MENU_SLUG, $menu[22][2] );
+		$this->assertSame( $other, $menu['58.5'] );
+		$this->assertSame( Menu_Config::ELEMENTOR_HOME_MENU_SLUG, $menu['58.51'][2] );
+		$this->assertArrayNotHasKey( '2', $menu );
 	}
 
-	public function test_move_below_pages__leaves_the_menu_when_pages_is_missing() {
+	public function test_move_to_position__leaves_the_menu_when_elementor_is_missing() {
 		// Arrange
 		$menu = [
-			2 => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_HOME_MENU_SLUG ],
+			'20' => [ 'Pages', 'edit_pages', 'edit.php?post_type=page' ],
 		];
 
 		// Act
-		$updated = $this->structure->move_below_pages(
-			$menu,
-			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-			Admin_Menu_Structure::PAGES_MENU_SLUG
-		);
+		$updated = $this->structure->move_to_position( $menu, Menu_Config::ELEMENTOR_HOME_MENU_SLUG, Menu_Config::MENU_POSITION );
 
 		// Assert
 		$this->assertSame( $menu, $updated );
+	}
+
+	public function test_place_elementor_above_hello__is_registered_late_on_admin_menu() {
+		// Assert
+		$this->assertSame( 10020, has_action( 'admin_menu', [ $this->structure, 'place_elementor_above_hello' ] ) );
 	}
 
 	public function test_build_submenu__orders_groups_and_keeps_upgrade_against_account() {

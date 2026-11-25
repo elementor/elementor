@@ -1,18 +1,10 @@
 import { useEffect, useState } from 'react';
 import { getWidgetsCache } from '@elementor/editor-elements';
 
+import { type ExtendedWindow } from '../types';
 import { getAtomicWidgets, type WidgetsCache } from '../utils/get-atomic-widgets';
 
 const REFRESHED_ACTION = 'elementor/widgets/refreshed';
-
-type HooksWindow = {
-	elementor?: {
-		hooks?: {
-			addAction: ( name: string, callback: () => void ) => void;
-			removeAction: ( name: string, callback: () => void ) => void;
-		};
-	};
-};
 
 const readWidgets = () => getAtomicWidgets( getWidgetsCache() as WidgetsCache | null );
 
@@ -20,7 +12,7 @@ export function useAtomicWidgets() {
 	const [ widgets, setWidgets ] = useState( readWidgets );
 
 	useEffect( () => {
-		const hooks = ( window as unknown as HooksWindow ).elementor?.hooks;
+		const hooks = ( window as unknown as ExtendedWindow ).elementor?.hooks;
 
 		const onRefresh = () => setWidgets( readWidgets() );
 

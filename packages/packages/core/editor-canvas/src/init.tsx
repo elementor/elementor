@@ -18,6 +18,7 @@ import { initViewReplacements } from './legacy/replacements/manager';
 import { initTabsModelExtensions } from './legacy/tabs-model-extensions';
 import { initCanvasMcp } from './mcp/canvas-mcp';
 import { mcpDescription } from './mcp/mcp-description';
+import { initMenuPlacementPrevention } from './menu-structure/prevent-menu-placement-commands';
 import { initLinkInLinkPrevention } from './prevent-link-in-link-commands';
 import { initStyleCommands } from './style-commands/init-style-commands';
 
@@ -25,6 +26,7 @@ export function init() {
 	initStyleTransformers();
 	initStyleCommands();
 
+	initMenuPlacementPrevention();
 	initLinkInLinkPrevention();
 	initFormNestingPrevention();
 	initFormAncestorEnforcement();

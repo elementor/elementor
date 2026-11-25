@@ -24,6 +24,7 @@ const INFOTIP_CONTENT = {
 		'To add a link or action to this container, first remove the link or action from its parent container.',
 		'elementor'
 	),
+	menu: __( 'To add a link or action to this container, first move the Menu out of it.', 'elementor' ),
 };
 
 type RestrictedLinkInfotipProps = PropsWithChildren< {

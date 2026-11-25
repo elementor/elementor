@@ -15,9 +15,16 @@ jest.mock( '../../../../contexts/element-context', () => ( {
 	useElement: jest.fn(),
 } ) );
 jest.mock( '../../../../components/settings-control', () => ( {
-	SettingsControl: ( { control }: { control: { value: { bind: string } } } ) => (
-		<div>{ `settings-control-${ control.value.bind }` }</div>
-	),
+	SettingsControl: ( { control }: { control: { value: { bind: string } } } ) => {
+		const { useElement: useProvidedElement } = jest.requireActual( '../../../../contexts/element-context' );
+
+		return (
+			<>
+				<div>{ `settings-control-${ control.value.bind }` }</div>
+				<div>{ `settings-control-element-${ useProvidedElement().element.id }` }</div>
+			</>
+		);
+	},
 } ) );
 jest.mock( '../use-entry-item' );
 jest.mock( '../use-submenu', () => ( {
@@ -81,6 +88,17 @@ describe( '<MenuItemsControl />', () => {
 		// Assert
 		expect( await screen.findByText( 'Item name' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'settings-control-link' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should bind the row link to the Menu Item so the link-in-link restriction checks the Menu Item', async () => {
+		// Arrange
+		renderControl( 1 );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Open item' } ) );
+
+		// Assert
+		expect( await screen.findByText( 'settings-control-element-item-1' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render the locked Enable Submenu switch for the entry in the row popover', async () => {
