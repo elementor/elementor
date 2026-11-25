@@ -1,4 +1,4 @@
-import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
+import { type AngieMcpSdk } from '@elementor/editor-angie-sdk';
 
 import { type getRegisteredMcpServers as _getRegisteredMcpServers } from '../mcp-registry';
 import { toMCPTitle } from '../utils/to-mcp-title';
@@ -14,8 +14,7 @@ export class AngieMcpAdapter implements IMcpRegistrationAdapter {
 
 	async activate(): Promise< void > {
 		// No waitForReady() here: registerLocalServer queues the server and the SDK flushes
-		// the queue once Angie reports ready. waitForReady() only resolves for the SDK copy
-		// that booted the sidebar, which is the host integration, never the editor bundle.
+		// the queue once Angie reports ready.
 		await this.registerEntries( this.getRegisteredMcpServers(), MAX_RETRIES );
 	}
 

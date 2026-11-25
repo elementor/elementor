@@ -1,7 +1,6 @@
 import './types/open-angie-request';
 
-import { getSDK } from './utils/get-sdk';
-export { getAngieIframe, MessageEventType as AngieMessageEvenetType } from './utils/get-sdk';
+export { getAngieIframe, getAngieSdk, MessageEventType as AngieMessageEvenetType } from '@elementor/editor-angie-sdk';
 
 export {
 	McpServer,
@@ -33,7 +32,6 @@ export { redirectToInstallation } from './utils/redirect-to-installation';
 export { redirectToAppAdmin } from './utils/redirect-to-app-admin';
 export { installAngiePlugin, type InstallAngieResult } from './utils/install-angie-plugin';
 export { saveAngieConsent } from './utils/save-angie-consent';
-export const getAngieSdk = () => getSDK();
 export * from './init';
 export {
 	dispatchMcpStylesAppliedEvent,
