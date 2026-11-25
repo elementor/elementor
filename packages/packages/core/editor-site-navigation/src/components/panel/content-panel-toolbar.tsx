@@ -4,6 +4,7 @@ import { Box, Stack } from '@elementor/ui';
 import ContentPanelActiveFilters from './content-panel-active-filters';
 import { contentPanelSearchBoxSx } from './content-panel-chrome';
 import ContentPanelSearch from './content-panel-search';
+import ContentPanelSort from './content-panel-sort';
 import ContentPanelStatusFilter from './content-panel-status-filter';
 
 export default function ContentPanelToolbar() {
@@ -15,6 +16,7 @@ export default function ContentPanelToolbar() {
 						<ContentPanelSearch />
 					</Box>
 					<ContentPanelStatusFilter />
+					<ContentPanelSort />
 				</Stack>
 				<ContentPanelActiveFilters />
 			</Stack>

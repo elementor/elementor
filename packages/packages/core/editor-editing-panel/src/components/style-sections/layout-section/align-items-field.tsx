@@ -9,7 +9,7 @@ import {
 import { withDirection } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { UiProviders } from '../../../styles-inheritance/components/ui-providers';
 import { StylesFieldLayout } from '../../styles-field-layout';
 import { RotatedIcon } from './utils/rotated-icon';
@@ -53,11 +53,11 @@ const options: ToggleButtonGroupItem< AlignItems >[] = [
 	},
 ];
 
-export const AlignItemsField = () => {
+export const AlignItemsField = ( { label = ALIGN_ITEMS_LABEL }: StylesFieldLabelProps ) => {
 	return (
 		<UiProviders>
-			<StylesField bind="align-items" propDisplayName={ ALIGN_ITEMS_LABEL }>
-				<StylesFieldLayout label={ ALIGN_ITEMS_LABEL }>
+			<StylesField bind="align-items" propDisplayName={ label }>
+				<StylesFieldLayout label={ label }>
 					<ToggleControl options={ options } />
 				</StylesFieldLayout>
 			</StylesField>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import {
 	__useActiveDocument as useActiveDocument,
 	__useNavigateToDocument as useNavigateToDocument,
@@ -29,7 +30,7 @@ import Duplicate from '../../actions-menu/actions/duplicate';
 import ForceDelete from '../../actions-menu/actions/force-delete';
 import Rename from '../../actions-menu/actions/rename';
 import Restore from '../../actions-menu/actions/restore';
-import SetHome from '../../actions-menu/actions/set-home';
+import SetHome, { RemoveHomepageDialog } from '../../actions-menu/actions/set-home';
 import View from '../../actions-menu/actions/view';
 import { contentPanelListItemButtonSx, getContentPanelListItemSx } from '../../content-panel-chrome';
 import {
@@ -68,6 +69,7 @@ const DisabledPostTooltip = ( {
 
 export default function ListItemView( { post }: { post: Post } ) {
 	const { type } = usePostListContext();
+	const [ isRemoveHomeDialogOpen, setIsRemoveHomeDialogOpen ] = useState( false );
 	const activeDocument = useActiveDocument();
 	const navigateToDocument = useNavigateToDocument();
 
@@ -159,12 +161,20 @@ export default function ListItemView( { post }: { post: Post } ) {
 						{ type === 'page' && (
 							<>
 								<Divider />
-								<SetHome post={ post } closeMenu={ () => popupState.close() } />
+								<SetHome
+									post={ post }
+									closeMenu={ () => popupState.close() }
+									onRequestRemoveHomepage={ () => setIsRemoveHomeDialogOpen( true ) }
+								/>
 							</>
 						) }
 					</>
 				) }
 			</Menu>
+			<RemoveHomepageDialog
+				open={ isRemoveHomeDialogOpen }
+				onClose={ () => setIsRemoveHomeDialogOpen( false ) }
+			/>
 		</>
 	);
 }

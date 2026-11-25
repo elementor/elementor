@@ -1,6 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 
+import { DEFAULT_SITE_CONTENT_SORT, getRestOrderForSiteContentSort } from '../site-content-sort';
 import { type Post } from '../types';
 
 export type NewPost = {
@@ -80,15 +81,18 @@ export const getRequest = async (
 	page: number,
 	search = '',
 	status: string = 'any',
-	perPage = POST_PER_PAGE
+	perPage = POST_PER_PAGE,
+	sort = DEFAULT_SITE_CONTENT_SORT
 ): Promise< PostsResponse > => {
 	const baseUri = `/wp/v2/${ postTypesMap[ postTypeSlug ].rest_base }`;
 
 	const keys: Array< keyof Post > = [ 'id', 'type', 'title', 'link', 'status', 'user_can' ];
+	const { order, orderby } = getRestOrderForSiteContentSort( sort );
 
 	const queryParams = new URLSearchParams( {
 		status,
-		order: 'asc',
+		order,
+		orderby,
 		page: page.toString(),
 		per_page: perPage.toString(),
 		_fields: keys.join( ',' ),

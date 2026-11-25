@@ -119,6 +119,8 @@
 				]
 			}
 		],
-		"quick_edit": []
+		"quick_edit": [
+			{ "label": "Gap", "style_prop": "gap", "targets": [ "root" ] }
+		]
 	}
 }

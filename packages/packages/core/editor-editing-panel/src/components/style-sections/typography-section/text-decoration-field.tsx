@@ -3,7 +3,7 @@ import { ToggleControl, type ToggleControlProps } from '@elementor/editor-contro
 import { MinusIcon, OverlineIcon, StrikethroughIcon, UnderlineIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-import { StylesField } from '../../../controls-registry/styles-field';
+import { StylesField, type StylesFieldLabelProps } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
 type Decoration = 'none' | 'underline' | 'line-through' | 'overline';
@@ -37,9 +37,9 @@ const options: ToggleControlProps< Decoration >[ 'options' ] = [
 		showTooltip: true,
 	},
 ];
-export const TextDecorationField = () => (
-	<StylesField bind="text-decoration" propDisplayName={ TEXT_DECORATION_LABEL }>
-		<StylesFieldLayout label={ TEXT_DECORATION_LABEL }>
+export const TextDecorationField = ( { label = TEXT_DECORATION_LABEL }: StylesFieldLabelProps ) => (
+	<StylesField bind="text-decoration" propDisplayName={ label }>
+		<StylesFieldLayout label={ label }>
 			<ToggleControl options={ options } exclusive={ false } />
 		</StylesFieldLayout>
 	</StylesField>

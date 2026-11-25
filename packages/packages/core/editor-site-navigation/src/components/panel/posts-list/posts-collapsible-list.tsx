@@ -10,6 +10,7 @@ import { useHomepage } from '../../../hooks/use-homepage';
 import { usePostListPagination } from '../../../hooks/use-post-list-pagination';
 import { usePosts } from '../../../hooks/use-posts';
 import { usePostsBaselineTotal } from '../../../hooks/use-posts-baseline-total';
+import { shouldPinHomepageForSiteContentSort } from '../../../site-content-sort';
 import {
 	hasActiveSiteContentStatusFilters,
 	isSiteContentListNarrowed,
@@ -30,7 +31,8 @@ type Props = {
 
 export default function PostsCollapsibleList( { isOpenByDefault = false }: Props ) {
 	const { type, editMode, resetEditMode, setEditMode } = usePostListContext();
-	const { registerSection, searchQuery, statusFilters, unregisterSection } = useContentPanelCoordinator();
+	const { registerSection, searchQuery, siteContentSort, statusFilters, unregisterSection } =
+		useContentPanelCoordinator();
 	const [ isOpen, setIsOpen ] = useState( isOpenByDefault );
 	const trimmedSearch = searchQuery.trim();
 	const [ debouncedSearch, setDebouncedSearch ] = useState( trimmedSearch );
@@ -52,7 +54,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
-	} = usePosts( type, debouncedSearch, statusFilters );
+	} = usePosts( type, debouncedSearch, statusFilters, siteContentSort );
 	const isNarrowed = isSiteContentListNarrowed( statusFilters, debouncedSearch );
 	const isTrashFilter = isSiteContentTrashFilterActive( statusFilters );
 	const baselineStatus = isTrashFilter ? 'trash' : 'any';
@@ -85,7 +87,9 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 			? posts.map( ( post ) => ( post.id === homepageId ? { ...post, isHome: true } : post ) )
 			: posts;
 
-		const sorted = isPageType
+		const shouldPinHomepage = isPageType && shouldPinHomepageForSiteContentSort( siteContentSort );
+
+		const sorted = shouldPinHomepage
 			? [ ...mappedPosts ].sort( ( a, b ) => {
 					if ( a.id === homepageId ) {
 						return -1;
@@ -100,14 +104,14 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 			: mappedPosts;
 
 		return sorted;
-	}, [ posts, isPageType, homepageId ] );
+	}, [ homepageId, isPageType, posts, siteContentSort ] );
 
 	const pagination = usePostListPagination( {
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
 		loadedCount: filteredPosts.length,
-		resetKey: `${ type }:${ debouncedSearch }:${ statusFiltersKey }`,
+		resetKey: `${ type }:${ debouncedSearch }:${ statusFiltersKey }:${ siteContentSort }`,
 		totalCount: total,
 	} );
 
