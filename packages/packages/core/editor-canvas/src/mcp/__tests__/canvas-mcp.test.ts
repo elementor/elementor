@@ -1,6 +1,5 @@
 import { initCanvasMcp } from '../canvas-mcp';
 import { initFindIconsTool } from '../tools/find-icons/tool';
-import { initUploadMediaTool } from '../tools/upload-media/tool';
 
 jest.mock( '@elementor/editor-props', () => ( {
 	Schema: { setDynamicTagNamesResolver: jest.fn() },
@@ -19,7 +18,6 @@ jest.mock( '../tools/build-composition/tool', () => ( { initBuildCompositionTool
 jest.mock( '../tools/configure-element/tool', () => ( { initConfigureElementTool: jest.fn() } ) );
 jest.mock( '../tools/find-icons/tool', () => ( { initFindIconsTool: jest.fn() } ) );
 jest.mock( '../tools/get-page-structure/tool', () => ( { initGetPageStructureTool: jest.fn() } ) );
-jest.mock( '../tools/upload-media/tool', () => ( { initUploadMediaTool: jest.fn() } ) );
 jest.mock( '../utils/resolve-dynamic-tag', () => ( { getDynamicTagNamesByCategories: jest.fn() } ) );
 
 describe( 'initCanvasMcp', () => {
@@ -32,16 +30,5 @@ describe( 'initCanvasMcp', () => {
 
 		// Assert.
 		expect( initFindIconsTool ).toHaveBeenCalledWith( reg );
-	} );
-
-	it( 'should always register the upload-media tool', () => {
-		// Arrange.
-		const reg = { addTool: jest.fn() } as never;
-
-		// Act.
-		initCanvasMcp( reg );
-
-		// Assert.
-		expect( initUploadMediaTool ).toHaveBeenCalledWith( reg );
 	} );
 } );

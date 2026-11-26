@@ -1,13 +1,24 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { type HttpResponse, httpService } from '@elementor/http-client';
+import { AxiosError, type HttpResponse, httpService } from '@elementor/http-client';
 import { z } from '@elementor/schema';
 
-import { getMcpErrorMessage } from '../../utils/get-mcp-error-message';
 import { uploadMediaToolPrompt } from './prompt';
 
 const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
 
 const MAX_IMAGES = 5;
+
+const getErrorMessage = ( error: unknown ): string => {
+	if ( error instanceof AxiosError ) {
+		const data = error.response?.data as { message?: string; code?: string } | undefined;
+
+		if ( data?.message ) {
+			return data.code ? `${ data.code }: ${ data.message }` : data.message;
+		}
+	}
+
+	return error instanceof Error ? error.message : 'upload-media failed with an unknown error.';
+};
 
 // NOTE: shape defined by Upload_Media_Ability::execute() in modules/mcp/abilities/upload-media-ability.php
 type UploadMediaResponse = Record< string, unknown >;
@@ -66,7 +77,7 @@ export const initUploadMediaTool = ( reg: MCPRegistryEntry ) => {
 
 				return data.data;
 			} catch ( error ) {
-				throw new Error( getMcpErrorMessage( error, 'upload-media' ) );
+				throw new Error( getErrorMessage( error ) );
 			}
 		},
 	} );
