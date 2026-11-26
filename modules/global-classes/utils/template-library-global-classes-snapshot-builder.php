@@ -5,6 +5,7 @@ namespace Elementor\Modules\GlobalClasses\Utils;
 use Elementor\Core\Utils\Template_Library_Element_Iterator;
 use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Core\Utils\Template_Library_Snapshot_Processor;
+use Elementor\Modules\GlobalClasses\Global_Classes_Lock;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Rest_Api;
@@ -88,12 +89,57 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 		return self::build_snapshot_for_ids( $ids );
 	}
 
+	/**
+	 * @return array Operation result. When the global classes lock is busy nothing is written and
+	 *               the result holds a `WP_Error` under the `error` key.
+	 */
 	public static function merge_snapshot_and_get_id_map( array $snapshot ): array {
-		return self::make()->merge_and_get_id_map( $snapshot );
+		return self::run_with_lock( function () use ( $snapshot ) {
+			return self::make()->merge_and_get_id_map( $snapshot );
+		} );
 	}
 
+	/**
+	 * @return array Operation result. When the global classes lock is busy nothing is written and
+	 *               the result holds a `WP_Error` under the `error` key.
+	 */
 	public static function create_snapshot_as_new( array $snapshot ): array {
-		return self::make()->create_all_as_new( $snapshot );
+		return self::run_with_lock( function () use ( $snapshot ) {
+			return self::make()->create_all_as_new( $snapshot );
+		} );
+	}
+
+	/**
+	 * The import reads the current classes and then writes the index, the same read-modify-write
+	 * as a REST save, so it takes the same lock. Incoming classes are never flattened when the
+	 * lock is busy: that would hide a failed global save inside a successful import.
+	 */
+	private static function run_with_lock( callable $operation ): array {
+		$kit = Plugin::instance()->kits_manager->get_active_kit();
+		$kit_id = $kit ? (int) $kit->get_main_id() : 0;
+
+		// Without a kit there is no shared index to protect, so there is nothing to lock.
+		if ( ! $kit_id ) {
+			return $operation();
+		}
+
+		$lock_token = Global_Classes_Lock::acquire( $kit_id );
+
+		if ( null === $lock_token ) {
+			return array_merge( self::make()->get_empty_result(), [
+				'error' => new \WP_Error(
+					Global_Classes_Lock::ERROR_CODE,
+					__( 'Global classes are currently being updated by another request. Please try again.', 'elementor' ),
+					[ 'status' => 409 ]
+				),
+			] );
+		}
+
+		try {
+			return $operation();
+		} finally {
+			Global_Classes_Lock::release( $kit_id, $lock_token );
+		}
 	}
 
 	protected function is_matching_item( array $existing_item, array $incoming_item ): bool {

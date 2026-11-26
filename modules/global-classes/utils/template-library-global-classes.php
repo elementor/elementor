@@ -38,7 +38,10 @@ class Template_Library_Global_Classes {
 		return $snapshots;
 	}
 
-	public static function process_global_classes_import( array $result, string $import_mode, array $data ): array {
+	/**
+	 * @return array|\WP_Error The import result, or a `WP_Error` when the global classes lock is busy.
+	 */
+	public static function process_global_classes_import( array $result, string $import_mode, array $data ) {
 		$snapshot = $data['global_classes'] ?? null;
 
 		if ( empty( $snapshot ) || ! is_array( $snapshot ) ) {
@@ -62,6 +65,12 @@ class Template_Library_Global_Classes {
 			[ Template_Library_Global_Classes_Element_Transformer::class, 'rewrite_elements_classes_ids' ],
 			[ Template_Library_Global_Classes_Element_Transformer::class, 'flatten_elements_classes' ]
 		);
+
+		$lock_error = $processed['operation_result']['error'] ?? null;
+
+		if ( is_wp_error( $lock_error ) ) {
+			return $lock_error;
+		}
 
 		$result['content'] = $processed['content'];
 		$result['updated_global_classes'] = $processed['operation_result']['global_classes'] ?? null;
