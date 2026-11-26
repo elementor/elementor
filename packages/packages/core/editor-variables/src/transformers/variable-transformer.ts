@@ -4,6 +4,8 @@ import { service } from '../service';
 import { type TVariable } from '../storage';
 import { resolveCssVariable } from './utils/resolve-css-variable';
 
+const GRID_TRACK_COUNT_PATTERN = /^\d+(\.\d+)?\s*(fr)?$/i;
+
 export const variableTransformer = createTransformer( ( idOrLabel: string, { key }: { key: string } ) => {
 	const variables = service.variables();
 
@@ -14,9 +16,12 @@ export const variableTransformer = createTransformer( ( idOrLabel: string, { key
 	}
 
 	if ( isGridTrackProperty( key ) ) {
-		const count = parseInt( ( targetVariable.value ?? '' ).trim(), 10 );
+		const trackValue = ( targetVariable.value ?? '' ).trim();
 
-		return formatGridTrackRepeat( count );
+		// Only a plain count like "3" or "3fr" becomes repeat(), other values are full track lists.
+		if ( GRID_TRACK_COUNT_PATTERN.test( trackValue ) ) {
+			return formatGridTrackRepeat( parseInt( trackValue, 10 ) );
+		}
 	}
 
 	const id = service.findIdByLabel( targetVariable.label );
