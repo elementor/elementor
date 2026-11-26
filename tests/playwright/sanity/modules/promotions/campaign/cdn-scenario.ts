@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
-import { existsSync, readFileSync } from 'fs';
-import { resolve } from 'path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { dirname, resolve } from 'path';
 import { type BrowserContext, type Locator, type TestInfo, expect } from '@playwright/test';
 
 export const ACTIVE_CAMPAIGN_SCENARIO = 'active-campaign';
@@ -109,6 +109,20 @@ const STAGING_ASSETS_ORIGIN = 'https://assets.stg.elementor.red';
 const CAMPAIGN_BASELINE_PREFIX = 'campaign';
 const FINGERPRINT_LENGTH = 12;
 const APPROVING_UPDATE_MODES = [ 'all', 'changed' ];
+const NOT_APPROVED_DIR = 'campaign-not-approved';
+
+// A retry shows the same unapproved content again, so the first attempt leaves a note and the retries fail at once.
+const getNotApprovedNote = ( testInfo: TestInfo ): string =>
+	resolve( testInfo.project.outputDir, NOT_APPROVED_DIR, testInfo.testId );
+
+// Call it first in beforeEach. Skipping the retry instead would turn the test into flaky, which does not fail the run.
+export const failRetryOfNotApproved = ( testInfo: TestInfo ): void => {
+	const note = getNotApprovedNote( testInfo );
+
+	if ( testInfo.retry && existsSync( note ) ) {
+		throw new Error( `Not retried, the first attempt found content that is not approved: ${ readFileSync( note, 'utf8' ) }` );
+	}
+};
 
 // Staging serves its images from its own host, so a campaign approved on staging keeps its fingerprint after the launch.
 const getContentFingerprint = ( content: unknown ): string =>
@@ -150,7 +164,12 @@ export const checkCampaignLook = async ( { scenario, element, name, testInfo, co
 	const isApproving = APPROVING_UPDATE_MODES.includes( testInfo.config.updateSnapshots );
 
 	if ( ! isApproving && ! existsSync( testInfo.snapshotPath( baseline, { kind: 'screenshot' } ) ) ) {
-		expect.soft( baseline, `The ${ scenario } CDN content of ${ name } is not approved. Check the attached ${ scenario }-${ baseline } screenshot, then approve it with Update Playwright Snapshots: test_grep="live @promotions" and the same cdn_source.` ).toBe( 'approved' );
+		const message = `The ${ scenario } CDN content of ${ name } is not approved. Check the attached ${ scenario }-${ baseline } screenshot, then approve it with Update Playwright Snapshots: test_grep="live @promotions" and the same cdn_source.`;
+		const note = getNotApprovedNote( testInfo );
+
+		mkdirSync( dirname( note ), { recursive: true } );
+		writeFileSync( note, message );
+		expect.soft( baseline, message ).toBe( 'approved' );
 		return;
 	}
 

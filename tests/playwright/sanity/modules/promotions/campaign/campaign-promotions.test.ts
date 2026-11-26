@@ -12,6 +12,7 @@ import {
 	assertScenarioFetched,
 	cdnFieldOrDefault,
 	checkCampaignLook,
+	failRetryOfNotApproved,
 	readEditorPromotion,
 	UPSELL_PATH,
 	V4_PROMOTIONS_PATH,
@@ -91,7 +92,8 @@ test.beforeAll( async () => {
 
 for ( const scenario of [ ...CAMPAIGN_SCENARIOS, NO_PROMOTION_SCENARIO ] ) {
 	test.describe( `Editor promotions from CDN - ${ scenario } @promotions`, () => {
-		test.beforeEach( async ( { page, baseURL } ) => {
+		test.beforeEach( async ( { page, baseURL }, testInfo ) => {
+			failRetryOfNotApproved( testInfo );
 			assertScenarioFetched( scenario, EDITOR_PROMOTION_PATHS );
 			await useCdnScenario( page.context(), baseURL, scenario );
 		} );
@@ -236,7 +238,8 @@ for ( const scenario of [ ...CAMPAIGN_SCENARIOS, NO_PROMOTION_SCENARIO ] ) {
 
 for ( const scenario of CAMPAIGN_SCENARIOS ) {
 	test.describe( `Campaign content from CDN - ${ scenario } @promotions`, () => {
-		test.beforeEach( async ( { page, baseURL } ) => {
+		test.beforeEach( async ( { page, baseURL }, testInfo ) => {
+			failRetryOfNotApproved( testInfo );
 			assertScenarioFetched( scenario, [ NOTIFICATIONS_PATH, HOME_SCREEN_PATH ] );
 			await useCdnScenario( page.context(), baseURL, scenario );
 		} );
