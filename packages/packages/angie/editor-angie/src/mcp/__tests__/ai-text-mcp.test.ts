@@ -40,10 +40,8 @@ describe( 'initAiTextMcp', () => {
 	} );
 
 	it( 'registers the v3 ai tools on the ai MCP domain', () => {
-		// Act
 		initAiTextMcp();
 
-		// Assert
 		expect( getMCPByDomain ).toHaveBeenCalledWith( 'ai', expect.any( Object ) );
 		expect( initV3CodeControlTool ).toHaveBeenCalledWith( { addTool: mockAddTool } );
 		expect( initV3KitSiteIdentityTool ).toHaveBeenCalledWith( { addTool: mockAddTool } );

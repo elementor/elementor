@@ -29,6 +29,10 @@ class Module extends BaseModule {
 
 	const ANGIE_CONSENT_OPTION = 'angie_external_scripts_consent';
 
+	const ANGIE_USER_DISABLED_META_KEY = 'elementor_angie_disabled';
+
+	const ANGIE_BLOCKED_BY_SITE_OPTION = 'elementor_angie_blocked_by_site';
+
 	public function get_name() {
 		return 'ai';
 	}
@@ -115,6 +119,26 @@ class Module extends BaseModule {
 		return Plugin::$instance->experiments->is_feature_active( self::ANGIE_IN_PANELS_EXPERIMENT_NAME );
 	}
 
+	public static function is_angie_enabled(): bool {
+		if ( ! self::is_angie_in_panels_active() || self::is_current_user_angie_disabled() || self::is_angie_blocked_by_site() ) {
+			return false;
+		}
+
+		if ( Hints::is_plugin_active( 'angie' ) ) {
+			return true;
+		}
+
+		return 'yes' === get_option( self::ANGIE_CONSENT_OPTION );
+	}
+
+	public static function is_current_user_angie_disabled(): bool {
+		return (bool) get_user_meta( get_current_user_id(), self::ANGIE_USER_DISABLED_META_KEY, true );
+	}
+
+	public static function is_angie_blocked_by_site(): bool {
+		return (bool) get_option( self::ANGIE_BLOCKED_BY_SITE_OPTION, false );
+	}
+
 	public function print_angie_config(): void {
 		if ( ! self::is_angie_in_panels_active() ) {
 			return;
@@ -123,6 +147,11 @@ class Module extends BaseModule {
 		Utils::print_js_config( 'elementor-v2-editor-angie', 'elementorEditorAngie', [
 			'isAngiePluginActive' => Hints::is_plugin_active( 'angie' ),
 			'showEntryPoints' => $this->is_ai_enabled(),
+			'isExperimentActive' => true,
+			'hasConsent' => 'yes' === get_option( self::ANGIE_CONSENT_OPTION ),
+			'isUserDisabled' => self::is_current_user_angie_disabled(),
+			'isBlockedBySite' => self::is_angie_blocked_by_site(),
+			'isPluginInstalled' => Hints::is_plugin_installed( 'angie' ),
 		] );
 	}
 
