@@ -135,7 +135,7 @@ class Frontmatter_Builder {
 	}
 
 	/**
-	 * Return the display name of a user by ID, or '' when not found.
+	 * Return a public author label for frontmatter, or '' when it would expose user_login.
 	 *
 	 * @param int $user_id
 	 * @return string
@@ -151,7 +151,21 @@ class Frontmatter_Builder {
 			return '';
 		}
 
-		return $this->sanitize_metadata( $user->display_name );
+		$login = strtolower( $user->user_login );
+
+		$display_name = $this->sanitize_metadata( $user->display_name );
+
+		if ( '' !== $display_name && strtolower( $display_name ) !== $login ) {
+			return $display_name;
+		}
+
+		$first_name = $this->sanitize_metadata( $user->first_name );
+
+		if ( '' !== $first_name && strtolower( $first_name ) !== $login ) {
+			return $first_name;
+		}
+
+		return '';
 	}
 
 	/**

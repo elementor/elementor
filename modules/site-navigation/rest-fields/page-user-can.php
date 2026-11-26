@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Page_User_Can {
 
-	private const SUPPORTED_POST_TYPES = [ 'page', 'post' ];
+	private const SUPPORTED_POST_TYPES = [ 'page', 'post', 'elementor_library' ];
 
 	public function register_rest_field() {
 		if ( ! isset( $_GET['_fields'] ) ) {

@@ -1,25 +1,39 @@
-import { getContentPanelListItemSx } from '../content-panel-chrome';
+import {
+	contentPanelListItemButtonSx,
+	getContentPanelListItemRowStateSx,
+	getContentPanelListItemSx,
+} from '../content-panel-chrome';
 
 describe( 'getContentPanelListItemSx', () => {
-	it( 'leaves rows without an action slot on the shared list padding', () => {
-		// Act.
-		const sx = getContentPanelListItemSx( false );
+	it( 'reserves trailing space for secondary actions on the list row button', () => {
+		const sx = getContentPanelListItemSx( 2 );
 
-		// Assert.
-		expect( sx ).toEqual( { paddingInline: 2 } );
+		expect( sx ).toEqual(
+			expect.objectContaining( {
+				'&& > .MuiListItemButton-root': expect.objectContaining( {
+					paddingInlineEnd: 11,
+				} ),
+			} )
+		);
 	} );
+} );
 
-	it( 'insets only the button end when the active row has an action slot', () => {
-		// Act.
-		const sx = getContentPanelListItemSx( true );
+describe( 'getContentPanelListItemRowStateSx', () => {
+	it( 'applies selected background on the list row container', () => {
+		expect( getContentPanelListItemRowStateSx( true, true ) ).toEqual(
+			expect.objectContaining( {
+				backgroundColor: 'action.selected',
+			} )
+		);
+	} );
+} );
 
-		// Assert.
-		expect( sx ).toEqual( {
-			paddingInline: 2,
-			'&& > .MuiListItemButton-root': {
-				paddingInlineEnd: 10,
-				paddingRight: 'unset',
-			},
-		} );
+describe( 'contentPanelListItemButtonSx', () => {
+	it( 'keeps the row button background transparent so the list item can paint selection', () => {
+		expect( contentPanelListItemButtonSx ).toEqual(
+			expect.objectContaining( {
+				backgroundColor: 'transparent',
+			} )
+		);
 	} );
 } );

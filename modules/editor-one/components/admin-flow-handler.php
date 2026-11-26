@@ -53,11 +53,30 @@ class Admin_Flow_Handler {
 		$redirect_url = $this->get_redirect_url( $page );
 
 		if ( empty( $redirect_url ) ) {
+			$redirect_url = $this->get_quick_start_redirect_url( $page );
+		}
+
+		if ( empty( $redirect_url ) ) {
 			return;
 		}
 
 		wp_safe_redirect( $redirect_url );
 		exit;
+	}
+
+	/**
+	 * The legacy Quick Start screen is not a destination in the new navigation, so it lands on Home.
+	 */
+	public function get_quick_start_redirect_url( string $page ): string {
+		if ( Menu_Config::ELEMENTOR_MENU_SLUG !== $page ) {
+			return '';
+		}
+
+		if ( ! current_user_can( Menu_Config::CAPABILITY_MANAGE_OPTIONS ) ) {
+			return '';
+		}
+
+		return Menu_Config::get_elementor_home_url();
 	}
 
 	/**

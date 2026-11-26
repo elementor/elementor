@@ -2,7 +2,7 @@ import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { ContentPanelCoordinatorProvider } from '../../../contexts/content-panel-coordinator';
+import { SiteContentSectionToolbarProvider } from '../../../contexts/site-content-section-toolbar';
 import ContentPanelStatusFilterList from '../content-panel-status-filter-list';
 
 type MockStatusCountsResult = {
@@ -36,9 +36,9 @@ jest.mock( '../../../hooks/use-site-content-status-filter-counts', () => ( {
 
 const renderList = () =>
 	renderWithTheme(
-		<ContentPanelCoordinatorProvider>
+		<SiteContentSectionToolbarProvider statusFilterCountSlugs={ [ 'page' ] }>
 			<ContentPanelStatusFilterList loadCounts />
-		</ContentPanelCoordinatorProvider>
+		</SiteContentSectionToolbarProvider>
 	);
 
 describe( 'ContentPanelStatusFilterList', () => {

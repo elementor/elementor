@@ -1,6 +1,7 @@
 import {
 	EMPTY_SITE_CONTENT_STATUS_FILTERS,
 	getRestStatusForSiteContentFilters,
+	getSiteContentStatusFilterForCount,
 	hasActiveSiteContentStatusFilters,
 	isSiteContentListNarrowed,
 	shouldShowSiteContentStatusFilterRow,
@@ -94,6 +95,17 @@ describe( 'site-content-status-filter', () => {
 				publish: true,
 			} )
 		).toBe( true );
+	} );
+
+	it( 'builds a single-status filter object for count queries', () => {
+		expect( getSiteContentStatusFilterForCount( 'publish' ) ).toEqual( {
+			...EMPTY_SITE_CONTENT_STATUS_FILTERS,
+			publish: true,
+		} );
+		expect( getSiteContentStatusFilterForCount( 'trash' ) ).toEqual( {
+			...EMPTY_SITE_CONTENT_STATUS_FILTERS,
+			trash: true,
+		} );
 	} );
 
 	it( 'hides filter rows with zero count when counts are loaded', () => {

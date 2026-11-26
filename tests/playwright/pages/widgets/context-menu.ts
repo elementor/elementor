@@ -1,6 +1,22 @@
 import EditorSelectors from '../../selectors/editor-selectors';
 import Content from '../elementor-panel-tabs/content';
 
+export type ContextMenuCommand =
+	| 'edit'
+	| 'duplicate'
+	| 'copy'
+	| 'paste'
+	| 'pasteStyle'
+	| 'pasteDisplayConditions'
+	| 'pasteInteractions'
+	| 'pasteArea'
+	| 'resetStyle'
+	| 'clearDisplayConditions'
+	| 'save-component'
+	| 'save'
+	| 'navigator'
+	| 'delete';
+
 export default class ContextMenu extends Content {
 	/**
 	 * Open context menu for a given widget.
@@ -73,5 +89,42 @@ export default class ContextMenu extends Content {
 		const pasteListItemSelector = '.elementor-context-menu-list__item-pasteStyle:visible';
 		await this.page.waitForSelector( pasteListItemSelector );
 		await this.page.locator( pasteListItemSelector ).click();
+	}
+
+	/**
+	 * Open an element's context menu from its row in the structure panel and run a command.
+	 * The row has to be visible, so expand its parents first when the element is nested.
+	 *
+	 * @param {string}             elementId - Element ID.
+	 * @param {ContextMenuCommand} command   - Context menu item to click.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async contextMenuInNavigator( elementId: string, command: ContextMenuCommand ): Promise<void> {
+		await this.editor.openStructurePanel();
+		await this.page.locator( EditorSelectors.panels.navigator.getElementItem( elementId ) ).first().click( { button: 'right' } );
+		await this.page.locator( `.elementor-context-menu-list__item-${ command }:visible` ).click();
+	}
+
+	/**
+	 * Copy an element from its row in the structure panel.
+	 *
+	 * @param {string} elementId - Element ID.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async copyElementFromNavigator( elementId: string ): Promise<void> {
+		await this.contextMenuInNavigator( elementId, 'copy' );
+	}
+
+	/**
+	 * Paste the copied element into an element, from its row in the structure panel.
+	 *
+	 * @param {string} targetElementId - ID of the element to paste into.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async pasteElementInNavigator( targetElementId: string ): Promise<void> {
+		await this.contextMenuInNavigator( targetElementId, 'paste' );
 	}
 }

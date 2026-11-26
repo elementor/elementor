@@ -4,10 +4,7 @@ import { __useActiveDocument as useActiveDocument } from '@elementor/editor-docu
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { POST_PER_PAGE } from '../../../../api/post';
-import {
-	ContentPanelCoordinatorProvider,
-	useContentPanelCoordinator,
-} from '../../../../contexts/content-panel-coordinator';
+import { ContentPanelCoordinatorProvider } from '../../../../contexts/content-panel-coordinator';
 import { PostListContextProvider } from '../../../../contexts/post-list-context';
 import { usePosts } from '../../../../hooks/use-posts';
 import useUser from '../../../../hooks/use-user';
@@ -100,32 +97,6 @@ jest.mock( '../../../../hooks/use-user', () => ( {
 const renderList = ( ui: React.ReactElement ) =>
 	renderWithQuery( <ContentPanelCoordinatorProvider>{ ui }</ContentPanelCoordinatorProvider> );
 
-function SearchHarness() {
-	const { setSearchQuery } = useContentPanelCoordinator();
-
-	return (
-		<>
-			<button type="button" onClick={ () => setSearchQuery( 'missing' ) }>
-				Search missing
-			</button>
-			<PostsCollapsibleList isOpenByDefault />
-		</>
-	);
-}
-
-function SortHarness() {
-	const { setSiteContentSort } = useContentPanelCoordinator();
-
-	return (
-		<>
-			<button type="button" onClick={ () => setSiteContentSort( 'newest' ) }>
-				Sort newest
-			</button>
-			<PostsCollapsibleList isOpenByDefault />
-		</>
-	);
-}
-
 const defaultUsePostsValue = {
 	isLoading: false,
 	data: {
@@ -204,7 +175,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 
 		expect( items.length ).toBe( 2 );
 		expect( items[ 0 ] ).toHaveTextContent( 'Home' );
-		expect( items[ 0 ] ).toHaveTextContent( 'Homepage' );
+		expect( screen.getByTitle( 'Homepage' ) ).toBeInTheDocument();
 		expect( items[ 1 ] ).toHaveTextContent( 'About' );
 		expect( items[ 1 ] ).toHaveTextContent( 'Draft' );
 	} );
@@ -221,7 +192,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		const addNewButton = screen.getByRole( 'button', { name: 'New Page' } );
 		fireEvent.click( addNewButton );
 
-		const input = screen.getByRole( 'textbox' );
+		const input = screen.getByDisplayValue( 'New Page' );
 
 		if ( ! input || ! ( input instanceof HTMLInputElement ) ) {
 			throw new Error( 'No input field found.' );
@@ -281,7 +252,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 		fireEvent.click( duplicateButton );
 
 		// Assert.
-		const input = await screen.findByRole( 'textbox' );
+		const input = await screen.findByDisplayValue( 'Home copy' );
 
 		expect( input ).toHaveValue( 'Home copy' );
 	} );
@@ -334,11 +305,13 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 
 		renderList(
 			<PostListContextProvider type={ 'page' } setError={ () => {} }>
-				<SearchHarness />
+				<PostsCollapsibleList isOpenByDefault />
 			</PostListContextProvider>
 		);
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Search missing' } ) );
+		fireEvent.change( screen.getByRole( 'textbox', { name: 'Search' } ), {
+			target: { value: 'missing' },
+		} );
 
 		await waitFor(
 			() => {
@@ -359,11 +332,12 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 
 		renderList(
 			<PostListContextProvider type={ 'page' } setError={ () => {} }>
-				<SortHarness />
+				<PostsCollapsibleList isOpenByDefault />
 			</PostListContextProvider>
 		);
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Sort newest' } ) );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Sort' } ) );
+		fireEvent.click( screen.getByRole( 'menuitemradio', { name: /Newest/i } ) );
 
 		await waitFor( () => {
 			expect( screen.queryByText( 'No results found' ) ).not.toBeInTheDocument();

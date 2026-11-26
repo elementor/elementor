@@ -15,6 +15,7 @@ type Props = {
 	postTitle: string;
 	isLoading: boolean;
 	callback: ( inputValue: string ) => void;
+	onDismiss?: () => void;
 };
 
 const EDIT_ROW_FOCUS_BORDER_WIDTH_PX = 2;
@@ -57,12 +58,14 @@ const editRowInputSx = {
 	width: '100%',
 };
 
-export default function EditModeTemplate( { postTitle, isLoading, callback }: Props ) {
+export default function EditModeTemplate( { postTitle, isLoading, callback, onDismiss }: Props ) {
 	const { resetEditMode } = usePostListContext();
+	const dismissEditMode = onDismiss ?? resetEditMode;
 	const [ title, setTitle ] = useState( postTitle );
 	const [ touched, setTouched ] = useState( false );
 	const [ inputError, setInputError ] = useState< string | null >( null );
 	const closeButton = useRef< HTMLButtonElement >();
+	const hasSubmittedRef = useRef( false );
 
 	const onBlur = ( e: FocusEvent ) => {
 		if ( closeButton.current === e.relatedTarget ) {
@@ -70,7 +73,7 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 		}
 
 		if ( ! touched ) {
-			resetEditMode();
+			dismissEditMode();
 			return;
 		}
 
@@ -87,10 +90,15 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 	};
 
 	const runCallback = () => {
+		if ( hasSubmittedRef.current || isLoading ) {
+			return;
+		}
+
 		if ( ! validateInput( title ) ) {
 			return;
 		}
 
+		hasSubmittedRef.current = true;
 		callback( title );
 	};
 
@@ -113,7 +121,9 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 			<ListItem
 				disablePadding
 				sx={ contentPanelListRowPaddingSx }
-				secondaryAction={ <CloseButton isLoading={ isLoading } closeButton={ closeButton } /> }
+				secondaryAction={
+					<CloseButton isLoading={ isLoading } closeButton={ closeButton } onDismiss={ dismissEditMode } />
+				}
 			>
 				<Box
 					component="form"
@@ -150,13 +160,12 @@ export default function EditModeTemplate( { postTitle, isLoading, callback }: Pr
 type CloseButtonProps = {
 	isLoading: boolean;
 	closeButton: MutableRefObject< HTMLButtonElement | undefined >;
+	onDismiss: () => void;
 };
 
-function CloseButton( { isLoading, closeButton }: CloseButtonProps ) {
-	const { resetEditMode } = usePostListContext();
-
+function CloseButton( { isLoading, closeButton, onDismiss }: CloseButtonProps ) {
 	return (
-		<IconButton size="tiny" color="secondary" onClick={ resetEditMode } ref={ closeButton } disabled={ isLoading }>
+		<IconButton size="tiny" color="secondary" onClick={ onDismiss } ref={ closeButton } disabled={ isLoading }>
 			{ isLoading ? <CircularProgress size="1rem" /> : <XIcon fontSize="tiny" /> }
 		</IconButton>
 	);

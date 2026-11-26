@@ -73,6 +73,40 @@ class Test_Mcp_Proxy_REST_API extends Elementor_Test_Base {
 		$this->assertSame( 'rest_forbidden', $response->get_data()['code'] );
 	}
 
+	public function test_post__rejects_upload_media_for_editor() {
+		// Arrange
+		$this->act_as_editor();
+
+		// Act
+		$response = $this->call_upload_media( [ 'source_url' => 'https://example.com/a.png', 'consent' => true ] );
+
+		// Assert
+		$this->assertSame( \WP_Http::FORBIDDEN, $response->get_status() );
+		$this->assertSame( 'rest_forbidden', $response->get_data()['code'] );
+	}
+
+	public function test_post__reaches_upload_media_for_admin_when_site_mcp_exposure_is_off() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$response = $this->call_upload_media( [ 'source_url' => 'https://example.com/a.png', 'consent' => false ] );
+
+		// Assert
+		$this->assertSame( \WP_Http::BAD_REQUEST, $response->get_status() );
+		$this->assertSame( 'consent_required', $response->get_data()['code'] );
+	}
+
+	private function call_upload_media( array $input ) {
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/mcp-proxy' );
+		$request->set_body_params( [
+			'tool' => 'upload-media',
+			'input' => $input,
+		] );
+
+		return rest_do_request( $request );
+	}
+
 	public function test_post__allows_manage_global_variable_permission_for_admin() {
 		// Arrange
 		$this->act_as_admin();

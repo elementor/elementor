@@ -2,6 +2,7 @@ import { type NotificationData, notify } from '@elementor/editor-notifications';
 import { blockCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
+import { getLocalClipboardElements } from '../utils/get-local-clipboard-elements';
 import {
 	type CreateArgs,
 	FORM_ELEMENT_TYPE,
@@ -11,7 +12,6 @@ import {
 	isWithinForm,
 	type MoveArgs,
 	type PasteArgs,
-	type StorageContent,
 } from './utils';
 
 const FORM_NESTING_ALERT: NotificationData = {
@@ -68,21 +68,13 @@ function blockFormMove( args: MoveArgs ): boolean {
 }
 
 function blockFormPaste( args: PasteArgs ): boolean {
-	const { storageType } = args;
+	const clipboardElements = getLocalClipboardElements( args.storageType );
 
-	if ( storageType !== 'localstorage' ) {
+	if ( ! clipboardElements ) {
 		return false;
 	}
 
-	const data = (
-		window as { elementorCommon?: { storage?: { get: () => StorageContent } } }
-	 )?.elementorCommon?.storage?.get();
-
-	if ( ! data?.clipboard?.elements ) {
-		return false;
-	}
-
-	const hasFormElement = hasClipboardElementType( data.clipboard.elements, FORM_ELEMENT_TYPE );
+	const hasFormElement = hasClipboardElementType( clipboardElements, FORM_ELEMENT_TYPE );
 
 	if ( hasFormElement && isWithinForm( args.container ) ) {
 		handleBlockedFormField();
