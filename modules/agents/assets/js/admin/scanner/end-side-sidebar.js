@@ -40,10 +40,16 @@ const STYLES = `
 	}
 
 	html body.angie-sidebar-active:has(#editor-one-top-bar > *) #wpbody,
+	html body.angie-sidebar-active .interface-interface-skeleton,
+	html body.angie-sidebar-active #site-editor,
 	html body.angie-sidebar-active #editor-one-top-bar > *,
 	html body.angie-sidebar-active #editor-one-secondary-bar > * {
 		inset-inline-end: var(--angie-sidebar-width) !important;
 		width: auto !important;
+	}
+
+	html body.angie-sidebar-active .woocommerce-layout__header {
+		padding-inline-end: var(--angie-sidebar-width) !important;
 	}
 }
 `;
