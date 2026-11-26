@@ -9,11 +9,11 @@ $popover-width: 296px;
 	max-width: $popover-width;
 	width: $popover-width;
 	padding: 16px;
-	border-radius: 8px;
-	background: var(--e-a-bg-default, #fff);
-	color: var(--e-a-color-txt, #3f444b);
-	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.16);
-	font-family: inherit;
+	border-radius: var(--e-a-border-radius);
+	background: var(--e-a-bg-default);
+	color: var(--e-a-color-txt);
+	box-shadow: var(--e-a-popover-shadow);
+	font-family: var(--e-a-font-family);
 
 	.driver-popover-title {
 		margin: 0 24px 8px 0;
@@ -21,7 +21,7 @@ $popover-width: 296px;
 		font-weight: 500;
 		line-height: 1.57;
 		letter-spacing: 0.1px;
-		color: var(--e-a-color-txt, #3f444b);
+		color: var(--e-a-color-txt);
 	}
 
 	.driver-popover-description {
@@ -29,7 +29,7 @@ $popover-width: 296px;
 		font-weight: 400;
 		line-height: 1.43;
 		letter-spacing: 0.15px;
-		color: var(--e-a-color-txt-muted, #69727d);
+		color: var(--e-a-color-txt-muted);
 	}
 
 	.driver-popover-close-btn {
@@ -38,12 +38,12 @@ $popover-width: 296px;
 		width: 24px;
 		height: 24px;
 		border-radius: 50%;
-		color: var(--e-a-color-txt-muted, #69727d);
+		color: var(--e-a-color-txt-muted);
 
 		&:hover,
 		&:focus-visible {
-			background: var(--e-a-bg-hover, #f1f3f5);
-			color: var(--e-a-color-txt, #3f444b);
+			background: var(--e-a-bg-hover);
+			color: var(--e-a-color-txt);
 		}
 	}
 
@@ -54,7 +54,7 @@ $popover-width: 296px;
 
 	.driver-popover-progress-text {
 		font-size: 12px;
-		color: var(--e-a-color-txt-muted, #69727d);
+		color: var(--e-a-color-txt-muted);
 	}
 
 	.driver-popover-navigation-btns button {
@@ -62,7 +62,7 @@ $popover-width: 296px;
 		border: 0;
 		border-radius: 4px;
 		text-shadow: none;
-		font-family: inherit;
+		font-family: var(--e-a-font-family);
 		font-size: 13px;
 		font-weight: 500;
 		line-height: 1.7;
@@ -71,21 +71,21 @@ $popover-width: 296px;
 
 	.driver-popover-prev-btn {
 		background: transparent;
-		color: var(--e-a-color-txt, #3f444b);
+		color: var(--e-a-color-txt);
 
 		&:hover,
 		&:focus-visible {
-			background: var(--e-a-bg-hover, #f1f3f5);
+			background: var(--e-a-bg-hover);
 		}
 	}
 
 	.driver-popover-next-btn {
-		background: var(--e-a-btn-bg-primary, #f0abfc);
-		color: var(--e-a-btn-color-invert, #0c0d0e);
+		background: var(--e-a-btn-bg-primary);
+		color: var(--e-a-btn-color-invert);
 
 		&:hover,
 		&:focus-visible {
-			background: var(--e-a-btn-bg-primary-hover, #e879f9);
+			background: var(--e-a-btn-bg-primary-hover);
 		}
 	}
 
