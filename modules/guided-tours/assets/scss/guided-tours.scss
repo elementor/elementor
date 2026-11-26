@@ -1,16 +1,112 @@
+$popover-width: 296px;
+
 .driver-overlay {
 	z-index: 100000000 !important;
 }
 
-[dir="rtl"] {
-	.driver-popover {
-		direction: rtl;
-		text-align: right;
+.driver-popover.elementor-guided-tour {
+	min-width: 0;
+	max-width: $popover-width;
+	width: $popover-width;
+	padding: 16px;
+	border-radius: 8px;
+	background: var(--e-a-bg-default, #fff);
+	color: var(--e-a-color-txt, #3f444b);
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.16);
+	font-family: inherit;
+
+	.driver-popover-title {
+		margin: 0 24px 8px 0;
+		font-size: 14px;
+		font-weight: 500;
+		line-height: 1.57;
+		letter-spacing: 0.1px;
+		color: var(--e-a-color-txt, #3f444b);
+	}
+
+	.driver-popover-description {
+		font-size: 14px;
+		font-weight: 400;
+		line-height: 1.43;
+		letter-spacing: 0.15px;
+		color: var(--e-a-color-txt-muted, #69727d);
 	}
 
 	.driver-popover-close-btn {
+		top: 8px;
+		right: 8px;
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+		color: var(--e-a-color-txt-muted, #69727d);
+
+		&:hover,
+		&:focus-visible {
+			background: var(--e-a-bg-hover, #f1f3f5);
+			color: var(--e-a-color-txt, #3f444b);
+		}
+	}
+
+	.driver-popover-footer {
+		align-items: center;
+		margin-top: 16px;
+	}
+
+	.driver-popover-progress-text {
+		font-size: 12px;
+		color: var(--e-a-color-txt-muted, #69727d);
+	}
+
+	.driver-popover-navigation-btns button {
+		padding: 4px 12px;
+		border: 0;
+		border-radius: 4px;
+		text-shadow: none;
+		font-family: inherit;
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 1.7;
+		cursor: pointer;
+	}
+
+	.driver-popover-prev-btn {
+		background: transparent;
+		color: var(--e-a-color-txt, #3f444b);
+
+		&:hover,
+		&:focus-visible {
+			background: var(--e-a-bg-hover, #f1f3f5);
+		}
+	}
+
+	.driver-popover-next-btn {
+		background: var(--e-a-btn-bg-primary, #f0abfc);
+		color: var(--e-a-btn-color-invert, #0c0d0e);
+
+		&:hover,
+		&:focus-visible {
+			background: var(--e-a-btn-bg-primary-hover, #e879f9);
+		}
+	}
+
+	.driver-popover-arrow {
+		z-index: 1;
+	}
+}
+
+[dir="rtl"] {
+	.driver-popover.elementor-guided-tour {
+		direction: rtl;
+		text-align: right;
+
+		.driver-popover-title {
+			margin: 0 0 8px 24px;
+		}
+	}
+
+	.driver-popover.elementor-guided-tour .driver-popover-close-btn {
 		right: auto;
-		left: 0;
+		left: 8px;
 	}
 
 	.driver-popover-progress-text {
