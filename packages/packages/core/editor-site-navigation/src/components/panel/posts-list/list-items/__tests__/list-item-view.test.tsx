@@ -70,6 +70,16 @@ describe( 'ListItemView', () => {
 		expect( screen.getByRole( 'button', { name: 'Slot title Renamed in editor' } ) ).toBeInTheDocument();
 	} );
 
+	it( 'shows the homepage icon in the leading secondary slot when the row is not active', () => {
+		renderWithQuery(
+			<PostListContextProvider type="page" setError={ () => {} }>
+				<ListItemView post={ { ...pagePost, isHome: true } } />
+			</PostListContextProvider>
+		);
+
+		expect( screen.getByRole( 'button', { name: 'Homepage' } ) ).toBeInTheDocument();
+	} );
+
 	it( 'renders list item action slot only for the active editable row', () => {
 		const { __useActiveDocument } = jest.requireMock( '@elementor/editor-documents' );
 		__useActiveDocument.mockReturnValue( { id: pagePost.id, status: { value: 'publish' }, title: 'Test Page' } );

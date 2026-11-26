@@ -39,6 +39,7 @@ describe( '@elementor/site-settings/use-homepage-actions', () => {
 			},
 		} );
 
+		expect( queryClient.getQueryData( queryKey ) ).toBe( 1 );
 		expect( queryClient.getQueryState( queryKey )?.isInvalidated ).toBe( true );
 	} );
 } );

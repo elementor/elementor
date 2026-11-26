@@ -79,7 +79,7 @@ function PostsCollapsibleListContent( { isOpenByDefault = false }: Props ) {
 		}
 
 		const mappedPosts = isPageType
-			? posts.map( ( post ) => ( post.id === homepageId ? { ...post, isHome: true } : post ) )
+			? posts.map( ( post ) => ( { ...post, isHome: post.id === homepageId } ) )
 			: posts;
 
 		const shouldPinHomepage = isPageType && shouldPinHomepageForSiteContentSort( siteContentSort );

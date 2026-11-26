@@ -3,6 +3,14 @@ const CONTENT_PANEL_LIST_ROW_GAP = 0.5;
 const CONTENT_PANEL_LIST_ROW_INSET_INLINE = 0.75;
 const CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_ACTION_SLOT_WIDTH = 5.5;
 const CONTENT_PANEL_LIST_ITEM_MENU_SLOT_COUNT = 1;
+
+export const contentPanelListItemSecondaryActionSlotSx = {
+	alignItems: 'center',
+	display: 'flex',
+	flexShrink: 0,
+	justifyContent: 'center',
+	width: CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_ACTION_SLOT_WIDTH,
+};
 const CONTENT_PANEL_LIST_ROW_TITLE_FONT_SIZE = '0.75rem';
 const CONTENT_PANEL_LIST_SECTION_BOTTOM_SPACING = 1;
 

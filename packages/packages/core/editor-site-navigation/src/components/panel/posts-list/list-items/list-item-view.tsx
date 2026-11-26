@@ -8,6 +8,7 @@ import { DotsVerticalIcon, HomeIcon } from '@elementor/icons';
 import {
 	bindMenu,
 	bindTrigger,
+	Box,
 	Divider,
 	IconButton,
 	ListItem,
@@ -34,6 +35,7 @@ import SetHome, { RemoveHomepageDialog } from '../../actions-menu/actions/set-ho
 import View from '../../actions-menu/actions/view';
 import {
 	contentPanelListItemButtonSx,
+	contentPanelListItemSecondaryActionSlotSx,
 	getContentPanelListItemSecondarySlotCount,
 	getContentPanelListItemSx,
 } from '../../content-panel-chrome';
@@ -92,10 +94,25 @@ export default function ListItemView( { post }: { post: Post } ) {
 	const menuTriggerProps = bindTrigger( popupState );
 	const hasListItemActions = useSiteContentListItemActionsInjections().length > 0;
 	const showListItemActions = isActive && post.user_can.edit && ! isTrashed && hasListItemActions;
+	const isHome = Boolean( post.isHome );
+	const showHomeInLeadingSecondarySlot = isHome && ! showListItemActions;
+	const showHomeInTrailingSecondarySlot = isHome && showListItemActions;
+	const showLeadingSecondarySlot = showListItemActions || showHomeInLeadingSecondarySlot;
 	const secondaryActionSlotCount = getContentPanelListItemSecondarySlotCount( {
-		hasHomeIcon: Boolean( post.isHome ),
+		hasHomeIcon: isHome,
 		hasRowActions: showListItemActions,
 	} );
+	const homeIcon = isHome ? (
+		<IconButton
+			aria-label={ __( 'Homepage', 'elementor' ) }
+			disabled
+			size="tiny"
+			sx={ { pointerEvents: 'none' } }
+			tabIndex={ -1 }
+		>
+			<HomeIcon color="disabled" fontSize="tiny" />
+		</IconButton>
+	) : null;
 
 	const listRow = (
 		<ListItem
@@ -103,9 +120,14 @@ export default function ListItemView( { post }: { post: Post } ) {
 			sx={ getContentPanelListItemSx( secondaryActionSlotCount ) }
 			secondaryAction={
 				<Stack alignItems="center" direction="row" spacing={ 0 }>
-					{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
-					{ post.isHome && (
-						<HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" fontSize="tiny" />
+					{ showLeadingSecondarySlot && (
+						<Box sx={ contentPanelListItemSecondaryActionSlotSx }>
+							{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
+							{ showHomeInLeadingSecondarySlot && homeIcon }
+						</Box>
+					) }
+					{ showHomeInTrailingSecondarySlot && (
+						<Box sx={ contentPanelListItemSecondaryActionSlotSx }>{ homeIcon }</Box>
 					) }
 					<IconButton
 						aria-label={ __( 'More actions', 'elementor' ) }
