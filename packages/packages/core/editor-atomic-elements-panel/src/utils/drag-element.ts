@@ -23,8 +23,8 @@ export function isDraggableTile( tile: ElementTile ) {
 export function startTileDrag( tile: ElementTile, event: React.DragEvent ) {
 	const { custom, ...model } = buildElementModel( tile );
 
-	setPanelDragging( true );
 	startDragElementFromPanel( model, event, custom );
+	setPanelDragging( true );
 	document.addEventListener( 'dragend', resetPanelDragging, { once: true, capture: true } );
 	document.addEventListener( 'drop', resetPanelDragging, { once: true, capture: true } );
 }
