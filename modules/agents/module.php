@@ -56,6 +56,7 @@ use Elementor\Modules\Agents\Components\Webmcp\Tools\Query_Business_Info;
 use Elementor\Modules\Agents\Components\Webmcp\Tools\Read_Page_Content;
 use Elementor\Modules\Agents\Components\Webmcp\Tools\Search_Site_Content;
 use Elementor\Modules\Agents\Components\Webmcp\Webmcp_Browser_Tools;
+use Elementor\Modules\Ai\Module as Ai_Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -330,7 +331,16 @@ class Module extends BaseModule {
 	}
 
 	private function should_show_sdk_angie_toggle(): bool {
-		return is_admin() && Ai_Module::is_angie_enabled() && ! Hints::is_plugin_active( 'angie' );
+		$ai_module = Plugin::$instance->modules_manager->get_modules( 'ai' );
+
+		if ( ! $ai_module || ! $ai_module->is_ai_enabled() ) {
+			return false;
+		}
+
+		return is_admin()
+			&& current_user_can( 'edit_posts' )
+			&& Ai_Module::is_angie_enabled()
+			&& ! Hints::is_plugin_active( 'angie' );
 	}
 
 	public function enqueue_dashboard_tracking( string $hook_suffix ): void {
@@ -1198,7 +1208,7 @@ class Module extends BaseModule {
 			'angiePluginSearchUrl'   => admin_url( 'plugin-install.php?s=angie&tab=search&type=term' ),
 			'angieAppUrl'            => admin_url( 'admin.php?page=angie-app' ),
 			'angieInstallHeroUrl'    => plugins_url( 'assets/images/angie-install-hero.png', __FILE__ ),
-			'isAngieActive'          => Hints::is_plugin_active( 'angie' ),
+			'isAngieEnabled'         => Ai_Module::is_angie_enabled(),
 			'isAngieInstalled'       => Hints::is_plugin_installed( 'angie' ),
 			'lastReport'             => $this->scanner_store->get_last_report(),
 			'scoreTiers'             => Score_Tiers::to_array(),

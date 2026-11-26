@@ -46,7 +46,7 @@ const wasSidebarLeftOpen = () => {
 	}
 };
 
-export const canOpenAngie = ( isAngieActive ) => Boolean( isAngieActive ) || isAngiePluginActive() || Boolean( getAngieIframe() );
+export const canOpenAngie = ( isAngieEnabled = false ) => Boolean( isAngieEnabled ) || isAngiePluginActive() || Boolean( getAngieIframe() );
 
 const sendPromptToPlugin = ( prompt ) => {
 	const iframe = getAngieIframe();

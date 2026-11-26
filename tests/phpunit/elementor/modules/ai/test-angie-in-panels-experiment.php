@@ -51,6 +51,8 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 	}
 
 	public function test_is_angie_enabled__false_without_consent_or_plugin() {
+		$this->activate_experiment();
+
 		// Act & Assert
 		$this->assertFalse( Module::is_angie_enabled() );
 	}
@@ -58,6 +60,8 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 	public function test_is_angie_enabled__true_with_consent() {
 		// Arrange
 		update_option( Module::ANGIE_CONSENT_OPTION, 'yes' );
+
+		$this->activate_experiment();
 
 		// Act & Assert
 		$this->assertTrue( Module::is_angie_enabled() );
@@ -67,6 +71,8 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		// Arrange
 		add_filter( 'pre_option_active_plugins', fn() => [ 'angie/angie.php' ] );
 
+		$this->activate_experiment();
+
 		// Act & Assert
 		$this->assertTrue( Module::is_angie_enabled() );
 	}
@@ -75,9 +81,25 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		// Arrange
 		update_option( Module::ANGIE_CONSENT_OPTION, 'yes' );
 		update_option( Module::ANGIE_BLOCKED_BY_SITE_OPTION, true );
+		$this->activate_experiment();
 
 		// Act & Assert
 		$this->assertFalse( Module::is_angie_enabled() );
+	}
+
+	public function test_is_angie_enabled__false_when_experiment_inactive() {
+		// Arrange
+		update_option( Module::ANGIE_CONSENT_OPTION, 'yes' );
+
+		// Act & Assert
+		$this->assertFalse( Module::is_angie_enabled() );
+	}
+
+	private function activate_experiment(): void {
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
 	}
 
 	public function test_is_angie_enabled__false_when_user_disabled() {
@@ -85,6 +107,7 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		$this->act_as_admin();
 		update_option( Module::ANGIE_CONSENT_OPTION, 'yes' );
 		update_user_meta( get_current_user_id(), Module::ANGIE_USER_DISABLED_META_KEY, true );
+		$this->activate_experiment();
 
 		// Act & Assert
 		$this->assertFalse( Module::is_angie_enabled() );
