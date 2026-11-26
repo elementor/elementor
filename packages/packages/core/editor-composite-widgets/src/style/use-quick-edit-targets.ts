@@ -1,9 +1,10 @@
 import { getElementClassesProp, getElementLocalStyle } from '@elementor/editor-editing-panel';
-import { type ElementID, type V1Element } from '@elementor/editor-elements';
+import { type ElementID, getContainer, styleRerenderEvents, type V1Element } from '@elementor/editor-elements';
 import { type StyleDefinitionID } from '@elementor/editor-styles';
+import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 
+import { findWidgetPart } from '../general/find-widget-part';
 import { toWidgetPartElement, type WidgetPartElement } from '../general/use-widget-part-elements';
-import { useWidgetPartContainers } from './use-widget-part-containers';
 
 export type QuickEditTargets = {
 	readTarget: WidgetPartElement;
@@ -13,18 +14,27 @@ export type QuickEditTargets = {
 };
 
 export function useQuickEditTargets( rootId: ElementID, parts: string[] ): QuickEditTargets | null {
-	const partContainers = useWidgetPartContainers( rootId, parts );
-
-	return getQuickEditTargets(
-		parts.flatMap( ( part ) => {
-			const container = partContainers[ part ];
-
-			return container ? [ container ] : [];
-		} )
+	return useListenTo(
+		[
+			...styleRerenderEvents,
+			commandEndEvent( 'document/elements/set-settings' ),
+			commandEndEvent( 'document/elements/delete' ),
+		],
+		() => getQuickEditTargets( rootId, parts ),
+		[ rootId, parts ]
 	);
 }
 
-function getQuickEditTargets( containers: V1Element[] ): QuickEditTargets | null {
+function getQuickEditTargets( rootId: ElementID, parts: string[] ): QuickEditTargets | null {
+	const root = getContainer( rootId );
+
+	if ( ! root ) {
+		return null;
+	}
+
+	const containers = parts
+		.map( ( part ) => findWidgetPart( root, part ) )
+		.filter( ( container ): container is V1Element => !! container );
 	const [ firstContainer ] = containers;
 	const readTarget = firstContainer ? toWidgetPartElement( firstContainer ) : null;
 	const classesProp = firstContainer ? getElementClassesProp( firstContainer.id ) : null;

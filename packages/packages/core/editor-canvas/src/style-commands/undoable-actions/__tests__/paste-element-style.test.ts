@@ -7,7 +7,7 @@ import {
 	updateElementStyle,
 } from '@elementor/editor-elements';
 
-import { undoableApplyElementStyles } from '../apply-element-styles';
+import { undoableApplyElementStyles } from '../paste-element-style';
 
 jest.mock( '@elementor/editor-elements' );
 

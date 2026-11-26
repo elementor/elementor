@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import {
 	getElementStylesInheritance,
 	isEqual,
@@ -6,13 +5,14 @@ import {
 	type StylesInheritanceAPI,
 	type StylesInheritanceSnapshot,
 } from '@elementor/editor-editing-panel';
-import { type ElementID } from '@elementor/editor-elements';
+import { type ElementID, styleRerenderEvents } from '@elementor/editor-elements';
 import { isTransformable, type ObjectPropValue, type PropValue } from '@elementor/editor-props';
 import { type BreakpointId, getBreakpointsTree } from '@elementor/editor-responsive';
 import { getStylesSchema } from '@elementor/editor-styles';
+import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 
 import { type CompositeWidgetPreset, type CompositeWidgetPresetOption } from '../../types';
-import { useWidgetPartContainers, type WidgetPartContainers } from '../use-widget-part-containers';
+import { getWidgetPartContainers, type WidgetPartContainers } from './get-widget-part-containers';
 import { getPresetPartNames, isObjectStyleProp, resolvePresetProps } from './preset-values';
 
 type PartStyles = {
@@ -27,10 +27,21 @@ type FindMatchingPresetOptionArgs = {
 };
 
 export function usePresetMatch( rootId: ElementID, preset: CompositeWidgetPreset, breakpoint: BreakpointId ) {
-	const parts = useMemo( () => getPresetPartNames( preset ), [ preset ] );
-	const containers = useWidgetPartContainers( rootId, parts );
-
-	return findMatchingPresetOption( { options: preset.options, containers, breakpoint } );
+	return useListenTo(
+		[
+			...styleRerenderEvents,
+			commandEndEvent( 'document/elements/set-settings' ),
+			commandEndEvent( 'document/elements/create' ),
+			commandEndEvent( 'document/elements/delete' ),
+		],
+		() =>
+			findMatchingPresetOption( {
+				options: preset.options,
+				containers: getWidgetPartContainers( rootId, getPresetPartNames( preset ) ),
+				breakpoint,
+			} ),
+		[ rootId, preset, breakpoint ]
+	);
 }
 
 export function findMatchingPresetOption( {

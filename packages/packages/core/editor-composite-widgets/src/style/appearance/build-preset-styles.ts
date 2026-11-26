@@ -9,7 +9,7 @@ import { type Props, type PropValue } from '@elementor/editor-props';
 import { type BreakpointId, getBreakpointsTree } from '@elementor/editor-responsive';
 
 import { type CompositeWidgetPresetOption, type CompositeWidgetPresetWrite } from '../../types';
-import { type WidgetPartContainers } from '../use-widget-part-containers';
+import { type WidgetPartContainers } from './get-widget-part-containers';
 import { mergePresetValue, resolvePresetProps } from './preset-values';
 
 type BreakpointsPaths = ReturnType< typeof makeBreakpointsInheritancePaths >;

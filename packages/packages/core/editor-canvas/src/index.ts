@@ -11,7 +11,7 @@ export { init } from './init';
 export {
 	type ElementStylesEntry,
 	undoableApplyElementStyles,
-} from './style-commands/undoable-actions/apply-element-styles';
+} from './style-commands/undoable-actions/paste-element-style';
 export { isAtomicWidget } from './utils/command-utils';
 
 export {

@@ -3,8 +3,8 @@ import { type ElementID } from '@elementor/editor-elements';
 import { type BreakpointId } from '@elementor/editor-responsive';
 
 import { type CompositeWidgetPreset } from '../../types';
-import { getWidgetPartContainers } from '../use-widget-part-containers';
 import { buildPresetStyles } from './build-preset-styles';
+import { getWidgetPartContainers } from './get-widget-part-containers';
 import { getPresetPartNames } from './preset-values';
 
 type ApplyPresetArgs = {

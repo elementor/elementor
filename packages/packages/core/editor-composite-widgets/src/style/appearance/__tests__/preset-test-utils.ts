@@ -5,7 +5,7 @@ import { type BreakpointId, type BreakpointNode } from '@elementor/editor-respon
 import { type StyleDefinition } from '@elementor/editor-styles';
 
 import { type CompositeWidgetPreset } from '../../../types';
-import { type WidgetPartContainers } from '../../use-widget-part-containers';
+import { type WidgetPartContainers } from '../get-widget-part-containers';
 
 export const BREAKPOINTS_TREE: BreakpointNode = {
 	id: 'desktop',
