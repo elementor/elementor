@@ -2,6 +2,8 @@ name: PR
 
 on:
   pull_request:
+    # labeled is kept so run-tests / full-browser-compatibility still start CI.
+    # Other labels must not rerun install/build/lint/jest/phpunit/Playwright (ED-26492).
     types: [opened, synchronize, reopened, ready_for_review, labeled]
     branches:
       - main
@@ -21,12 +23,16 @@ permissions:
   statuses: write
   deployments: write
 
+env:
+  CI_TRIGGER_LABELS: '["run-tests","full-browser-compatibility"]'
+
 jobs:
   set-pending-playwright-on-draft:
     name: Set Pending Playwright Status on Draft
     if: |
       github.event.pull_request.draft == true &&
-      github.event.action != 'ready_for_review'
+      github.event.action != 'ready_for_review' &&
+      (github.event.action != 'labeled' || contains(fromJSON('["run-tests","full-browser-compatibility"]'), github.event.label.name))
     runs-on: ubuntu-22.04
     permissions:
       statuses: write
@@ -47,7 +53,9 @@ jobs:
   detect-changes:
     name: Detect changes
     runs-on: ubuntu-22.04
-    if: startsWith( github.repository, 'elementor/' )
+    if: |
+      startsWith( github.repository, 'elementor/' ) &&
+      (github.event.action != 'labeled' || contains(fromJSON('["run-tests","full-browser-compatibility"]'), github.event.label.name))
     outputs:
       js: ${{ steps.filter.outputs.js }}
       php: ${{ steps.filter.outputs.php }}
@@ -570,8 +578,92 @@ jobs:
       - playwright
     if: always() && !cancelled()
     steps:
+      - name: Reuse latest full-run required-check result for non-CI labels
+        if: github.event.action == 'labeled' && !contains(fromJSON(env.CI_TRIGGER_LABELS), github.event.label.name)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const sha = context.payload.pull_request.head.sha;
+            const { data } = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'pr.yml',
+              head_sha: sha,
+              per_page: 30,
+            });
+
+            const isDetectChanges = (job) =>
+              job.name === 'detect-changes' || job.name === 'Detect changes';
+            const isValidate = (job) => job.name === 'Pull Request Validations';
+
+            const isFullRunFromJobs = (jobList) => {
+              if (!jobList?.length) {
+                return false;
+              }
+              const detect = jobList.find(isDetectChanges);
+              if (!detect) {
+                return false;
+              }
+              return detect.conclusion !== 'skipped' && detect.conclusion !== 'cancelled';
+            };
+
+            for (const run of data.workflow_runs) {
+              if (run.id === context.runId || run.status === 'completed') {
+                continue;
+              }
+
+              const inProgressJobs = await github.rest.actions.listJobsForWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: run.id,
+                per_page: 100,
+              });
+
+              if (isFullRunFromJobs(inProgressJobs.data.jobs)) {
+                core.setFailed(
+                  `Full pr.yml run ${run.html_url} is still in progress; re-run this check when it finishes`
+                );
+                return;
+              }
+            }
+
+            let fullRun;
+            let validateConclusion;
+
+            for (const run of data.workflow_runs) {
+              if (run.id === context.runId || run.status !== 'completed') {
+                continue;
+              }
+
+              const jobs = await github.rest.actions.listJobsForWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: run.id,
+                per_page: 100,
+              });
+
+              if (!isFullRunFromJobs(jobs.data.jobs)) {
+                continue;
+              }
+
+              fullRun = run;
+              const validate = jobs.data.jobs.find(isValidate);
+              validateConclusion = validate?.conclusion ?? run.conclusion;
+              break;
+            }
+
+            if (validateConclusion !== 'success') {
+              core.setFailed(
+                fullRun
+                  ? `Latest full pr.yml run ${fullRun.html_url} concluded ${validateConclusion}`
+                  : `No completed full pr.yml run for ${sha}; light labeled runs cannot pass Pull Request Validations`
+              );
+            }
+
       - name: Resolve pending Playwright commit status
-        if: github.event.pull_request.draft == false
+        if: |
+          github.event.pull_request.draft == false &&
+          (github.event.action != 'labeled' || contains(fromJSON(env.CI_TRIGGER_LABELS), github.event.label.name))
         continue-on-error: true
         uses: actions/github-script@v7
         env:
@@ -606,6 +698,7 @@ jobs:
               target_url: `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
             });
       - name: Validate required checks
+        if: github.event.action != 'labeled' || contains(fromJSON(env.CI_TRIGGER_LABELS), github.event.label.name)
         env:
           DETECT_CHANGES_RESULT: ${{ needs.detect-changes.result }}
           INSTALL_RESULT: ${{ needs.install.result }}
