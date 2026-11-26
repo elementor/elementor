@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Top_Bar_Handler {
 
+	private const LOGO_SVG = '<svg class="e-one-top-bar-placeholder__logo" viewBox="0 0 25 24" width="24" height="24" fill="none" focusable="false" aria-hidden="true"><path d="M12.1207 0C5.42401 0 0 5.37 0 12C0 18.63 5.42401 24 12.1207 24C18.8174 24 24.2414 18.63 24.2414 12C24.2414 5.37 18.8174 0 12.1207 0ZM8.48448 18H6.06034V6H8.48448V18ZM18.181 18H10.9086V15.6H18.181V18ZM18.181 13.2H10.9086V10.8H18.181V13.2ZM18.181 8.4H10.9086V6H18.181V8.4Z" fill="currentColor"/></svg>';
+
 	private Menu_Data_Provider $menu_data_provider;
 
 	public function __construct() {
@@ -63,7 +65,7 @@ class Top_Bar_Handler {
 			'elementorOneTopBarConfig',
 			[
 				'version' => ELEMENTOR_VERSION,
-				'title' => __( 'website builder', 'elementor' ),
+				'title' => $this->get_title(),
 				'environment' => apply_filters( 'elementor/environment', 'production' ),
 				'locale' => $wordpress_locale,
 				'localeLanguageBaseUrls' => $locale_language_base_urls,
@@ -76,6 +78,23 @@ class Top_Bar_Handler {
 			return;
 		}
 
-		echo '<div id="editor-one-top-bar"></div>';
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Markup is escaped in get_placeholder_markup().
+		echo '<div id="editor-one-top-bar">' . $this->get_placeholder_markup() . '</div>';
+	}
+
+	/**
+	 * Static stand-in for the React header, so the admin layout is correct from the first paint.
+	 * React replaces it when it mounts into `#editor-one-top-bar`.
+	 */
+	public function get_placeholder_markup(): string {
+		return sprintf(
+			'<header class="e-one-top-bar-placeholder" aria-hidden="true"><span class="e-one-top-bar-placeholder__brand">%1$s<span class="e-one-top-bar-placeholder__title">%2$s</span></span></header>',
+			self::LOGO_SVG,
+			esc_html( $this->get_title() )
+		);
+	}
+
+	private function get_title(): string {
+		return __( 'website builder', 'elementor' );
 	}
 }
