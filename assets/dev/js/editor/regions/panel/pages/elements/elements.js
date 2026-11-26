@@ -43,10 +43,14 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		this.initCategoriesCollection();
 
-		( { elementsCollection: this.elementsCollection, categoriesCollection: this.categoriesCollection } = filterCollections( {
+		// Applies the `panel/elements/collections` filter before the region views read the collections.
+		const filtered = filterCollections( {
 			elementsCollection: this.elementsCollection,
 			categoriesCollection: this.categoriesCollection,
-		} ) );
+		} );
+
+		this.elementsCollection = filtered.elementsCollection;
+		this.categoriesCollection = filtered.categoriesCollection;
 
 		this.initRegionViews();
 	},
