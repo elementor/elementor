@@ -34,8 +34,8 @@ import SetHome, { RemoveHomepageDialog } from '../../actions-menu/actions/set-ho
 import View from '../../actions-menu/actions/view';
 import {
 	contentPanelListItemButtonSx,
-	contentPanelListItemTrailingActionsStackSx,
-	contentPanelListRowPaddingSx,
+	getContentPanelListItemRowStateSx,
+	getContentPanelListItemSx,
 } from '../../content-panel-chrome';
 import {
 	SiteContentListItemActionsSlot,
@@ -93,22 +93,40 @@ export default function ListItemView( { post }: { post: Post } ) {
 	const hasListItemActions = useSiteContentListItemActionsInjections().length > 0;
 	const showListItemActions = isActive && post.user_can.edit && ! isTrashed && hasListItemActions;
 	const isHome = Boolean( post.isHome );
-	const showHomeInLeadingSecondarySlot = isHome && ! showListItemActions;
-	const showHomeInTrailingSecondarySlot = isHome && showListItemActions;
-	const homeIcon = isHome ? (
-		<IconButton
-			aria-label={ __( 'Homepage', 'elementor' ) }
-			disabled
-			size="tiny"
-			sx={ { pointerEvents: 'none' } }
-			tabIndex={ -1 }
-		>
-			<HomeIcon color="disabled" fontSize="tiny" />
-		</IconButton>
-	) : null;
+	const trailingActionCount = 1 + ( showListItemActions ? 1 : 0 ) + ( isHome ? 1 : 0 );
+	const allowRowHover = ! isEditBlocked;
 
 	const listRow = (
-		<ListItem disablePadding sx={ contentPanelListRowPaddingSx }>
+		<ListItem
+			disablePadding
+			sx={ {
+				...getContentPanelListItemSx( trailingActionCount ),
+				...getContentPanelListItemRowStateSx( isActive, allowRowHover ),
+			} }
+			secondaryAction={
+				<Stack alignItems="center" direction="row" spacing={ 0 }>
+					{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
+					{ isHome && (
+						<HomeIcon
+							color="disabled"
+							fontSize="tiny"
+							titleAccess={ __( 'Homepage', 'elementor' ) }
+						/>
+					) }
+					<IconButton
+						aria-label={ __( 'More actions', 'elementor' ) }
+						size="tiny"
+						{ ...menuTriggerProps }
+						onClick={ ( event: React.MouseEvent ) => {
+							event.stopPropagation();
+							menuTriggerProps.onClick?.( event );
+						} }
+					>
+						<DotsVerticalIcon fontSize="tiny" />
+					</IconButton>
+				</Stack>
+			}
+		>
 			<ListItemButton
 				dense
 				disableGutters
@@ -127,30 +145,6 @@ export default function ListItemView( { post }: { post: Post } ) {
 				<ListItemText disableTypography sx={ { flex: 1, minWidth: 0 } }>
 					<PageTitleAndStatus title={ title } status={ status } />
 				</ListItemText>
-				<Stack
-					alignItems="center"
-					direction="row"
-					spacing={ 0.5 }
-					sx={ contentPanelListItemTrailingActionsStackSx }
-					onClick={ ( event: React.MouseEvent ) => {
-						event.stopPropagation();
-					} }
-				>
-					{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
-					{ showHomeInLeadingSecondarySlot && homeIcon }
-					{ showHomeInTrailingSecondarySlot && homeIcon }
-					<IconButton
-						aria-label={ __( 'More actions', 'elementor' ) }
-						size="tiny"
-						{ ...menuTriggerProps }
-						onClick={ ( event: React.MouseEvent ) => {
-							event.stopPropagation();
-							menuTriggerProps.onClick?.( event );
-						} }
-					>
-						<DotsVerticalIcon fontSize="tiny" />
-					</IconButton>
-				</Stack>
 			</ListItemButton>
 		</ListItem>
 	);

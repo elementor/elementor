@@ -77,7 +77,7 @@ describe( 'ListItemView', () => {
 			</PostListContextProvider>
 		);
 
-		expect( screen.getByRole( 'button', { name: 'Homepage' } ) ).toBeInTheDocument();
+		expect( screen.getByTitle( 'Homepage' ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders list item action slot only for the active editable row', () => {

@@ -35,7 +35,8 @@ type Props = {
 function PostsCollapsibleListContent( { isOpenByDefault = false }: Props ) {
 	const { type, editMode, resetEditMode, setEditMode } = usePostListContext();
 	const { registerSection, unregisterSection } = useContentPanelCoordinator();
-	const { debouncedSearch, siteContentSort, statusFilters } = useSiteContentSectionToolbar();
+	const { clearStatusFilters, debouncedSearch, siteContentSort, statusFilters } =
+		useSiteContentSectionToolbar();
 	const [ isOpen, setIsOpen ] = useState( isOpenByDefault );
 	const focusAfterShowLessRef = useRef( false );
 	const listTopRef = useRef< HTMLDivElement | null >( null );
@@ -67,11 +68,17 @@ function PostsCollapsibleListContent( { isOpenByDefault = false }: Props ) {
 	useEffect( () => {
 		registerSection( type, {
 			setExpanded: setIsOpen,
-			startCreate: () => setEditMode( { mode: 'create', details: {} } ),
+			startCreate: () => {
+				if ( isSiteContentTrashFilterActive( statusFilters ) ) {
+					clearStatusFilters();
+				}
+
+				setEditMode( { mode: 'create', details: {} } );
+			},
 		} );
 
 		return () => unregisterSection( type );
-	}, [ registerSection, unregisterSection, type, setEditMode ] );
+	}, [ clearStatusFilters, registerSection, setEditMode, statusFilters, type, unregisterSection ] );
 
 	const filteredPosts = useMemo( () => {
 		if ( ! posts ) {
