@@ -19,6 +19,7 @@ export type OpenAngieRequest = OpenAngieCommonProperties & {
 
 export type EditorAngieWindowHost = {
 	openAngie?: ( request: OpenAngieRequest ) => Promise< void > | void;
+	getAngieState?: () => 'plugin' | 'sdk' | 'promo' | 'hidden';
 };
 
 declare global {
