@@ -24,6 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const MODULE_NAME = 'composite-widgets';
 	const EXPERIMENT_NAME = 'e_composite_widgets';
+	const MANUAL_CREATE_EXPERIMENT_NAME = 'e_composite_widgets_create';
 	const REGISTER_HOOK = 'elementor/composite-widgets/register';
 	const REGISTER_SITE_HOOK = 'elementor/composite-widgets/register-site';
 	const CORE_DEFINITION_FILES = [
@@ -93,8 +94,18 @@ class Module extends BaseModule {
 		return Atomic_Widgets_Module::is_active();
 	}
 
+	/**
+	 * Gates only manual, user-initiated creation from a page structure; agentic and API creation stay open.
+	 * Registered by the constructor, so it does not exist (and is inactive) while the mother experiment is off.
+	 */
+	public static function is_manual_create_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::MANUAL_CREATE_EXPERIMENT_NAME );
+	}
+
 	public function __construct() {
 		parent::__construct();
+
+		$this->register_manual_create_experiment();
 
 		( new Definitions_REST_API( fn () => $this->get_editor_definitions() ) )->register_hooks();
 
@@ -103,6 +114,17 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->sync_widget_locks( $data, $document ), self::SYNC_LOCKS_PRIORITY, 2 );
 
 		( new Site_Widgets_Visibility() )->register_hooks();
+	}
+
+	private function register_manual_create_experiment(): void {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::MANUAL_CREATE_EXPERIMENT_NAME,
+			'title' => esc_html__( 'Composite Widgets: Create', 'elementor' ),
+			'description' => esc_html__( 'Enable creating a composite widget from a page structure in the editor.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
 	}
 
 	/**
