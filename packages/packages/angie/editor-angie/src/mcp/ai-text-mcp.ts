@@ -1,9 +1,9 @@
 import { getMCPByDomain } from '@elementor/editor-mcp';
 
+import { initUploadMediaTool } from './tools/upload-media/tool';
 import { initV3CodeControlTool } from './tools/v3-code-control/tool';
 import { initV3KitSiteIdentityTool } from './tools/v3-kit-site-identity/tool';
 import { initV3MotionEffectsTool } from './tools/v3-motion-effects/tool';
-import { initUploadMediaTool } from './tools/upload-media/tool';
 import { initV3TextControlTool } from './tools/v3-text-control/tool';
 
 const AI_TEXT_MCP_INSTRUCTIONS =
