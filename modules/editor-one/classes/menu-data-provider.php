@@ -418,10 +418,6 @@ class Menu_Data_Provider {
 	}
 
 	private function with_tag( array $item_data, Menu_Item_Interface $item ): array {
-		if ( App_Link_Classifier::opens_in_app( $item_data['url'] ) ) {
-			$item_data['opens_in_app'] = true;
-		}
-
 		if ( ! $item instanceof Menu_Item_With_Tag_Interface || '' === $item->get_tag() ) {
 			return $item_data;
 		}

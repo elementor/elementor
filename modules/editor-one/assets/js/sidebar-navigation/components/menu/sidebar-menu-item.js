@@ -1,12 +1,9 @@
 import { useCallback, useState } from '@wordpress/element';
-import ArrowUpRightIcon from '@elementor/icons/ArrowUpRightIcon';
-import { Collapse, List, ListItem, ListItemText, withDirection } from '@elementor/ui';
+import { Collapse, List, ListItem, ListItemText } from '@elementor/ui';
 import Chip from '@elementor/ui/Chip';
 import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
 import PropTypes from 'prop-types';
 import { ChildListItem, ChildMenuItemButton, DEFAULT_ICON, ExpandIcon, ICON_MAP, MenuIcon, MenuItemButton } from '../shared';
-
-const DirectionalArrowIcon = withDirection( ArrowUpRightIcon );
 
 const STORAGE_KEY_PREFIX = 'elementor_sidebar_menu_expanded_v2_';
 
@@ -69,7 +66,6 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 						<IconComponent />
 					</MenuIcon>
 					<ListItemText primary={ item.label } primaryTypographyProps={ { variant: 'body2' } } />
-					{ item.opens_in_app && <DirectionalArrowIcon fontSize="tiny" /> }
 					{ item.tag && <Chip size="tiny" shape="rounded" variant="outlined" label={ item.tag } /> }
 					{ hasChildren && <ExpandIcon expanded={ isExpanded } /> }
 				</MenuItemButton>
