@@ -80,28 +80,8 @@ export const assertScenarioFetched = ( scenario: string, paths: string[] ): void
 	}
 };
 
-const CDN_IMAGE_PATTERN = /^https:\/\/assets\.elementor\.com\/.+\.(?:svg|png|jpe?g|gif|webp)(?:\?.*)?$/;
-
-// The browser loads campaign images from the CDN itself, not through the mock, so the active-campaign scenario
-// answers them from its fixture without depending on the live CDN.
-const serveFixtureImages = ( context: BrowserContext, scenario: string ): Promise<void> =>
-	context.route( CDN_IMAGE_PATTERN, async ( route ) => {
-		const file = resolve( FIXTURES_DIR, scenario, new URL( route.request().url() ).pathname.slice( 1 ) );
-
-		if ( existsSync( file ) ) {
-			await route.fulfill( { path: file } );
-			return;
-		}
-
-		await route.fallback();
-	} );
-
 export const useCdnScenario = async ( context: BrowserContext, baseURL: string, scenario: string ): Promise<void> => {
 	await context.addCookies( [ { name: SCENARIO_COOKIE, value: scenario, url: baseURL } ] );
-
-	if ( ACTIVE_CAMPAIGN_SCENARIO === scenario ) {
-		await serveFixtureImages( context, scenario );
-	}
 };
 
 const ASSETS_ORIGIN = 'https://assets.elementor.com';
