@@ -375,7 +375,10 @@ export const useScannerFlow = ( {
 
 	const fixWithAngie = useCallback( ( check ) => {
 		if ( canOpenAngie( isAngieActive ) ) {
-			openAngieWithPrompt( check.fixPrompt );
+			openAngieWithPrompt( check.fixPrompt ).catch( ( error ) => {
+				// eslint-disable-next-line no-console
+				console.error( 'Opening Angie failed:', error );
+			} );
 			return;
 		}
 

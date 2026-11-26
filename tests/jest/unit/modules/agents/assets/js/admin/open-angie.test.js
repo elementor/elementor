@@ -1,14 +1,29 @@
-import { clearReferrerRedirect, waitForAngiePluginActive } from '@elementor-external/angie-sdk';
+import {
+	AngieMcpSdk,
+	clearReferrerRedirect,
+	isAngiePluginAvailable,
+	waitForAngiePluginActive,
+} from '@elementor-external/angie-sdk';
 import {
 	deliverPendingAngiePrompt,
 	openAngieAfterInstall,
+	openAngieWithPrompt,
 } from 'elementor/modules/agents/assets/js/admin/scanner/open-angie';
+
+const mockSdk = {
+	loadSidebarV2: jest.fn( () => Promise.resolve() ),
+	waitForReady: jest.fn( () => Promise.resolve() ),
+	triggerAngie: jest.fn( () => Promise.resolve() ),
+};
 
 jest.mock( '@elementor-external/angie-sdk', () => ( {
 	ANGIE_SIDEBAR_STATE_OPEN: 'open',
+	AngieMcpSdk: jest.fn( () => mockSdk ),
 	clearReferrerRedirect: jest.fn(),
 	getAngieIframe: jest.fn( () => null ),
 	isAngiePluginActive: jest.fn( () => false ),
+	isAngiePluginAvailable: jest.fn( () => false ),
+	LAYOUT_SIDEBAR: 'sidebar',
 	saveState: jest.fn(),
 	setReferrerRedirect: jest.fn(),
 	toggleAngieSidebar: jest.fn(),
@@ -95,5 +110,40 @@ describe( 'deliverPendingAngiePrompt', () => {
 		// Assert
 		expect( sessionStorage.getItem( PENDING_PROMPT_STORAGE_KEY ) ).toBe( PROMPT );
 		expect( assign ).toHaveBeenCalledWith( '/wp-admin/admin.php?page=angie-app' );
+	} );
+} );
+
+describe( 'openAngieWithPrompt', () => {
+	beforeEach( () => {
+		AngieMcpSdk.mockClear();
+		Object.values( mockSdk ).forEach( ( mock ) => mock.mockClear() );
+		isAngiePluginAvailable.mockReturnValue( false );
+		setLocation( '' );
+	} );
+
+	it( 'boots the Core SDK sidebar once and sends each prompt when the Angie plugin is not on the page', async () => {
+		// Act
+		await openAngieWithPrompt( PROMPT );
+		await openAngieWithPrompt( PROMPT );
+
+		// Assert
+		expect( mockSdk.loadSidebarV2 ).toHaveBeenCalledTimes( 1 );
+		expect( mockSdk.loadSidebarV2 ).toHaveBeenCalledWith( expect.objectContaining( {
+			container: expect.objectContaining( { create: true, layout: 'sidebar' } ),
+		} ) );
+		expect( mockSdk.triggerAngie ).toHaveBeenCalledTimes( 2 );
+		expect( mockSdk.triggerAngie ).toHaveBeenCalledWith( expect.objectContaining( { prompt: PROMPT } ) );
+	} );
+
+	it( 'hands the prompt to the Angie plugin when it is available', async () => {
+		// Arrange
+		isAngiePluginAvailable.mockReturnValue( true );
+
+		// Act
+		await openAngieWithPrompt( PROMPT );
+
+		// Assert
+		expect( window.location.hash ).toContain( `angie-prompt=${ encodeURIComponent( PROMPT ) }` );
+		expect( mockSdk.loadSidebarV2 ).not.toHaveBeenCalled();
 	} );
 } );
