@@ -1,5 +1,5 @@
-import { renderHook } from '@testing-library/react';
 import { dismissNotification, notify } from '@elementor/editor-notifications';
+import { renderHook } from '@testing-library/react';
 
 import { useActionProps } from '../use-action-props';
 
@@ -50,23 +50,26 @@ describe( 'useAngieActionProps', () => {
 		);
 	} );
 
-	it.each( [ 'sdk', 'plugin' ] as const )( 'opens Angie through the editor host when state is %s', async ( state ) => {
-		const openAngie = jest.fn().mockResolvedValue( undefined );
-		setHost( state, { getAngieState: () => state, openAngie } );
+	it.each( [ 'sdk', 'plugin' ] as const )(
+		'opens Angie through the editor host when state is %s',
+		async ( state ) => {
+			const openAngie = jest.fn().mockResolvedValue( undefined );
+			setHost( state, { getAngieState: () => state, openAngie } );
 
-		const { result } = renderHook( () => useActionProps() );
+			const { result } = renderHook( () => useActionProps() );
 
-		result.current.onClick();
+			result.current.onClick();
 
-		await Promise.resolve();
+			await Promise.resolve();
 
-		expect( openAngie ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				prompt: '',
-				mode: 'ask',
-			} )
-		);
-	} );
+			expect( openAngie ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					prompt: '',
+					mode: 'ask',
+				} )
+			);
+		}
+	);
 
 	it.each( [ 'sdk', 'plugin' ] as const )(
 		'shows an error notification when openAngie is missing in %s state',
