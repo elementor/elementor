@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 export type SiteContentSection = {
 	id: string;
+	label?: string;
 	priority?: number;
 	render: () => ReactNode;
 };
