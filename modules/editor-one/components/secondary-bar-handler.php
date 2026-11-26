@@ -90,12 +90,15 @@ class Secondary_Bar_Handler {
 				? ''
 				: '<span class="e-one-secondary-bar-placeholder__tag">' . esc_html( $tab['tag'] ) . '</span>';
 
+			$arrow = empty( $tab['opens_in_app'] ) ? '' : '<span class="e-one-secondary-bar-placeholder__app-arrow"></span>';
+
 			$tabs .= sprintf(
-				'<a class="%1$s" href="%2$s" tabindex="-1">%3$s%4$s</a>',
+				'<a class="%1$s" href="%2$s" tabindex="-1">%3$s%5$s%4$s</a>',
 				empty( $tab['is_active'] ) ? 'e-one-secondary-bar-placeholder__tab' : 'e-one-secondary-bar-placeholder__tab is-active',
 				esc_url( $tab['url'] ?? '' ),
 				esc_html( $tab['label'] ?? '' ),
-				$tag
+				$tag,
+				$arrow
 			);
 		}
 
