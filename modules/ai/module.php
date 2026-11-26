@@ -120,7 +120,7 @@ class Module extends BaseModule {
 	}
 
 	public static function is_angie_enabled(): bool {
-		if ( self::is_current_user_angie_disabled() || self::is_angie_blocked_by_site() ) {
+		if ( ! self::is_angie_in_panels_active() || self::is_current_user_angie_disabled() || self::is_angie_blocked_by_site() ) {
 			return false;
 		}
 
