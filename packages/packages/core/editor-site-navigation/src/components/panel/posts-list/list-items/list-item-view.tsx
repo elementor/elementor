@@ -8,7 +8,6 @@ import { DotsVerticalIcon, HomeIcon } from '@elementor/icons';
 import {
 	bindMenu,
 	bindTrigger,
-	Box,
 	Divider,
 	IconButton,
 	ListItem,
@@ -35,7 +34,7 @@ import SetHome, { RemoveHomepageDialog } from '../../actions-menu/actions/set-ho
 import View from '../../actions-menu/actions/view';
 import {
 	contentPanelListItemButtonSx,
-	contentPanelListItemSecondaryActionSlotSx,
+	contentPanelListItemSecondaryActionsStackSx,
 	getContentPanelListItemSecondarySlotCount,
 	getContentPanelListItemSx,
 } from '../../content-panel-chrome';
@@ -97,7 +96,6 @@ export default function ListItemView( { post }: { post: Post } ) {
 	const isHome = Boolean( post.isHome );
 	const showHomeInLeadingSecondarySlot = isHome && ! showListItemActions;
 	const showHomeInTrailingSecondarySlot = isHome && showListItemActions;
-	const showLeadingSecondarySlot = showListItemActions || showHomeInLeadingSecondarySlot;
 	const secondaryActionSlotCount = getContentPanelListItemSecondarySlotCount( {
 		hasHomeIcon: isHome,
 		hasRowActions: showListItemActions,
@@ -119,16 +117,15 @@ export default function ListItemView( { post }: { post: Post } ) {
 			disablePadding
 			sx={ getContentPanelListItemSx( secondaryActionSlotCount ) }
 			secondaryAction={
-				<Stack alignItems="center" direction="row" spacing={ 0.25 }>
-					{ showLeadingSecondarySlot && (
-						<Box sx={ contentPanelListItemSecondaryActionSlotSx }>
-							{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
-							{ showHomeInLeadingSecondarySlot && homeIcon }
-						</Box>
-					) }
-					{ showHomeInTrailingSecondarySlot && (
-						<Box sx={ contentPanelListItemSecondaryActionSlotSx }>{ homeIcon }</Box>
-					) }
+				<Stack
+					alignItems="center"
+					direction="row"
+					spacing={ 0.5 }
+					sx={ contentPanelListItemSecondaryActionsStackSx }
+				>
+					{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
+					{ showHomeInLeadingSecondarySlot && homeIcon }
+					{ showHomeInTrailingSecondarySlot && homeIcon }
 					<IconButton
 						aria-label={ __( 'More actions', 'elementor' ) }
 						size="tiny"

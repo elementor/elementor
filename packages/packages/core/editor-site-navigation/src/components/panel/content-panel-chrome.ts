@@ -1,16 +1,35 @@
 const CONTENT_PANEL_INSET_SPACING = 2;
 const CONTENT_PANEL_LIST_ROW_GAP = 0.5;
 const CONTENT_PANEL_LIST_ROW_INSET_INLINE = 0.75;
-const CONTENT_PANEL_LIST_ROW_TINY_ICON_BUTTON_SLOT_WIDTH = 7;
+const CONTENT_PANEL_LIST_ROW_TINY_ICON_BUTTON_SIZE = 8;
+const CONTENT_PANEL_LIST_ROW_SECONDARY_ACTION_GAP = 0.5;
 const CONTENT_PANEL_LIST_ITEM_MENU_SLOT_COUNT = 1;
 
-export const contentPanelListItemSecondaryActionSlotSx = {
-	alignItems: 'center',
-	display: 'flex',
+export const contentPanelListItemSecondaryActionsStackSx = {
 	flexShrink: 0,
-	justifyContent: 'center',
-	minWidth: CONTENT_PANEL_LIST_ROW_TINY_ICON_BUTTON_SLOT_WIDTH,
-	width: CONTENT_PANEL_LIST_ROW_TINY_ICON_BUTTON_SLOT_WIDTH,
+};
+
+export const contentPanelListItemSecondaryActionsRootSx = {
+	'& .MuiListItemSecondaryAction-root': {
+		alignItems: 'center',
+		display: 'flex',
+		marginInlineStart: 'auto',
+		position: 'static',
+		transform: 'none',
+	},
+};
+
+const getContentPanelListItemTrailingInsetEnd = ( secondaryActionSlotCount: number ) => {
+	if ( secondaryActionSlotCount <= CONTENT_PANEL_LIST_ITEM_MENU_SLOT_COUNT ) {
+		return undefined;
+	}
+
+	const gapCount = secondaryActionSlotCount - 1;
+
+	return (
+		secondaryActionSlotCount * CONTENT_PANEL_LIST_ROW_TINY_ICON_BUTTON_SIZE +
+		gapCount * CONTENT_PANEL_LIST_ROW_SECONDARY_ACTION_GAP
+	);
 };
 const CONTENT_PANEL_LIST_ROW_TITLE_FONT_SIZE = '0.75rem';
 const CONTENT_PANEL_LIST_SECTION_BOTTOM_SPACING = 1;
@@ -45,14 +64,18 @@ export function getContentPanelListItemSecondarySlotCount( options: {
 }
 
 export function getContentPanelListItemSx( secondaryActionSlotCount: number ) {
-	if ( secondaryActionSlotCount <= CONTENT_PANEL_LIST_ITEM_MENU_SLOT_COUNT ) {
-		return contentPanelListRowPaddingSx;
-	}
+	const paddingInlineEnd = getContentPanelListItemTrailingInsetEnd( secondaryActionSlotCount );
 
-	const paddingInlineEnd = secondaryActionSlotCount * CONTENT_PANEL_LIST_ROW_TINY_ICON_BUTTON_SLOT_WIDTH;
+	if ( undefined === paddingInlineEnd ) {
+		return {
+			...contentPanelListRowPaddingSx,
+			...contentPanelListItemSecondaryActionsRootSx,
+		};
+	}
 
 	return {
 		...contentPanelListRowPaddingSx,
+		...contentPanelListItemSecondaryActionsRootSx,
 		'&& > .MuiListItemButton-root': {
 			paddingInlineEnd,
 			paddingRight: 'unset',
