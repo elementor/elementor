@@ -119,14 +119,14 @@ export default function ListItemView( { post }: { post: Post } ) {
 			disablePadding
 			sx={ getContentPanelListItemSx( secondaryActionSlotCount ) }
 			secondaryAction={
-				<Stack alignItems="center" direction="row" spacing={ 0 }>
+				<Stack alignItems="center" direction="row" spacing={ 0.25 }>
 					{ showLeadingSecondarySlot && (
 						<Box sx={ contentPanelListItemSecondaryActionSlotSx }>
 							{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
 							{ showHomeInLeadingSecondarySlot && homeIcon }
 						</Box>
 					) }
-					{ showHomeInTrailingSecondarySlot && (
+					{ showTrailingHomeSecondarySlot && (
 						<Box sx={ contentPanelListItemSecondaryActionSlotSx }>{ homeIcon }</Box>
 					) }
 					<IconButton

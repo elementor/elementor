@@ -175,7 +175,7 @@ describe( '@elementor/editor-site-navigation - PostsCollapsibleList', () => {
 
 		expect( items.length ).toBe( 2 );
 		expect( items[ 0 ] ).toHaveTextContent( 'Home' );
-		expect( items[ 0 ] ).toHaveTextContent( 'Homepage' );
+		expect( screen.getByRole( 'button', { name: 'Homepage' } ) ).toBeInTheDocument();
 		expect( items[ 1 ] ).toHaveTextContent( 'About' );
 		expect( items[ 1 ] ).toHaveTextContent( 'Draft' );
 	} );
