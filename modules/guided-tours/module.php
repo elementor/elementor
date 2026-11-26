@@ -16,6 +16,7 @@ class Module extends BaseModule {
 	private const DRIVER_ASSET_VERSION = '1.10.2';
 	private const DRIVER_SCRIPT_HANDLE = 'elementor-guided-tours-driver';
 	private const SCRIPT_HANDLE = 'elementor-guided-tours';
+	private const THEME_TOKENS_HANDLE = 'e-theme-ui-light';
 
 	private Progress_Manager $progress_manager;
 	private Tours_Repository $tours_repository;
@@ -60,6 +61,19 @@ class Module extends BaseModule {
 		$this->maybe_enqueue_tour_assets( self::EDITOR_SCREEN_ID, 'editor' );
 	}
 
+	private function maybe_enqueue_theme_tokens( string $context ): void {
+		if ( 'admin' !== $context ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			self::THEME_TOKENS_HANDLE,
+			$this->get_css_assets_url( 'theme-light' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+	}
+
 	private function maybe_enqueue_tour_assets( string $screen_id, string $context = 'admin' ): void {
 		$tour = $this->tours_repository->get_eligible_tour(
 			$screen_id,
@@ -84,6 +98,8 @@ class Module extends BaseModule {
 			[],
 			self::DRIVER_ASSET_VERSION
 		);
+		$this->maybe_enqueue_theme_tokens( $context );
+
 		wp_enqueue_style(
 			self::SCRIPT_HANDLE,
 			$this->get_css_assets_url( 'modules/guided-tours/guided-tours' ),

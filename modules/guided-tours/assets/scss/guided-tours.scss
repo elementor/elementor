@@ -1,4 +1,6 @@
 $popover-width: 296px;
+$arrow-size: 10px;
+$popover-shadow: 0 -6px 10px 2px rgba(0, 0, 0, 0.025), 6px 0 10px 2px rgba(0, 0, 0, 0.025), -6px 0 10px 2px rgba(0, 0, 0, 0.025), 0 6px 10px 2px rgba(0, 0, 0, 0.025);
 
 .driver-overlay {
 	z-index: 100000000 !important;
@@ -12,7 +14,7 @@ $popover-width: 296px;
 	border-radius: var(--e-a-border-radius);
 	background: var(--e-a-bg-default);
 	color: var(--e-a-color-txt);
-	box-shadow: var(--e-a-popover-shadow);
+	box-shadow: $popover-shadow;
 	font-family: var(--e-a-font-family);
 
 	.driver-popover-title {
@@ -91,6 +93,24 @@ $popover-width: 296px;
 
 	.driver-popover-arrow {
 		z-index: 1;
+		border-width: $arrow-size;
+		border-color: var(--e-a-bg-default);
+	}
+
+	.driver-popover-arrow-side-left {
+		border-color: transparent transparent transparent var(--e-a-bg-default);
+	}
+
+	.driver-popover-arrow-side-right {
+		border-color: transparent var(--e-a-bg-default) transparent transparent;
+	}
+
+	.driver-popover-arrow-side-top {
+		border-color: var(--e-a-bg-default) transparent transparent;
+	}
+
+	.driver-popover-arrow-side-bottom {
+		border-color: transparent transparent var(--e-a-bg-default);
 	}
 }
 
