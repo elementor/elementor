@@ -8,6 +8,10 @@ export {
 } from './mcp/utils/convert-css-to-atomic';
 
 export { init } from './init';
+export {
+	type ElementStylesEntry,
+	undoableApplyElementStyles,
+} from './style-commands/undoable-actions/apply-element-styles';
 export { isAtomicWidget } from './utils/command-utils';
 
 export {

@@ -20,8 +20,7 @@ import { useClassesProp } from '../contexts/classes-prop-context';
 import { useElement } from '../contexts/element-context';
 import { useStyle } from '../contexts/style-context';
 import { StylesProviderCannotUpdatePropsError } from '../errors';
-import { getSubtitle, getTitle } from '../utils/styles-history';
-import { HISTORY_DEBOUNCE_WAIT } from './use-styles-fields';
+import { getSubtitle, getTitle, HISTORY_DEBOUNCE_WAIT } from './use-styles-fields';
 import { useStylesRerender } from './use-styles-rerender';
 
 type UpdateStyleArgs = {

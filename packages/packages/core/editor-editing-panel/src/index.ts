@@ -41,6 +41,9 @@ export { ClassesPropProvider, useClassesProp } from './contexts/classes-prop-con
 export { ElementProvider, useElement } from './contexts/element-context';
 export { StyleProvider, useStyle } from './contexts/style-context';
 export { StyleInheritanceProvider } from './contexts/styles-inheritance-context';
+export { makeBreakpointsInheritancePaths } from './styles-inheritance/create-snapshots-manager';
+export { getElementStylesInheritance } from './styles-inheritance/get-element-styles-inheritance';
+export type { StylesInheritanceAPI, StylesInheritanceSnapshot } from './styles-inheritance/types';
 export { StylesFieldTargetsProvider } from './contexts/styles-field-targets-context';
 export { Control as BaseControl } from './controls-registry/control';
 export { ControlTypeContainer } from './controls-registry/control-type-container';
@@ -50,7 +53,7 @@ export { createTopLevelObjectType } from './controls-registry/create-top-level-o
 export { useControlsByWidgetType } from './hooks/use-controls-by-widget-type';
 export { useCustomCss } from './hooks/use-custom-css';
 export { useStateByElement } from './hooks/use-state-by-element';
-export { HISTORY_DEBOUNCE_WAIT } from './hooks/use-styles-fields';
+export { getSubtitle, getTitle, HISTORY_DEBOUNCE_WAIT } from './hooks/use-styles-fields';
 export { useStylesRerender } from './hooks/use-styles-rerender';
 export { init } from './init';
 export { usePanelActions, usePanelStatus } from './panel';
@@ -73,14 +76,6 @@ export {
 } from './utils/prop-dependency-utils';
 export { getElementClassesProp, getElementLocalStyle } from './utils/element-local-style';
 export { isEqual } from './utils/is-equal';
-export {
-	createUndoableUpdateStyles,
-	getLocalStyleTargets,
-	getSubtitle,
-	getTitle,
-	type StyleTarget,
-	type StyleWrite,
-} from './utils/styles-history';
 export {
 	registerSubmenuToggle,
 	type SubmenuToggleProps,

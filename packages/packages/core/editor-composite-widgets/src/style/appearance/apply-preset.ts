@@ -1,10 +1,11 @@
-import { createUndoableUpdateStyles } from '@elementor/editor-editing-panel';
+import { undoableApplyElementStyles } from '@elementor/editor-canvas';
 import { type ElementID } from '@elementor/editor-elements';
-import { type BreakpointId, getBreakpointsTree } from '@elementor/editor-responsive';
+import { type BreakpointId } from '@elementor/editor-responsive';
 
 import { type CompositeWidgetPreset } from '../../types';
-import { buildPresetWrites } from './build-preset-writes';
-import { getPresetParts } from './get-preset-parts';
+import { getWidgetPartContainers } from '../use-widget-part-containers';
+import { buildPresetStyles } from './build-preset-styles';
+import { getPresetPartNames } from './preset-values';
 
 type ApplyPresetArgs = {
 	rootId: ElementID;
@@ -20,16 +21,15 @@ export function applyPreset( { rootId, preset, optionId, breakpoint }: ApplyPres
 		return;
 	}
 
-	const writes = buildPresetWrites( {
+	const entries = buildPresetStyles( {
 		option,
-		parts: getPresetParts( rootId, preset ),
+		containers: getWidgetPartContainers( rootId, getPresetPartNames( preset ) ),
 		breakpoint,
-		breakpointsTree: getBreakpointsTree(),
 	} );
 
-	if ( ! writes.length ) {
+	if ( ! entries.length ) {
 		return;
 	}
 
-	createUndoableUpdateStyles()( { writes, propDisplayName: preset.label } );
+	undoableApplyElementStyles()( { entries, subtitle: preset.label } );
 }

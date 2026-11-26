@@ -1,33 +1,27 @@
-import { isEqual } from '@elementor/editor-editing-panel';
-import { isTransformable, type PropValue, type TransformablePropValue } from '@elementor/editor-props';
+import { isTransformable, type ObjectPropValue, type Props, type PropValue } from '@elementor/editor-props';
+import { type BreakpointId } from '@elementor/editor-responsive';
+import { getStylesSchema } from '@elementor/editor-styles';
 
-type ObjectPropValue = TransformablePropValue< string, Record< string, unknown > >;
+import { type CompositeWidgetPreset, type CompositeWidgetPresetWrite } from '../../types';
 
-export function mergePresetValue( current: PropValue | undefined, preset: PropValue ): PropValue {
-	if ( ! isObjectProp( preset ) || ! isObjectPropOfType( current, preset.$$type ) ) {
+export function isObjectStyleProp( prop: string ): boolean {
+	return getStylesSchema()?.[ prop ]?.kind === 'object';
+}
+
+export function mergePresetValue( prop: string, current: PropValue | undefined, preset: PropValue ): PropValue {
+	const presetObject = preset as ObjectPropValue;
+
+	if ( ! isObjectStyleProp( prop ) || ! isTransformable( current ) || current.$$type !== presetObject.$$type ) {
 		return preset;
 	}
 
-	return { ...preset, value: { ...current.value, ...preset.value } };
+	return { ...presetObject, value: { ...( current as ObjectPropValue ).value, ...presetObject.value } };
 }
 
-export function matchesPresetValue( current: PropValue | undefined, preset: PropValue ): boolean {
-	if ( ! isObjectProp( preset ) || ! isObjectPropOfType( current, preset.$$type ) ) {
-		return isEqual( current, preset );
-	}
-
-	return Object.entries( preset.value ).every( ( [ key, value ] ) => isEqual( current.value[ key ], value ) );
+export function resolvePresetProps( style: CompositeWidgetPresetWrite[ 'style' ], path: BreakpointId[] ): Props {
+	return Object.assign( {}, ...path.map( ( breakpoint ) => style[ breakpoint ] ?? {} ) );
 }
 
-function isObjectPropOfType( value: PropValue | undefined, type: string ): value is ObjectPropValue {
-	return isObjectProp( value ) && value.$$type === type;
-}
-
-function isObjectProp( value: PropValue | undefined ): value is ObjectPropValue {
-	return (
-		isTransformable( value ) &&
-		typeof value.value === 'object' &&
-		value.value !== null &&
-		! Array.isArray( value.value )
-	);
+export function getPresetPartNames( preset: CompositeWidgetPreset ): string[] {
+	return [ ...new Set( preset.options.flatMap( ( option ) => option.set.map( ( { part } ) => part ) ) ) ];
 }

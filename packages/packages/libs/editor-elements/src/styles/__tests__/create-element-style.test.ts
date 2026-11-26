@@ -141,6 +141,35 @@ describe( 'createElementStyle', () => {
 		expect( createdId ).toBe( 'test-id' );
 	} );
 
+	it( 'should not add the style id to the classes again when recreating a style that is still applied', () => {
+		// Arrange.
+		const element = createMockElement( {
+			model: { widgetType: 'test-element', id: 'test-element-id', styles: {} },
+			settings: { classes: { $$type: 'classes', value: [ 'global-class', 'test-id' ] } },
+		} );
+
+		jest.mocked( getContainer ).mockImplementation( ( elementId ) =>
+			elementId === 'test-element-id' ? element : null
+		);
+
+		// Act.
+		createElementStyle( {
+			styleId: 'test-id',
+			elementId: 'test-element-id',
+			meta: { breakpoint: null, state: null },
+			label: 'Test Style',
+			classesProp: 'classes',
+			props: { testProp: 'testValue' },
+		} );
+
+		// Assert.
+		expect( updateElementSettings ).toHaveBeenLastCalledWith( {
+			id: 'test-element-id',
+			props: { classes: { $$type: 'classes', value: [ 'global-class', 'test-id' ] } },
+			withHistory: false,
+		} );
+	} );
+
 	it( 'should create a new classes prop if it does not exist', () => {
 		// Arrange.
 		const element = createMockElement( {

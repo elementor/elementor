@@ -3,6 +3,7 @@ import { createMockElementType, renderWithTheme } from 'test-utils';
 import { ElementProvider } from '@elementor/editor-editing-panel';
 import { ELEMENT_STYLE_CHANGE_EVENT, getElementType } from '@elementor/editor-elements';
 import { type PropType } from '@elementor/editor-props';
+import { type StyleDefinition } from '@elementor/editor-styles';
 import { act, fireEvent, screen } from '@testing-library/react';
 
 import { setCompositeWidgetDefinitions } from '../../__tests__/set-composite-widget-definitions';
@@ -45,35 +46,34 @@ jest.mock( '@elementor/editor-editing-panel', () => {
 
 	const { getElementStyles } = jest.requireActual( '@elementor/editor-elements' );
 
-	const elementStylesProvider = {
-		actions: {
-			get: ( styleId: string, { elementId }: { elementId: string } ) =>
-				getElementStyles( elementId )?.[ styleId ] ?? null,
-		},
-	};
-
 	const getElementLocalStyle = ( elementId: string ) => {
 		const [ styleId ] = Object.keys( getElementStyles( elementId ) ?? {} );
 
-		return styleId ? { styleId, provider: elementStylesProvider } : null;
+		return styleId ? { styleId, provider: null } : null;
 	};
 
-	const getLocalStyleTargets = ( elementIds: string[] ) =>
-		elementIds.map( ( elementId ) => {
-			const localStyle = getElementLocalStyle( elementId );
+	const getElementStylesInheritance = ( elementId: string ) => ( {
+		getSnapshot: () => {
+			const styles: StyleDefinition[] = Object.values( getElementStyles( elementId ) ?? {} );
 
-			return {
-				elementId,
-				classesProp: 'classes',
-				styleId: localStyle?.styleId ?? null,
-				provider: localStyle?.provider ?? null,
-			};
-		} );
+			return Object.fromEntries(
+				styles.flatMap( ( style ) =>
+					style.variants.flatMap( ( variant ) =>
+						Object.entries( variant.props ).map( ( [ prop, value ] ) => [
+							prop,
+							[ { style, variant, value } ],
+						] )
+					)
+				)
+			);
+		},
+		getInheritanceChain: () => [],
+	} );
 
 	return {
 		...actual,
 		getElementLocalStyle,
-		getLocalStyleTargets,
+		getElementStylesInheritance,
 		StyleTab: () => createElement( 'div', null, 'Root style tab' ),
 		StyleProvider: StyleProviderProbe,
 		StyleInheritanceProvider: ( { children }: { children: React.ReactNode } ) => children,

@@ -4,17 +4,13 @@ import { MenuListItem } from '@elementor/editor-ui';
 import { Select, type SelectChangeEvent, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type CompositeWidgetPreset } from '../../types';
-
-export type PresetControlProps = {
-	preset: CompositeWidgetPreset;
-	value: string | null;
-	onChange: ( optionId: string ) => void;
-};
+import { usePreset } from './preset-context';
 
 export const CUSTOM_LABEL = __( 'Custom', 'elementor' );
 
-export function PresetToggle( { preset, value, onChange }: PresetControlProps ) {
+export function PresetToggle() {
+	const { preset, matchedOptionId, apply } = usePreset();
+
 	const items = preset.options.map( ( { id, label } ) => ( {
 		value: id,
 		label,
@@ -24,15 +20,17 @@ export function PresetToggle( { preset, value, onChange }: PresetControlProps ) 
 	return (
 		<ToggleButtonGroupUi< string | null >
 			items={ items }
-			value={ value }
-			onChange={ ( optionId ) => optionId && onChange( optionId ) }
+			value={ matchedOptionId }
+			onChange={ ( optionId ) => optionId && apply( optionId ) }
 			exclusive
 			fullWidth
 		/>
 	);
 }
 
-export function PresetSelect( { preset, value, onChange }: PresetControlProps ) {
+export function PresetSelect() {
+	const { preset, matchedOptionId, apply } = usePreset();
+
 	const renderValue = ( optionId: string ) =>
 		preset.options.find( ( { id } ) => id === optionId )?.label ?? (
 			<Typography fontSize="inherit" color="text.tertiary">
@@ -46,9 +44,9 @@ export function PresetSelect( { preset, value, onChange }: PresetControlProps ) 
 			fullWidth
 			displayEmpty
 			SelectDisplayProps={ { 'aria-label': preset.label } }
-			value={ value ?? '' }
+			value={ matchedOptionId ?? '' }
 			renderValue={ renderValue }
-			onChange={ ( event: SelectChangeEvent< string > ) => event.target.value && onChange( event.target.value ) }
+			onChange={ ( event: SelectChangeEvent< string > ) => event.target.value && apply( event.target.value ) }
 		>
 			{ preset.options.map( ( { id, label } ) => (
 				<MenuListItem key={ id } value={ id }>
