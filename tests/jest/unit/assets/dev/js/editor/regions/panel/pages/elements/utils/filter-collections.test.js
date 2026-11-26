@@ -1,12 +1,14 @@
 import { filterCollections } from 'elementor-panel/pages/elements/utils/filter-collections';
 
+const collectionOf = ( models = [] ) => ( { models, each: jest.fn() } );
+
 describe( 'filterCollections', () => {
 	let collections;
 
 	beforeEach( () => {
 		collections = {
-			elementsCollection: { models: [] },
-			categoriesCollection: { models: [] },
+			elementsCollection: collectionOf(),
+			categoriesCollection: collectionOf(),
 		};
 
 		global.elementor = { hooks: { applyFilters: jest.fn( ( name, value ) => value ) } };
@@ -32,8 +34,8 @@ describe( 'filterCollections', () => {
 
 	test( 'returns the handler collections', () => {
 		const filtered = {
-			elementsCollection: { models: [ 1 ] },
-			categoriesCollection: { models: [ 2 ] },
+			elementsCollection: collectionOf( [ 1 ] ),
+			categoriesCollection: collectionOf( [ 2 ] ),
 		};
 
 		global.elementor.hooks.applyFilters.mockReturnValue( filtered );
@@ -50,14 +52,16 @@ describe( 'filterCollections', () => {
 
 		expect( filterCollections( collections ) ).toBe( collections );
 		expect( consoleError ).toHaveBeenCalledTimes( 1 );
+		expect( consoleError ).toHaveBeenCalledWith( expect.any( String ), 'boom' );
 	} );
 
 	test.each( [
 		[ 'undefined', undefined ],
 		[ 'empty object', {} ],
-		[ 'missing categoriesCollection', { elementsCollection: { models: [] } } ],
-		[ 'missing elementsCollection', { categoriesCollection: { models: [] } } ],
-		[ 'non-array models', { elementsCollection: { models: {} }, categoriesCollection: { models: [] } } ],
+		[ 'missing categoriesCollection', { elementsCollection: collectionOf() } ],
+		[ 'missing elementsCollection', { categoriesCollection: collectionOf() } ],
+		[ 'non-array models', { elementsCollection: { models: {}, each: jest.fn() }, categoriesCollection: collectionOf() } ],
+		[ 'plain object without each', { elementsCollection: { models: [] }, categoriesCollection: collectionOf() } ],
 	] )( 'returns the input when a handler returns an invalid shape (%s)', ( name, invalid ) => {
 		global.elementor.hooks.applyFilters.mockReturnValue( invalid );
 

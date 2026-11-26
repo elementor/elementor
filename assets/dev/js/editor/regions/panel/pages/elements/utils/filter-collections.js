@@ -1,4 +1,5 @@
-const isValidCollection = ( collection ) => Array.isArray( collection?.models );
+const isValidCollection = ( collection ) =>
+	Array.isArray( collection?.models ) && 'function' === typeof collection.each;
 
 const isValidCollections = ( collections ) =>
 	isValidCollection( collections?.elementsCollection ) && isValidCollection( collections?.categoriesCollection );
@@ -17,7 +18,7 @@ export function filterCollections( collections ) {
 
 		return isValidCollections( filtered ) ? filtered : collections;
 	} catch ( error ) {
-		console.error( 'Failed to filter the panel elements collections.', error ); // eslint-disable-line no-console
+		console.error( 'Failed to filter the panel elements collections.', error?.message ); // eslint-disable-line no-console
 
 		return collections;
 	}

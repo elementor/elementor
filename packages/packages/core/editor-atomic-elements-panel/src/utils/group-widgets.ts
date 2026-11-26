@@ -29,7 +29,7 @@ export type ElementGroup = {
 	tiles: ElementTile[];
 };
 
-export const FALLBACK_GROUP_ID = 'v4-elements';
+const FALLBACK_GROUP_ID = 'v4-elements';
 const FORM_GROUP_ID = 'form';
 const FORM_CATEGORY = 'atomic-form';
 
