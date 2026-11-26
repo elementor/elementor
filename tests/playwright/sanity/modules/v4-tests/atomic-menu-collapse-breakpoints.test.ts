@@ -336,7 +336,7 @@ test.describe( 'Atomic Menu collapse breakpoint follows the site breakpoints @at
 		await expect( getToggle( getMenuRoot( menuId ) ) ).toBeVisible();
 	} );
 
-	test( 'Visual: the menu collapsed at Laptop and at Widescreen on the canvas', async () => {
+	test( 'Visual: the canvas at Laptop width with the menu collapsed at Laptop', async () => {
 		// Arrange
 		await breakpoints.addAllBreakpoints( editor );
 
@@ -347,20 +347,39 @@ test.describe( 'Atomic Menu collapse breakpoint follows the site breakpoints @at
 		await setCollapseBreakpoint( menuId, 'laptop' );
 		await editor.changeResponsiveView( 'laptop' );
 		await expect( getToggle( menu ) ).toBeVisible();
+		await expect( getItems( menu ) ).toBeHidden();
 
 		// Assert
-		await expect( menu ).toHaveScreenshot( 'menu-collapsed-laptop-canvas.png' );
+		await expect( editor.page.locator( '#elementor-preview-iframe' ) ).toHaveScreenshot( 'menu-collapsed-laptop-canvas.png' );
+	} );
+
+	test( 'Visual: the canvas at Widescreen width, expanded with Desktop and collapsed with Widescreen', async () => {
+		// Arrange
+		await breakpoints.addAllBreakpoints( editor );
+
+		const menuId = await addMenu();
+		const menu = getMenuRoot( menuId );
+		const preview = editor.page.locator( '#elementor-preview-iframe' );
+
+		// Act
+		await setCollapseBreakpoint( menuId, 'desktop' );
+		await editor.changeResponsiveView( 'widescreen' );
+		await expect( getToggle( menu ) ).toBeHidden();
+		await expect( getItems( menu ) ).toBeVisible();
+
+		// Assert
+		await expect( preview ).toHaveScreenshot( 'menu-widescreen-expanded-with-desktop-canvas.png' );
 
 		// Act
 		await setCollapseBreakpoint( menuId, 'widescreen' );
-		await editor.changeResponsiveView( 'widescreen' );
 		await expect( getToggle( menu ) ).toBeVisible();
+		await expect( getItems( menu ) ).toBeHidden();
 
 		// Assert
-		await expect( menu ).toHaveScreenshot( 'menu-collapsed-widescreen-canvas.png' );
+		await expect( preview ).toHaveScreenshot( 'menu-widescreen-collapsed-with-widescreen-canvas.png' );
 	} );
 
-	test( 'Visual: the frontend menu collapsed at Desktop and expanded with None', async () => {
+	test( 'Visual: the frontend menu collapsed at Desktop, closed and opened', async () => {
 		// Arrange
 		const menuId = await addMenu();
 
@@ -371,7 +390,17 @@ test.describe( 'Atomic Menu collapse breakpoint follows the site breakpoints @at
 
 		await expect( getToggle( nav ) ).toBeVisible();
 
-		// Assert
-		await expect( nav ).toHaveScreenshot( 'menu-collapsed-desktop-frontend.png' );
+		const closedBox = await nav.boundingBox();
+		const clip = { x: 0, y: Math.max( 0, ( closedBox?.y ?? 0 ) - 8 ), width: 600, height: 260 };
+
+		// Assert - closed
+		await expect( editor.page ).toHaveScreenshot( 'menu-collapsed-desktop-closed-frontend.png', { clip } );
+
+		// Act
+		await getToggle( nav ).click();
+		await expect( getItems( nav ) ).toBeVisible();
+
+		// Assert - opened
+		await expect( editor.page ).toHaveScreenshot( 'menu-collapsed-desktop-open-frontend.png', { clip } );
 	} );
 } );
