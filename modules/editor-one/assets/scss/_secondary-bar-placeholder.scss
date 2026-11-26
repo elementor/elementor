@@ -62,6 +62,19 @@
 		}
 	}
 
+	.e-one-secondary-bar-placeholder__app-arrow {
+		display: inline-block;
+		width: 16px;
+		height: 16px;
+		margin-inline-start: 4px;
+		background-color: currentColor;
+		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 7h10v10h-2V10.4L7.4 18 6 16.6 13.6 9H7z'/%3E%3C/svg%3E") center / contain no-repeat;
+
+		[dir="rtl"] & {
+			transform: scaleX(-1);
+		}
+	}
+
 	.e-one-secondary-bar-placeholder__tag {
 		display: inline-flex;
 		align-items: center;
