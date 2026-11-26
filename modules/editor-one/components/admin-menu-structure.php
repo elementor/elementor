@@ -3,6 +3,7 @@
 namespace Elementor\Modules\EditorOne\Components;
 
 use Elementor\Modules\EditorOne\Classes\Admin_Flow_Config;
+use Elementor\Modules\EditorOne\Classes\App_Link_Classifier;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Subscription_Action;
@@ -14,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Admin_Menu_Structure {
 
 	const DIVIDER_CLASS = 'elementor-submenu-has-divider';
+	const OPENS_IN_APP_CLASS = 'elementor-submenu-opens-in-app';
 
 	const UPGRADE_SLUGS = [
 		'elementor-one-upgrade',
@@ -232,6 +234,17 @@ class Admin_Menu_Structure {
 
 		$item[0] = $label;
 		$item[2] = $slug;
+
+		return $this->mark_if_opens_in_app( $item );
+	}
+
+	private function mark_if_opens_in_app( array $item ): array {
+		if ( ! App_Link_Classifier::opens_in_app( $this->admin_flow_handler->get_map()->get_default_url( $item[2] ) ) ) {
+			return $item;
+		}
+
+		$item[3] = $item[3] ?? $item[0];
+		$item[4] = trim( ( $item[4] ?? '' ) . ' ' . self::OPENS_IN_APP_CLASS );
 
 		return $item;
 	}

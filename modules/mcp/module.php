@@ -9,6 +9,7 @@ use Elementor\MCP\Composer\Admin\McpSettingsController;
 use Elementor\MCP\Composer\Admin\Page as Mcp_Admin_Page;
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
 use Elementor\Modules\CompositeWidgets\Mcp\Composite_Widgets_Resource_Ability;
+use Elementor\Modules\CompositeWidgets\Mcp\Manage_Widget_Pro_Features_Discovery_Ability;
 use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Ability_Hooks;
@@ -275,9 +276,17 @@ class Module extends BaseModule {
 
 	/** @return Abstract_Ability[] */
 	public static function get_composite_widgets_abilities(): array {
-		return Plugin::$instance->experiments->is_feature_active( Composite_Widgets_Module::EXPERIMENT_NAME )
-			? [ new Composite_Widgets_Resource_Ability() ]
-			: [];
+		if ( ! Plugin::$instance->experiments->is_feature_active( Composite_Widgets_Module::EXPERIMENT_NAME ) ) {
+			return [];
+		}
+
+		$abilities = [ new Composite_Widgets_Resource_Ability() ];
+
+		if ( ! Utils::has_pro() ) {
+			$abilities[] = new Manage_Widget_Pro_Features_Discovery_Ability();
+		}
+
+		return $abilities;
 	}
 
 	private function register_composite_widgets_abilities(): void {
