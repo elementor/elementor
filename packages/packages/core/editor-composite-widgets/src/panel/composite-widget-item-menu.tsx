@@ -4,7 +4,10 @@ import { bindMenu, bindTrigger, IconButton, Menu, usePopupState } from '@element
 import { __ } from '@wordpress/i18n';
 
 import { type CompositeWidgetDefinition } from '../types';
-import { CompositeWidgetItemMenuSlot, useCompositeWidgetItemMenuInjections } from './composite-widget-item-menu-location';
+import {
+	CompositeWidgetItemMenuSlot,
+	useCompositeWidgetItemMenuInjections,
+} from './composite-widget-item-menu-location';
 
 type Props = {
 	definition: CompositeWidgetDefinition;

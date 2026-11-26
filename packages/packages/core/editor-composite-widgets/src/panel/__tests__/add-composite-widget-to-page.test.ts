@@ -37,7 +37,9 @@ describe( 'addCompositeWidgetToPage', () => {
 		expect( dropElement ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				containerId: PREVIEW_ID,
-				model: expect.objectContaining( { custom: expect.objectContaining( { compositeWidgetId: 'site/card' } ) } ),
+				model: expect.objectContaining( {
+					custom: expect.objectContaining( { compositeWidgetId: 'site/card' } ),
+				} ),
 			} )
 		);
 	} );
