@@ -118,7 +118,20 @@ declare global {
 				dataEditMode?: {
 					request: ( key: 'activeMode' ) => string;
 				};
+				editor?: unknown;
+				panelElements?: {
+					on: ( event: string, callback: () => void ) => void;
+					off: ( event: string, callback: () => void ) => void;
+				};
 			};
+			modules?: {
+				elements?: {
+					models?: {
+						Element?: unknown;
+					};
+				};
+			};
+			userCan?: ( capability: string ) => boolean;
 			selection?: {
 				getElements: () => V1Element[];
 			};

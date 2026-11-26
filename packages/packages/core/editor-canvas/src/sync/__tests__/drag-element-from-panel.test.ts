@@ -57,6 +57,33 @@ describe( 'drag-element-from-panel', () => {
 		} );
 	} );
 
+	describe( 'startDragElementFromPanel custom', () => {
+		const Element = extendedWindow.elementor?.modules?.elements?.models?.Element as jest.Mock;
+		const mockEvent = { dataTransfer: { setData: jest.fn(), getData: () => '' } } as unknown as React.DragEvent;
+
+		it( 'should merge the custom argument into the preset metadata', () => {
+			// Act
+			startDragElementFromPanel( { elType: 'widget', widgetType: 'test', settings: { a: 1 } }, mockEvent, {
+				group: 'x',
+			} );
+
+			// Assert
+			expect( Element ).toHaveBeenLastCalledWith(
+				expect.objectContaining( { custom: { isPreset: true, preset_settings: { a: 1 }, group: 'x' } } )
+			);
+		} );
+
+		it( 'should keep the default custom data when no custom argument is passed', () => {
+			// Act
+			startDragElementFromPanel( { elType: 'widget', widgetType: 'test' }, mockEvent );
+
+			// Assert
+			expect( Element ).toHaveBeenLastCalledWith(
+				expect.objectContaining( { custom: { isPreset: false, preset_settings: undefined } } )
+			);
+		} );
+	} );
+
 	describe( 'endDragElementFromPanel', () => {
 		it( 'should trigger element:drag:end event', () => {
 			// Act
