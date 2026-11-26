@@ -140,6 +140,13 @@ class Atomic_Menu extends Atomic_Element_Base {
 	}
 
 	private static function get_collapse_breakpoint_keys(): array {
+		return array_merge( self::get_collapse_scale(), [ self::COLLAPSE_NONE ] );
+	}
+
+	/**
+	 * Every collapse choice from the smallest screen to the largest. Desktop is the base device, so it is always the last one.
+	 */
+	private static function get_collapse_scale(): array {
 		return [
 			Breakpoints_Manager::BREAKPOINT_KEY_MOBILE,
 			Breakpoints_Manager::BREAKPOINT_KEY_MOBILE_EXTRA,
@@ -147,8 +154,29 @@ class Atomic_Menu extends Atomic_Element_Base {
 			Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA,
 			Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP,
 			self::COLLAPSE_DESKTOP,
-			self::COLLAPSE_NONE,
 		];
+	}
+
+	/**
+	 * Maps every stored value to the breakpoint it collapses at on this site: itself while it is available, otherwise the
+	 * next smaller available one, and none when nothing smaller is left. The stored value is never rewritten.
+	 */
+	public static function resolve_collapse_breakpoints( array $available ): array {
+		$available[] = self::COLLAPSE_DESKTOP;
+		$resolved = [];
+		$fallback = self::COLLAPSE_NONE;
+
+		foreach ( self::get_collapse_scale() as $key ) {
+			if ( in_array( $key, $available, true ) ) {
+				$fallback = $key;
+			}
+
+			$resolved[ $key ] = $fallback;
+		}
+
+		$resolved[ self::COLLAPSE_NONE ] = self::COLLAPSE_NONE;
+
+		return $resolved;
 	}
 
 	public static function get_default_collapse_breakpoint(): string {
@@ -325,6 +353,7 @@ class Atomic_Menu extends Atomic_Element_Base {
 			[
 				'context' => [
 					'default_collapse_breakpoint' => self::get_default_collapse_breakpoint(),
+					'collapse_breakpoints' => self::resolve_collapse_breakpoints( array_keys( self::get_collapsible_breakpoints() ) ),
 				],
 			],
 		];

@@ -651,6 +651,67 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertFalse( $prop_type->validate( [ '$$type' => 'string', 'value' => 'unknown' ] ) );
 	}
 
+	public function test_resolve_collapse_breakpoints__keeps_every_available_value() {
+		// Act.
+		$resolved = Atomic_Menu::resolve_collapse_breakpoints( [ 'mobile', 'tablet', 'laptop' ] );
+
+		// Assert.
+		$this->assertSame( 'mobile', $resolved['mobile'] );
+		$this->assertSame( 'tablet', $resolved['tablet'] );
+		$this->assertSame( 'laptop', $resolved['laptop'] );
+		$this->assertSame( 'desktop', $resolved['desktop'] );
+		$this->assertSame( 'none', $resolved['none'] );
+	}
+
+	public function test_resolve_collapse_breakpoints__a_removed_breakpoint_falls_to_the_next_smaller_one() {
+		// Act.
+		$resolved = Atomic_Menu::resolve_collapse_breakpoints( [ 'mobile', 'laptop' ] );
+
+		// Assert.
+		$this->assertSame( 'mobile', $resolved['mobile_extra'] );
+		$this->assertSame( 'mobile', $resolved['tablet'] );
+		$this->assertSame( 'mobile', $resolved['tablet_extra'] );
+		$this->assertSame( 'laptop', $resolved['laptop'] );
+	}
+
+	public function test_resolve_collapse_breakpoints__falls_to_none_when_nothing_smaller_is_left() {
+		// Act.
+		$resolved = Atomic_Menu::resolve_collapse_breakpoints( [ 'tablet', 'laptop' ] );
+
+		// Assert.
+		$this->assertSame( 'none', $resolved['mobile'] );
+		$this->assertSame( 'none', $resolved['mobile_extra'] );
+		$this->assertSame( 'tablet', $resolved['tablet'] );
+		$this->assertSame( 'desktop', $resolved['desktop'] );
+	}
+
+	public function test_resolve_collapse_breakpoints__with_no_active_breakpoints_only_desktop_and_none_remain() {
+		// Act.
+		$resolved = Atomic_Menu::resolve_collapse_breakpoints( [] );
+
+		// Assert.
+		$this->assertSame( 'none', $resolved['laptop'] );
+		$this->assertSame( 'desktop', $resolved['desktop'] );
+	}
+
+	public function test_rendered_nav__keeps_desktop_and_none_as_the_collapse_breakpoint() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		foreach ( [ 'desktop', 'none' ] as $value ) {
+			// Act.
+			$html = $this->render_menu( [
+				'collapse-breakpoint' => [
+					'$$type' => 'string',
+					'value' => $value,
+				],
+			] );
+
+			// Assert.
+			$this->assertSame( $value, $this->load_html( $html )->query( '//nav' )->item( 0 )->getAttribute( 'data-e-collapse' ) );
+		}
+	}
+
 	public function test_get_collapse_css__desktop_collapses_at_every_width_without_a_media_query() {
 		// Act.
 		$css = Atomic_Menu::get_collapse_css();
