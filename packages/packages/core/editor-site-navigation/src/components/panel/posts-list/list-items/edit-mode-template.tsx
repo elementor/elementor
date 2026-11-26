@@ -65,6 +65,7 @@ export default function EditModeTemplate( { postTitle, isLoading, callback, onDi
 	const [ touched, setTouched ] = useState( false );
 	const [ inputError, setInputError ] = useState< string | null >( null );
 	const closeButton = useRef< HTMLButtonElement >();
+	const hasSubmittedRef = useRef( false );
 
 	const onBlur = ( e: FocusEvent ) => {
 		if ( closeButton.current === e.relatedTarget ) {
@@ -89,10 +90,15 @@ export default function EditModeTemplate( { postTitle, isLoading, callback, onDi
 	};
 
 	const runCallback = () => {
+		if ( hasSubmittedRef.current || isLoading ) {
+			return;
+		}
+
 		if ( ! validateInput( title ) ) {
 			return;
 		}
 
+		hasSubmittedRef.current = true;
 		callback( title );
 	};
 

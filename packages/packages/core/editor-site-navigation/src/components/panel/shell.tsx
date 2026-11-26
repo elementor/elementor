@@ -9,7 +9,6 @@ import { ContentPanelCoordinatorProvider } from '../../contexts/content-panel-co
 import useAccessiblePanelPostTypes from '../../hooks/use-accessible-panel-post-types';
 import { contentPanelHeaderStackSx } from './content-panel-chrome';
 import ContentPanelHeaderAdd from './content-panel-header-add';
-import ContentPanelToolbar from './content-panel-toolbar';
 import ErrorSnackbar from './error-snackbar';
 import ShellPanelBodyContent from './shell-panel-body-content';
 
@@ -39,8 +38,6 @@ const Shell = () => {
 				</PanelHeader>
 				<Divider />
 				<PanelBody>
-					<ContentPanelToolbar />
-					<Divider />
 					<ShellPanelBodyContent
 						accessiblePostTypes={ accessiblePostTypes }
 						isUserPending={ isUserPending }
