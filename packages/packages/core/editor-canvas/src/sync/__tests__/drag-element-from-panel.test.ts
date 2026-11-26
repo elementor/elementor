@@ -63,11 +63,9 @@ describe( 'drag-element-from-panel', () => {
 
 		it( 'should merge the custom argument into the preset metadata', () => {
 			// Act
-			startDragElementFromPanel(
-				{ elType: 'widget', widgetType: 'test', settings: { a: 1 } },
-				mockEvent,
-				{ group: 'x' }
-			);
+			startDragElementFromPanel( { elType: 'widget', widgetType: 'test', settings: { a: 1 } }, mockEvent, {
+				group: 'x',
+			} );
 
 			// Assert
 			expect( Element ).toHaveBeenLastCalledWith(

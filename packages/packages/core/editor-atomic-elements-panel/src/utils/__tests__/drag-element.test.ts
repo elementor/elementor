@@ -1,7 +1,7 @@
 import { startDragElementFromPanel } from '@elementor/editor-canvas';
 
-import { endTileDrag, isDraggableTile, startTileDrag } from '../drag-element';
 import { isPanelDragging } from '../../drag-state';
+import { endTileDrag, isDraggableTile, startTileDrag } from '../drag-element';
 
 jest.mock( '@elementor/editor-canvas', () => ( {
 	endDragElementFromPanel: jest.fn(),
@@ -28,7 +28,7 @@ describe( 'drag-element', () => {
 	beforeEach( () => {
 		( window as unknown as { elementor: unknown } ).elementor = {
 			channels: { editor: {}, panelElements: channel },
-			modules: { elements: { models: { Element: class {} } } },
+			modules: { elements: { models: { Element: jest.fn() } } },
 			userCan: () => true,
 		};
 	} );
