@@ -51,13 +51,13 @@ export const initUploadMediaTool = ( reg: MCPRegistryEntry ) => {
 			failed: z.number().optional(),
 			uploads: z.array( z.record( z.string(), z.unknown() ) ).optional(),
 		},
-		handler: async ( { source_url, title, alt, images, consent } ) => {
+		handler: async ( { source_url: sourceUrl, title, alt, images, consent } ) => {
 			try {
 				const { data } = await httpService().post< HttpResponse< UploadMediaResponse > >( MCP_PROXY_URL, {
 					tool: 'upload-media',
 					input: {
 						consent,
-						...( source_url ? { source_url } : {} ),
+						...( sourceUrl ? { source_url: sourceUrl } : {} ),
 						...( title ? { title } : {} ),
 						...( alt ? { alt } : {} ),
 						...( images ? { images } : {} ),

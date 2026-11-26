@@ -4,7 +4,7 @@ import { initUploadMediaTool } from '../tool';
 
 jest.mock( '@elementor/http-client', () => ( {
 	httpService: jest.fn(),
-	AxiosError: class AxiosError extends Error {
+	AxiosError: class MockAxiosError extends Error {
 		response?: unknown;
 	},
 } ) );
@@ -44,7 +44,9 @@ describe( 'upload-media tool', () => {
 	it( 'should surface a clear permission error', async () => {
 		// Arrange.
 		const error = new AxiosError( 'Forbidden' );
-		error.response = { data: { code: 'rest_forbidden', message: 'Only administrators can upload media.' } } as never;
+		error.response = {
+			data: { code: 'rest_forbidden', message: 'Only administrators can upload media.' },
+		} as never;
 		mockedHttpService.mockReturnValue( { post: jest.fn().mockRejectedValue( error ) } as never );
 
 		// Act & Assert.
