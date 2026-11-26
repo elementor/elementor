@@ -12,45 +12,13 @@ import {
 	waitForAngiePluginActive,
 } from '@elementor-external/angie-sdk';
 
+import { enableEndSideResize, injectEndSideStyles } from './end-side-sidebar';
+
 const PROMPT_HASH_KEY = 'angie-prompt';
 const PENDING_PROMPT_STORAGE_KEY = 'elementor_agent_ready_pending_angie_prompt';
 const ANGIE_ACTIVATION_RETURN_PARAM = 'open-angie';
 const ANGIE_READY_TIMEOUT_MS = 10000;
 const ADMIN_PAGES_ANGIE_APP_ID = 'elementor-admin-pages';
-const END_SIDE_STYLES_ID = 'e-admin-pages-angie-end-side';
-const END_SIDE_STYLES = `
-@media (min-width: 768px) {
-	html body.angie-sidebar-active {
-		padding-inline-start: 0 !important;
-		padding-inline-end: var(--angie-sidebar-width) !important;
-	}
-
-	body #angie-sidebar-container {
-		inset-inline-start: auto;
-		inset-inline-end: 0;
-		--angie-sidebar-hide-transform: translateX(100%);
-	}
-
-	[dir="rtl"] body #angie-sidebar-container {
-		--angie-sidebar-hide-transform: translateX(-100%);
-	}
-
-	html body.angie-sidebar-active #wpadminbar {
-		inset-inline-start: 0 !important;
-		inset-inline-end: var(--angie-sidebar-width) !important;
-		width: auto !important;
-	}
-
-	html body.angie-sidebar-active #wpbody,
-	html body.angie-sidebar-active #wpfooter,
-	html body.angie-sidebar-active #editor-one-top-bar > *,
-	html body.angie-sidebar-active #editor-one-secondary-bar > * {
-		inset-inline-end: var(--angie-sidebar-width) !important;
-		width: auto !important;
-	}
-}
-`;
-
 const SIDEBAR_STATE_STORAGE_KEY = 'elementor_admin_pages_angie_sidebar_state';
 const SIDEBAR_STATE_OPEN = 'open';
 const SIDEBAR_STATE_CLOSED = 'closed';
@@ -72,17 +40,6 @@ const wasSidebarLeftOpen = () => {
 	}
 };
 
-const dockSidebarToEndSide = () => {
-	if ( document.getElementById( END_SIDE_STYLES_ID ) ) {
-		return;
-	}
-
-	const style = document.createElement( 'style' );
-	style.id = END_SIDE_STYLES_ID;
-	style.textContent = END_SIDE_STYLES;
-	document.head.appendChild( style );
-};
-
 export const canOpenAngie = ( isAngieActive ) => Boolean( isAngieActive ) || isAngiePluginActive() || Boolean( getAngieIframe() );
 
 const sendPromptToPlugin = ( prompt ) => {
@@ -97,7 +54,7 @@ const sendPromptToPlugin = ( prompt ) => {
 
 const bootSdk = () => {
 	sdkBootPromise ??= ( async () => {
-		dockSidebarToEndSide();
+		injectEndSideStyles();
 
 		const sdk = new AngieMcpSdk( { appId: ADMIN_PAGES_ANGIE_APP_ID } );
 
@@ -118,6 +75,8 @@ const bootSdk = () => {
 				},
 			},
 		} );
+
+		enableEndSideResize();
 
 		return sdk;
 	} )().catch( ( error ) => {
