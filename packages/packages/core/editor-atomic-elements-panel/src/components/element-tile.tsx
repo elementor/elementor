@@ -4,7 +4,7 @@ import { ButtonBase, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { endTileDrag, isDraggableTile, startTileDrag } from '../utils/drag-element';
-import { isPanelDragging } from '../utils/drag-state';
+import { isPanelDragging } from '../drag-state';
 import { type ElementTile as ElementTileData } from '../utils/group-widgets';
 import { canInsertElements, insertElement } from '../utils/insert-element';
 

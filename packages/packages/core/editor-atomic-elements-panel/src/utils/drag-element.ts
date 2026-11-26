@@ -1,12 +1,11 @@
 import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
 
-import { type ExtendedWindow } from '../types';
+import { setPanelDragging } from '../drag-state';
 import { buildElementModel } from './build-element-model';
-import { setPanelDragging } from './drag-state';
 import { type ElementTile } from './group-widgets';
 
 export function isDragReady() {
-	const elementor = ( window as unknown as ExtendedWindow ).elementor;
+	const { elementor } = window;
 
 	return (
 		!! elementor?.channels?.editor &&
@@ -25,15 +24,15 @@ export function startTileDrag( tile: ElementTile, event: React.DragEvent ) {
 
 	startDragElementFromPanel( model, event, custom );
 	setPanelDragging( true );
-	document.addEventListener( 'dragend', resetPanelDragging, { once: true, capture: true } );
-	document.addEventListener( 'drop', resetPanelDragging, { once: true, capture: true } );
+	window.elementor?.channels?.panelElements?.on( 'element:drag:end', onChannelDragEnd );
 }
 
 export function endTileDrag() {
-	resetPanelDragging();
 	endDragElementFromPanel();
+	setPanelDragging( false );
 }
 
-function resetPanelDragging() {
+function onChannelDragEnd() {
+	window.elementor?.channels?.panelElements?.off( 'element:drag:end', onChannelDragEnd );
 	setPanelDragging( false );
 }

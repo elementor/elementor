@@ -28,8 +28,7 @@ export type ExtendedWindow = {
 		getPreviewContainer?: () => { id: string } | undefined;
 		documents?: { getCurrent?: () => { $element?: Array< Node > } | undefined };
 		userCan?: ( capability: string ) => boolean;
-		channels?: { editor?: unknown; panelElements?: PanelChannel };
-		modules?: { elements?: { models?: { Element?: unknown } } };
+		channels?: { panelElements?: PanelChannel };
 		hooks?: {
 			addAction: ( name: string, callback: () => void ) => void;
 			removeAction: ( name: string, callback: () => void ) => void;
