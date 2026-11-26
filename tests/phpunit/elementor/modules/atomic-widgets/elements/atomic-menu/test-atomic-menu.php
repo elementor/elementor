@@ -11,12 +11,15 @@ use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use ElementorEditorTesting\Traits\Breakpoints_Trait;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Test_Atomic_Menu extends Elementor_Test_Base {
+	use Breakpoints_Trait;
+
 
 	const LOCKED_TYPES = [
 		'e-menu-items',
@@ -715,75 +718,74 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 	public function test_rendered_nav__collapses_at_the_next_smaller_breakpoint_when_the_stored_one_is_no_longer_active() {
 		// Arrange.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
-		$original = $this->set_active_breakpoints( [ 'viewport_mobile' ] );
+		$this->assertArrayNotHasKey( 'laptop', Plugin::$instance->breakpoints->get_active_breakpoints() );
 
-		try {
+		foreach ( [
+			'laptop' => 'tablet',
+			'tablet_extra' => 'tablet',
+			'mobile_extra' => 'mobile',
+		] as $stored => $effective ) {
 			// Act.
 			$html = $this->render_menu( [
 				'collapse-breakpoint' => [
 					'$$type' => 'string',
-					'value' => 'tablet',
+					'value' => $stored,
 				],
 			] );
-		} finally {
-			$this->restore_active_breakpoints( $original );
-		}
 
-		// Assert.
-		$this->assertSame( 'mobile', $this->load_html( $html )->query( '//nav' )->item( 0 )->getAttribute( 'data-e-collapse' ) );
+			// Assert.
+			$this->assertSame( $effective, $this->load_html( $html )->query( '//nav' )->item( 0 )->getAttribute( 'data-e-collapse' ), $stored );
+		}
 	}
 
-	public function test_rendered_nav__never_collapses_when_no_smaller_breakpoint_is_active() {
+	public function test_rendered_nav__keeps_a_stored_extra_breakpoint_while_it_is_active() {
 		// Arrange.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
-		$original = $this->set_active_breakpoints( [ 'viewport_tablet' ] );
+		$this->activate_breakpoints( [ 'viewport_laptop' ] );
 
 		try {
 			// Act.
 			$html = $this->render_menu( [
 				'collapse-breakpoint' => [
 					'$$type' => 'string',
-					'value' => 'mobile',
+					'value' => 'laptop',
 				],
 			] );
 		} finally {
-			$this->restore_active_breakpoints( $original );
+			$this->reset_breakpoints_to_default();
 		}
 
 		// Assert.
-		$this->assertSame( 'none', $this->load_html( $html )->query( '//nav' )->item( 0 )->getAttribute( 'data-e-collapse' ) );
+		$this->assertSame( 'laptop', $this->load_html( $html )->query( '//nav' )->item( 0 )->getAttribute( 'data-e-collapse' ) );
 	}
 
 	public function test_collapse_breakpoint_control__selects_the_resolved_option_for_a_breakpoint_that_is_no_longer_active() {
 		// Arrange.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
-		$original = $this->set_active_breakpoints( [ 'viewport_mobile' ] );
 
-		try {
-			// Act.
-			$props = $this->get_collapse_breakpoint_control_props();
-		} finally {
-			$this->restore_active_breakpoints( $original );
-		}
+		// Act.
+		$props = $this->get_collapse_breakpoint_control_props();
 
 		// Assert.
-		$this->assertSame( 'mobile', $props['fallbackValues']['tablet'] );
-		$this->assertSame( 'mobile', $props['fallbackValues']['laptop'] );
-		$this->assertArrayNotHasKey( 'mobile', $props['fallbackValues'] );
-		$this->assertArrayNotHasKey( 'desktop', $props['fallbackValues'] );
-		$this->assertArrayNotHasKey( 'none', $props['fallbackValues'] );
+		$this->assertSame( 'tablet', $props['fallbackValues']['laptop'] );
+		$this->assertSame( 'tablet', $props['fallbackValues']['tablet_extra'] );
+		$this->assertSame( 'mobile', $props['fallbackValues']['mobile_extra'] );
+
+		foreach ( [ 'mobile', 'tablet', 'desktop', 'none' ] as $kept ) {
+			$this->assertArrayNotHasKey( $kept, $props['fallbackValues'] );
+		}
 	}
 
 	public function test_collapse_breakpoint_control__lists_the_active_breakpoints_then_desktop_and_none() {
 		// Arrange.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
-		$original = $this->set_active_breakpoints( [ 'viewport_mobile', 'viewport_tablet', 'viewport_laptop' ] );
+		$this->activate_breakpoints( [ 'viewport_laptop' ] );
 
 		try {
 			// Act.
 			$props = $this->get_collapse_breakpoint_control_props();
 		} finally {
-			$this->restore_active_breakpoints( $original );
+			$this->reset_breakpoints_to_default();
 		}
 
 		// Assert.
@@ -791,7 +793,7 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 			[ 'mobile', 'tablet', 'laptop', 'desktop', 'none' ],
 			array_column( $props['options'], 'value' )
 		);
-		$this->assertArrayNotHasKey( 'fallbackValues', $props );
+		$this->assertArrayNotHasKey( 'laptop', $props['fallbackValues'] );
 	}
 
 	private function get_collapse_breakpoint_control_props(): array {
@@ -826,21 +828,15 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		return null;
 	}
 
-	private function set_active_breakpoints( array $keys ): array {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$settings = $kit->get_settings();
-		$original = $settings['active_breakpoints'] ?? [];
+	private function activate_breakpoints( array $keys ): void {
+		$this->set_admin_user();
 
-		$settings['active_breakpoints'] = $keys;
-		$kit->save( [ 'settings' => $settings ] );
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit->set_settings( 'active_breakpoints', $keys );
+		$kit->save( [ 'settings' => $kit->get_settings() ] );
+
 		Plugin::$instance->documents->get( $kit->get_id(), false );
 		Plugin::$instance->breakpoints->refresh();
-
-		return $original;
-	}
-
-	private function restore_active_breakpoints( array $original ): void {
-		$this->set_active_breakpoints( $original );
 	}
 
 	public function test_get_collapse_css__desktop_collapses_at_every_width_without_a_media_query() {

@@ -357,15 +357,11 @@ class Atomic_Menu extends Atomic_Element_Base {
 		];
 	}
 
-	protected function define_render_context(): array {
-		return [
-			[
-				'context' => [
-					'default_collapse_breakpoint' => self::get_default_collapse_breakpoint(),
-					'collapse_breakpoints' => self::resolve_collapse_breakpoints( array_keys( self::get_collapsible_breakpoints() ) ),
-				],
-			],
-		];
+	protected function build_template_context(): array {
+		return array_merge( $this->build_base_template_context(), [
+			'default_collapse_breakpoint' => self::get_default_collapse_breakpoint(),
+			'collapse_breakpoints' => self::resolve_collapse_breakpoints( array_keys( self::get_collapsible_breakpoints() ) ),
+		] );
 	}
 
 	protected function define_allowed_child_types() {
