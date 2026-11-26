@@ -3,6 +3,7 @@ import { List, Skeleton, Stack } from '@elementor/ui';
 
 import { type Slug } from '../../api/post';
 import { PostListContextProvider } from '../../contexts/post-list-context';
+import { getSiteContentSections } from '../../site-content-sections';
 import PostsCollapsibleList from './posts-list/posts-collapsible-list';
 import UserLoadError from './user-load-error';
 
@@ -32,12 +33,17 @@ export default function ShellPanelBodyContent( {
 		return <UserLoadError />;
 	}
 
+	const extraSections = getSiteContentSections();
+
 	return (
 		<List dense disablePadding sx={ { py: 0, width: '100%' } }>
 			{ accessiblePostTypes.map( ( postTypeSlug, index ) => (
 				<PostListContextProvider key={ postTypeSlug } type={ postTypeSlug } setError={ onListError }>
 					<PostsCollapsibleList isOpenByDefault={ index === 0 } />
 				</PostListContextProvider>
+			) ) }
+			{ extraSections.map( ( section ) => (
+				<React.Fragment key={ section.id }>{ section.render() }</React.Fragment>
 			) ) }
 		</List>
 	);
