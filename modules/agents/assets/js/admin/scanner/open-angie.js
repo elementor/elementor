@@ -34,6 +34,20 @@ const END_SIDE_STYLES = `
 	[dir="rtl"] body #angie-sidebar-container {
 		--angie-sidebar-hide-transform: translateX(-100%);
 	}
+
+	html body.angie-sidebar-active #wpadminbar {
+		inset-inline-start: 0 !important;
+		inset-inline-end: var(--angie-sidebar-width) !important;
+		width: auto !important;
+	}
+
+	html body.angie-sidebar-active #wpbody,
+	html body.angie-sidebar-active #wpfooter,
+	html body.angie-sidebar-active #editor-one-top-bar > *,
+	html body.angie-sidebar-active #editor-one-secondary-bar > * {
+		inset-inline-end: var(--angie-sidebar-width) !important;
+		width: auto !important;
+	}
 }
 `;
 
