@@ -1,4 +1,5 @@
 import { isWidgetNew as checkIsWidgetNew } from './utils/is-widget-new';
+import { filterCollections } from './utils/filter-collections';
 
 var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsElementsCollection = require( './collections/elements' ),
@@ -41,6 +42,11 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.initElementsCollection();
 
 		this.initCategoriesCollection();
+
+		( { elementsCollection: this.elementsCollection, categoriesCollection: this.categoriesCollection } = filterCollections( {
+			elementsCollection: this.elementsCollection,
+			categoriesCollection: this.categoriesCollection,
+		} ) );
 
 		this.initRegionViews();
 	},
