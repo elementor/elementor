@@ -1,6 +1,8 @@
+import type { AngieState } from '@elementor/editor-mcp';
+
 import { isAngiePluginActive } from './is-angie-plugin-active';
 
-export type AngieState = 'plugin' | 'sdk' | 'promo' | 'hidden';
+export type { AngieState };
 
 const getEditorAngieConfig = () => window.elementorEditorAngie ?? {};
 

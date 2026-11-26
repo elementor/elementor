@@ -1,13 +1,23 @@
 import { renderHook } from '@testing-library/react';
+import { dismissNotification, notify } from '@elementor/editor-notifications';
 
 import { useActionProps } from '../use-action-props';
 
+const ANGIE_OPEN_ERROR_NOTIFICATION_ID = 'angie-top-bar-open-error';
+
 jest.mock( '@elementor/editor-notifications', () => ( {
+	dismissNotification: jest.fn(),
 	notify: jest.fn(),
 } ) );
 
-const setHost = ( state: 'plugin' | 'sdk' | 'promo' | 'hidden', openAngie = jest.fn() ) => {
-	window.elementorV2 = { editorAngie: { getAngieState: () => state, openAngie } };
+const setHost = (
+	state: 'plugin' | 'sdk' | 'promo' | 'hidden',
+	editorAngie: { getAngieState: () => typeof state; openAngie?: jest.Mock } = {
+		getAngieState: () => state,
+		openAngie: jest.fn().mockResolvedValue( undefined ),
+	}
+) => {
+	window.elementorV2 = { editorAngie };
 };
 
 describe( 'useAngieActionProps', () => {
@@ -40,9 +50,9 @@ describe( 'useAngieActionProps', () => {
 		);
 	} );
 
-	it( 'opens Angie through the editor host when state is sdk', async () => {
+	it.each( [ 'sdk', 'plugin' ] as const )( 'opens Angie through the editor host when state is %s', async ( state ) => {
 		const openAngie = jest.fn().mockResolvedValue( undefined );
-		setHost( 'sdk', openAngie );
+		setHost( state, { getAngieState: () => state, openAngie } );
 
 		const { result } = renderHook( () => useActionProps() );
 
@@ -56,5 +66,50 @@ describe( 'useAngieActionProps', () => {
 				mode: 'ask',
 			} )
 		);
+	} );
+
+	it.each( [ 'sdk', 'plugin' ] as const )(
+		'shows an error notification when openAngie is missing in %s state',
+		async ( state ) => {
+			setHost( state, { getAngieState: () => state } );
+
+			const { result } = renderHook( () => useActionProps() );
+
+			result.current.onClick();
+
+			await Promise.resolve();
+
+			expect( notify ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					id: ANGIE_OPEN_ERROR_NOTIFICATION_ID,
+					type: 'error',
+				} )
+			);
+		}
+	);
+
+	it( 'shows an error notification when openAngie rejects and retries on click', async () => {
+		const openAngie = jest.fn().mockRejectedValue( new Error( 'failed' ) );
+		setHost( 'sdk', { getAngieState: () => 'sdk', openAngie } );
+
+		const { result } = renderHook( () => useActionProps() );
+
+		result.current.onClick();
+
+		await Promise.resolve();
+
+		expect( notify ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				id: ANGIE_OPEN_ERROR_NOTIFICATION_ID,
+				type: 'error',
+			} )
+		);
+
+		const retryOnClick = ( notify as jest.Mock ).mock.calls[ 0 ][ 0 ].additionalActionProps[ 0 ].onClick;
+
+		retryOnClick();
+
+		expect( dismissNotification ).toHaveBeenCalledWith( ANGIE_OPEN_ERROR_NOTIFICATION_ID );
+		expect( openAngie ).toHaveBeenCalledTimes( 2 );
 	} );
 } );
