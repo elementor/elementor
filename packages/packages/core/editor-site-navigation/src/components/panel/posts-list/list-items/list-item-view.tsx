@@ -107,11 +107,7 @@ export default function ListItemView( { post }: { post: Post } ) {
 				<Stack alignItems="center" direction="row" spacing={ 0 }>
 					{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
 					{ isHome && (
-						<HomeIcon
-							color="disabled"
-							fontSize="tiny"
-							titleAccess={ __( 'Homepage', 'elementor' ) }
-						/>
+						<HomeIcon color="disabled" fontSize="tiny" titleAccess={ __( 'Homepage', 'elementor' ) } />
 					) }
 					<IconButton
 						aria-label={ __( 'More actions', 'elementor' ) }

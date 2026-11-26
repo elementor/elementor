@@ -35,8 +35,7 @@ type Props = {
 function PostsCollapsibleListContent( { isOpenByDefault = false }: Props ) {
 	const { type, editMode, resetEditMode, setEditMode } = usePostListContext();
 	const { registerSection, unregisterSection } = useContentPanelCoordinator();
-	const { clearStatusFilters, debouncedSearch, siteContentSort, statusFilters } =
-		useSiteContentSectionToolbar();
+	const { clearStatusFilters, debouncedSearch, siteContentSort, statusFilters } = useSiteContentSectionToolbar();
 	const [ isOpen, setIsOpen ] = useState( isOpenByDefault );
 	const focusAfterShowLessRef = useRef( false );
 	const listTopRef = useRef< HTMLDivElement | null >( null );

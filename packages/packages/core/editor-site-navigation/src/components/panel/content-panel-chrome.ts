@@ -19,8 +19,7 @@ export const contentPanelListRowPaddingSx = {
 
 const contentPanelListItemSecondaryInsetSx = ( trailingActionCount: number ) => ( {
 	'&& > .MuiListItemButton-root': {
-		paddingInlineEnd:
-			trailingActionCount * CONTENT_PANEL_LIST_ROW_SECONDARY_ACTION_SLOT_WIDTH,
+		paddingInlineEnd: trailingActionCount * CONTENT_PANEL_LIST_ROW_SECONDARY_ACTION_SLOT_WIDTH,
 		paddingRight: 'unset',
 	},
 } );
