@@ -23,8 +23,13 @@ const SIDEBAR_STATE_STORAGE_KEY = 'elementor_admin_pages_angie_sidebar_state';
 const SIDEBAR_STATE_OPEN = 'open';
 const SIDEBAR_STATE_CLOSED = 'closed';
 
-let sdkBootPromise = null;
-let isSdkBooted = false;
+const SHARED_SDK_STATE_KEY = 'elementorAdminPagesAngie';
+
+const getSdkState = () => {
+	window[ SHARED_SDK_STATE_KEY ] ??= { bootPromise: null, isBooted: false };
+
+	return window[ SHARED_SDK_STATE_KEY ];
+};
 
 const saveSidebarState = ( isOpen ) => {
 	try {
@@ -54,7 +59,9 @@ const sendPromptToPlugin = ( prompt ) => {
 };
 
 const bootSdk = () => {
-	sdkBootPromise ??= ( async () => {
+	const state = getSdkState();
+
+	state.bootPromise ??= ( async () => {
 		injectEndSideStyles();
 
 		const sdk = new AngieMcpSdk( { appId: ADMIN_PAGES_ANGIE_APP_ID } );
@@ -78,21 +85,21 @@ const bootSdk = () => {
 		} );
 
 		enableEndSideResize();
-		isSdkBooted = true;
+		state.isBooted = true;
 
 		return sdk;
 	} )().catch( ( error ) => {
-		sdkBootPromise = null;
+		state.bootPromise = null;
 		throw error;
 	} );
 
-	return sdkBootPromise;
+	return state.bootPromise;
 };
 
 const sendPromptToSdk = async ( prompt ) => {
 	await openSdkSidebar();
 
-	const sdk = await sdkBootPromise;
+	const sdk = await getSdkState().bootPromise;
 
 	await sdk.waitForReady();
 	await sdk.triggerAngie( { prompt, context: { source: ADMIN_PAGES_ANGIE_APP_ID } } );
@@ -105,8 +112,7 @@ const openSdkSidebar = async () => {
 };
 
 export const resetAngieSdkForTests = () => {
-	sdkBootPromise = null;
-	isSdkBooted = false;
+	delete window[ SHARED_SDK_STATE_KEY ];
 };
 
 export const restoreSdkSidebar = () => {
@@ -118,7 +124,7 @@ export const restoreSdkSidebar = () => {
 };
 
 export const toggleSdkSidebar = () => {
-	if ( ! isSdkBooted ) {
+	if ( ! getSdkState().isBooted ) {
 		return openSdkSidebar();
 	}
 
