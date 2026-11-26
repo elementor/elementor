@@ -3,6 +3,7 @@ import { registerPanel } from '@elementor/editor-panels';
 
 import { isAtomicElementsPanelEnabled } from '../gate';
 import { init } from '../init';
+import { registerLegacyHiding } from '../legacy-hiding/register-legacy-hiding';
 
 jest.mock( '@elementor/editor-panels', () => ( {
 	createPanel: jest.fn( () => ( { panel: { id: 'atomic-elements-panel' } } ) ),
@@ -13,12 +14,14 @@ jest.mock( '@elementor/editor', () => ( {
 	injectIntoTop: jest.fn(),
 } ) );
 jest.mock( '../gate' );
+jest.mock( '../legacy-hiding/register-legacy-hiding' );
 
 describe( 'editor-atomic-elements-panel init', () => {
 	beforeEach( () => {
 		jest.mocked( registerPanel ).mockClear();
 		jest.mocked( injectIntoLogic ).mockClear();
 		jest.mocked( injectIntoTop ).mockClear();
+		jest.mocked( registerLegacyHiding ).mockClear();
 	} );
 
 	it( 'should register the panel when the gate is on', () => {
@@ -32,6 +35,7 @@ describe( 'editor-atomic-elements-panel init', () => {
 		expect( registerPanel ).toHaveBeenCalledWith( { id: 'atomic-elements-panel' } );
 		expect( injectIntoLogic ).toHaveBeenCalledTimes( 1 );
 		expect( injectIntoTop ).toHaveBeenCalledTimes( 1 );
+		expect( registerLegacyHiding ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'should not register the panel when the gate is off', () => {
@@ -45,5 +49,6 @@ describe( 'editor-atomic-elements-panel init', () => {
 		expect( registerPanel ).not.toHaveBeenCalled();
 		expect( injectIntoLogic ).not.toHaveBeenCalled();
 		expect( injectIntoTop ).not.toHaveBeenCalled();
+		expect( registerLegacyHiding ).not.toHaveBeenCalled();
 	} );
 } );
