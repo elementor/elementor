@@ -17,7 +17,7 @@ export default function ContentPanelSectionsFilterList() {
 	const { descriptors, isSectionVisible, setSectionVisible } = useSiteContentPanelSectionsFilter();
 
 	return (
-		<MenuList dense disablePadding>
+		<MenuList dense>
 			{ descriptors.map( ( descriptor ) => {
 				const selected = isSectionVisible( descriptor.id );
 

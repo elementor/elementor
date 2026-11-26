@@ -32,7 +32,7 @@ export default function ContentPanelSectionsFilter() {
 					value="content-types"
 					{ ...bindToggle( popupState ) }
 				>
-					<ListIcon fontSize="tiny" />
+					<FilterIcon fontSize="tiny" />
 				</ToggleButton>
 			</Tooltip>
 			<Popover
@@ -62,7 +62,7 @@ export default function ContentPanelSectionsFilter() {
 							  ]
 							: []
 					}
-					icon={ <ListIcon fontSize="tiny" /> }
+					icon={ <FilterIcon fontSize="tiny" /> }
 					onClose={ popupState.close }
 					title={ filterLabel }
 				/>
