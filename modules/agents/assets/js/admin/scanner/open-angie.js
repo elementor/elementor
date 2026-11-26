@@ -1,11 +1,13 @@
 import {
 	ANGIE_SIDEBAR_STATE_OPEN,
 	AngieMcpSdk,
+	applyWidth,
 	clearReferrerRedirect,
 	getAngieIframe,
 	isAngiePluginActive,
 	isAngiePluginAvailable,
 	LAYOUT_SIDEBAR,
+	loadWidth,
 	saveState,
 	setReferrerRedirect,
 	toggleAngieSidebar,
@@ -22,6 +24,7 @@ const ADMIN_PAGES_ANGIE_APP_ID = 'elementor-admin-pages';
 const SIDEBAR_STATE_STORAGE_KEY = 'elementor_admin_pages_angie_sidebar_state';
 const SIDEBAR_STATE_OPEN = 'open';
 const SIDEBAR_STATE_CLOSED = 'closed';
+const SIDEBAR_ACTIVE_CLASS = 'angie-sidebar-active';
 
 const SHARED_SDK_STATE_KEY = 'elementorAdminPagesAngie';
 
@@ -105,10 +108,16 @@ const sendPromptToSdk = async ( prompt ) => {
 	await sdk.triggerAngie( { prompt, context: { source: ADMIN_PAGES_ANGIE_APP_ID } } );
 };
 
-const openSdkSidebar = async () => {
+const openSdkSidebar = async ( skipTransition = false ) => {
 	await bootSdk();
 
-	window.toggleAngieSidebar?.( true );
+	window.toggleAngieSidebar?.( true, skipTransition );
+};
+
+const reserveSidebarSpace = () => {
+	injectEndSideStyles();
+	applyWidth( loadWidth() );
+	document.body.classList.add( SIDEBAR_ACTIVE_CLASS );
 };
 
 export const resetAngieSdkForTests = () => {
@@ -120,7 +129,9 @@ export const restoreSdkSidebar = () => {
 		return Promise.resolve();
 	}
 
-	return openSdkSidebar();
+	reserveSidebarSpace();
+
+	return openSdkSidebar( true );
 };
 
 export const toggleSdkSidebar = () => {

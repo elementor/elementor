@@ -22,11 +22,13 @@ const mockSdk = {
 jest.mock( '@elementor-external/angie-sdk', () => ( {
 	ANGIE_SIDEBAR_STATE_OPEN: 'open',
 	AngieMcpSdk: jest.fn( () => mockSdk ),
+	applyWidth: jest.fn(),
 	clearReferrerRedirect: jest.fn(),
 	getAngieIframe: jest.fn( () => null ),
 	isAngiePluginActive: jest.fn( () => false ),
 	isAngiePluginAvailable: jest.fn( () => false ),
 	LAYOUT_SIDEBAR: 'sidebar',
+	loadWidth: jest.fn( () => 350 ),
 	saveState: jest.fn(),
 	setReferrerRedirect: jest.fn(),
 	toggleAngieSidebar: jest.fn(),
@@ -137,17 +139,20 @@ describe( 'restoreSdkSidebar', () => {
 		expect( mockSdk.loadSidebarV2 ).not.toHaveBeenCalled();
 	} );
 
-	it( 'reopens the sidebar and saves future toggles when it was left open', async () => {
+	it( 'reopens the sidebar without animation and saves future toggles when it was left open', async () => {
 		// Arrange
 		localStorage.setItem( SIDEBAR_STATE_STORAGE_KEY, 'open' );
 		window.toggleAngieSidebar = jest.fn();
 
 		// Act
-		await restoreSdkSidebar();
+		const restoring = restoreSdkSidebar();
+		const reservedSpaceBeforeBoot = document.body.classList.contains( 'angie-sidebar-active' );
+		await restoring;
 		mockSdk.loadSidebarV2.mock.calls[ 0 ][ 0 ].callbacks.onToggle( false );
 
 		// Assert
-		expect( window.toggleAngieSidebar ).toHaveBeenCalledWith( true );
+		expect( reservedSpaceBeforeBoot ).toBe( true );
+		expect( window.toggleAngieSidebar ).toHaveBeenCalledWith( true, true );
 		expect( localStorage.getItem( SIDEBAR_STATE_STORAGE_KEY ) ).toBe( 'closed' );
 	} );
 } );
