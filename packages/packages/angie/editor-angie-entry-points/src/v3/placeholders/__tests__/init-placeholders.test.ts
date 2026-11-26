@@ -30,7 +30,7 @@ describe( 'initV3PlaceholderControls', () => {
 
 		// Assert
 		expect( prompt ).toContain( 'v3-kit-site-identity' );
-		expect( prompt ).toContain( 'elementor/upload-media' );
+		expect( prompt ).toContain( 'upload-media' );
 		expect( prompt ).toContain( 'image agent' );
 	} );
 

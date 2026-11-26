@@ -12,7 +12,11 @@ type PanelElementProps = Omit< V1ElementModelProps, 'id' > & {
 	custom?: Record< string, unknown >;
 };
 
-export const startDragElementFromPanel = ( props: PanelElementProps, event: React.DragEvent ) => {
+export const startDragElementFromPanel = (
+	props: PanelElementProps,
+	event: React.DragEvent,
+	custom?: Record< string, unknown >
+) => {
 	setDragGroups( event );
 
 	const channels = getElementorChannels();
@@ -20,7 +24,7 @@ export const startDragElementFromPanel = ( props: PanelElementProps, event: Reac
 	channels?.editor.reply( 'element:dragged', null );
 
 	channels?.panelElements
-		.reply( 'element:selected', getLegacyPanelElementView( props ) )
+		.reply( 'element:selected', getLegacyPanelElementView( props, custom ) )
 		.trigger( 'element:drag:start' );
 };
 
@@ -48,7 +52,10 @@ const getElementorChannels = () => {
 	return channels;
 };
 
-const getLegacyPanelElementView = ( { settings, custom, ...rest }: PanelElementProps ) => {
+const getLegacyPanelElementView = (
+	{ settings, custom: propsCustom, ...rest }: PanelElementProps,
+	custom?: Record< string, unknown >
+) => {
 	const extendedWindow = window as unknown as CanvasExtendedWindow;
 	const LegacyElementModel = extendedWindow.elementor?.modules?.elements?.models?.Element;
 
@@ -59,9 +66,10 @@ const getLegacyPanelElementView = ( { settings, custom, ...rest }: PanelElementP
 	const elementModel = new LegacyElementModel( {
 		...rest,
 		custom: {
-			...custom,
+			...propsCustom,
 			isPreset: !! settings,
 			preset_settings: settings,
+			...custom,
 		},
 	} );
 

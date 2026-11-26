@@ -57,7 +57,7 @@ describe( 'Shell', () => {
 
 		renderWithQuery( <Shell /> );
 
-		expect( screen.getByPlaceholderText( 'Search' ) ).toBeInTheDocument();
+		expect( screen.queryByPlaceholderText( 'Search' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Pages' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Posts' ) ).not.toBeInTheDocument();
 	} );
@@ -85,6 +85,7 @@ describe( 'Shell', () => {
 		renderWithQuery( <Shell /> );
 
 		expect( screen.getByRole( 'button', { name: 'Posts (0)' } ) ).toBeInTheDocument();
+		expect( screen.getByPlaceholderText( 'Search' ) ).toBeInTheDocument();
 	} );
 
 	it( 'falls back to all sections when user capabilities fail to load but the env gate allows access', () => {

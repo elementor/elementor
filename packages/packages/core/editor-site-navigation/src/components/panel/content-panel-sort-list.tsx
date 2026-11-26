@@ -2,7 +2,7 @@ import * as React from 'react';
 import { CheckIcon } from '@elementor/icons';
 import { MenuItem, MenuList, Stack, Typography } from '@elementor/ui';
 
-import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
+import { useSiteContentSectionToolbar } from '../../contexts/site-content-section-toolbar';
 import { getSiteContentSortLabel, SITE_CONTENT_SORT_OPTIONS } from '../../site-content-sort';
 
 const renderSortMenuItemContent = ( label: string, selected: boolean ) => (
@@ -15,7 +15,7 @@ const renderSortMenuItemContent = ( label: string, selected: boolean ) => (
 );
 
 export default function ContentPanelSortList() {
-	const { setSiteContentSort, siteContentSort } = useContentPanelCoordinator();
+	const { setSiteContentSort, siteContentSort } = useSiteContentSectionToolbar();
 
 	return (
 		<MenuList dense>

@@ -6,7 +6,7 @@ export type ElementModelProps = Omit< V1ElementModelProps, 'id' > & {
 	custom: Record< string, unknown > & {
 		isPreset: boolean;
 		preset_settings?: V1ElementSettingsProps;
-	};
+	} & Record< string, unknown >;
 };
 
 type Channel = {
