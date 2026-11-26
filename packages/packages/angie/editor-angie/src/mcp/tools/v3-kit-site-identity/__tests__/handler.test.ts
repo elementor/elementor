@@ -264,8 +264,11 @@ describe( 'v3-kit-site-identity handler', () => {
 		it( 'reads site identity through the active kit settings API', async () => {
 			// Arrange
 			( fetchKitSettings as jest.Mock ).mockResolvedValue( {
-				site_name: 'Remote Site',
-				site_logo: { id: 7, url: 'https://example.com/remote.png' },
+				settings: {
+					site_name: 'Remote Site',
+					site_logo: { id: 7, url: 'https://example.com/remote.png' },
+				},
+				editable: { site_name: false, site_logo: true },
 			} );
 
 			// Act
@@ -274,6 +277,7 @@ describe( 'v3-kit-site-identity handler', () => {
 			// Assert
 			expect( fetchKitSettings ).toHaveBeenCalledWith( [ 'site_name', 'site_logo' ] );
 			expect( result ).toEqual( {
+				editable: { site_name: false, site_logo: true },
 				site_name: 'Remote Site',
 				site_logo: { id: 7, url: 'https://example.com/remote.png' },
 			} );
@@ -283,7 +287,7 @@ describe( 'v3-kit-site-identity handler', () => {
 			// Arrange
 			const container = { settings: { get: jest.fn(), set: jest.fn() } };
 			documentsGet.mockReturnValue( { container } );
-			( updateKitSettings as jest.Mock ).mockResolvedValue( {} );
+			( updateKitSettings as jest.Mock ).mockResolvedValue( undefined );
 
 			// Act
 			const result = await setSiteIdentityValues( { site_name: 'Renamed' } );
@@ -299,7 +303,7 @@ describe( 'v3-kit-site-identity handler', () => {
 			// Arrange
 			documentsGet.mockReturnValue( undefined );
 			getContainer.mockReturnValue( null );
-			( updateKitSettings as jest.Mock ).mockResolvedValue( {} );
+			( updateKitSettings as jest.Mock ).mockResolvedValue( undefined );
 
 			// Act
 			const result = await setSiteIdentityValues( { site_name: 'Renamed' } );

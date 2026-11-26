@@ -17,6 +17,11 @@ class Active_Kit_Rest_Api {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'kits/active/settings';
 
+	const KEY_CAPABILITIES = [
+		'site_name' => 'manage_options',
+		'site_description' => 'manage_options',
+	];
+
 	public function register_hooks() {
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
 	}
@@ -38,7 +43,7 @@ class Active_Kit_Rest_Api {
 			[
 				'methods' => 'POST, PUT, PATCH',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->update_settings( $request ) ),
-				'permission_callback' => fn() => $this->can_manage_active_kit(),
+				'permission_callback' => fn( $request ) => $this->can_update_settings( $request ),
 				'args' => [
 					'settings' => [
 						'type' => 'object',
@@ -53,6 +58,42 @@ class Active_Kit_Rest_Api {
 		$kit = $this->get_active_kit();
 
 		return $kit ? $kit->is_editable_by_current_user() : current_user_can( Kit::get_property( 'edit_capability' ) );
+	}
+
+	private function can_update_settings( \WP_REST_Request $request ): bool {
+		$settings = $request->get_param( 'settings' );
+		$keys = is_array( $settings ) ? array_keys( $settings ) : [];
+
+		return $this->can_manage_active_kit() && $this->can_edit_keys( $keys );
+	}
+
+	private function get_required_capabilities( array $keys ): array {
+		$capabilities = array_map(
+			fn( $key ) => self::KEY_CAPABILITIES[ $key ] ?? null,
+			$keys
+		);
+
+		return array_values( array_unique( array_filter( $capabilities ) ) );
+	}
+
+	private function can_edit_keys( array $keys ): bool {
+		foreach ( $this->get_required_capabilities( $keys ) as $capability ) {
+			if ( ! current_user_can( $capability ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private function get_editable_keys( array $keys ): array {
+		$editable = [];
+
+		foreach ( $keys as $key ) {
+			$editable[ $key ] = $this->can_edit_keys( [ $key ] );
+		}
+
+		return $editable;
 	}
 
 	private function get_active_kit(): ?Kit {
@@ -88,7 +129,10 @@ class Active_Kit_Rest_Api {
 		}
 
 		return Response_Builder::make( (object) $settings )
-			->set_meta( [ 'kit_id' => $kit->get_main_id() ] )
+			->set_meta( [
+				'kit_id' => $kit->get_main_id(),
+				'editable' => (object) $this->get_editable_keys( is_array( $keys ) && ! empty( $keys ) ? $keys : array_keys( $settings ) ),
+			] )
 			->build();
 	}
 

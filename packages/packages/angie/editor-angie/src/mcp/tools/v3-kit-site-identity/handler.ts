@@ -42,6 +42,7 @@ export type KitSiteIdentityToolParams = {
 };
 
 type GetSiteIdentityResult = {
+	editable?: Record< string, boolean >;
 	site_name?: string;
 	site_description?: string;
 	site_logo?: MediaValue;
@@ -158,24 +159,29 @@ export const resolveKitContainer = (): ElementorContainer => {
 	return container;
 };
 
-const createSettingReader = async ( fields: SiteIdentityField[] ) => {
+type SettingsSource = {
+	read: ( field: string ) => unknown;
+	editable?: Record< string, boolean >;
+};
+
+const createSettingsSource = async ( fields: SiteIdentityField[] ): Promise< SettingsSource > => {
 	if ( isKitCurrentDocument() ) {
 		const container = resolveKitContainer();
 
-		return ( field: string ) => container.settings?.get?.( field );
+		return { read: ( field ) => container.settings?.get?.( field ) };
 	}
 
-	const stored = await fetchKitSettings( fields );
+	const { settings, editable } = await fetchKitSettings( fields );
 
-	return ( field: string ) => stored[ field ];
+	return { read: ( field ) => settings[ field ], editable };
 };
 
 export const getSiteIdentityValues = async ( fields?: SiteIdentityField[] ): Promise< GetSiteIdentityResult > => {
 	const selectedFields = fields?.length ? fields : [ ...SITE_IDENTITY_FIELDS ];
 	assertAllowedFields( selectedFields );
 
-	const readSetting = await createSettingReader( selectedFields );
-	const result: GetSiteIdentityResult = {};
+	const { read: readSetting, editable } = await createSettingsSource( selectedFields );
+	const result: GetSiteIdentityResult = editable ? { editable } : {};
 
 	for ( const field of selectedFields ) {
 		const raw = readSetting( field );
