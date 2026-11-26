@@ -43,10 +43,51 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 
 		delete_option( Experiments_Manager::OPTION_PREFIX . Module::ANGIE_IN_PANELS_EXPERIMENT_NAME );
 		delete_option( Module::ANGIE_CONSENT_OPTION );
+		delete_option( Module::ANGIE_BLOCKED_BY_SITE_OPTION );
 		remove_all_filters( 'pre_option_active_plugins' );
 		wp_deregister_script( self::ANGIE_SCRIPT_HANDLE );
 
 		parent::tear_down();
+	}
+
+	public function test_is_angie_enabled__false_without_consent_or_plugin() {
+		// Act & Assert
+		$this->assertFalse( Module::is_angie_enabled() );
+	}
+
+	public function test_is_angie_enabled__true_with_consent() {
+		// Arrange
+		update_option( Module::ANGIE_CONSENT_OPTION, 'yes' );
+
+		// Act & Assert
+		$this->assertTrue( Module::is_angie_enabled() );
+	}
+
+	public function test_is_angie_enabled__true_with_active_plugin() {
+		// Arrange
+		add_filter( 'pre_option_active_plugins', fn() => [ 'angie/angie.php' ] );
+
+		// Act & Assert
+		$this->assertTrue( Module::is_angie_enabled() );
+	}
+
+	public function test_is_angie_enabled__false_when_blocked_by_site() {
+		// Arrange
+		update_option( Module::ANGIE_CONSENT_OPTION, 'yes' );
+		update_option( Module::ANGIE_BLOCKED_BY_SITE_OPTION, true );
+
+		// Act & Assert
+		$this->assertFalse( Module::is_angie_enabled() );
+	}
+
+	public function test_is_angie_enabled__false_when_user_disabled() {
+		// Arrange
+		$this->act_as_admin();
+		update_option( Module::ANGIE_CONSENT_OPTION, 'yes' );
+		update_user_meta( get_current_user_id(), Module::ANGIE_USER_DISABLED_META_KEY, true );
+
+		// Act & Assert
+		$this->assertFalse( Module::is_angie_enabled() );
 	}
 
 	public function test_experiment_is_registered_as_default_inactive() {
@@ -182,9 +223,11 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 	}
 
 	public function angie_plugin_active_provider(): array {
+		$shared_flags = '"isExperimentActive":true,"hasConsent":false,"isUserDisabled":false,"isBlockedBySite":false,"isPluginInstalled":false';
+
 		return [
-			'angie plugin active' => [ [ 'angie/angie.php' ], '{"isAngiePluginActive":true,"showEntryPoints":true}' ],
-			'angie plugin inactive' => [ [], '{"isAngiePluginActive":false,"showEntryPoints":true}' ],
+			'angie plugin active' => [ [ 'angie/angie.php' ], '{"isAngiePluginActive":true,"showEntryPoints":true,' . $shared_flags . '}' ],
+			'angie plugin inactive' => [ [], '{"isAngiePluginActive":false,"showEntryPoints":true,' . $shared_flags . '}' ],
 		];
 	}
 
@@ -207,8 +250,10 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		$this->get_ai_module()->print_angie_config();
 
 		// Assert.
+		$shared_flags = '"isExperimentActive":true,"hasConsent":false,"isUserDisabled":false,"isBlockedBySite":false,"isPluginInstalled":false';
+
 		$this->assertSame(
-			[ 'var elementorEditorAngie = {"isAngiePluginActive":false,"showEntryPoints":false};' ],
+			[ 'var elementorEditorAngie = {"isAngiePluginActive":false,"showEntryPoints":false,' . $shared_flags . '};' ],
 			array_values( array_filter( wp_scripts()->get_data( self::ANGIE_SCRIPT_HANDLE, 'before' ) ) )
 		);
 	}
@@ -233,8 +278,10 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		$this->get_ai_module()->print_angie_config();
 
 		// Assert.
+		$shared_flags = '"isExperimentActive":true,"hasConsent":false,"isUserDisabled":false,"isBlockedBySite":false,"isPluginInstalled":false';
+
 		$this->assertSame(
-			[ 'var elementorEditorAngie = {"isAngiePluginActive":false,"showEntryPoints":false};' ],
+			[ 'var elementorEditorAngie = {"isAngiePluginActive":false,"showEntryPoints":false,' . $shared_flags . '};' ],
 			array_values( array_filter( wp_scripts()->get_data( self::ANGIE_SCRIPT_HANDLE, 'before' ) ) )
 		);
 

@@ -41,6 +41,9 @@
   "devDependencies": {
     "tsup": "^8.3.5"
   },
+  "peerDependencies": {
+    "react": "^18.3.1"
+  },
   "dependencies": {
     "@elementor-external/wp-search-mcp": "npm:@elementor/wp-search-mcp@1.2.0",
     "@elementor/editor-angie-sdk": "4.5.0",

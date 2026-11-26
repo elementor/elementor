@@ -1,6 +1,5 @@
 import { getMCPByDomain } from '@elementor/editor-mcp';
 
-import { initUploadMediaTool } from './tools/upload-media/tool';
 import { initV3CodeControlTool } from './tools/v3-code-control/tool';
 import { initV3KitSiteIdentityTool } from './tools/v3-kit-site-identity/tool';
 import { initV3MotionEffectsTool } from './tools/v3-motion-effects/tool';
@@ -14,6 +13,5 @@ export const initAiTextMcp = (): void => {
 	initV3CodeControlTool( reg );
 	initV3KitSiteIdentityTool( reg );
 	initV3MotionEffectsTool( reg );
-	initUploadMediaTool( reg );
 	initV3TextControlTool( reg );
 };
