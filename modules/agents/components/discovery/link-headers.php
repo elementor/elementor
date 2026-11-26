@@ -48,6 +48,8 @@ class Link_Headers extends Feature_Component {
 
 	const MCP_SERVER_CARD_SLUG = 'mcp/server-card.json';
 
+	const VARY_ACCEPT_HEADER = 'Vary: Accept';
+
 	/** @var bool Prevents duplicate emission within the same request. */
 	private bool $emitted = false;
 
@@ -109,6 +111,12 @@ class Link_Headers extends Feature_Component {
 			if ( null !== $link ) {
 				$links[] = $link;
 			}
+
+			$this->send_header( $this->build_singular_vary_header( $post ) );
+		}
+
+		if ( is_404() ) {
+			$this->send_header( $this->build_not_found_vary_header() );
 		}
 
 		$this->send_link_headers( $links );
@@ -230,6 +238,20 @@ class Link_Headers extends Feature_Component {
 			. '; rel="alternate"; type="text/markdown"';
 	}
 
+	/**
+	 * @param \WP_Post|null $post
+	 * @return string|null
+	 */
+	public function build_singular_vary_header( $post ): ?string {
+		return null === $this->build_singular_markdown_link( $post ) ? null : self::VARY_ACCEPT_HEADER;
+	}
+
+	public function build_not_found_vary_header(): ?string {
+		return $this->settings->is_module_active( Agent_Ready_Settings::MODULE_MARKDOWN_CONTENT )
+			? self::VARY_ACCEPT_HEADER
+			: null;
+	}
+
 	private function resolve_markdown_url( \WP_Post $post ): ?string {
 		if ( $this->is_static_front_page( $post ) ) {
 			return untrailingslashit( home_url() ) . self::HOMEPAGE_MARKDOWN_PATH;
@@ -262,6 +284,14 @@ class Link_Headers extends Feature_Component {
 		foreach ( $links as $link ) {
 			header( 'Link: ' . $link, false );
 		}
+	}
+
+	private function send_header( ?string $header ): void {
+		if ( null === $header || headers_sent() ) {
+			return;
+		}
+
+		header( $header, false );
 	}
 
 	/**
