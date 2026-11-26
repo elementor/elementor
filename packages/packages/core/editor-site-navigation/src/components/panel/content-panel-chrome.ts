@@ -40,8 +40,7 @@ export function getContentPanelListItemSx( secondaryActionSlotCount: number ) {
 		return contentPanelListRowPaddingSx;
 	}
 
-	const paddingInlineEnd =
-		secondaryActionSlotCount * CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_ACTION_SLOT_WIDTH;
+	const paddingInlineEnd = secondaryActionSlotCount * CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_ACTION_SLOT_WIDTH;
 
 	return {
 		...contentPanelListRowPaddingSx,

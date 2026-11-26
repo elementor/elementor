@@ -1,7 +1,4 @@
-import {
-	getContentPanelListItemSecondarySlotCount,
-	getContentPanelListItemSx,
-} from '../content-panel-chrome';
+import { getContentPanelListItemSecondarySlotCount, getContentPanelListItemSx } from '../content-panel-chrome';
 
 describe( 'getContentPanelListItemSx', () => {
 	it( 'leaves rows with only the menu slot on the shared list padding', () => {

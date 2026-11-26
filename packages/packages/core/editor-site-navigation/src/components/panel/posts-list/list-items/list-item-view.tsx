@@ -32,7 +32,11 @@ import Rename from '../../actions-menu/actions/rename';
 import Restore from '../../actions-menu/actions/restore';
 import SetHome, { RemoveHomepageDialog } from '../../actions-menu/actions/set-home';
 import View from '../../actions-menu/actions/view';
-import { contentPanelListItemButtonSx, getContentPanelListItemSecondarySlotCount, getContentPanelListItemSx } from '../../content-panel-chrome';
+import {
+	contentPanelListItemButtonSx,
+	getContentPanelListItemSecondarySlotCount,
+	getContentPanelListItemSx,
+} from '../../content-panel-chrome';
 import {
 	SiteContentListItemActionsSlot,
 	useSiteContentListItemActionsInjections,
