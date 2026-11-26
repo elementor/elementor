@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Elements\AtomicMenu;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Entry\Atomic_Menu_Entry;
@@ -875,6 +876,45 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		}
 
 		$assert_both_agree( [ 'laptop' => 'tablet', 'mobile_extra' => 'mobile' ] );
+	}
+
+	public function test_get_collapse_css__orders_the_blocks_from_the_smallest_breakpoint_to_desktop() {
+		// Arrange.
+		$this->activate_breakpoints( [ 'viewport_mobile_extra', 'viewport_tablet_extra', 'viewport_laptop' ] );
+
+		try {
+			// Act.
+			$css = Atomic_Menu::get_collapse_css();
+		} finally {
+			$this->reset_breakpoints_to_default();
+		}
+
+		preg_match_all( '/\.e-menu\[data-e-collapse="(\w+)"\]:has\(> \.e-menu-toggle-base\)\{flex-wrap/', $css, $matches );
+
+		// Assert.
+		$this->assertSame(
+			[ 'mobile', 'mobile_extra', 'tablet', 'tablet_extra', 'laptop', 'desktop' ],
+			$matches[1]
+		);
+	}
+
+	public function test_resolve_collapse_breakpoints__lists_the_keys_from_the_smallest_width_to_the_largest() {
+		// Arrange.
+		$default_widths = array_map(
+			fn( array $config ) => $config['default_value'],
+			Breakpoints_Manager::get_default_config()
+		);
+
+		// Act.
+		$keys = array_diff( array_keys( Atomic_Menu::resolve_collapse_breakpoints( [] ) ), [ 'desktop', 'none' ] );
+		$widths = array_map( fn( string $key ) => $default_widths[ $key ], $keys );
+
+		// Assert.
+		$sorted = $widths;
+		sort( $sorted );
+
+		$this->assertSame( $sorted, $widths );
+		$this->assertSame( [ 'desktop', 'none' ], array_slice( array_keys( Atomic_Menu::resolve_collapse_breakpoints( [] ) ), -2 ) );
 	}
 
 	public function test_get_collapse_css__desktop_collapses_at_every_width_without_a_media_query() {

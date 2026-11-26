@@ -239,11 +239,17 @@ class Atomic_Menu extends Atomic_Element_Base {
 			".e-menu:not([data-e-open=\"true\"]) > {$toggle} .e-menu-toggle-open-base{display:none}",
 		];
 
-		$conditions = [ self::COLLAPSE_DESKTOP => '@media(scripting:enabled)' ];
+		$conditions = [];
 
 		foreach ( self::get_collapsible_breakpoints() as $key => $breakpoint ) {
+			if ( self::COLLAPSE_DESKTOP === $key ) {
+				continue;
+			}
+
 			$conditions[ $key ] = "@media(scripting:enabled) and (max-width:{$breakpoint->get_value()}px)";
 		}
+
+		$conditions[ self::COLLAPSE_DESKTOP ] = '@media(scripting:enabled)';
 
 		foreach ( $conditions as $key => $condition ) {
 			$scope = ".e-menu[data-e-collapse=\"{$key}\"]:has(> {$toggle})";
