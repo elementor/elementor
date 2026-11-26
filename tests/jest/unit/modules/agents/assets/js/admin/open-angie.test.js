@@ -8,6 +8,9 @@ import {
 	deliverPendingAngiePrompt,
 	openAngieAfterInstall,
 	openAngieWithPrompt,
+	resetAngieSdkForTests,
+	restoreSdkSidebar,
+	toggleSdkSidebar,
 } from 'elementor/modules/agents/assets/js/admin/scanner/open-angie';
 
 const mockSdk = {
@@ -113,10 +116,47 @@ describe( 'deliverPendingAngiePrompt', () => {
 	} );
 } );
 
+describe( 'restoreSdkSidebar', () => {
+	const SIDEBAR_STATE_STORAGE_KEY = 'elementor_admin_pages_angie_sidebar_state';
+
+	beforeEach( () => {
+		AngieMcpSdk.mockClear();
+		Object.values( mockSdk ).forEach( ( mock ) => mock.mockClear() );
+		resetAngieSdkForTests();
+		localStorage.clear();
+	} );
+
+	it( 'keeps the sidebar closed when it was not left open', async () => {
+		// Arrange
+		localStorage.setItem( SIDEBAR_STATE_STORAGE_KEY, 'closed' );
+
+		// Act
+		await restoreSdkSidebar();
+
+		// Assert
+		expect( mockSdk.loadSidebarV2 ).not.toHaveBeenCalled();
+	} );
+
+	it( 'reopens the sidebar and saves future toggles when it was left open', async () => {
+		// Arrange
+		localStorage.setItem( SIDEBAR_STATE_STORAGE_KEY, 'open' );
+		window.toggleAngieSidebar = jest.fn();
+
+		// Act
+		await restoreSdkSidebar();
+		mockSdk.loadSidebarV2.mock.calls[ 0 ][ 0 ].callbacks.onToggle( false );
+
+		// Assert
+		expect( window.toggleAngieSidebar ).toHaveBeenCalledWith( true );
+		expect( localStorage.getItem( SIDEBAR_STATE_STORAGE_KEY ) ).toBe( 'closed' );
+	} );
+} );
+
 describe( 'openAngieWithPrompt', () => {
 	beforeEach( () => {
 		AngieMcpSdk.mockClear();
 		Object.values( mockSdk ).forEach( ( mock ) => mock.mockClear() );
+		resetAngieSdkForTests();
 		isAngiePluginAvailable.mockReturnValue( false );
 		setLocation( '' );
 	} );
@@ -133,6 +173,20 @@ describe( 'openAngieWithPrompt', () => {
 		} ) );
 		expect( mockSdk.triggerAngie ).toHaveBeenCalledTimes( 2 );
 		expect( mockSdk.triggerAngie ).toHaveBeenCalledWith( expect.objectContaining( { prompt: PROMPT } ) );
+	} );
+
+	it( 'toggles the already booted SDK sidebar from the admin bar', async () => {
+		// Arrange
+		window.toggleAngieSidebar = jest.fn();
+		await openAngieWithPrompt( PROMPT );
+		window.toggleAngieSidebar.mockClear();
+
+		// Act
+		await toggleSdkSidebar();
+
+		// Assert
+		expect( window.toggleAngieSidebar ).toHaveBeenCalledWith();
+		expect( mockSdk.loadSidebarV2 ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'hands the prompt to the Angie plugin when it is available', async () => {

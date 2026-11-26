@@ -1,10 +1,33 @@
 import ReactUtils from 'elementor-utils/react';
 
 import { App } from './app';
+import { restoreSdkSidebar, toggleSdkSidebar } from './scanner/open-angie';
 import { ScannerApp } from './scanner/scanner-app';
 
 const MOUNT_ID = 'e-agents-ready';
 const SCANNER_MOUNT_ID = 'e-agents-ready-scanner';
+const ADMIN_BAR_ANGIE_TOGGLE_SELECTOR = '#wp-admin-bar-elementor-angie-toggle > .ab-item';
+
+const logAngieError = ( error ) => {
+	// eslint-disable-next-line no-console
+	console.error( 'Toggling Angie failed:', error );
+};
+
+const bindAdminBarAngieToggle = () => {
+	const toggle = document.querySelector( ADMIN_BAR_ANGIE_TOGGLE_SELECTOR );
+
+	if ( ! toggle ) {
+		return;
+	}
+
+	toggle.addEventListener( 'click', ( event ) => {
+		event.preventDefault();
+
+		toggleSdkSidebar().catch( logAngieError );
+	} );
+
+	restoreSdkSidebar().catch( logAngieError );
+};
 
 const mountAgentAccess = ( rootElement, config, isRTL ) => {
 	ReactUtils.render( (
@@ -60,6 +83,8 @@ const init = () => {
 	if ( agentAccessRoot ) {
 		mountAgentAccess( agentAccessRoot, config, isRTL );
 	}
+
+	bindAdminBarAngieToggle();
 };
 
 init();
