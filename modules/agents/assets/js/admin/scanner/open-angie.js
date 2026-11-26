@@ -24,6 +24,7 @@ const SIDEBAR_STATE_OPEN = 'open';
 const SIDEBAR_STATE_CLOSED = 'closed';
 
 let sdkBootPromise = null;
+let isSdkBooted = false;
 
 const saveSidebarState = ( isOpen ) => {
 	try {
@@ -77,6 +78,7 @@ const bootSdk = () => {
 		} );
 
 		enableEndSideResize();
+		isSdkBooted = true;
 
 		return sdk;
 	} )().catch( ( error ) => {
@@ -104,6 +106,7 @@ const openSdkSidebar = async () => {
 
 export const resetAngieSdkForTests = () => {
 	sdkBootPromise = null;
+	isSdkBooted = false;
 };
 
 export const restoreSdkSidebar = () => {
@@ -115,11 +118,13 @@ export const restoreSdkSidebar = () => {
 };
 
 export const toggleSdkSidebar = () => {
-	if ( ! sdkBootPromise ) {
+	if ( ! isSdkBooted ) {
 		return openSdkSidebar();
 	}
 
-	return sdkBootPromise.then( () => window.toggleAngieSidebar?.() );
+	window.toggleAngieSidebar?.();
+
+	return Promise.resolve();
 };
 
 export const openAngieWithPrompt = ( prompt ) => {

@@ -80,9 +80,11 @@ export const injectEndSideStyles = () => {
 export const enableEndSideResize = () => {
 	const container = document.getElementById( SIDEBAR_CONTAINER_ID );
 
-	if ( ! container ) {
+	if ( ! container || container.dataset.endSideResize ) {
 		return;
 	}
+
+	container.dataset.endSideResize = 'true';
 
 	let startX = 0;
 	let startWidth = 0;
