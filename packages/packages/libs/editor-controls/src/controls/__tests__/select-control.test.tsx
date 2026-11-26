@@ -42,6 +42,30 @@ describe( 'SelectControl', () => {
 		} );
 	} );
 
+	it( 'should display the fallback option when the stored value is no longer an option', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = { setValue, value: { $$type: 'string', value: 'tablet' }, bind: 'tag', propType };
+
+		// Act.
+		renderControl( <SelectControl options={ defaultOptions } fallbackValues={ { tablet: 'value2' } } />, props );
+
+		// Assert.
+		expect( screen.getByText( 'Option 2' ) ).toBeInTheDocument();
+		expect( setValue ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should ignore the fallback values when the stored value is still an option', () => {
+		// Arrange.
+		const props = { setValue: jest.fn(), value: { $$type: 'string', value: 'value1' }, bind: 'tag', propType };
+
+		// Act.
+		renderControl( <SelectControl options={ defaultOptions } fallbackValues={ { value1: 'value2' } } />, props );
+
+		// Assert.
+		expect( screen.getByText( 'Option 1' ) ).toBeInTheDocument();
+	} );
+
 	it( 'should disable the select options', () => {
 		// Arrange.
 		const setValue = jest.fn();

@@ -29,6 +29,7 @@ Scope: Internal (Core). Experiment: `e_nav_menu`.
 
 - `collapse-breakpoint` stores a key: a site max-width breakpoint, `desktop` (collapsed at every width) or `none` (never collapsed). Options in the control are the site's active max-width breakpoints, then Desktop and None.
 - The stored key is never rewritten. `Atomic_Menu::resolve_collapse_breakpoints()` maps each key to the effective one: itself while active, else the next smaller active breakpoint, else `none`. It is passed as the `collapse_breakpoints` render context, so the Twig `data-e-collapse` and the editor preview use the same value. `get_collapse_css()` emits one block per active breakpoint plus `desktop`.
+- The editor dropdown shows the resolved option for a stored key that is no longer listed: `Select_Control::set_fallback_values()` sends `fallbackValues` and `SelectControl` selects `fallbackValues[stored]` when the stored value is not an option. The stored value is not rewritten until the author picks one.
 - Pro's collapsed Submenu CSS must cover `desktop` as well (see Pro `modules/atomic-menu`).
 
 ## Submenu lock (Free and not-connected Pro)

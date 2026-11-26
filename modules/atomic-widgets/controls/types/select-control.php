@@ -11,6 +11,7 @@ class Select_Control extends Atomic_Control_Base {
 	private array $options = [];
 	private array $groups = [];
 	private ?array $fallback_labels = null;
+	private array $fallback_values = [];
 	private ?string $collection_id = null;
 	private ?string $placeholder = null;
 
@@ -49,6 +50,10 @@ class Select_Control extends Atomic_Control_Base {
 			'placeholder' => $this->placeholder,
 		];
 
+		if ( $this->fallback_values ) {
+			$props['fallbackValues'] = $this->fallback_values;
+		}
+
 		if ( $this->groups ) {
 			$props['groups'] = $this->groups;
 		}
@@ -61,6 +66,15 @@ class Select_Control extends Atomic_Control_Base {
 
 	public function set_fallback_labels( array $fallback_labels ): self {
 		$this->fallback_labels = $fallback_labels;
+
+		return $this;
+	}
+
+	/**
+	 * Maps a stored value that is no longer an option to the option the control selects in its place. The stored value is not rewritten.
+	 */
+	public function set_fallback_values( array $fallback_values ): self {
+		$this->fallback_values = $fallback_values;
 
 		return $this;
 	}

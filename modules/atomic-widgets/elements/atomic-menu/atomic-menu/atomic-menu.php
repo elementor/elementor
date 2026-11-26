@@ -191,6 +191,14 @@ class Atomic_Menu extends Atomic_Element_Base {
 		return reset( $available );
 	}
 
+	private static function get_collapse_fallback_values(): array {
+		return array_filter(
+			self::resolve_collapse_breakpoints( array_keys( self::get_collapsible_breakpoints() ) ),
+			fn( string $resolved, string $stored ) => $resolved !== $stored,
+			ARRAY_FILTER_USE_BOTH
+		);
+	}
+
 	private function get_collapse_breakpoint_options(): array {
 		$options = [];
 
@@ -285,7 +293,8 @@ class Atomic_Menu extends Atomic_Element_Base {
 						] ),
 					Select_Control::bind_to( 'collapse-breakpoint' )
 						->set_label( __( 'Collapse at breakpoint', 'elementor' ) )
-						->set_options( $this->get_collapse_breakpoint_options() ),
+						->set_options( $this->get_collapse_breakpoint_options() )
+						->set_fallback_values( self::get_collapse_fallback_values() ),
 					Select_Control::bind_to( 'collapsed-submenus' )
 						->set_label( __( 'Collapsed submenus', 'elementor' ) )
 						->set_options( [
