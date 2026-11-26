@@ -639,13 +639,46 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertStringContainsString( '[data-e-collapsed-position="overlay"] > .e-menu-items-base{position:absolute', $css );
 	}
 
+	public function test_collapse_breakpoint_schema__accepts_desktop_and_none() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+		$prop_type = $this->get_config( 'e-menu' )['atomic_props_schema']['collapse-breakpoint'];
+
+		// Act & Assert.
+		$this->assertTrue( $prop_type->validate( [ '$$type' => 'string', 'value' => 'desktop' ] ) );
+		$this->assertTrue( $prop_type->validate( [ '$$type' => 'string', 'value' => 'none' ] ) );
+		$this->assertTrue( $prop_type->validate( [ '$$type' => 'string', 'value' => 'tablet' ] ) );
+		$this->assertFalse( $prop_type->validate( [ '$$type' => 'string', 'value' => 'unknown' ] ) );
+	}
+
+	public function test_get_collapse_css__desktop_collapses_at_every_width_without_a_media_query() {
+		// Act.
+		$css = Atomic_Menu::get_collapse_css();
+
+		// Assert.
+		$scope = '.e-menu[data-e-collapse="desktop"]:has(> .e-menu-toggle-base)';
+		$this->assertStringContainsString( "{$scope} > .e-menu-toggle-base{display:flex;", $css );
+		$this->assertStringContainsString( "{$scope} > .e-menu-items-base{display:none}", $css );
+		$this->assertStringContainsString( "{$scope}[data-e-open=\"true\"] > .e-menu-items-base{display:flex}", $css );
+		$this->assertStringContainsString( '@media(scripting:enabled){' . $scope, $css );
+	}
+
+	public function test_get_collapse_css__none_never_collapses() {
+		// Act.
+		$css = Atomic_Menu::get_collapse_css();
+
+		// Assert.
+		$this->assertStringNotContainsString( 'data-e-collapse="none"', $css );
+		$this->assertStringContainsString( '.e-menu[data-e-collapse] > .e-menu-toggle-base{display:none}', $css );
+	}
+
 	public function test_get_collapse_css__defaults_items_layout_in_every_collapsible_breakpoint_block() {
 		// Act.
 		$css = Atomic_Menu::get_collapse_css();
 
 		// Assert.
 		$blocks = substr_count( $css, '@media(scripting:enabled)' );
-		$this->assertGreaterThan( 0, $blocks );
+		$this->assertGreaterThan( 1, $blocks );
 		$this->assertSame( $blocks, substr_count( $css, '> .e-menu-items-base){flex-direction:column;flex-basis:100%;width:100%}' ) );
 	}
 

@@ -52,6 +52,8 @@ class Atomic_Menu extends Atomic_Element_Base {
 	const POSITION_IN_FLOW = 'in-flow';
 	const SUBMENU_TRIGGER_CLICK = 'click';
 	const SUBMENU_TRIGGER_HOVER = 'hover';
+	const COLLAPSE_DESKTOP = 'desktop';
+	const COLLAPSE_NONE = 'none';
 	const COLLAPSED_SUBMENUS_ONE = 'one-per-level';
 	const COLLAPSED_SUBMENUS_MULTIPLE = 'multiple';
 	const DEFAULT_SUBMENU_ENTRY = 'products';
@@ -102,7 +104,7 @@ class Atomic_Menu extends Atomic_Element_Base {
 			'collapse-breakpoint' => String_Prop_Type::make()
 				->enum( self::get_collapse_breakpoint_keys() )
 				->default( Breakpoints_Manager::BREAKPOINT_KEY_TABLET )
-				->description( 'The breakpoint at and below which the menu items collapse behind the toggle.' ),
+				->description( 'The breakpoint at and below which the menu items collapse behind the toggle. Desktop collapses at every width; none never collapses.' ),
 			'collapsed-submenus' => String_Prop_Type::make()
 				->enum( [ self::COLLAPSED_SUBMENUS_ONE, self::COLLAPSED_SUBMENUS_MULTIPLE ] )
 				->default( self::COLLAPSED_SUBMENUS_ONE )
@@ -144,6 +146,8 @@ class Atomic_Menu extends Atomic_Element_Base {
 			Breakpoints_Manager::BREAKPOINT_KEY_TABLET,
 			Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA,
 			Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP,
+			self::COLLAPSE_DESKTOP,
+			self::COLLAPSE_NONE,
 		];
 	}
 
@@ -169,6 +173,15 @@ class Atomic_Menu extends Atomic_Element_Base {
 			];
 		}
 
+		$options[] = [
+			'value' => self::COLLAPSE_DESKTOP,
+			'label' => __( 'Desktop', 'elementor' ),
+		];
+		$options[] = [
+			'value' => self::COLLAPSE_NONE,
+			'label' => __( 'None', 'elementor' ),
+		];
+
 		return $options;
 	}
 
@@ -190,10 +203,16 @@ class Atomic_Menu extends Atomic_Element_Base {
 			".e-menu:not([data-e-open=\"true\"]) > {$toggle} .e-menu-toggle-open-base{display:none}",
 		];
 
+		$conditions = [ self::COLLAPSE_DESKTOP => '@media(scripting:enabled)' ];
+
 		foreach ( self::get_collapsible_breakpoints() as $key => $breakpoint ) {
+			$conditions[ $key ] = "@media(scripting:enabled) and (max-width:{$breakpoint->get_value()}px)";
+		}
+
+		foreach ( $conditions as $key => $condition ) {
 			$scope = ".e-menu[data-e-collapse=\"{$key}\"]:has(> {$toggle})";
 
-			$css[] = "@media(scripting:enabled) and (max-width:{$breakpoint->get_value()}px){"
+			$css[] = "{$condition}{"
 				. "{$scope}{flex-wrap:wrap;position:relative}"
 				. "{$scope} > {$toggle}{display:flex;order:-1;flex:0 0 auto;width:auto;align-items:center;justify-content:center}"
 				. "{$scope} > {$items}{display:none}"
