@@ -21,6 +21,7 @@ export function createIconButtonDefinition(): CompositeWidgetDefinition {
 	return {
 		id: 'elementor/icon-button',
 		version: 1,
+		source: 'code',
 		title: 'Icon button',
 		template: {
 			elType: 'e-flexbox',

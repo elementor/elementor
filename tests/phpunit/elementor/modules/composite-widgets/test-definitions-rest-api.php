@@ -54,10 +54,11 @@ class Test_Definitions_REST_API extends Elementor_Test_Base {
 
 		$this->assertSame( \WP_Http::OK, $response->get_status() );
 		$this->assertEqualsCanonicalizing(
-			[ 'id', 'version', 'title', 'template', 'general', Widgets_Definitions_Registry::ARCHIVED_KEY ],
+			[ 'id', 'version', 'source', 'title', 'template', 'general', Widgets_Definitions_Registry::ARCHIVED_KEY, Module::INSERTABLE_KEY ],
 			array_keys( $definition )
 		);
 		$this->assertTrue( $definition[ Widgets_Definitions_Registry::ARCHIVED_KEY ] );
+		$this->assertFalse( $definition[ Module::INSERTABLE_KEY ] );
 	}
 
 	public function test_get__requires_edit_posts() {

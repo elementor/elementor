@@ -55,6 +55,23 @@ describe( 'drag-element-from-panel', () => {
 			expect( mockReply ).toHaveBeenCalledWith( 'element:selected', expect.any( Object ) );
 			expect( mockTrigger ).toHaveBeenCalledWith( 'element:drag:start' );
 		} );
+
+		it( 'should keep the custom data next to the preset flags', () => {
+			// Arrange
+			const mockEvent = {
+				dataTransfer: { setData: jest.fn(), getData: () => '' },
+			} as unknown as React.DragEvent;
+
+			// Act
+			startDragElementFromPanel( { elType: 'e-flexbox', custom: { compositeWidgetId: 'site/card' } }, mockEvent );
+
+			// Assert
+			expect( mockReply ).toHaveBeenCalledWith( 'element:selected', {
+				model: expect.objectContaining( {
+					custom: { compositeWidgetId: 'site/card', isPreset: false, preset_settings: undefined },
+				} ),
+			} );
+		} );
 	} );
 
 	describe( 'startDragElementFromPanel custom', () => {

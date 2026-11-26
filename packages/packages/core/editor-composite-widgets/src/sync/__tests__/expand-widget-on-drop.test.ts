@@ -14,6 +14,7 @@ const WIDGET_ID = 'elementor/icon-button';
 const DEFINITION: CompositeWidgetDefinition = {
 	id: WIDGET_ID,
 	version: 1,
+	source: 'code',
 	title: 'Icon button',
 	template: { elType: 'e-flexbox', part: 'root' },
 };

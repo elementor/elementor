@@ -20,6 +20,7 @@ jest.mock( '@elementor/editor-elements', () => ( {
 const DEFINITION: CompositeWidgetDefinition = {
 	id: WIDGET_ID,
 	version: 1,
+	source: 'code',
 	title: 'Tabs',
 	template: { elType: 'e-flexbox' },
 	general: [ { section: 'Content', fields: [ { label: 'Text', target: { part: 'label', prop: 'paragraph' } } ] } ],

@@ -24,12 +24,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const MODULE_NAME = 'composite-widgets';
 	const EXPERIMENT_NAME = 'e_composite_widgets';
+	const MANUAL_CREATE_EXPERIMENT_NAME = 'e_composite_widgets_create';
 	const REGISTER_HOOK = 'elementor/composite-widgets/register';
 	const REGISTER_SITE_HOOK = 'elementor/composite-widgets/register-site';
 	const CORE_DEFINITION_FILES = [
 		'schema/examples/icon-button.json',
 	];
-	const EDITOR_DEFINITION_KEYS = [ 'id', 'version', 'title', 'icon', 'template', 'general', 'style' ];
+	const EDITOR_DEFINITION_KEYS = [ 'id', 'version', 'source', 'title', 'icon', 'template', 'general', 'style' ];
+	const INSERTABLE_KEY = 'insertable';
 	const SYNC_LOCKS_PRIORITY = 20;
 
 	const PACKAGES = [
@@ -92,8 +94,18 @@ class Module extends BaseModule {
 		return Atomic_Widgets_Module::is_active();
 	}
 
+	/**
+	 * Gates only manual, user-initiated creation from a page structure; agentic and API creation stay open.
+	 * Registered by the constructor, so it does not exist (and is inactive) while the mother experiment is off.
+	 */
+	public static function is_manual_create_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::MANUAL_CREATE_EXPERIMENT_NAME );
+	}
+
 	public function __construct() {
 		parent::__construct();
+
+		$this->register_manual_create_experiment();
 
 		( new Definitions_REST_API( fn () => $this->get_editor_definitions() ) )->register_hooks();
 
@@ -102,6 +114,17 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->sync_widget_locks( $data, $document ), self::SYNC_LOCKS_PRIORITY, 2 );
 
 		( new Site_Widgets_Visibility() )->register_hooks();
+	}
+
+	private function register_manual_create_experiment(): void {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::MANUAL_CREATE_EXPERIMENT_NAME,
+			'title' => esc_html__( 'Composite Widgets: Create', 'elementor' ),
+			'description' => esc_html__( 'Enable creating a composite widget from a page structure in the editor.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
 	}
 
 	/**
@@ -179,51 +202,22 @@ class Module extends BaseModule {
 	private function add_editor_settings( array $settings ): array {
 		$settings['compositeWidgets'] = $this->get_editor_definitions();
 
-		if ( isset( $settings['elementsPresets'] ) ) {
-			foreach ( $this->get_registry()->all() as $definition ) {
-				if ( ! self::can_insert( $definition ) ) {
-					continue;
-				}
-
-				$settings['elementsPresets'][ $this->get_panel_tile_key( $definition ) ] = $this->build_panel_tile( $definition );
-			}
-		}
-
 		return $settings;
 	}
 
 	/**
-	 * Archived definitions stay registered, so existing copies keep their panel and locks; the flag
-	 * only hides them from new drops.
+	 * Archived and non-insertable definitions stay registered, so existing copies keep their panel and
+	 * locks; the flags only hide them from new drops.
 	 */
 	private function get_editor_definitions(): array {
 		$keys = array_flip( array_merge( self::EDITOR_DEFINITION_KEYS, [ Widgets_Definitions_Registry::ARCHIVED_KEY ] ) );
 
 		return array_map(
-			fn ( array $definition ) => array_intersect_key( $definition, $keys ),
+			fn ( array $definition ) => array_merge(
+				array_intersect_key( $definition, $keys ),
+				[ self::INSERTABLE_KEY => self::can_insert( $definition ) ]
+			),
 			$this->get_registry()->all()
 		);
-	}
-
-	private function get_panel_tile_key( array $definition ): string {
-		return 'composite-widget-' . str_replace( '/', '-', $definition['id'] );
-	}
-
-	/**
-	 * TEMPORARY: reuses the legacy container-presets channel only to test inserting a widget tree.
-	 * Real panel tiles and categories are a separate ticket.
-	 */
-	private function build_panel_tile( array $definition ): array {
-		return [
-			'replacements' => [
-				'name' => $this->get_panel_tile_key( $definition ),
-				'title' => $definition['title'],
-				'icon' => $definition['icon'] ?? 'eicon-apps',
-				'custom' => [
-					'originalWidget' => $definition['template']['elType'],
-					'compositeWidgetId' => $definition['id'],
-				],
-			],
-		];
 	}
 }

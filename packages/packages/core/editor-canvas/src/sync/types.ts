@@ -3,7 +3,7 @@ import { type V1ElementModelProps, type V1ElementSettingsProps } from '@elemento
 import { type StorageContent } from '../form-structure/utils';
 
 export type ElementModelProps = Omit< V1ElementModelProps, 'id' > & {
-	custom: {
+	custom: Record< string, unknown > & {
 		isPreset: boolean;
 		preset_settings?: V1ElementSettingsProps;
 	} & Record< string, unknown >;

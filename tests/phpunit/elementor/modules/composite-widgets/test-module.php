@@ -25,9 +25,8 @@ class Test_Module extends Elementor_Test_Base {
 	const THIRD_PARTY_ID = 'acme/badge';
 	const LOCKING_WIDGET_ID = 'acme/card';
 	const UNREGISTERED_WIDGET_ID = 'acme/removed';
-	const SITE_WIDGET_TILE = 'composite-widget-site-promo-card';
 
-	public function test_editor_settings__expose_registered_definitions_and_temporary_tiles() {
+	public function test_editor_settings__expose_registered_definitions_without_panel_presets() {
 		// Arrange.
 		new Module();
 
@@ -35,11 +34,13 @@ class Test_Module extends Elementor_Test_Base {
 		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'elementsPresets' => [] ] );
 
 		// Assert.
-		$this->assertSame( Module::EDITOR_DEFINITION_KEYS, array_keys( $settings['compositeWidgets'][ self::ICON_BUTTON_ID ] ) );
 		$this->assertSame(
-			self::ICON_BUTTON_ID,
-			$settings['elementsPresets']['composite-widget-elementor-icon-button']['replacements']['custom']['compositeWidgetId']
+			array_merge( Module::EDITOR_DEFINITION_KEYS, [ Module::INSERTABLE_KEY ] ),
+			array_keys( $settings['compositeWidgets'][ self::ICON_BUTTON_ID ] )
 		);
+		$this->assertSame( Widget_Definition::SOURCE_CODE, $settings['compositeWidgets'][ self::ICON_BUTTON_ID ]['source'] );
+		$this->assertTrue( $settings['compositeWidgets'][ self::ICON_BUTTON_ID ][ Module::INSERTABLE_KEY ] );
+		$this->assertSame( [], $settings['elementsPresets'] );
 	}
 
 	public function test_register_hook__adds_third_party_definitions_next_to_core_ones() {
@@ -114,37 +115,40 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertSame( Widget_Definition::SOURCE_SITE, $definitions[ Site_Definition_Fixture::WIDGET_ID ]['source'] );
 	}
 
-	public function test_editor_settings__flag_archived_site_widgets_and_give_them_no_tile() {
+	public function test_editor_settings__flag_archived_site_widgets_as_not_insertable() {
 		// Arrange.
+		\Mock_Pro_License_API::set_license_state( true, false );
 		$this->register_site_widget( true );
 		new Module();
 
 		// Act.
-		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'elementsPresets' => [] ] );
+		$settings = apply_filters( 'elementor/editor/localize_settings', [] );
 
 		// Assert.
-		$this->assertTrue( $settings['compositeWidgets'][ Site_Definition_Fixture::WIDGET_ID ][ Widgets_Definitions_Registry::ARCHIVED_KEY ] );
-		$this->assertArrayNotHasKey( self::SITE_WIDGET_TILE, $settings['elementsPresets'] );
+		$definition = $settings['compositeWidgets'][ Site_Definition_Fixture::WIDGET_ID ];
+		$this->assertTrue( $definition[ Widgets_Definitions_Registry::ARCHIVED_KEY ] );
+		$this->assertFalse( $definition[ Module::INSERTABLE_KEY ] );
 	}
 
 	/**
-	 * @dataProvider site_widget_tile_provider
+	 * @dataProvider site_widget_insertable_provider
 	 */
-	public function test_editor_settings__give_site_widgets_a_tile_only_with_an_active_license( bool $is_active, bool $is_expired, bool $has_tile ) {
+	public function test_editor_settings__flag_site_widgets_insertable_only_with_an_active_license( bool $is_active, bool $is_expired, bool $is_insertable ) {
 		// Arrange.
 		\Mock_Pro_License_API::set_license_state( $is_active, $is_expired );
 		$this->register_site_widget();
 		new Module();
 
 		// Act.
-		$settings = apply_filters( 'elementor/editor/localize_settings', [ 'elementsPresets' => [] ] );
+		$settings = apply_filters( 'elementor/editor/localize_settings', [] );
 
 		// Assert.
-		$this->assertArrayHasKey( Site_Definition_Fixture::WIDGET_ID, $settings['compositeWidgets'] );
-		$this->assertSame( $has_tile, isset( $settings['elementsPresets'][ self::SITE_WIDGET_TILE ] ) );
+		$definition = $settings['compositeWidgets'][ Site_Definition_Fixture::WIDGET_ID ];
+		$this->assertSame( Widget_Definition::SOURCE_SITE, $definition['source'] );
+		$this->assertSame( $is_insertable, $definition[ Module::INSERTABLE_KEY ] );
 	}
 
-	public function site_widget_tile_provider(): array {
+	public function site_widget_insertable_provider(): array {
 		return [
 			'active license' => [ true, false, true ],
 			'expired license' => [ false, true, false ],

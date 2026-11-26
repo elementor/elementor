@@ -10,6 +10,7 @@ export const WIDGET_ID = 'elementor/tabs-like';
 export const WIDGET_DEFINITION: CompositeWidgetDefinition = {
 	id: WIDGET_ID,
 	version: 1,
+	source: 'code',
 	title: 'Tabs',
 	template: { elType: 'e-flexbox', part: 'root' },
 };
