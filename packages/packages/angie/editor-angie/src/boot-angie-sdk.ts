@@ -5,7 +5,6 @@ import {
 	getAngieSdk,
 	LAYOUT_SIDEBAR,
 	type LoadSidebarV2Options,
-	refreshAngieSdkIfDetectionExpired,
 	toggleAngieSidebar,
 } from '@elementor/editor-angie-sdk';
 
@@ -92,8 +91,6 @@ export const bootAngieSdk = (): Promise< AngieMcpSdk > => {
 	bootPromise = ( async () => {
 		try {
 			await waitForAngieContainer();
-
-			refreshAngieSdkIfDetectionExpired();
 
 			const instance = getAngieSdk();
 

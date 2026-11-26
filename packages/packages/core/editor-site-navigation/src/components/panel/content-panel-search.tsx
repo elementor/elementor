@@ -3,13 +3,18 @@ import { SearchIcon } from '@elementor/icons';
 import { Box, InputAdornment, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
+import { useSiteContentSectionToolbar } from '../../contexts/site-content-section-toolbar';
 
-export default function ContentPanelSearch() {
-	const { searchQuery, setSearchQuery } = useContentPanelCoordinator();
+type Props = {
+	searchAriaLabel?: string;
+};
+
+export default function ContentPanelSearch( { searchAriaLabel }: Props ) {
+	const { searchQuery, setSearchQuery } = useSiteContentSectionToolbar();
+	const ariaLabel = searchAriaLabel ?? __( 'Search site content', 'elementor' );
 
 	return (
-		<Box component="search" aria-label={ __( 'Search site content', 'elementor' ) }>
+		<Box component="search" aria-label={ ariaLabel }>
 			<TextField
 				fullWidth
 				size="tiny"

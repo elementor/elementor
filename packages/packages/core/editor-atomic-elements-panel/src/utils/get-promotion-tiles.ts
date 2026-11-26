@@ -1,24 +1,9 @@
+import { type ExtendedWindow } from '../types';
 import { type WidgetsCache } from './get-atomic-widgets';
 import { type PromotionTile } from './group-widgets';
 
-type PromotionWidget = {
-	name: string;
-	title: string;
-	icon?: string;
-	categories?: string;
-};
-
-type AtomicWidgetPromotion = {
-	type: string;
-	widgets?: PromotionWidget[];
-};
-
-type ExtendedWindow = Window & {
-	elementor?: { config?: { atomicWidgetPromotions?: AtomicWidgetPromotion[] } };
-};
-
 export function getPromotionTiles( registeredWidgets: WidgetsCache ): PromotionTile[] {
-	const promotions = ( window as ExtendedWindow ).elementor?.config?.atomicWidgetPromotions ?? [];
+	const promotions = ( window as unknown as ExtendedWindow ).elementor?.config?.atomicWidgetPromotions ?? [];
 
 	return promotions.flatMap( ( { type, widgets = [] } ) =>
 		widgets

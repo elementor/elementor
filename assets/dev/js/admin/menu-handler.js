@@ -16,10 +16,19 @@ export default class MenuHandler extends elementorModules.ViewModule {
 		};
 	}
 
+	// Under the new admin navigation the server already resolves the active menu item.
+	isAdminNavigationActive() {
+		return document.body.classList.contains( 'e-admin-navigation-active' );
+	}
+
 	// This method highlights the currently visited submenu item for the slug provided as an argument to this handler.
 	// This method also accepts a jQuery instance of a custom submenu item to highlight. If provided, the provided
 	// item will be the one highlighted.
 	highlightSubMenuItem( $element = null ) {
+		if ( this.isAdminNavigationActive() ) {
+			return;
+		}
+
 		const $submenuItem = $element || this.elements.$adminPageMenuLink;
 
 		if ( this.elements.$currentSubmenuItems.length ) {
@@ -33,6 +42,10 @@ export default class MenuHandler extends elementorModules.ViewModule {
 	}
 
 	highlightTopLevelMenuItem( $elementToHighlight, $elementToRemove = null ) {
+		if ( this.isAdminNavigationActive() ) {
+			return;
+		}
+
 		const activeClasses = 'wp-has-current-submenu wp-menu-open current';
 
 		$elementToHighlight

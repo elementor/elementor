@@ -63,11 +63,57 @@ class Secondary_Bar_Handler {
 	}
 
 	public function render_container(): void {
-		if ( empty( $this->get_bar() ) ) {
+		$bar = $this->get_bar();
+
+		if ( empty( $bar ) ) {
 			return;
 		}
 
-		echo '<div id="editor-one-secondary-bar"></div>';
+		// The placeholder is styled by the Editor One stylesheets, which are enqueued only on Editor One admin pages.
+		$placeholder = Menu_Data_Provider::instance()->is_editor_one_admin_page()
+			? $this->get_placeholder_markup( $bar )
+			: '';
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Markup is escaped in get_placeholder_markup().
+		echo '<div id="editor-one-secondary-bar">' . $placeholder . '</div>';
+	}
+
+	/**
+	 * Static stand-in for the React bar, so the admin layout is correct from the first paint.
+	 * React replaces it when it mounts; the links keep working if it never does.
+	 */
+	private function get_placeholder_markup( array $bar ): string {
+		$tabs = '';
+
+		foreach ( $bar['tabs'] as $tab ) {
+			$tag = empty( $tab['tag'] )
+				? ''
+				: '<span class="e-one-secondary-bar-placeholder__tag">' . esc_html( $tab['tag'] ) . '</span>';
+
+			$tabs .= sprintf(
+				'<a class="%1$s" href="%2$s" tabindex="-1">%3$s%4$s</a>',
+				empty( $tab['is_active'] ) ? 'e-one-secondary-bar-placeholder__tab' : 'e-one-secondary-bar-placeholder__tab is-active',
+				esc_url( $tab['url'] ?? '' ),
+				esc_html( $tab['label'] ?? '' ),
+				$tag
+			);
+		}
+
+		$actions = '';
+
+		if ( ! empty( $bar['addons'] ) ) {
+			$actions .= '<span class="e-one-secondary-bar-placeholder__addons"></span>';
+		}
+
+		if ( $this->is_finder_available() ) {
+			$actions .= '<span class="e-one-secondary-bar-placeholder__finder"></span>';
+		}
+
+		return sprintf(
+			'<nav class="e-one-secondary-bar-placeholder" aria-hidden="true"><div class="e-one-secondary-bar-placeholder__tabs">%1$s</div><div class="e-one-secondary-bar-placeholder__actions">%2$s</div></nav>',
+			$tabs,
+			$actions
+		);
 	}
 
 	protected function get_package_config(): ?array {
@@ -81,7 +127,7 @@ class Secondary_Bar_Handler {
 		return $assets_config_provider->load( $package )->get( $package );
 	}
 
-	private function is_finder_available(): bool {
+	protected function is_finder_available(): bool {
 		return isset( Plugin::$instance->common ) && (bool) Plugin::$instance->common->get_component( 'finder' );
 	}
 

@@ -31,8 +31,7 @@ test.describe( 'Editor tests', () => {
 		} ) ).toMatchSnapshot( 'editor-app-bar.jpg', { maxDiffPixels: 600 } );
 	} );
 
-	// Skipped until ED-26460 updates the panel snapshot after atomic elements categories land.
-	test.skip( 'Check for panel styles', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Check for panel styles', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
