@@ -1,7 +1,9 @@
-import { type ElementorEditorAngieConfig, getAngieState, isAngieEnabled } from '../is-angie-enabled';
+import { getAngieState, isAngieEnabled } from '../is-angie-enabled';
 
-const setAngieConfig = ( config: Partial< ElementorEditorAngieConfig > ) => {
-	window.elementorEditorAngie = config as ElementorEditorAngieConfig;
+type EditorAngieConfig = NonNullable< Window[ 'elementorEditorAngie' ] >;
+
+const setAngieConfig = ( config: Partial< EditorAngieConfig > ) => {
+	window.elementorEditorAngie = config as EditorAngieConfig;
 };
 
 describe( 'isAngieEnabled', () => {
@@ -73,6 +75,19 @@ describe( 'isAngieEnabled', () => {
 			isAngiePluginActive: true,
 			isBlockedBySite: true,
 			isExperimentActive: true,
+			isUserDisabled: false,
+		} );
+
+		expect( isAngieEnabled() ).toBe( false );
+		expect( getAngieState() ).toBe( 'hidden' );
+	} );
+
+	it( 'is hidden when the experiment is inactive', () => {
+		setAngieConfig( {
+			hasConsent: true,
+			isAngiePluginActive: true,
+			isBlockedBySite: false,
+			isExperimentActive: false,
 			isUserDisabled: false,
 		} );
 

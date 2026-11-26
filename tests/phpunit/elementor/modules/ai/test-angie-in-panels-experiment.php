@@ -90,6 +90,16 @@ class Test_Angie_In_Panels_Experiment extends Elementor_Test_Base {
 		$this->assertFalse( Module::is_angie_enabled() );
 	}
 
+	public function test_is_angie_enabled__false_when_experiment_is_inactive() {
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::ANGIE_IN_PANELS_EXPERIMENT_NAME,
+			Experiments_Manager::STATE_INACTIVE
+		);
+		update_option( Module::ANGIE_CONSENT_OPTION, 'yes' );
+
+		$this->assertFalse( Module::is_angie_enabled() );
+	}
+
 	public function test_experiment_is_registered_as_default_inactive() {
 		// Arrange
 		$data = Module::get_angie_in_panels_experimental_data();
