@@ -24,6 +24,15 @@ class Add_New_Post extends Endpoint {
 				},
 				'validate_callback' => 'rest_validate_request_arg',
 			],
+			'title' => [
+				'description' => 'Post title',
+				'type' => 'string',
+				'required' => false,
+				'sanitize_callback' => function ( $value ) {
+					return sanitize_text_field( $value );
+				},
+				'validate_callback' => 'rest_validate_request_arg',
+			],
 		];
 
 		$this->register_items_route( \WP_REST_Server::CREATABLE, $args );
@@ -40,12 +49,14 @@ class Add_New_Post extends Endpoint {
 	public function create_items( $request ) {
 		$post_type = $request->get_param( 'post_type' );
 
-		if ( ! $this->validate_post_type( $post_type ) ) {
+		if ( ! $this->is_valid_create_type( $post_type ) ) {
 			$sanitized_post_type = esc_html( str_replace( '%', '%%', $post_type ) );
 			return new \WP_Error( 400, sprintf( 'Post type %s does not exist.', $sanitized_post_type ), [ 'status' => 400 ] );
 		}
 
-		if ( ! User::is_current_user_can_edit_post_type( $post_type ) ) {
+		$permission_post_type = $this->resolve_permission_post_type( $post_type );
+
+		if ( ! User::is_current_user_can_edit_post_type( $permission_post_type ) ) {
 			$sanitized_post_type = esc_html( str_replace( '%', '%%', $post_type ) );
 			return new \WP_Error( 401, sprintf( 'User dont have capability to create page of type - %s.', $sanitized_post_type ), [ 'status' => 401 ] );
 		}
@@ -53,7 +64,14 @@ class Add_New_Post extends Endpoint {
 		// Temporary solution for the fact that documents creation not using the actual registered post types.
 		$post_type = $this->map_post_type( $post_type );
 
-		$document = Plugin::$instance->documents->create( $post_type );
+		$post_data = [];
+		$title = $request->get_param( 'title' );
+
+		if ( is_string( $title ) && '' !== trim( $title ) ) {
+			$post_data['post_title'] = $title;
+		}
+
+		$document = Plugin::$instance->documents->create( $post_type, $post_data );
 
 		if ( is_wp_error( $document ) ) {
 			$sanitized_post_type = esc_html( str_replace( '%', '%%', $post_type ) );
@@ -66,10 +84,28 @@ class Add_New_Post extends Endpoint {
 		];
 	}
 
-	private function validate_post_type( $post_type ): bool {
-		$post_types = get_post_types();
+	private function is_valid_create_type( $post_type ): bool {
+		if ( in_array( $post_type, get_post_types(), true ) ) {
+			return true;
+		}
 
-		return in_array( $post_type, $post_types );
+		return (bool) Plugin::$instance->documents->get_document_type( $post_type, false );
+	}
+
+	private function resolve_permission_post_type( $post_type ): string {
+		$document_type = Plugin::$instance->documents->get_document_type( $post_type, false );
+
+		if ( ! $document_type ) {
+			return $post_type;
+		}
+
+		$cpt = $document_type::get_property( 'cpt' );
+
+		if ( empty( $cpt ) || ! is_array( $cpt ) ) {
+			return $post_type;
+		}
+
+		return $cpt[0];
 	}
 
 	/**

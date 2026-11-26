@@ -10,6 +10,8 @@ import {
 	toggleSiteContentStatusFilter,
 } from '../site-content-status-filter';
 
+export type ContentPanelSectionId = Slug | ( string & {} );
+
 type SectionHandlers = {
 	setExpanded: ( expanded: boolean ) => void;
 	startCreate: () => void;
@@ -19,36 +21,36 @@ type ContentPanelCoordinatorValue = {
 	clearActiveToolbarFilters: () => void;
 	clearSiteContentSort: () => void;
 	clearStatusFilters: () => void;
-	registerSection: ( type: Slug, handlers: SectionHandlers ) => void;
-	requestCreate: ( type: Slug ) => void;
+	registerSection: ( type: ContentPanelSectionId, handlers: SectionHandlers ) => void;
+	requestCreate: ( type: ContentPanelSectionId ) => void;
 	searchQuery: string;
 	setSearchQuery: ( query: string ) => void;
 	setSiteContentSort: ( sort: SiteContentSortOption ) => void;
 	siteContentSort: SiteContentSortOption;
 	statusFilters: SiteContentStatusFilters;
 	toggleStatusFilter: ( filter: SiteContentSelectableStatus ) => void;
-	unregisterSection: ( type: Slug ) => void;
+	unregisterSection: ( type: ContentPanelSectionId ) => void;
 };
 
 const ContentPanelCoordinatorContext = createContext< ContentPanelCoordinatorValue | null >( null );
 
 export function ContentPanelCoordinatorProvider( { children }: { children: ReactNode } ) {
-	const sectionsRef = useRef( new Map< Slug, SectionHandlers >() );
+	const sectionsRef = useRef( new Map< ContentPanelSectionId, SectionHandlers >() );
 	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const [ siteContentSort, setSiteContentSortState ] = useState< SiteContentSortOption >( DEFAULT_SITE_CONTENT_SORT );
 	const [ statusFilters, setStatusFilters ] = useState< SiteContentStatusFilters >(
 		EMPTY_SITE_CONTENT_STATUS_FILTERS
 	);
 
-	const registerSection = useCallback( ( type: Slug, handlers: SectionHandlers ) => {
+	const registerSection = useCallback( ( type: ContentPanelSectionId, handlers: SectionHandlers ) => {
 		sectionsRef.current.set( type, handlers );
 	}, [] );
 
-	const unregisterSection = useCallback( ( type: Slug ) => {
+	const unregisterSection = useCallback( ( type: ContentPanelSectionId ) => {
 		sectionsRef.current.delete( type );
 	}, [] );
 
-	const requestCreate = useCallback( ( type: Slug ) => {
+	const requestCreate = useCallback( ( type: ContentPanelSectionId ) => {
 		const handlers = sectionsRef.current.get( type );
 
 		if ( ! handlers ) {

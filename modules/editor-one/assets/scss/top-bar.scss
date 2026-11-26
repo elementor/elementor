@@ -38,3 +38,101 @@
 		position: fixed;
 	}
 }
+
+// Defaults for the variables `useAdminMenuOffset()` measures and sets inline on `#wpcontent`, so the layout
+// is already right on the first paint. They mirror WordPress core: the admin menu is 160px wide, 36px when
+// folded (`.folded`, or `.auto-fold` up to 960px) and hidden on small screens (`.auto-fold` up to 782px);
+// the admin bar is 32px tall, 46px up to 782px. The inline values still win once the script runs.
+#wpcontent {
+	--editor-one-sidebar-left-offset: 160px;
+
+	&:has(#editor-one-top-bar > header) {
+		--e-top-bar-header-height: 48px;
+	}
+}
+
+.admin-bar #wpcontent {
+	--e-admin-bar-height: 32px;
+}
+
+.folded #wpcontent {
+	--editor-one-sidebar-left-offset: 36px;
+}
+
+@media only screen and (max-width: 960px) {
+	.auto-fold #wpcontent {
+		--editor-one-sidebar-left-offset: 36px;
+	}
+}
+
+@media screen and (max-width: 782px) {
+	.auto-fold #wpcontent {
+		--editor-one-sidebar-left-offset: 0px;
+	}
+
+	.admin-bar #wpcontent {
+		--e-admin-bar-height: 46px;
+	}
+}
+
+// Cross-document view transitions keep the bars in place while the next page loads, so mainly the content
+// changes. A transition runs only when both pages opt in, and this stylesheet is enqueued only on Editor One
+// admin pages, so navigating to or from any other admin page is unaffected. Unsupported browsers ignore it.
+@media (prefers-reduced-motion: no-preference) {
+	@view-transition {
+		navigation: auto;
+	}
+}
+
+#editor-one-top-bar > header {
+	view-transition-name: e-one-top-bar;
+}
+
+#editor-one-secondary-bar {
+	view-transition-name: e-one-secondary-bar;
+}
+
+::view-transition-group(e-one-top-bar),
+::view-transition-group(e-one-secondary-bar) {
+	animation-duration: 0s;
+}
+
+// Static stand-in printed by `Top_Bar_Handler::render_top_bar_container()` until React mounts `ElementorOneHeader`.
+// Values mirror the mounted header so the swap is not visible.
+.e-one-top-bar-placeholder {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	height: 48px;
+	padding-block: 0;
+	padding-inline: 30px 24px;
+	background-color: #0c0d0e;
+	color: #fff;
+	z-index: 1100;
+
+	&__brand {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	&__logo {
+		display: block;
+		flex-shrink: 0;
+		width: 24px;
+		height: 24px;
+	}
+
+	&__title {
+		font-family: "DM Sans", Roboto, Helvetica, Arial, sans-serif;
+		font-size: 20px;
+		font-weight: 400;
+		line-height: 35px;
+		white-space: nowrap;
+
+		// The mounted header hides the title below 600px.
+		@media (max-width: 599px) {
+			display: none;
+		}
+	}
+}
