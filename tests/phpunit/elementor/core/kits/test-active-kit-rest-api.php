@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Core\Kits;
 
 use Elementor\Core\Kits\Active_Kit_Rest_Api;
+use Elementor\Core\Kits\Manager;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -87,6 +88,18 @@ class Test_Active_Kit_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( $active_kit_id, $response->get_data()['meta']['kit_id'] );
 		$this->assertEmpty( get_post_meta( $other_post_id, '_elementor_page_settings', true ) );
+	}
+
+	public function test_get__returns_404_when_there_is_no_active_kit() {
+		// Arrange
+		$this->act_as_admin();
+		update_option( Manager::OPTION_ACTIVE, 0 );
+
+		// Act
+		$response = rest_do_request( new \WP_REST_Request( 'GET', self::ROUTE ) );
+
+		// Assert
+		$this->assertSame( 404, $response->get_status() );
 	}
 
 	public function test_update__rejects_empty_settings() {

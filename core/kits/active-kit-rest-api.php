@@ -52,7 +52,7 @@ class Active_Kit_Rest_Api {
 	private function can_manage_active_kit(): bool {
 		$kit = $this->get_active_kit();
 
-		return $kit && $kit->is_editable_by_current_user();
+		return $kit ? $kit->is_editable_by_current_user() : current_user_can( Kit::get_property( 'edit_capability' ) );
 	}
 
 	private function get_active_kit(): ?Kit {
