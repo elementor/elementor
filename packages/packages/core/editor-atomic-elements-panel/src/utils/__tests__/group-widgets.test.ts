@@ -38,6 +38,17 @@ describe( 'groupWidgets', () => {
 		expect( groups.map( ( { id } ) => id ) ).toEqual( [ 'layout', 'basic' ] );
 	} );
 
+	it( 'should title the basic group Content', () => {
+		// Arrange.
+		const widgets = { 'e-heading': widget( 'Heading' ) } as unknown as WidgetsCache;
+
+		// Act.
+		const groups = groupWidgets( widgets );
+
+		// Assert.
+		expect( groups.map( ( { id, title } ) => ( { id, title } ) ) ).toEqual( [ { id: 'basic', title: 'Content' } ] );
+	} );
+
 	it( 'should place widgets of the atomic-form category in the form group', () => {
 		// Arrange.
 		const widgets = {

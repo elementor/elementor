@@ -37,7 +37,7 @@ const GROUPS: { id: string; title: string; widgetTypes: string[] }[] = [
 	{ id: 'layout', title: __( 'Layout', 'elementor' ), widgetTypes: [ 'e-div-block', 'e-flexbox', 'e-grid' ] },
 	{
 		id: 'basic',
-		title: __( 'Basic', 'elementor' ),
+		title: __( 'Content', 'elementor' ),
 		widgetTypes: [ 'e-heading', 'e-paragraph', 'e-image', 'e-svg', 'e-button', 'e-divider' ],
 	},
 	{
