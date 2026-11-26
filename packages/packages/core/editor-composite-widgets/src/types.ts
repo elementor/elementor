@@ -55,15 +55,19 @@ export type CompositeWidgetStyle = {
 	quick_edit?: CompositeWidgetQuickEdit[];
 };
 
+export type CompositeWidgetSource = 'code' | 'site';
+
 export type CompositeWidgetDefinition = {
 	id: string;
 	version: number;
+	source: CompositeWidgetSource;
 	title: string;
 	icon?: string;
 	template: CompositeWidgetTemplateNode;
 	general?: CompositeWidgetGeneralEntry[];
 	style?: CompositeWidgetStyle;
 	archived?: boolean;
+	insertable?: boolean;
 };
 
 export type CompositeWidgetDefinitions = Record< string, CompositeWidgetDefinition >;

@@ -29,7 +29,8 @@ class Module extends BaseModule {
 	const CORE_DEFINITION_FILES = [
 		'schema/examples/icon-button.json',
 	];
-	const EDITOR_DEFINITION_KEYS = [ 'id', 'version', 'title', 'icon', 'template', 'general', 'style' ];
+	const EDITOR_DEFINITION_KEYS = [ 'id', 'version', 'source', 'title', 'icon', 'template', 'general', 'style' ];
+	const INSERTABLE_KEY = 'insertable';
 	const SYNC_LOCKS_PRIORITY = 20;
 
 	const PACKAGES = [
@@ -179,51 +180,22 @@ class Module extends BaseModule {
 	private function add_editor_settings( array $settings ): array {
 		$settings['compositeWidgets'] = $this->get_editor_definitions();
 
-		if ( isset( $settings['elementsPresets'] ) ) {
-			foreach ( $this->get_registry()->all() as $definition ) {
-				if ( ! self::can_insert( $definition ) ) {
-					continue;
-				}
-
-				$settings['elementsPresets'][ $this->get_panel_tile_key( $definition ) ] = $this->build_panel_tile( $definition );
-			}
-		}
-
 		return $settings;
 	}
 
 	/**
-	 * Archived definitions stay registered, so existing copies keep their panel and locks; the flag
-	 * only hides them from new drops.
+	 * Archived and non-insertable definitions stay registered, so existing copies keep their panel and
+	 * locks; the flags only hide them from new drops.
 	 */
 	private function get_editor_definitions(): array {
 		$keys = array_flip( array_merge( self::EDITOR_DEFINITION_KEYS, [ Widgets_Definitions_Registry::ARCHIVED_KEY ] ) );
 
 		return array_map(
-			fn ( array $definition ) => array_intersect_key( $definition, $keys ),
+			fn ( array $definition ) => array_merge(
+				array_intersect_key( $definition, $keys ),
+				[ self::INSERTABLE_KEY => self::can_insert( $definition ) ]
+			),
 			$this->get_registry()->all()
 		);
-	}
-
-	private function get_panel_tile_key( array $definition ): string {
-		return 'composite-widget-' . str_replace( '/', '-', $definition['id'] );
-	}
-
-	/**
-	 * TEMPORARY: reuses the legacy container-presets channel only to test inserting a widget tree.
-	 * Real panel tiles and categories are a separate ticket.
-	 */
-	private function build_panel_tile( array $definition ): array {
-		return [
-			'replacements' => [
-				'name' => $this->get_panel_tile_key( $definition ),
-				'title' => $definition['title'],
-				'icon' => $definition['icon'] ?? 'eicon-apps',
-				'custom' => [
-					'originalWidget' => $definition['template']['elType'],
-					'compositeWidgetId' => $definition['id'],
-				],
-			],
-		];
 	}
 }

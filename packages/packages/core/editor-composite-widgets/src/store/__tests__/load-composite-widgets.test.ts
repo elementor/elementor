@@ -14,6 +14,7 @@ const SITE_WIDGET_ID = 'site/promo-card';
 const createDefinition = ( id: string, overrides: Partial< CompositeWidgetDefinition > = {} ) => ( {
 	id,
 	version: 1,
+	source: 'code' as const,
 	title: id,
 	template: { elType: 'e-flexbox' },
 	...overrides,
