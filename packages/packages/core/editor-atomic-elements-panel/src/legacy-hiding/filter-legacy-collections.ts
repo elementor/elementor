@@ -9,17 +9,22 @@ export function filterLegacyCollections(
 ): LegacyCollections {
 	const isHidden = ( model: unknown ) => isHiddenElement( model, hiddenTypes );
 
-	const categories = categoriesCollection.models.flatMap( ( model ) => {
-		const items = readAttribute( model, 'items' );
+	const categories = categoriesCollection.models.flatMap( ( model ): unknown[] => {
+		// Not something we can read or copy, so leave it to Legacy exactly as it came.
+		if ( ! isModel( model ) ) {
+			return [ model ];
+		}
+
+		const items = model.get( 'items' );
 
 		if ( ! Array.isArray( items ) ) {
-			return isAtomicFormCategory( model ) ? [] : [ toAttributes( model ) ];
+			return isAtomicFormCategory( model ) ? [] : [ model.toJSON() ];
 		}
 
 		const keptItems = items.filter( ( item ) => ! isHidden( item ) );
 		const shouldDrop = ! keptItems.length && ( keptItems.length < items.length || isAtomicFormCategory( model ) );
 
-		return shouldDrop ? [] : [ { ...toAttributes( model ), items: keptItems } ];
+		return shouldDrop ? [] : [ { ...model.toJSON(), items: keptItems } ];
 	} );
 
 	return {
@@ -39,17 +44,19 @@ function isHiddenElement( model: unknown, hiddenTypes: Set< string > ) {
 }
 
 function isAtomicFormCategory( model: LegacyModel ) {
-	return readAttribute( model, 'name' ) === ATOMIC_FORM_CATEGORY;
+	return model.get( 'name' ) === ATOMIC_FORM_CATEGORY;
+}
+
+function isModel( model: unknown ): model is LegacyModel {
+	const candidate = model as Partial< LegacyModel > | null | undefined;
+
+	return typeof candidate?.get === 'function' && typeof candidate?.toJSON === 'function';
 }
 
 function readAttribute( model: unknown, key: string ): unknown {
 	const get = ( model as Partial< LegacyModel > | null | undefined )?.get;
 
 	return typeof get === 'function' ? get.call( model, key ) : undefined;
-}
-
-function toAttributes( model: LegacyModel ) {
-	return typeof model?.toJSON === 'function' ? model.toJSON() : {};
 }
 
 function cloneWith( collection: LegacyCollection, models: unknown[] ) {

@@ -16,6 +16,8 @@ class FakeModel implements LegacyModel {
 class FakeCollection implements LegacyCollection {
 	models: LegacyModel[];
 
+	resetInput: unknown[] = [];
+
 	constructor( models: LegacyModel[] = [] ) {
 		this.models = models;
 	}
@@ -25,6 +27,7 @@ class FakeCollection implements LegacyCollection {
 	}
 
 	reset( models: unknown[] ) {
+		this.resetInput = models;
 		this.models = models.map( ( model ) =>
 			model instanceof FakeModel ? model : new FakeModel( model as Record< string, unknown > )
 		);
@@ -135,6 +138,21 @@ describe( 'filterLegacyCollections', () => {
 		expect( categoryNames( result ) ).toEqual( [ 'atomic-form-empty' ] );
 	} );
 
+	it( 'should drop the atomic-form category when its items are empty but nothing was removed', () => {
+		// Arrange.
+		const heading = element( { elType: 'widget', widgetType: 'heading' } );
+		const collections = collectionsOf(
+			[ heading ],
+			[ category( 'atomic-form', [] ), category( 'basic', [ heading ] ) ]
+		);
+
+		// Act.
+		const result = filterLegacyCollections( collections, HIDDEN );
+
+		// Assert.
+		expect( categoryNames( result ) ).toEqual( [ 'basic' ] );
+	} );
+
 	it( 'should keep an already-empty non-atomic category', () => {
 		// Arrange.
 		const collections = collectionsOf( [], [ category( 'pro-elements' ) ] );
@@ -197,5 +215,21 @@ describe( 'filterLegacyCollections', () => {
 
 		// Act & Assert.
 		expect( () => filterLegacyCollections( collections, HIDDEN ) ).not.toThrow();
+	} );
+
+	it( 'should pass a non-model category entry through unchanged', () => {
+		// Arrange.
+		const oddCategory = { name: 'odd' } as unknown as LegacyModel;
+		const basic = category( 'basic', [] );
+		const collections = collectionsOf( [], [ oddCategory, basic ] );
+
+		// Act.
+		const result = filterLegacyCollections( collections, HIDDEN );
+
+		// Assert.
+		const resetInput = ( result.categoriesCollection as FakeCollection ).resetInput;
+		expect( resetInput ).toHaveLength( 2 );
+		expect( resetInput[ 0 ] ).toBe( oddCategory );
+		expect( resetInput[ 1 ] ).toEqual( basic.toJSON() );
 	} );
 } );
