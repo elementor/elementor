@@ -26,12 +26,23 @@ class Test_Manual_Create_Experiment extends Elementor_Test_Base {
 	}
 
 	public function test_construct__registers_a_hidden_inactive_dev_experiment() {
+		// Arrange.
+		$feature = null;
+		$capture = function ( $manager, array $data ) use ( &$feature ) {
+			if ( Module::MANUAL_CREATE_EXPERIMENT_NAME === $data['name'] ) {
+				$feature = $data;
+			}
+		};
+
+		// The test bootstrap activates every registered experiment at priority 10; capture before it.
+		add_action( 'elementor/experiments/feature-registered', $capture, 1, 2 );
+
 		// Act.
 		new Module();
 
-		// Assert.
-		$feature = Plugin::$instance->experiments->get_features( Module::MANUAL_CREATE_EXPERIMENT_NAME );
+		remove_action( 'elementor/experiments/feature-registered', $capture, 1 );
 
+		// Assert.
 		$this->assertTrue( $feature['hidden'] );
 		$this->assertSame( Experiments_Manager::STATE_INACTIVE, $feature['default'] );
 		$this->assertSame( Experiments_Manager::RELEASE_STATUS_DEV, $feature['release_status'] );
