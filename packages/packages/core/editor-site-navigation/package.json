@@ -39,6 +39,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
+    "@elementor/editor-controls": "4.5.0",
     "@elementor/editor-app-bar": "4.5.0",
     "@elementor/editor-documents": "4.5.0",
     "@elementor/editor-panels": "4.5.0",
