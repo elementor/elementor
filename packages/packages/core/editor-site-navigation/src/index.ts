@@ -31,10 +31,13 @@ export {
 export {
 	EMPTY_SITE_CONTENT_STATUS_FILTERS,
 	getRestStatusForSiteContentFilters,
+	getSiteContentStatusFilterForCount,
 	hasActiveSiteContentStatusFilters,
 	isSiteContentListNarrowed,
 	isSiteContentTrashFilterActive,
 	serializeSiteContentStatusFilters,
+	SITE_CONTENT_SELECTABLE_STATUS_FILTERS,
+	type SiteContentSelectableStatus,
 	type SiteContentStatusFilters,
 } from './site-content-status-filter';
 export { default as SiteContentCollapsibleList } from './components/panel/posts-list/collapsible-list';

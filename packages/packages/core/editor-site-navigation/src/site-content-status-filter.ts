@@ -94,6 +94,19 @@ export function toggleSiteContentStatusFilter(
 	};
 }
 
+export function getSiteContentStatusFilterForCount(
+	status: SiteContentSelectableStatus
+): SiteContentStatusFilters {
+	if ( 'trash' === status ) {
+		return { ...EMPTY_SITE_CONTENT_STATUS_FILTERS, trash: true };
+	}
+
+	return {
+		...EMPTY_SITE_CONTENT_STATUS_FILTERS,
+		[ status ]: true,
+	};
+}
+
 export function shouldShowSiteContentStatusFilterRow(
 	count: number | undefined,
 	isLoadingCounts: boolean,
