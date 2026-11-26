@@ -1,10 +1,7 @@
 const CONTENT_PANEL_INSET_SPACING = 2;
 const CONTENT_PANEL_LIST_ROW_GAP = 0.5;
 const CONTENT_PANEL_LIST_ROW_INSET_INLINE = 0.75;
-const CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_ACTIONS_COUNT = 2;
-const CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_ACTION_SLOT_WIDTH = 5.5;
-const CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_INSET =
-	CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_ACTIONS_COUNT * CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_ACTION_SLOT_WIDTH;
+const CONTENT_PANEL_LIST_ROW_SECONDARY_ACTION_SLOT_WIDTH = 5.5;
 const CONTENT_PANEL_LIST_ROW_TITLE_FONT_SIZE = '0.75rem';
 const CONTENT_PANEL_LIST_SECTION_BOTTOM_SPACING = 1;
 
@@ -20,21 +17,42 @@ export const contentPanelListRowPaddingSx = {
 	...contentPanelInsetPaddingSx,
 };
 
-const contentPanelListItemActiveActionsInsetSx = {
+const contentPanelListItemSecondaryInsetSx = ( trailingActionCount: number ) => ( {
 	'&& > .MuiListItemButton-root': {
-		paddingInlineEnd: CONTENT_PANEL_LIST_ROW_ACTIVE_SECONDARY_INSET,
+		paddingInlineEnd: trailingActionCount * CONTENT_PANEL_LIST_ROW_SECONDARY_ACTION_SLOT_WIDTH,
 		paddingRight: 'unset',
 	},
-};
+} );
 
-export function getContentPanelListItemSx( hasActiveRowActions: boolean ) {
-	if ( ! hasActiveRowActions ) {
-		return contentPanelListRowPaddingSx;
+export function getContentPanelListItemSx( trailingActionCount: number ) {
+	return {
+		...contentPanelListRowPaddingSx,
+		...contentPanelListItemSecondaryInsetSx( trailingActionCount ),
+	};
+}
+
+export function getContentPanelListItemRowStateSx( isActive: boolean, allowRowHover: boolean ) {
+	if ( isActive ) {
+		return {
+			borderRadius: 1,
+			backgroundColor: 'action.selected',
+			'&:hover': {
+				backgroundColor: 'action.selected',
+			},
+		};
+	}
+
+	if ( ! allowRowHover ) {
+		return {
+			borderRadius: 1,
+		};
 	}
 
 	return {
-		...contentPanelListRowPaddingSx,
-		...contentPanelListItemActiveActionsInsetSx,
+		borderRadius: 1,
+		'&:hover': {
+			backgroundColor: 'action.hover',
+		},
 	};
 }
 
@@ -70,18 +88,26 @@ export const contentPanelListSectionListSx = {
 	paddingBlockEnd: CONTENT_PANEL_LIST_SECTION_BOTTOM_SPACING,
 };
 
+const contentPanelListItemButtonTransparentSx = {
+	backgroundColor: 'transparent',
+	'&.Mui-selected': {
+		backgroundColor: 'transparent',
+	},
+	'&.Mui-selected:hover': {
+		backgroundColor: 'transparent',
+	},
+	'&:hover': {
+		backgroundColor: 'transparent',
+	},
+	'&.Mui-disabled': {
+		backgroundColor: 'transparent',
+	},
+};
+
 export const contentPanelListItemButtonSx = {
+	...contentPanelListItemButtonTransparentSx,
 	justifyContent: 'flex-start',
 	paddingInline: CONTENT_PANEL_LIST_ROW_INSET_INLINE,
 	textAlign: 'start',
 	width: '100%',
-	'&.Mui-selected': {
-		backgroundColor: 'action.selected',
-	},
-	'&.Mui-selected:hover': {
-		backgroundColor: 'action.selected',
-	},
-	'&:hover:not(.Mui-disabled)': {
-		backgroundColor: 'action.hover',
-	},
 };

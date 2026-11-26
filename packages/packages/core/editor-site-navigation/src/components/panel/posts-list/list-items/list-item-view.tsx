@@ -32,7 +32,11 @@ import Rename from '../../actions-menu/actions/rename';
 import Restore from '../../actions-menu/actions/restore';
 import SetHome, { RemoveHomepageDialog } from '../../actions-menu/actions/set-home';
 import View from '../../actions-menu/actions/view';
-import { contentPanelListItemButtonSx, getContentPanelListItemSx } from '../../content-panel-chrome';
+import {
+	contentPanelListItemButtonSx,
+	getContentPanelListItemRowStateSx,
+	getContentPanelListItemSx,
+} from '../../content-panel-chrome';
 import {
 	SiteContentListItemActionsSlot,
 	useSiteContentListItemActionsInjections,
@@ -88,14 +92,23 @@ export default function ListItemView( { post }: { post: Post } ) {
 	const menuTriggerProps = bindTrigger( popupState );
 	const hasListItemActions = useSiteContentListItemActionsInjections().length > 0;
 	const showListItemActions = isActive && post.user_can.edit && ! isTrashed && hasListItemActions;
+	const isHome = Boolean( post.isHome );
+	const trailingActionCount = 1 + ( showListItemActions ? 1 : 0 ) + ( isHome ? 1 : 0 );
+	const allowRowHover = ! isEditBlocked;
 
 	const listRow = (
 		<ListItem
 			disablePadding
-			sx={ getContentPanelListItemSx( showListItemActions ) }
+			sx={ {
+				...getContentPanelListItemSx( trailingActionCount ),
+				...getContentPanelListItemRowStateSx( isActive, allowRowHover ),
+			} }
 			secondaryAction={
 				<Stack alignItems="center" direction="row" spacing={ 0 }>
 					{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
+					{ isHome && (
+						<HomeIcon color="disabled" fontSize="tiny" titleAccess={ __( 'Homepage', 'elementor' ) } />
+					) }
 					<IconButton
 						aria-label={ __( 'More actions', 'elementor' ) }
 						size="tiny"
@@ -128,7 +141,6 @@ export default function ListItemView( { post }: { post: Post } ) {
 				<ListItemText disableTypography sx={ { flex: 1, minWidth: 0 } }>
 					<PageTitleAndStatus title={ title } status={ status } />
 				</ListItemText>
-				{ post.isHome && <HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" /> }
 			</ListItemButton>
 		</ListItem>
 	);

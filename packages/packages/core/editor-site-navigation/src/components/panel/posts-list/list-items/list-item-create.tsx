@@ -20,6 +20,7 @@ export default function ListItemCreate() {
 				status: 'draft',
 			} );
 
+			resetEditMode();
 			navigateToDocument( id );
 		} catch {
 			setError();

@@ -41,7 +41,7 @@ class Test_Top_Bar_Handler extends Elementor_Test_Base {
 		$this->assertStringStartsWith( '<header class="e-one-top-bar-placeholder" aria-hidden="true">', $html );
 		$this->assertStringEndsWith( '</header>', $html );
 		$this->assertStringContainsString( '<svg class="e-one-top-bar-placeholder__logo"', $html );
-		$this->assertStringContainsString( '<span class="e-one-top-bar-placeholder__title">website builder</span>', $html );
+		$this->assertStringContainsString( '<span class="e-one-top-bar-placeholder__title">Elementor</span>', $html );
 	}
 
 	public function test_get_placeholder_markup__has_nothing_focusable() {

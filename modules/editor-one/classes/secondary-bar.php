@@ -64,6 +64,7 @@ class Secondary_Bar {
 				'tag' => $this->plain_label( $tab['tag'] ?? '' ),
 				'url' => esc_url_raw( $tab['url'] ),
 				'is_active' => $tab_id === $active_tab_id,
+				'opens_in_app' => App_Link_Classifier::opens_in_app( $tab['url'] ),
 			];
 		}
 
