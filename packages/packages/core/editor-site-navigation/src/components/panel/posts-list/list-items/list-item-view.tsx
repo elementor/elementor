@@ -126,7 +126,7 @@ export default function ListItemView( { post }: { post: Post } ) {
 							{ showHomeInLeadingSecondarySlot && homeIcon }
 						</Box>
 					) }
-					{ showTrailingHomeSecondarySlot && (
+					{ showHomeInTrailingSecondarySlot && (
 						<Box sx={ contentPanelListItemSecondaryActionSlotSx }>{ homeIcon }</Box>
 					) }
 					<IconButton
