@@ -59,7 +59,7 @@ function addStyleToClassesProp( elementId: ElementID, classesProp: string, style
 
 	const classesPropValue = classesPropTypeUtil.create(
 		( prev ) => {
-			return [ ...( prev ?? [] ), styleId ];
+			return prev?.includes( styleId ) ? prev : [ ...( prev ?? [] ), styleId ];
 		},
 		{ base }
 	);

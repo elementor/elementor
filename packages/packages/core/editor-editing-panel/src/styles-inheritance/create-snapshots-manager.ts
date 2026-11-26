@@ -86,7 +86,7 @@ export function createSnapshotsManager(
  * 	mobile: [ 'desktop', 'tablet' ]
  * @param root
  */
-function makeBreakpointsInheritancePaths( root: BreakpointNode ): BreakpointsInheritancePath {
+export function makeBreakpointsInheritancePaths( root: BreakpointNode ): BreakpointsInheritancePath {
 	const breakpoints: Partial< BreakpointsInheritancePath > = {};
 
 	const traverse = ( node: BreakpointNode, parent?: BreakpointId[] ) => {

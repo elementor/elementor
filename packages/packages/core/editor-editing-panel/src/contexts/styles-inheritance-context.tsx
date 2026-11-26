@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { createContext, type PropsWithChildren, useContext, useMemo } from 'react';
-import { getWidgetsCache } from '@elementor/editor-elements';
 import { classesPropTypeUtil, type ClassesPropValue, type PropValue } from '@elementor/editor-props';
 import { getBreakpointsTree } from '@elementor/editor-responsive';
 import { getStylesSchema } from '@elementor/editor-styles';
-import { stylesRepository } from '@elementor/editor-styles-repository';
 
 import { useDefaultStyleTagFromPreview } from '../hooks/use-default-style-tag-from-preview';
 import { useStylesRerender } from '../hooks/use-styles-rerender';
 import { createStylesInheritance } from '../styles-inheritance/create-styles-inheritance';
+import { getAppliedStyles } from '../styles-inheritance/get-applied-styles';
 import {
 	type SnapshotPropValue,
 	type StylesInheritanceAPI,
@@ -81,7 +80,7 @@ export function useInheritedValues( propKeys: string[] ): Record< string, PropVa
 
 const useAppliedStyles = () => {
 	const currentClassesProp = useClassesProp();
-	const baseStyles = useBaseStyles();
+	const { elementType } = useElement();
 	const defaultTagStyleId = useDefaultTagStyleId();
 	const { id: activeStyleId } = useStyle();
 
@@ -89,24 +88,12 @@ const useAppliedStyles = () => {
 
 	const classesProp = usePanelElementSetting< ClassesPropValue >( currentClassesProp );
 
-	const appliedStyles = classesPropTypeUtil.extract( classesProp ) ?? [];
-
-	const applicableIds = [
-		...baseStyles,
-		...appliedStyles,
-		...( defaultTagStyleId ? [ defaultTagStyleId ] : [] ),
-		...( activeStyleId ? [ activeStyleId ] : [] ),
-	];
-
-	return stylesRepository.all().filter( ( style ) => applicableIds.includes( style.id ) );
-};
-
-const useBaseStyles = () => {
-	const { elementType } = useElement();
-	const widgetsCache = getWidgetsCache();
-	const widgetCache = widgetsCache?.[ elementType.key ];
-
-	return Object.keys( widgetCache?.base_styles ?? {} );
+	return getAppliedStyles( {
+		elementTypeKey: elementType.key,
+		appliedStyleIds: classesPropTypeUtil.extract( classesProp ) ?? [],
+		defaultTagStyleId,
+		activeStyleId,
+	} );
 };
 
 const useDefaultTagStyleId = () => {

@@ -5,23 +5,36 @@ import {
 	updateElementStyle,
 	type V1Element,
 } from '@elementor/editor-elements';
-import { type StyleDefinition } from '@elementor/editor-styles';
+import { type StyleDefinition, type StyleDefinitionVariant } from '@elementor/editor-styles';
 import { ELEMENTS_STYLES_RESERVED_LABEL } from '@elementor/editor-styles-repository';
 import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { getClassesProp, getTitleForContainers } from '../../utils/command-utils';
 
+type ElementStyleVariant = Omit< StyleDefinitionVariant, 'custom_css' > &
+	Partial< Pick< StyleDefinitionVariant, 'custom_css' > >;
+
+export type ElementStylesEntry = {
+	container: V1Element;
+	variants: ElementStyleVariant[];
+};
+
+type ApplyElementStylesArgs = {
+	entries: ElementStylesEntry[];
+	subtitle: string;
+};
+
 type PasteElementStyleArgs = {
 	containers: V1Element[];
 	newStyle: StyleDefinition;
 };
 
-export const undoablePasteElementStyle = () =>
+export const undoableApplyElementStyles = () =>
 	undoable(
 		{
-			do: ( { containers, newStyle }: PasteElementStyleArgs ) => {
-				return containers.map( ( container ) => {
+			do: ( { entries }: ApplyElementStylesArgs ) => {
+				return entries.map( ( { container, variants } ) => {
 					const elementId = container.id;
 					const classesProp = getClassesProp( container );
 
@@ -40,18 +53,18 @@ export const undoablePasteElementStyle = () =>
 					};
 
 					if ( styleId ) {
-						newStyle.variants.forEach( ( { meta, props, custom_css: customCss } ) => {
+						variants.forEach( ( variant ) => {
 							updateElementStyle( {
 								elementId,
 								styleId,
-								meta,
-								props,
-								custom_css: customCss,
+								...variant,
 							} );
 						} );
 					} else {
-						const [ firstVariant ] = newStyle.variants;
-						const additionalVariants = newStyle.variants.slice( 1 );
+						const [ firstVariant, ...additionalVariants ] = variants.map( ( variant ) => ( {
+							...variant,
+							custom_css: variant.custom_css ?? null,
+						} ) );
 
 						revertData.styleId = createElementStyle( {
 							elementId,
@@ -66,8 +79,8 @@ export const undoablePasteElementStyle = () =>
 				} );
 			},
 
-			undo: ( { containers }, revertDataItems ) => {
-				containers.forEach( ( container, index ) => {
+			undo: ( { entries }, revertDataItems ) => {
+				entries.forEach( ( { container }, index ) => {
 					const revertData = revertDataItems[ index ];
 
 					if ( ! revertData ) {
@@ -102,7 +115,17 @@ export const undoablePasteElementStyle = () =>
 			},
 		},
 		{
-			title: ( { containers } ) => getTitleForContainers( containers ),
-			subtitle: __( 'Style Pasted', 'elementor' ),
+			title: ( { entries } ) => getTitleForContainers( entries.map( ( { container } ) => container ) ),
+			subtitle: ( { subtitle } ) => subtitle,
 		}
 	);
+
+export const undoablePasteElementStyle = () => {
+	const applyElementStyles = undoableApplyElementStyles();
+
+	return ( { containers, newStyle }: PasteElementStyleArgs ) =>
+		applyElementStyles( {
+			entries: containers.map( ( container ) => ( { container, variants: newStyle.variants } ) ),
+			subtitle: __( 'Style Pasted', 'elementor' ),
+		} );
+};

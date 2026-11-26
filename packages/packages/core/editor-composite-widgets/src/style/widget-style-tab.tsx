@@ -14,6 +14,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useWidgetDefinition } from '../general/use-widget-definition';
 import { type CompositeWidgetQuickEdit } from '../types';
+import { AppearanceSection } from './appearance/appearance-section';
 import { QuickEditField } from './quick-edit-field';
 
 export function WidgetStyleTab() {
@@ -23,6 +24,7 @@ export function WidgetStyleTab() {
 
 	return (
 		<>
+			<AppearanceSection rootId={ element.id } presets={ definition?.style?.appearance ?? [] } />
 			<QuickEditSection rootId={ element.id } quickEdits={ definition?.style?.quick_edit ?? [] } />
 			<Box sx={ { px: 2, py: 1.5 } }>
 				<Button

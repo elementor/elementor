@@ -1,4 +1,5 @@
 import { type V1ElementData } from '@elementor/editor-elements';
+import { type Props } from '@elementor/editor-props';
 
 export type CompositeWidgetTemplateNode = Omit< V1ElementData, 'id' | 'elements' | 'widget' > & {
 	elements?: CompositeWidgetTemplateNode[];
@@ -51,7 +52,25 @@ export type CompositeWidgetQuickEdit = {
 	targets: string[];
 };
 
+export type CompositeWidgetPresetWrite = {
+	part: string;
+	style: Record< string, Props >;
+};
+
+export type CompositeWidgetPresetOption = {
+	id: string;
+	label: string;
+	set: CompositeWidgetPresetWrite[];
+};
+
+export type CompositeWidgetPreset = {
+	id: string;
+	label: string;
+	options: CompositeWidgetPresetOption[];
+};
+
 export type CompositeWidgetStyle = {
+	appearance?: CompositeWidgetPreset[];
 	quick_edit?: CompositeWidgetQuickEdit[];
 };
 

@@ -41,6 +41,9 @@ export { ClassesPropProvider, useClassesProp } from './contexts/classes-prop-con
 export { ElementProvider, useElement } from './contexts/element-context';
 export { StyleProvider, useStyle } from './contexts/style-context';
 export { StyleInheritanceProvider } from './contexts/styles-inheritance-context';
+export { makeBreakpointsInheritancePaths } from './styles-inheritance/create-snapshots-manager';
+export { getElementStylesInheritance } from './styles-inheritance/get-element-styles-inheritance';
+export type { StylesInheritanceAPI, StylesInheritanceSnapshot } from './styles-inheritance/types';
 export { StylesFieldTargetsProvider } from './contexts/styles-field-targets-context';
 export { Control as BaseControl } from './controls-registry/control';
 export { ControlTypeContainer } from './controls-registry/control-type-container';
@@ -72,6 +75,7 @@ export {
 	extractOrderedDependencies,
 } from './utils/prop-dependency-utils';
 export { getElementClassesProp, getElementLocalStyle } from './utils/element-local-style';
+export { isEqual } from './utils/is-equal';
 export {
 	registerSubmenuToggle,
 	type SubmenuToggleProps,
