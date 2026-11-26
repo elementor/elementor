@@ -95,6 +95,6 @@ class Top_Bar_Handler {
 	}
 
 	private function get_title(): string {
-		return __( 'website builder', 'elementor' );
+		return __( 'Elementor', 'elementor' );
 	}
 }
