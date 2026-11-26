@@ -4,7 +4,7 @@ import { FilterIcon } from '@elementor/icons';
 import { bindPopover, bindToggle, Divider, Popover, ToggleButton, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
+import { useSiteContentSectionToolbar } from '../../contexts/site-content-section-toolbar';
 import {
 	hasActiveSiteContentStatusFilters,
 	SITE_CONTENT_FILTER_POPOVER_WIDTH_PX,
@@ -13,7 +13,7 @@ import ContentPanelClearFiltersButton from './content-panel-clear-filters-button
 import ContentPanelStatusFilterList from './content-panel-status-filter-list';
 
 export default function ContentPanelStatusFilter() {
-	const { clearStatusFilters, statusFilters } = useContentPanelCoordinator();
+	const { clearStatusFilters, statusFilters } = useSiteContentSectionToolbar();
 	const popupState = usePopupState( {
 		variant: 'popover',
 		disableAutoFocus: true,

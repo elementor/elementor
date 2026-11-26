@@ -2,7 +2,20 @@ import * as React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { startTileDrag } from '../../utils/drag-element';
+import { insertElement } from '../../utils/insert-element';
 import { ElementTile } from '../element-tile';
+
+jest.mock( '../../utils/insert-element', () => ( {
+	canInsertElements: () => true,
+	insertElement: jest.fn(),
+} ) );
+
+jest.mock( '../../utils/drag-element', () => ( {
+	endTileDrag: jest.fn(),
+	isDraggableTile: ( { promotionType }: { promotionType?: string } ) => ! promotionType,
+	startTileDrag: jest.fn(),
+} ) );
 
 const tile = { elType: 'widget', widgetType: 'e-form', title: 'Form' };
 
@@ -60,5 +73,30 @@ describe( 'ElementTile', () => {
 		// Assert.
 		expect( withoutCrown ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'img', { name: 'Upgrade' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'should insert the element when a regular tile is clicked', () => {
+		// Arrange.
+		render( <ElementTile tile={ tile } groupId="form" /> );
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'button' ) );
+
+		// Assert.
+		expect( insertElement ).toHaveBeenCalledWith( tile );
+	} );
+
+	it( 'should start the drag only for regular tiles', () => {
+		// Arrange.
+		const { rerender } = render( <ElementTile tile={ tile } groupId="form" /> );
+		const regular = screen.getByRole( 'button' );
+
+		// Act.
+		fireEvent.dragStart( regular );
+		rerender( <ElementTile tile={ { ...tile, promotionType: 'atomic-form' } } groupId="form" /> );
+
+		// Assert.
+		expect( startTileDrag ).toHaveBeenCalledTimes( 1 );
+		expect( screen.getByRole( 'button' ) ).toHaveAttribute( 'draggable', 'false' );
 	} );
 } );

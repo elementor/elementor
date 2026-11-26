@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Tag_Interface;
 use Elementor\Modules\EditorOne\Classes\Admin_Flow_Config;
 use Elementor\Modules\EditorOne\Classes\Admin_Flow_Map;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
@@ -24,8 +25,12 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 
 	private array $handlers = [];
 
+	private $original_screen;
+
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->original_screen = $GLOBALS['current_screen'] ?? null;
 
 		$this->reset_menu_data_provider();
 		$this->provider = Menu_Data_Provider::instance();
@@ -41,6 +46,8 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 		}
 
 		wp_deregister_script( Secondary_Bar_Handler::SCRIPT_HANDLE );
+		remove_filter( 'elementor/editor-one/admin-edit-post-types', [ $this, 'filter_editor_one_post_types' ] );
+		$GLOBALS['current_screen'] = $this->original_screen;
 		$this->reset_menu_data_provider();
 		parent::tearDown();
 	}
@@ -163,6 +170,22 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 		$this->assertSame( [ 'Settings & More' ], array_column( $bar['tabs'], 'label' ) );
 	}
 
+	public function test_get_bar__tabs_carry_the_tag_of_their_item() {
+		// Arrange
+		$this->register_item( 'elementor-settings', 'Settings' );
+		$this->register_tagged_item( 'elementor-tools', 'Tools', '<b>Beta</b>' );
+
+		// Act
+		$bar = $this->secondary_bar->get_bar( $this->create_map(), $this->provider, [
+			'parent' => Admin_Flow_Config::PARENT_SETTINGS,
+			'group' => Admin_Flow_Config::GROUP_SETTINGS,
+			'tab' => 'settings',
+		] );
+
+		// Assert
+		$this->assertSame( [ 'settings' => '', 'tools' => 'Beta' ], array_column( $bar['tabs'], 'tag', 'id' ) );
+	}
+
 	public function test_get_bar__unknown_parent_falls_back_to_the_default_label() {
 		// Arrange
 		$this->register_item( 'elementor-settings', 'Settings' );
@@ -180,6 +203,7 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 
 	public function test_render_container__prints_the_root_only_when_there_is_a_bar() {
 		// Arrange
+		$this->act_on_an_editor_one_page();
 		$with_bar = $this->create_handler( $this->create_bar() );
 		$without_bar = $this->create_handler( [] );
 
@@ -193,12 +217,132 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 		$empty_html = ob_get_clean();
 
 		// Assert
-		$this->assertSame( '<div id="editor-one-secondary-bar"></div>', $html );
+		$this->assertStringStartsWith( '<div id="editor-one-secondary-bar"><nav class="e-one-secondary-bar-placeholder" aria-hidden="true">', $html );
+		$this->assertStringEndsWith( '</nav></div>', $html );
 		$this->assertSame( '', $empty_html );
+	}
+
+	public function test_render_container__prints_the_tabs_as_plain_links_inside_the_root() {
+		// Arrange
+		$this->act_on_an_editor_one_page();
+		$handler = $this->create_handler( [
+			'label' => 'Settings',
+			'tabs' => [
+				[ 'id' => 'settings', 'label' => 'Settings', 'url' => 'https://example.org/wp-admin/admin.php?page=elementor-settings', 'is_active' => true ],
+				[ 'id' => 'tools', 'label' => 'Tools', 'url' => 'https://example.org/wp-admin/admin.php?page=elementor-tools', 'is_active' => false ],
+			],
+			'addons' => [],
+		] );
+
+		// Act
+		ob_start();
+		$handler->render_container();
+		$html = ob_get_clean();
+
+		// Assert
+		$this->assertStringContainsString(
+			'<div class="e-one-secondary-bar-placeholder__tabs">' .
+			'<a class="e-one-secondary-bar-placeholder__tab is-active" href="https://example.org/wp-admin/admin.php?page=elementor-settings" tabindex="-1">Settings</a>' .
+			'<a class="e-one-secondary-bar-placeholder__tab" href="https://example.org/wp-admin/admin.php?page=elementor-tools" tabindex="-1">Tools</a>' .
+			'</div>',
+			$html
+		);
+		$this->assertSame( 1, substr_count( $html, 'is-active' ) );
+	}
+
+	public function test_render_container__escapes_the_tab_labels_tags_and_urls() {
+		// Arrange
+		$this->act_on_an_editor_one_page();
+		$handler = $this->create_handler( [
+			'label' => 'Settings',
+			'tabs' => [
+				[
+					'id' => 'settings',
+					'label' => '<script>alert(1)</script> & More',
+					'tag' => '<b>Beta</b>',
+					'url' => 'javascript:alert(1)',
+					'is_active' => true,
+				],
+				[
+					'id' => 'tools',
+					'label' => 'Tools',
+					'url' => 'https://example.org/wp-admin/admin.php?page=elementor-tools&tab="x"',
+					'is_active' => false,
+				],
+			],
+			'addons' => [],
+		] );
+
+		// Act
+		ob_start();
+		$handler->render_container();
+		$html = ob_get_clean();
+
+		// Assert
+		$this->assertStringNotContainsString( '<script>', $html );
+		$this->assertStringNotContainsString( '<b>', $html );
+		$this->assertStringNotContainsString( 'javascript:', $html );
+		$this->assertStringNotContainsString( '"x"', $html );
+		$this->assertStringContainsString( '&lt;script&gt;alert(1)&lt;/script&gt; &amp; More', $html );
+		$this->assertStringContainsString( '<span class="e-one-secondary-bar-placeholder__tag">&lt;b&gt;Beta&lt;/b&gt;</span>', $html );
+	}
+
+	public function test_render_container__prints_a_tag_only_for_tabs_that_have_one() {
+		// Arrange
+		$this->act_on_an_editor_one_page();
+		$handler = $this->create_handler( [
+			'label' => 'Settings',
+			'tabs' => [
+				[ 'id' => 'agents', 'label' => 'Agent Ready', 'tag' => 'Beta', 'url' => 'https://example.org/agents', 'is_active' => false ],
+				[ 'id' => 'tools', 'label' => 'Tools', 'url' => 'https://example.org/tools', 'is_active' => true ],
+			],
+			'addons' => [],
+		] );
+
+		// Act
+		ob_start();
+		$handler->render_container();
+		$html = ob_get_clean();
+
+		// Assert
+		$this->assertStringContainsString( 'Agent Ready<span class="e-one-secondary-bar-placeholder__tag">Beta</span></a>', $html );
+		$this->assertSame( 1, substr_count( $html, 'e-one-secondary-bar-placeholder__tag' ) );
+	}
+
+	public function test_render_container__reserves_the_addons_and_finder_slots_only_when_they_are_shown() {
+		// Arrange
+		$this->act_on_an_editor_one_page();
+		$bar = $this->create_bar();
+		$with_actions = $this->create_handler(
+			array_merge( $bar, [ 'addons' => [ [ 'id' => 'addon', 'label' => 'Addon', 'url' => 'https://example.org/addon' ] ] ] ),
+			[ 'handle' => Secondary_Bar_Handler::SCRIPT_HANDLE, 'deps' => [] ],
+			true
+		);
+		$without_actions = $this->create_handler( $bar );
+
+		// Act
+		ob_start();
+		$with_actions->render_container();
+		$with_actions_html = ob_get_clean();
+
+		ob_start();
+		$without_actions->render_container();
+		$without_actions_html = ob_get_clean();
+
+		// Assert
+		$this->assertStringContainsString(
+			'<div class="e-one-secondary-bar-placeholder__actions">' .
+			'<span class="e-one-secondary-bar-placeholder__addons"></span>' .
+			'<span class="e-one-secondary-bar-placeholder__finder"></span>' .
+			'</div>',
+			$with_actions_html
+		);
+		$this->assertStringContainsString( '<div class="e-one-secondary-bar-placeholder__actions"></div>', $without_actions_html );
 	}
 
 	public function test_render_container__prints_nothing_when_the_package_is_missing() {
 		// Arrange
+		$this->act_on_an_editor_one_page();
 		$handler = $this->create_handler( $this->create_bar(), null );
 
 		// Act
@@ -208,6 +352,20 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( '', $html );
+	}
+
+	public function test_render_container__prints_only_the_root_outside_editor_one_pages() {
+		// Arrange
+		$GLOBALS['current_screen'] = \WP_Screen::get( 'post' );
+		$handler = $this->create_handler( $this->create_bar() );
+
+		// Act
+		ob_start();
+		$handler->render_container();
+		$html = ob_get_clean();
+
+		// Assert
+		$this->assertSame( '<div id="editor-one-secondary-bar"></div>', $html );
 	}
 
 	public function test_register_container__renders_at_the_top_of_the_notices() {
@@ -254,15 +412,16 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 		];
 	}
 
-	private function create_handler( array $bar, ?array $package_config = [ 'handle' => Secondary_Bar_Handler::SCRIPT_HANDLE, 'deps' => [] ] ): Secondary_Bar_Handler {
+	private function create_handler( array $bar, ?array $package_config = [ 'handle' => Secondary_Bar_Handler::SCRIPT_HANDLE, 'deps' => [] ], bool $is_finder_available = false ): Secondary_Bar_Handler {
 		$secondary_bar = $this->createMock( Secondary_Bar::class );
 		$secondary_bar->method( 'get_bar' )->willReturn( $bar );
 
 		$handler = $this->getMockBuilder( Secondary_Bar_Handler::class )
 			->setConstructorArgs( [ $this->createMock( Admin_Flow_Handler::class ), $secondary_bar ] )
-			->onlyMethods( [ 'get_package_config' ] )
+			->onlyMethods( [ 'get_package_config', 'is_finder_available' ] )
 			->getMock();
 		$handler->method( 'get_package_config' )->willReturn( $package_config );
+		$handler->method( 'is_finder_available' )->willReturn( $is_finder_available );
 
 		$this->handlers[] = $handler;
 
@@ -282,6 +441,65 @@ class Test_Secondary_Bar extends Elementor_Test_Base {
 		$item->method( 'get_capability' )->willReturn( 'manage_options' );
 		$item->method( 'is_visible' )->willReturn( $visible );
 		$item->method( 'get_position' )->willReturn( $position );
+
+		$this->provider->register_level4_item( $item );
+	}
+
+	private function act_on_an_editor_one_page(): void {
+		$GLOBALS['current_screen'] = \WP_Screen::get( 'post' );
+		add_filter( 'elementor/editor-one/admin-edit-post-types', [ $this, 'filter_editor_one_post_types' ] );
+	}
+
+	public function filter_editor_one_post_types( array $post_types ): array {
+		$post_types[] = 'post';
+
+		return $post_types;
+	}
+
+	private function register_tagged_item( string $slug, string $label, string $tag ): void {
+		$item = new class( $slug, $label, $tag ) implements Menu_Item_Interface, Menu_Item_With_Tag_Interface {
+			private string $slug;
+			private string $label;
+			private string $tag;
+
+			public function __construct( string $slug, string $label, string $tag ) {
+				$this->slug = $slug;
+				$this->label = $label;
+				$this->tag = $tag;
+			}
+
+			public function get_capability(): string {
+				return 'manage_options';
+			}
+
+			public function get_label(): string {
+				return $this->label;
+			}
+
+			public function get_parent_slug(): string {
+				return Menu_Config::ELEMENTOR_MENU_SLUG;
+			}
+
+			public function is_visible(): bool {
+				return true;
+			}
+
+			public function get_position(): int {
+				return 10;
+			}
+
+			public function get_slug(): string {
+				return $this->slug;
+			}
+
+			public function get_group_id(): string {
+				return 'test-group';
+			}
+
+			public function get_tag(): string {
+				return $this->tag;
+			}
+		};
 
 		$this->provider->register_level4_item( $item );
 	}

@@ -24,6 +24,7 @@ export type PasteArgs = {
 };
 
 export type ClipboardElement = {
+	id?: string;
 	elType?: string;
 	widgetType?: string;
 	elements?: ClipboardElement[];

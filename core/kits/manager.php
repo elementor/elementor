@@ -470,6 +470,8 @@ class Manager {
 	}
 
 	public function __construct() {
+		( new Active_Kit_Rest_Api() )->register_hooks();
+
 		add_action( 'elementor/documents/register', [ $this, 'register_document' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 		add_filter( 'elementor/editor/footer', [ $this, 'render_panel_html' ] );

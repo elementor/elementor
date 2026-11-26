@@ -111,7 +111,7 @@ class Test_Admin_Flow_Handler extends Elementor_Test_Base {
 	public function redirect_return_to_data_provider(): array {
 		return [
 			'with referer' => [ 'wp-admin/admin.php?page=elementor-settings', 'wp-admin/admin.php?page=elementor-settings' ],
-			'without referer' => [ '', 'wp-admin/admin.php?page=' . Menu_Config::ELEMENTOR_MENU_SLUG ],
+			'without referer' => [ '', 'wp-admin/admin.php?page=' . Menu_Config::ELEMENTOR_HOME_MENU_SLUG ],
 		];
 	}
 
@@ -162,6 +162,44 @@ class Test_Admin_Flow_Handler extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertSame( $expected_url, $redirect_url );
+	}
+
+	public function quick_start_redirect_data_provider(): array {
+		return [
+			'quick start' => [ Menu_Config::ELEMENTOR_MENU_SLUG, 'admin', Menu_Config::get_elementor_home_url() ],
+			'settings page' => [ 'elementor-settings', 'admin', '' ],
+			'home page' => [ Menu_Config::ELEMENTOR_HOME_MENU_SLUG, 'admin', '' ],
+			'empty page' => [ '', 'admin', '' ],
+			'edit posts user' => [ Menu_Config::ELEMENTOR_MENU_SLUG, 'editor', '' ],
+		];
+	}
+
+	/**
+	 * @dataProvider quick_start_redirect_data_provider
+	 */
+	public function test_get_quick_start_redirect_url__redirects_only_quick_start_to_home( string $page, string $role, string $expected_url ) {
+		// Arrange
+		if ( 'admin' === $role ) {
+			$this->act_as_admin();
+		} else {
+			$this->act_as_editor();
+		}
+
+		$handler = new Admin_Flow_Handler();
+
+		// Act
+		$redirect_url = $handler->get_quick_start_redirect_url( $page );
+
+		// Assert
+		$this->assertSame( $expected_url, $redirect_url );
+	}
+
+	public function test_get_elementor_home_url__points_to_the_home_page() {
+		// Act
+		$url = Menu_Config::get_elementor_home_url();
+
+		// Assert
+		$this->assertSame( admin_url( 'admin.php?page=elementor-home' ), $url );
 	}
 
 	public function submenu_file_data_provider(): array {
