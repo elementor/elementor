@@ -39,8 +39,7 @@ const STYLES = `
 		width: auto !important;
 	}
 
-	html body.angie-sidebar-active #wpbody,
-	html body.angie-sidebar-active #wpfooter,
+	html body.angie-sidebar-active:has(#editor-one-top-bar > *) #wpbody,
 	html body.angie-sidebar-active #editor-one-top-bar > *,
 	html body.angie-sidebar-active #editor-one-secondary-bar > * {
 		inset-inline-end: var(--angie-sidebar-width) !important;
