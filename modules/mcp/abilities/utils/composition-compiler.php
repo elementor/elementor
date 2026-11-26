@@ -60,6 +60,10 @@ final class Composition_Compiler {
 	}
 
 	/**
+	 * Elementor Pro's `elementor/manage-widget` compiles with `COMPONENT_PARENT_ID` and reads `elements`, `warnings`,
+	 * `dom`, `xml_parser` and `pro_features_discovery`, so the signature and the returned keys are a Core–Pro contract
+	 * (pinned by `Test_Composition_Compiler_Contract`): keep them, and deprecate before changing them.
+	 *
 	 * @param array     $input         Composition input using the `elementor/build-composition` shapes.
 	 * @param ?Document $document      Context for resolving dynamic values, when a target document exists.
 	 * @param array     $document_tree Existing document tree used for insertion-context validation.
