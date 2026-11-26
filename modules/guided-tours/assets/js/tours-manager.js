@@ -1,4 +1,4 @@
-import { ELEMENT_WAIT_TIMEOUT, POPOVER_CLASS, POPOVER_OFFSET } from './constants';
+import { ELEMENT_WAIT_TIMEOUT, POPOVER_CLASS, POPOVER_OFFSET, STAGE_PADDING } from './constants';
 import { formatProgressText, getPopoverSide, isValidSelector } from './popover-utils';
 import {
 	getNextTourStep,
@@ -80,6 +80,7 @@ export class GuidedTours {
 			prevBtnText: this.config.i18n?.previous,
 			showProgress: true,
 			skipMissingElement: true,
+			stagePadding: STAGE_PADDING,
 			smoothScroll: true,
 			steps,
 			waitForElement: ELEMENT_WAIT_TIMEOUT,
