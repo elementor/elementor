@@ -39,6 +39,10 @@ class Subtree_Builder {
 	/**
 	 * Build an index of configuration-id -> reference to subtree node.
 	 *
+	 * Elementor Pro's `elementor/manage-widget` writes `part` markers through this index on a compiled composition,
+	 * so the signature and the by-reference index are a Core–Pro contract (pinned by `Test_Composition_Compiler_Contract`):
+	 * keep them, and deprecate before changing them.
+	 *
 	 * @param array[]      $subtrees Built subtrees (mutated by reference downstream).
 	 * @param \DOMDocument $dom      Source DOM.
 	 * @return array<string, array&>
