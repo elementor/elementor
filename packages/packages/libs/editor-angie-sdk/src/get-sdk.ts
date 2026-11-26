@@ -4,28 +4,7 @@ export const EDITOR_ANGIE_APP_ID = 'elementor-editor-core';
 
 let sdk: AngieMcpSdk | undefined;
 
-type DetectorAccess = {
-	angieDetector?: { waitForReady: () => Promise< { isReady: boolean } > };
-};
-
 class RetriableAngieSDK extends AngieMcpSdk {
-	private detectionExpired = false;
-
-	constructor( ...args: ConstructorParameters< typeof AngieMcpSdk > ) {
-		super( ...args );
-
-		( this as unknown as DetectorAccess ).angieDetector
-			?.waitForReady()
-			.then( ( { isReady } ) => {
-				this.detectionExpired = ! isReady;
-			} )
-			.catch( () => undefined );
-	}
-
-	public hasDetectionExpired() {
-		return this.detectionExpired;
-	}
-
 	public async waitForReady(): Promise< void > {
 		let retryCount = 3;
 		while ( retryCount > 0 ) {
@@ -58,18 +37,6 @@ export const getAngieSdk = (): AngieMcpSdk => {
 	sdk ??= new RetriableAngieSDK( { appId: EDITOR_ANGIE_APP_ID } );
 
 	return sdk;
-};
-
-export const refreshAngieSdkIfDetectionExpired = () => {
-	if ( ! ( sdk instanceof RetriableAngieSDK ) || ! sdk.hasDetectionExpired() ) {
-		return false;
-	}
-
-	// destroy() only clears the registration queue; the old instance keeps its window message listeners.
-	sdk.destroy();
-	sdk = undefined;
-
-	return true;
 };
 
 export const resetAngieSdkForTests = () => {
