@@ -11,6 +11,7 @@ export type UpdateElementStyleArgs = {
 	meta: StyleDefinitionVariant[ 'meta' ];
 	props: StyleDefinitionVariant[ 'props' ];
 	custom_css?: StyleDefinitionVariant[ 'custom_css' ];
+	mode?: 'merge' | 'replace';
 };
 
 export function updateElementStyle( args: UpdateElementStyleArgs ) {
@@ -25,7 +26,8 @@ export function updateElementStyle( args: UpdateElementStyleArgs ) {
 		const customCss = ( 'custom_css' in args ? args.custom_css : variant?.custom_css ) ?? null;
 
 		if ( variant ) {
-			variant.props = mergeProps( variant.props, args.props );
+			variant.props =
+				'replace' === args.mode ? structuredClone( args.props ) : mergeProps( variant.props, args.props );
 			variant.custom_css = customCss?.raw ? customCss : null;
 		} else {
 			style.variants.push( { meta: args.meta, props: args.props, custom_css: customCss } );

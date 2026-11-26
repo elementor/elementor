@@ -142,6 +142,28 @@ describe( 'documentElementsStylesProvider', () => {
 		} );
 	} );
 
+	it( 'should pass the update mode through', () => {
+		// Act.
+		documentElementsStylesProvider.actions?.updateProps?.(
+			{
+				id: 'test-style',
+				meta: { breakpoint: null, state: null },
+				props: { prop: 'value' },
+				mode: 'replace',
+			},
+			{ elementId: 'test-element' }
+		);
+
+		// Assert.
+		expect( updateElementStyle ).toHaveBeenCalledWith( {
+			elementId: 'test-element',
+			styleId: 'test-style',
+			meta: { breakpoint: null, state: null },
+			props: { prop: 'value' },
+			mode: 'replace',
+		} );
+	} );
+
 	it.each( [
 		{ elementsMeta: { notElementId: 'test-value' } },
 		{ elementsMeta: { elementId: 123 } },
