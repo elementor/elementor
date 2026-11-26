@@ -1,12 +1,12 @@
+import { AngieMcpSdk } from '@elementor-external/angie-sdk';
+
 import { EDITOR_ANGIE_APP_ID, getAngieSdk, resetAngieSdkForTests } from '../get-sdk';
 
-const mockConstructor = jest.fn();
-
 jest.mock( '@elementor-external/angie-sdk', () => ( {
-	AngieMcpSdk: function ( ...args: unknown[] ) {
-		mockConstructor( ...args );
-	},
+	AngieMcpSdk: jest.fn(),
 } ) );
+
+const mockConstructor = jest.mocked( AngieMcpSdk );
 
 const GLOBAL_MCP_DISABLED_FLAG = '__ELEMENTOR_MCP_DISABLED__';
 
