@@ -34,9 +34,8 @@ import SetHome, { RemoveHomepageDialog } from '../../actions-menu/actions/set-ho
 import View from '../../actions-menu/actions/view';
 import {
 	contentPanelListItemButtonSx,
-	contentPanelListItemSecondaryActionsStackSx,
-	getContentPanelListItemSecondarySlotCount,
-	getContentPanelListItemSx,
+	contentPanelListItemTrailingActionsStackSx,
+	contentPanelListRowPaddingSx,
 } from '../../content-panel-chrome';
 import {
 	SiteContentListItemActionsSlot,
@@ -96,10 +95,6 @@ export default function ListItemView( { post }: { post: Post } ) {
 	const isHome = Boolean( post.isHome );
 	const showHomeInLeadingSecondarySlot = isHome && ! showListItemActions;
 	const showHomeInTrailingSecondarySlot = isHome && showListItemActions;
-	const secondaryActionSlotCount = getContentPanelListItemSecondarySlotCount( {
-		hasHomeIcon: isHome,
-		hasRowActions: showListItemActions,
-	} );
 	const homeIcon = isHome ? (
 		<IconButton
 			aria-label={ __( 'Homepage', 'elementor' ) }
@@ -113,33 +108,7 @@ export default function ListItemView( { post }: { post: Post } ) {
 	) : null;
 
 	const listRow = (
-		<ListItem
-			disablePadding
-			sx={ getContentPanelListItemSx( secondaryActionSlotCount ) }
-			secondaryAction={
-				<Stack
-					alignItems="center"
-					direction="row"
-					spacing={ 0.5 }
-					sx={ contentPanelListItemSecondaryActionsStackSx }
-				>
-					{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
-					{ showHomeInLeadingSecondarySlot && homeIcon }
-					{ showHomeInTrailingSecondarySlot && homeIcon }
-					<IconButton
-						aria-label={ __( 'More actions', 'elementor' ) }
-						size="tiny"
-						{ ...menuTriggerProps }
-						onClick={ ( event: React.MouseEvent ) => {
-							event.stopPropagation();
-							menuTriggerProps.onClick?.( event );
-						} }
-					>
-						<DotsVerticalIcon fontSize="tiny" />
-					</IconButton>
-				</Stack>
-			}
-		>
+		<ListItem disablePadding sx={ contentPanelListRowPaddingSx }>
 			<ListItemButton
 				dense
 				disableGutters
@@ -158,6 +127,30 @@ export default function ListItemView( { post }: { post: Post } ) {
 				<ListItemText disableTypography sx={ { flex: 1, minWidth: 0 } }>
 					<PageTitleAndStatus title={ title } status={ status } />
 				</ListItemText>
+				<Stack
+					alignItems="center"
+					direction="row"
+					spacing={ 0.5 }
+					sx={ contentPanelListItemTrailingActionsStackSx }
+					onClick={ ( event: React.MouseEvent ) => {
+						event.stopPropagation();
+					} }
+				>
+					{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
+					{ showHomeInLeadingSecondarySlot && homeIcon }
+					{ showHomeInTrailingSecondarySlot && homeIcon }
+					<IconButton
+						aria-label={ __( 'More actions', 'elementor' ) }
+						size="tiny"
+						{ ...menuTriggerProps }
+						onClick={ ( event: React.MouseEvent ) => {
+							event.stopPropagation();
+							menuTriggerProps.onClick?.( event );
+						} }
+					>
+						<DotsVerticalIcon fontSize="tiny" />
+					</IconButton>
+				</Stack>
 			</ListItemButton>
 		</ListItem>
 	);
