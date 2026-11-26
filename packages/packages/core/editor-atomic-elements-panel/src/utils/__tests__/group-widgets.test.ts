@@ -132,7 +132,12 @@ describe( 'groupWidgets', () => {
 		const groups = groupWidgets( widgets, lockedTiles );
 
 		// Assert.
-		expect( tileTypes( groups, 'interactive' ) ).toEqual( [ 'e-tabs', 'e-list', 'e-collection-loop', 'e-carousel' ] );
+		expect( tileTypes( groups, 'interactive' ) ).toEqual( [
+			'e-tabs',
+			'e-list',
+			'e-collection-loop',
+			'e-carousel',
+		] );
 	} );
 
 	it( 'should place locked form stubs in the form group, form first', () => {
@@ -148,7 +153,10 @@ describe( 'groupWidgets', () => {
 
 	it( 'should keep one tile per widget type', () => {
 		// Arrange.
-		const lockedTiles = [ locked( 'e-form-input', [ 'atomic-form' ] ), locked( 'e-form-input', [ 'atomic-form' ] ) ];
+		const lockedTiles = [
+			locked( 'e-form-input', [ 'atomic-form' ] ),
+			locked( 'e-form-input', [ 'atomic-form' ] ),
+		];
 
 		// Act.
 		const groups = groupWidgets( {}, lockedTiles );

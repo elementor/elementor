@@ -108,9 +108,14 @@ function sortByInventory( tiles: ElementTile[], widgetTypes: string[] ) {
 
 	// Array.prototype.sort is stable, so unlisted tiles keep their original order after the listed ones.
 	return [ ...tiles ].sort( ( a, b ) => {
-		const [ positionA, positionB ] = [ position( a ), position( b ) ];
+		const positionA = position( a );
+		const positionB = position( b );
 
-		return positionA === positionB ? 0 : positionA < positionB ? -1 : 1;
+		if ( positionA === positionB ) {
+			return 0;
+		}
+
+		return positionA < positionB ? -1 : 1;
 	} );
 }
 
