@@ -3,6 +3,7 @@ namespace Elementor\Tests\Phpunit\Includes\Settings;
 
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Plugin;
+use Elementor\Settings;
 use Elementor\Modules\EditorOne\Module as EditorOneModule;
 
 class Test_Settings extends Elementor_Test_Base {
@@ -57,5 +58,13 @@ class Test_Settings extends Elementor_Test_Base {
 		$this->assertEquals( 'elementor-editor', $editor_item['slug'], 'Editor menu item should have correct slug' );
 	}
 
-}
+	public function test_get_settings_page_url__points_to_settings_page_not_quick_start() {
+		// Act.
+		$url = Settings::get_settings_page_url();
 
+		// Assert.
+		$this->assertSame( admin_url( 'admin.php?page=elementor-settings' ), $url );
+		$this->assertNotSame( Settings::get_url(), $url );
+	}
+
+}

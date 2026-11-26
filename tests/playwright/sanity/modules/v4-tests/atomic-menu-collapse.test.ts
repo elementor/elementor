@@ -449,7 +449,9 @@ test.describe( 'Atomic Menu toggle and collapse @atomic-widgets', () => {
 		test( 'Two menus on one page toggle independently', async () => {
 			// Arrange
 			await addMenu();
-			await addMenu();
+			await editor.selectElement( await editor.addElement( { elType: 'e-div-block' }, 'document' ) );
+			await editor.v4Panel.addAtomicElementFromPanel( 'e-menu' );
+			await expect( editor.getPreviewFrame().locator( '[data-element_type="e-menu"]' ) ).toHaveCount( 2 );
 			await viewFrontend();
 			await editor.page.setViewportSize( TABLET );
 

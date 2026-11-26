@@ -1,6 +1,6 @@
 import { type V1ElementModelProps, type V1ElementSettingsProps } from '@elementor/editor-elements';
 
-import { type StorageContent } from '../prevent-link-in-link-commands';
+import { type StorageContent } from '../form-structure/utils';
 
 export type ElementModelProps = Omit< V1ElementModelProps, 'id' > & {
 	custom: {
