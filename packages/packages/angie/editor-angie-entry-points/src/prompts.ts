@@ -89,10 +89,10 @@ export const ANGIE_PROMPTS: AngiePromptBuilders = {
 
 export const buildAngieSiteLogoPrompt = (): string =>
 	[
-		'Update the Site Identity site logo on the active kit. Site Settings (kit) must be open as the current document before any get or set.',
+		'Update the Site Identity site logo on the active kit.',
 		'Call v3-kit-site-identity (not update-elementor-kit-settings-colors-and-fonts) with action "get" to read the current site name, description, logo, and favicon.',
 		'Use the image agent to create or pick an appropriate site logo. Do not use an MCP tool for image generation.',
-		'When you have a public HTTPS image URL, call elementor/upload-media to import it into the WordPress Media Library (admin only).',
+		'When you have a public HTTPS image URL, call upload-media (with consent: true after the user approves) to import it into the WordPress Media Library (admin only).',
 		'Call v3-kit-site-identity with action "set" and patch { site_logo: { id, url } } using the attachment id and URL from the upload step.',
 		'Do not invent other write paths.',
 	].join( '\n\n' );
