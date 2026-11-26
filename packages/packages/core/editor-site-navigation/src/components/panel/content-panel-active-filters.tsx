@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Chip, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useContentPanelCoordinator } from '../../contexts/content-panel-coordinator';
+import { useSiteContentSectionToolbar } from '../../contexts/site-content-section-toolbar';
 import { DEFAULT_SITE_CONTENT_SORT, getSiteContentSortLabel, hasActiveSiteContentSort } from '../../site-content-sort';
 import {
 	getActiveSiteContentStatusFilterKeys,
@@ -23,7 +23,7 @@ const contentPanelFilterChipSx = {
 
 export default function ContentPanelActiveFilters() {
 	const { clearActiveToolbarFilters, setSiteContentSort, siteContentSort, statusFilters, toggleStatusFilter } =
-		useContentPanelCoordinator();
+		useSiteContentSectionToolbar();
 
 	const hasStatusFilters = hasActiveSiteContentStatusFilters( statusFilters );
 	const hasSort = hasActiveSiteContentSort( siteContentSort );
