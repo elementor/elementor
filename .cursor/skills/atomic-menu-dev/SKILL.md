@@ -25,6 +25,12 @@ Scope: Internal (Core). Experiment: `e_nav_menu`.
 - Toggle width: the collapse CSS sets `flex:0 0 auto;width:auto` on the toggle so themes cannot stretch it.
 - Items layout defaults: the items' base style has no `flex-direction` (the browser default `row` applies). `get_collapse_css()` defaults the collapsed layout to `column;flex-basis:100%;width:100%` through `:where(<scope> > items)` in each collapse breakpoint block. Zero specificity means anything the author sets on `e-menu-items` in the Style tab wins, including a desktop value without a breakpoint, as with any Atomic element; the author sets a smaller-breakpoint value to change it. Toggle rules stay forced, so authors cannot override the toggle's `order`, `flex` or `width` while collapsed. Base styles are cached per page, so after changing them run Regenerate CSS.
 
+## Collapse breakpoint
+
+- `collapse-breakpoint` stores a key: a site max-width breakpoint, `desktop` (collapsed at every width) or `none` (never collapsed). Options in the control are the site's active max-width breakpoints, then Desktop and None.
+- The stored key is never rewritten. `Atomic_Menu::resolve_collapse_breakpoints()` maps each key to the effective one: itself while active, else the next smaller active breakpoint, else `none`. It is passed as the `collapse_breakpoints` render context, so the Twig `data-e-collapse` and the editor preview use the same value. `get_collapse_css()` emits one block per active breakpoint plus `desktop`.
+- Pro's collapsed Submenu CSS must cover `desktop` as well (see Pro `modules/atomic-menu`).
+
 ## Submenu lock (Free and not-connected Pro)
 
 - Types `e-menu-submenu` and `e-menu-submenu-trigger` are children of `e-menu-entry`. Under `e_nav_menu`, Core always registers placeholders, even with Pro installed, so an older Pro without these types does not drop them on save; a Pro that has them replaces them later on `elementor/elements/elements_registered`. The placeholders (`Atomic_Menu_Submenu_Promotion`, `Atomic_Menu_Submenu_Trigger_Promotion`, built on `Atomic_Pro_Promotion_Element_Base`) are hidden from the panel, render nothing, data kept on save by `Pro_Promotion_Data_Preservation`. Pro must register the same types and schema.
