@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PopoverBody, PopoverHeader } from '@elementor/editor-ui';
-import { ListIcon } from '@elementor/icons';
+import { FilterIcon } from '@elementor/icons';
 import { bindPopover, bindToggle, Divider, Popover, ToggleButton, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
