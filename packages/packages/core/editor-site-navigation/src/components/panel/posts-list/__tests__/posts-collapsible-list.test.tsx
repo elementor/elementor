@@ -97,7 +97,6 @@ jest.mock( '../../../../hooks/use-user', () => ( {
 const renderList = ( ui: React.ReactElement ) =>
 	renderWithQuery( <ContentPanelCoordinatorProvider>{ ui }</ContentPanelCoordinatorProvider> );
 
-
 const defaultUsePostsValue = {
 	isLoading: false,
 	data: {

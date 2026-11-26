@@ -32,11 +32,7 @@ import Rename from '../../actions-menu/actions/rename';
 import Restore from '../../actions-menu/actions/restore';
 import SetHome, { RemoveHomepageDialog } from '../../actions-menu/actions/set-home';
 import View from '../../actions-menu/actions/view';
-import {
-	contentPanelListItemButtonSx,
-	getContentPanelListItemSecondarySlotCount,
-	getContentPanelListItemSx,
-} from '../../content-panel-chrome';
+import { contentPanelListItemButtonSx, getContentPanelListItemSecondarySlotCount, getContentPanelListItemSx } from '../../content-panel-chrome';
 import {
 	SiteContentListItemActionsSlot,
 	useSiteContentListItemActionsInjections,
@@ -104,7 +100,9 @@ export default function ListItemView( { post }: { post: Post } ) {
 			secondaryAction={
 				<Stack alignItems="center" direction="row" spacing={ 0 }>
 					{ showListItemActions && <SiteContentListItemActionsSlot post={ post } title={ title } /> }
-					{ post.isHome && <HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" fontSize="tiny" /> }
+					{ post.isHome && (
+						<HomeIcon titleAccess={ __( 'Homepage', 'elementor' ) } color="disabled" fontSize="tiny" />
+					) }
 					<IconButton
 						aria-label={ __( 'More actions', 'elementor' ) }
 						size="tiny"

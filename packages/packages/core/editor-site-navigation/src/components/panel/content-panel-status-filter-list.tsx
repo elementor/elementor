@@ -40,7 +40,7 @@ export default function ContentPanelStatusFilterList( { loadCounts }: Props ) {
 		shouldLoadPostTypeCounts
 	);
 	const statusCounts = presetStatusCounts ?? fetchedStatusCounts;
-	const isLoadingCounts = presetStatusCounts ? statusFilterCountsPending : isFetchingStatusCounts;
+	const isLoadingCounts = Boolean( presetStatusCounts ? statusFilterCountsPending : isFetchingStatusCounts );
 
 	const isAllSelected = ! hasActiveSiteContentStatusFilters( statusFilters );
 
