@@ -139,12 +139,62 @@ class Atomic_Menu extends Atomic_Element_Base {
 		return $eligible;
 	}
 
+	private static function get_widescreen_breakpoint(): ?Breakpoint {
+		$breakpoints = Plugin::$instance->breakpoints ?? null;
+
+		return $breakpoints
+			? $breakpoints->get_active_breakpoints( Breakpoints_Manager::BREAKPOINT_KEY_WIDESCREEN )
+			: null;
+	}
+
+	/**
+	 * Every collapse choice the site can use right now, apart from none.
+	 */
+	private static function get_available_collapse_keys(): array {
+		$keys = array_keys( self::get_collapsible_breakpoints() );
+		$keys[] = self::COLLAPSE_DESKTOP;
+
+		if ( self::get_widescreen_breakpoint() ) {
+			$keys[] = Breakpoints_Manager::BREAKPOINT_KEY_WIDESCREEN;
+		}
+
+		return $keys;
+	}
+
+	/**
+	 * The widest screen, in px, at which each available choice still collapses the menu; null means every width.
+	 * Desktop stops where Widescreen starts, so with Widescreen on the site only Widescreen collapses at every width.
+	 *
+	 * @return array<string, int|null> keyed by choice, from the smallest screen to the largest.
+	 */
+	public static function get_collapse_widths(): array {
+		$widths = [];
+
+		foreach ( self::get_collapsible_breakpoints() as $key => $breakpoint ) {
+			if ( self::COLLAPSE_DESKTOP === $key || Breakpoints_Manager::BREAKPOINT_KEY_WIDESCREEN === $key ) {
+				continue;
+			}
+
+			$widths[ $key ] = (int) $breakpoint->get_value();
+		}
+
+		$widescreen = self::get_widescreen_breakpoint();
+
+		$widths[ self::COLLAPSE_DESKTOP ] = $widescreen ? (int) $widescreen->get_value() - 1 : null;
+
+		if ( $widescreen ) {
+			$widths[ Breakpoints_Manager::BREAKPOINT_KEY_WIDESCREEN ] = null;
+		}
+
+		return $widths;
+	}
+
 	private static function get_collapse_breakpoint_keys(): array {
 		return array_merge( self::get_collapse_scale(), [ self::COLLAPSE_NONE ] );
 	}
 
 	/**
-	 * Every collapse choice from the smallest screen to the largest. Desktop is the base device, so it is always the last one.
+	 * Every collapse choice from the smallest screen to the largest. Desktop is the base device, and Widescreen, when the site has it, is wider than Desktop.
 	 */
 	private static function get_collapse_scale(): array {
 		return [
@@ -154,6 +204,7 @@ class Atomic_Menu extends Atomic_Element_Base {
 			Breakpoints_Manager::BREAKPOINT_KEY_TABLET_EXTRA,
 			Breakpoints_Manager::BREAKPOINT_KEY_LAPTOP,
 			self::COLLAPSE_DESKTOP,
+			Breakpoints_Manager::BREAKPOINT_KEY_WIDESCREEN,
 		];
 	}
 
@@ -193,7 +244,7 @@ class Atomic_Menu extends Atomic_Element_Base {
 
 	private static function get_collapse_fallback_values(): array {
 		return array_filter(
-			self::resolve_collapse_breakpoints( array_keys( self::get_collapsible_breakpoints() ) ),
+			self::resolve_collapse_breakpoints( self::get_available_collapse_keys() ),
 			fn( string $resolved, string $stored ) => $resolved !== $stored,
 			ARRAY_FILTER_USE_BOTH
 		);
@@ -213,6 +264,16 @@ class Atomic_Menu extends Atomic_Element_Base {
 			'value' => self::COLLAPSE_DESKTOP,
 			'label' => __( 'Desktop', 'elementor' ),
 		];
+
+		$widescreen = self::get_widescreen_breakpoint();
+
+		if ( $widescreen ) {
+			$options[] = [
+				'value' => Breakpoints_Manager::BREAKPOINT_KEY_WIDESCREEN,
+				'label' => $widescreen->get_label(),
+			];
+		}
+
 		$options[] = [
 			'value' => self::COLLAPSE_NONE,
 			'label' => __( 'None', 'elementor' ),
@@ -241,15 +302,11 @@ class Atomic_Menu extends Atomic_Element_Base {
 
 		$conditions = [];
 
-		foreach ( self::get_collapsible_breakpoints() as $key => $breakpoint ) {
-			if ( self::COLLAPSE_DESKTOP === $key ) {
-				continue;
-			}
-
-			$conditions[ $key ] = "@media(scripting:enabled) and (max-width:{$breakpoint->get_value()}px)";
+		foreach ( self::get_collapse_widths() as $key => $max_width ) {
+			$conditions[ $key ] = null === $max_width
+				? '@media(scripting:enabled)'
+				: "@media(scripting:enabled) and (max-width:{$max_width}px)";
 		}
-
-		$conditions[ self::COLLAPSE_DESKTOP ] = '@media(scripting:enabled)';
 
 		foreach ( $conditions as $key => $condition ) {
 			$scope = ".e-menu[data-e-collapse=\"{$key}\"]:has(> {$toggle})";
@@ -363,25 +420,10 @@ class Atomic_Menu extends Atomic_Element_Base {
 		];
 	}
 
-	public function get_initial_config() {
-		$config = parent::get_initial_config();
-
-		$config['template_context'] = self::get_collapse_template_context();
-
-		return $config;
-	}
-
-	protected function build_template_context(): array {
-		return array_merge( $this->build_base_template_context(), self::get_collapse_template_context() );
-	}
-
-	/**
-	 * Shared by the frontend render and the editor canvas, which renders the same Twig template in the browser.
-	 */
-	private static function get_collapse_template_context(): array {
+	protected function get_template_extra_context(): array {
 		return [
 			'default_collapse_breakpoint' => self::get_default_collapse_breakpoint(),
-			'collapse_breakpoints' => self::resolve_collapse_breakpoints( array_keys( self::get_collapsible_breakpoints() ) ),
+			'collapse_breakpoints' => self::resolve_collapse_breakpoints( self::get_available_collapse_keys() ),
 		];
 	}
 

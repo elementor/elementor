@@ -840,6 +840,65 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		Plugin::$instance->breakpoints->refresh();
 	}
 
+	public function test_get_config__stays_a_nested_templated_element_with_the_collapse_template_context() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		$config = $this->get_config( 'e-menu' );
+
+		// Assert.
+		$this->assertTrue( $config['support_nesting'] );
+		$this->assertNotEmpty( $config['twig_main_template'] );
+		$this->assertNotEmpty( $config['twig_templates'] );
+		$this->assertArrayHasKey( 'collapse_breakpoints', $config['template_context'] );
+	}
+
+	public function test_resolve_collapse_breakpoints__widescreen_falls_to_desktop_unless_the_site_has_it() {
+		// Act.
+		$without = Atomic_Menu::resolve_collapse_breakpoints( [ 'mobile', 'tablet' ] );
+		$with = Atomic_Menu::resolve_collapse_breakpoints( [ 'mobile', 'tablet', 'widescreen' ] );
+
+		// Assert.
+		$this->assertSame( 'desktop', $without['widescreen'] );
+		$this->assertSame( 'widescreen', $with['widescreen'] );
+		$this->assertSame( 'desktop', $with['desktop'] );
+	}
+
+	public function test_widescreen__is_offered_and_collapses_at_every_width_while_desktop_stops_where_it_starts() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+		$this->activate_breakpoints( [ 'viewport_mobile', 'viewport_tablet', 'viewport_widescreen' ] );
+
+		try {
+			$widescreen_min = (int) Plugin::$instance->breakpoints->get_active_breakpoints( 'widescreen' )->get_value();
+
+			// Act.
+			$css = Atomic_Menu::get_collapse_css();
+			$widths = Atomic_Menu::get_collapse_widths();
+			$props = $this->get_collapse_breakpoint_control_props();
+		} finally {
+			$this->reset_breakpoints_to_default();
+		}
+
+		// Assert.
+		$this->assertSame( [ 'mobile', 'tablet', 'desktop', 'widescreen' ], array_keys( $widths ) );
+		$this->assertSame( $widescreen_min - 1, $widths['desktop'] );
+		$this->assertNull( $widths['widescreen'] );
+		$this->assertStringContainsString( '@media(scripting:enabled) and (max-width:' . ( $widescreen_min - 1 ) . 'px){.e-menu[data-e-collapse="desktop"]', $css );
+		$this->assertStringContainsString( '@media(scripting:enabled){.e-menu[data-e-collapse="widescreen"]', $css );
+		$this->assertSame( [ 'mobile', 'tablet', 'desktop', 'widescreen', 'none' ], array_column( $props['options'], 'value' ) );
+	}
+
+	public function test_widescreen__is_not_offered_when_the_site_does_not_have_it() {
+		// Act.
+		$widths = Atomic_Menu::get_collapse_widths();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'widescreen', $widths );
+		$this->assertNull( $widths['desktop'] );
+	}
+
 	public function test_editor_canvas_and_frontend_resolve_the_collapse_breakpoint_the_same_way() {
 		// Arrange.
 		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
@@ -906,7 +965,7 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		);
 
 		// Act.
-		$keys = array_diff( array_keys( Atomic_Menu::resolve_collapse_breakpoints( [] ) ), [ 'desktop', 'none' ] );
+		$keys = array_diff( array_keys( Atomic_Menu::resolve_collapse_breakpoints( [] ) ), [ 'desktop', 'widescreen', 'none' ] );
 		$widths = array_map( fn( string $key ) => $default_widths[ $key ], $keys );
 
 		// Assert.
@@ -914,7 +973,7 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		sort( $sorted );
 
 		$this->assertSame( $sorted, $widths );
-		$this->assertSame( [ 'desktop', 'none' ], array_slice( array_keys( Atomic_Menu::resolve_collapse_breakpoints( [] ) ), -2 ) );
+		$this->assertSame( [ 'desktop', 'widescreen', 'none' ], array_slice( array_keys( Atomic_Menu::resolve_collapse_breakpoints( [] ) ), -3 ) );
 	}
 
 	public function test_get_collapse_css__desktop_collapses_at_every_width_without_a_media_query() {
