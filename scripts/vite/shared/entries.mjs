@@ -75,6 +75,7 @@ export const BASE_ENTRIES = {
 	'mcp-analytics-registrar': 'modules/mcp/assets/dev/js/mcp-analytics-registrar.js',
 	'agents-ready': 'modules/agents/assets/js/admin/agents-ready.js',
 	'agents-dashboard-widget': 'modules/agents/assets/js/admin/dashboard-widget.js',
+	'admin-angie-toggle': 'modules/agents/assets/js/admin/admin-angie-toggle.js',
 	'mcp-promotion-registrar': 'modules/mcp/assets/dev/js/mcp-promotion-registrar.js',
 };
 
