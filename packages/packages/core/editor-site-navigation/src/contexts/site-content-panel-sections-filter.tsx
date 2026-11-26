@@ -88,13 +88,7 @@ export function SiteContentPanelSectionsFilterProvider( { children }: { children
 			setSectionVisible,
 			shouldShowSectionsFilter: descriptors.length > 1,
 		} ),
-		[
-			clearHiddenSections,
-			descriptors,
-			hiddenSectionIds,
-			isSectionVisible,
-			setSectionVisible,
-		]
+		[ clearHiddenSections, descriptors, hiddenSectionIds, isSectionVisible, setSectionVisible ]
 	);
 
 	return (
