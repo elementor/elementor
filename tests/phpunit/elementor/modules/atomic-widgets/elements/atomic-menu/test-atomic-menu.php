@@ -839,6 +839,44 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		Plugin::$instance->breakpoints->refresh();
 	}
 
+	public function test_editor_canvas_and_frontend_resolve_the_collapse_breakpoint_the_same_way() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$assert_both_agree = function ( array $expected ) {
+			// The editor builds the canvas config once per load, so a changed breakpoint shows after a reload.
+			$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+			$canvas_map = $this->get_config( 'e-menu' )['template_context']['collapse_breakpoints'];
+
+			foreach ( $expected as $stored => $effective ) {
+				$html = $this->render_menu( [
+					'collapse-breakpoint' => [
+						'$$type' => 'string',
+						'value' => $stored,
+					],
+				] );
+
+				// Assert.
+				$this->assertSame( $effective, $canvas_map[ $stored ], "canvas: {$stored}" );
+				$this->assertSame( $effective, $this->load_html( $html )->query( '//nav' )->item( 0 )->getAttribute( 'data-e-collapse' ), "frontend: {$stored}" );
+			}
+		};
+
+		// Act & Assert.
+		$assert_both_agree( [ 'laptop' => 'tablet', 'tablet' => 'tablet', 'mobile_extra' => 'mobile' ] );
+
+		$this->activate_breakpoints( [ 'viewport_laptop', 'viewport_mobile_extra' ] );
+
+		try {
+			$assert_both_agree( [ 'laptop' => 'laptop', 'tablet' => 'tablet', 'mobile_extra' => 'mobile_extra' ] );
+		} finally {
+			$this->reset_breakpoints_to_default();
+		}
+
+		$assert_both_agree( [ 'laptop' => 'tablet', 'mobile_extra' => 'mobile' ] );
+	}
+
 	public function test_get_collapse_css__desktop_collapses_at_every_width_without_a_media_query() {
 		// Act.
 		$css = Atomic_Menu::get_collapse_css();

@@ -357,11 +357,26 @@ class Atomic_Menu extends Atomic_Element_Base {
 		];
 	}
 
+	public function get_initial_config() {
+		$config = parent::get_initial_config();
+
+		$config['template_context'] = self::get_collapse_template_context();
+
+		return $config;
+	}
+
 	protected function build_template_context(): array {
-		return array_merge( $this->build_base_template_context(), [
+		return array_merge( $this->build_base_template_context(), self::get_collapse_template_context() );
+	}
+
+	/**
+	 * Shared by the frontend render and the editor canvas, which renders the same Twig template in the browser.
+	 */
+	private static function get_collapse_template_context(): array {
+		return [
 			'default_collapse_breakpoint' => self::get_default_collapse_breakpoint(),
 			'collapse_breakpoints' => self::resolve_collapse_breakpoints( array_keys( self::get_collapsible_breakpoints() ) ),
-		] );
+		];
 	}
 
 	protected function define_allowed_child_types() {
