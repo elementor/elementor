@@ -52,7 +52,7 @@ class Manager extends BaseManager {
 	protected function get_saved_settings( $id ) {
 		$settings = get_user_meta( get_current_user_id(), self::META_KEY, true );
 
-		if ( ! $settings ) {
+		if ( ! is_array( $settings ) ) {
 			$settings = [];
 		}
 
