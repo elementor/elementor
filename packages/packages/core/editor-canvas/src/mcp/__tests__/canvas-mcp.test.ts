@@ -33,7 +33,6 @@ describe( 'initCanvasMcp', () => {
 		// Assert.
 		expect( initFindIconsTool ).toHaveBeenCalledWith( reg );
 	} );
-}
 
 	it( 'should always register the upload-media tool', () => {
 		// Arrange.
