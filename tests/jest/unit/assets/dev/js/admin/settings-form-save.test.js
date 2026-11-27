@@ -139,6 +139,7 @@ describe( 'SettingsFormSave', () => {
 		form.dispatchEvent( new Event( 'submit', { bubbles: true, cancelable: true } ) );
 
 		expect( saveHandler.allowNavigation ).toBe( true );
+		expect( sessionStorage.getItem( 'elementor_admin_settings_scroll_y_after_save' ) ).not.toBeNull();
 	} );
 
 	it( 'should redirect after save only for safe destinations', () => {
