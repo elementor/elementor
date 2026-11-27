@@ -8,13 +8,20 @@ export const DESIGN_SYSTEM_EXPERIMENTS = {
 	e_atomic_elements: 'active',
 } as const;
 
+export const DESIGN_SYSTEM_SIDEBAR_EXPERIMENTS = {
+	...DESIGN_SYSTEM_EXPERIMENTS,
+	e_editor_sidebar: 'active',
+	e_editor_atomic_panel: 'active',
+} as const;
+
 export async function initDesignSystemTest(
 	page: Page,
 	testInfo: TestInfo,
 	apiRequests: ApiRequests,
+	experiments: Record< string, string > = DESIGN_SYSTEM_EXPERIMENTS,
 ): Promise< WpAdminPage > {
 	const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-	await wpAdminPage.setExperiments( DESIGN_SYSTEM_EXPERIMENTS );
+	await wpAdminPage.setExperiments( experiments );
 	await wpAdminPage.openNewPage();
 	return wpAdminPage;
 }

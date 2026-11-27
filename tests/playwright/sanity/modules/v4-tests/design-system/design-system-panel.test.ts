@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import DesignSystemPage from './design-system-page';
-import { cleanupDesignSystemData, initDesignSystemTest } from './utils';
+import { cleanupDesignSystemData, DESIGN_SYSTEM_SIDEBAR_EXPERIMENTS, initDesignSystemTest } from './utils';
 
 test.describe( 'Design System Panel @v4-tests', () => {
 	let wpAdmin: WpAdminPage;
@@ -232,5 +232,127 @@ test.describe( 'Design System Panel @v4-tests', () => {
 		await expect( page.locator( '#elementor-panel' ) ).toHaveScreenshot(
 			'design-system-classes-tab.png',
 		);
+	} );
+} );
+
+test.describe( 'Design System Panel - editor sidebar with atomic elements panel @v4-tests', () => {
+	let wpAdmin: WpAdminPage;
+	let editor: EditorPage;
+	let page: Page;
+	let context: BrowserContext;
+	let designSystem: DesignSystemPage;
+
+	const isV1RouteActive = ( route: string ) => page.evaluate(
+		( r ) => ( window as unknown as { $e: { routes: { isPartOf: ( name: string ) => boolean } } } ).$e.routes.isPartOf( r ),
+		route,
+	);
+
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		context = await browser.newContext();
+		page = await context.newPage();
+		wpAdmin = await initDesignSystemTest( page, testInfo, apiRequests, DESIGN_SYSTEM_SIDEBAR_EXPERIMENTS );
+		designSystem = new DesignSystemPage( page );
+	} );
+
+	test.beforeEach( async ( { apiRequests } ) => {
+		await page.evaluate( () => {
+			window.localStorage.removeItem( 'elementor:new-experience:elements-panel' );
+			window.localStorage.removeItem( 'elementor_editor_design_system_active_tab' );
+		} );
+		editor = await wpAdmin.openNewPage();
+		await cleanupDesignSystemData( apiRequests, page );
+		await expect( designSystem.atomicElementsPanelHeading ).toBeVisible();
+	} );
+
+	test.afterAll( async ( { apiRequests } ) => {
+		await cleanupDesignSystemData( apiRequests, page );
+		await wpAdmin.resetExperiments();
+		await context.close();
+	} );
+
+	test( 'First click on Design System in the sidebar rail opens the panel', async () => {
+		await test.step( 'Click Design System once', async () => {
+			await designSystem.getSidebarRailButton( 'Design System' ).click();
+		} );
+
+		await test.step( 'Design System panel replaces the atomic elements panel', async () => {
+			await expect( designSystem.panelHeading ).toBeVisible();
+			await expect( designSystem.atomicElementsPanelHeading ).toBeHidden();
+		} );
+	} );
+
+	test( 'Design System panel stays interactive and closing it brings back the atomic elements panel', async () => {
+		await test.step( 'Open Design System from the rail', async () => {
+			await designSystem.getSidebarRailButton( 'Design System' ).click();
+			await expect( designSystem.panelHeading ).toBeVisible();
+		} );
+
+		await test.step( 'Switch tabs', async () => {
+			await designSystem.switchToClassesTab();
+			await designSystem.switchToVariablesTab();
+		} );
+
+		await test.step( 'Close the panel', async () => {
+			await designSystem.closePanel();
+		} );
+
+		await test.step( 'Atomic elements panel is back', async () => {
+			await expect( designSystem.atomicElementsPanelHeading ).toBeVisible();
+			await expect( designSystem.getSidebarRailButton( 'Add Element' ) ).toBeEnabled();
+		} );
+	} );
+
+	test( 'Other sidebar rail entries still open their panels', async () => {
+		const backToAddPanel = async () => {
+			await designSystem.getSidebarRailButton( 'Add Element' ).click();
+			await expect( designSystem.atomicElementsPanelHeading ).toBeVisible();
+		};
+
+		await test.step( 'Components', async () => {
+			await designSystem.getSidebarRailButton( 'Components' ).click();
+			await expect( designSystem.panel.getByRole( 'heading', { level: 2, name: 'Components', exact: true } ) ).toBeVisible();
+			await backToAddPanel();
+		} );
+
+		await test.step( 'Page Settings', async () => {
+			await designSystem.getSidebarRailButton( 'Page Settings' ).click();
+			await expect.poll( () => isV1RouteActive( 'panel/page-settings' ) ).toBe( true );
+			await backToAddPanel();
+		} );
+
+		await test.step( 'History', async () => {
+			await designSystem.getSidebarRailButton( 'History' ).click();
+			await expect.poll( () => isV1RouteActive( 'panel/history' ) ).toBe( true );
+			await backToAddPanel();
+		} );
+
+		await test.step( 'Design System from Page Settings', async () => {
+			await designSystem.getSidebarRailButton( 'Page Settings' ).click();
+			await expect.poll( () => isV1RouteActive( 'panel/page-settings' ) ).toBe( true );
+			await designSystem.getSidebarRailButton( 'Design System' ).click();
+			await expect( designSystem.panelHeading ).toBeVisible();
+		} );
+	} );
+
+	test( 'Closing Design System restores the selected element', async () => {
+		let divBlockId: string;
+
+		await test.step( 'Add and select a div block', async () => {
+			divBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+			await editor.selectElement( divBlockId );
+		} );
+
+		await test.step( 'Open Design System from the rail', async () => {
+			await designSystem.getSidebarRailButton( 'Design System' ).click();
+			await designSystem.dismissUnsavedChangesDialogIfVisible();
+			await expect( designSystem.panelHeading ).toBeVisible();
+		} );
+
+		await test.step( 'Close the panel and check the selection', async () => {
+			await designSystem.closePanel();
+			await expect(
+				editor.getPreviewFrame().locator( `.elementor-element-${ divBlockId }.elementor-element-editable` ),
+			).toBeVisible();
+		} );
 	} );
 } );

@@ -24,6 +24,14 @@ export default class DesignSystemPage {
 		return this.panel.getByRole( 'heading', { level: 2, name: 'Design system' } );
 	}
 
+	get atomicElementsPanelHeading(): Locator {
+		return this.panel.getByRole( 'heading', { level: 2, name: 'Add', exact: true } );
+	}
+
+	getSidebarRailButton( name: string ): Locator {
+		return this.page.getByRole( 'complementary', { name: 'Editor sidebar' } ).getByRole( 'button', { name, exact: true } );
+	}
+
 	get closeButton(): Locator {
 		return this.panel.getByRole( 'button', { name: 'Close' } );
 	}
