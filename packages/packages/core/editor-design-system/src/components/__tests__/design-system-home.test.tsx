@@ -15,9 +15,9 @@ jest.mock( '@wordpress/i18n', () => ( {
 } ) );
 
 jest.mock( '@elementor/ui', () => ( {
-	Box: ( { children, ...rest }: React.ComponentProps<'div'> ) => <div { ...rest }>{ children }</div>,
+	Box: ( { children, ...rest }: React.ComponentProps< 'div' > ) => <div { ...rest }>{ children }</div>,
 	Rotate: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
-	Stack: ( { children, ...rest }: React.ComponentProps<'div'> ) => <div { ...rest }>{ children }</div>,
+	Stack: ( { children, ...rest }: React.ComponentProps< 'div' > ) => <div { ...rest }>{ children }</div>,
 	Typography: ( { children }: { children: React.ReactNode } ) => <span>{ children }</span>,
 	useTheme: () => ( { direction: 'ltr' } ),
 } ) );
