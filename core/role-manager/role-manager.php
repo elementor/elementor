@@ -98,14 +98,22 @@ class Role_Manager extends Settings_Page {
 	 */
 	public function display_settings_page() {
 		$this->get_tabs();
+		$nav_screen = $this->get_settings_nav_screen_slug();
 		?>
 		<div class="wrap">
-			<h1 class="wp-heading-inline"><?php echo esc_html( $this->get_page_title() ); ?></h1>
-
-			<div>
+			<h1 class="screen-reader-text"><?php echo esc_html( $this->get_page_title() ); ?></h1>
+			<form
+				id="elementor-settings-form"
+				class="elementor-settings-form"
+				method="post"
+				action="options.php"
+				data-nav-screen="<?php echo esc_attr( $nav_screen ); ?>"
+			>
+				<div class="elementor-settings-page-header elementor-settings-page-header--role-manager">
+					<h2 class="elementor-settings-page-header__title"><?php echo esc_html__( 'Manage What Your Users Can Edit In Elementor', 'elementor' ); ?></h2>
+					<?php $this->render_settings_save_controls( 'elementor-role-manager-button-save-changes' ); ?>
+				</div>
 				<div id="elementor-role-manager">
-					<h2><?php echo esc_html__( 'Manage What Your Users Can Edit In Elementor', 'elementor' ); ?></h2>
-					<form id="elementor-settings-form" method="post" action="options.php">
 						<?php
 						settings_fields( static::PAGE_ID );
 						echo '<div class="elementor-settings-form-page elementor-active">';
@@ -115,11 +123,10 @@ class Role_Manager extends Settings_Page {
 							}
 							$this->display_role_controls( $role_slug, $role_data );
 						}
-						submit_button( __( 'Save Changes', 'elementor' ), 'primary', 'submit', true, [ 'data-id' => 'elementor-role-manager-button-save-changes' ] );
+						echo '</div>';
 						?>
-					</form>
 				</div>
-			</div>
+			</form>
 		</div><!-- /.wrap -->
 		<?php
 	}

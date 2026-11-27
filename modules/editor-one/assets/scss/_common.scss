@@ -396,9 +396,16 @@
 	}
 
 	#elementor-system-info > h2,
-	#elementor-role-manager > h2 {
+	.elementor-settings-page-header__title {
 		font-weight: 500;
 		font-size: 20px;
+	}
+
+	.elementor-settings-page-header__save {
+		#submit[disabled],
+		#submit:disabled {
+			opacity: 0.45;
+		}
 	}
 
 	.elementor-settings-form-page h2 ~ p {

@@ -316,6 +316,40 @@ body {
 }
 
 // Settings
+.elementor-settings-page-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+
+	.wp-heading-inline,
+	&__title {
+		margin: 0;
+		flex: 1;
+		min-inline-size: 0;
+	}
+
+	&__save {
+		flex-shrink: 0;
+
+		.submit {
+			margin: 0;
+			padding: 0;
+		}
+
+		#submit[disabled],
+		#submit:disabled {
+			cursor: not-allowed;
+			opacity: 0.55;
+		}
+	}
+
+	&--role-manager {
+		margin-block-end: 1em;
+	}
+}
+
 .elementor-settings-form-page {
 	padding-block-start: 30px;
 
