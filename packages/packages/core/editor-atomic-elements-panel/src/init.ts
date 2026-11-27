@@ -5,6 +5,7 @@ import { blockCommand } from '@elementor/editor-v1-adapters';
 import { AtomicEntryRedirect } from './components/atomic-entry-redirect';
 import { LegacyPanelSwitcher } from './components/legacy-panel-switcher';
 import { isAtomicElementsPanelEnabled } from './gate';
+import { registerLegacyHiding } from './legacy-hiding/register-legacy-hiding';
 import { isPanelOpen, panel } from './panel';
 
 export function init() {
@@ -13,6 +14,7 @@ export function init() {
 	}
 
 	registerPanel( panel );
+	registerLegacyHiding();
 
 	blockCommand( { command: 'panel/open-default', condition: ( { refresh } ) => ! refresh && isPanelOpen() } );
 
