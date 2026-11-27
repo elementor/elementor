@@ -34,7 +34,24 @@ trait Has_Element_Template {
 		$config['twig_templates'] = $this->get_templates_contents();
 		$config['base_styles_dictionary'] = $this->get_base_styles_dictionary();
 
+		$extra_context = $this->get_template_extra_context();
+
+		if ( ! empty( $extra_context ) ) {
+			$config['template_context'] = $extra_context;
+		}
+
 		return $config;
+	}
+
+	/**
+	 * Static, element-level values exposed to the Twig template on both the frontend and the editor canvas.
+	 * Must not depend on element settings, since the editor receives it once per page load.
+	 * Values are sent to every user who can open the editor: only return data that is already public
+	 * in the rendered frontend, never server-side secrets.
+	 * Core context keys (id, settings, type, ...) take precedence over these.
+	 */
+	protected function get_template_extra_context(): array {
+		return [];
 	}
 
 	protected function get_shared_templates(): array {
@@ -143,6 +160,6 @@ trait Has_Element_Template {
 	abstract protected function get_templates(): array;
 
 	protected function build_template_context(): array {
-		return $this->build_base_template_context();
+		return array_merge( $this->get_template_extra_context(), $this->build_base_template_context() );
 	}
 }

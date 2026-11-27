@@ -72,7 +72,7 @@ Register types per [authoring-widgets.md](authoring-widgets.md). Override `defin
 | `e-tab` | element | no | — | Single tab trigger |
 | `e-tabs-content-area` | element | yes | `e-tab-content`, `container` | Tab panels wrapper |
 | `e-tab-content` | element | yes | any | Panel body |
-| `e-menu` | element | yes | `e-menu-items`, `e-menu-toggle` | `<nav>`; experiment `e_nav_menu`; collapses into the toggle at a breakpoint; default: items + toggle |
+| `e-menu` | element | yes | `e-menu-items`, `e-menu-toggle` | `<nav>`; experiment `e_nav_menu`; collapses into the toggle at the chosen site breakpoint, always (`desktop`, or `widescreen` when the site has it) or never (`none`); a saved breakpoint the site no longer has resolves to the next smaller one, then `none`; default: items + toggle |
 | `e-menu-items` | element | yes | `e-menu-entry` | `<ul>` of entries; permanently locked |
 | `e-menu-entry` | element | yes | `e-menu-item`, `e-menu-submenu-trigger`, `e-menu-submenu` | `<li>`; permanently locked; boolean `submenu` setting adds the trigger after the item and the Submenu after the trigger (children dependencies), and stashes both when off |
 | `e-menu-item` | element | yes | any | Link inside an entry; permanently locked |

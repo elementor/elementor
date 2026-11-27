@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Elements\AtomicMenu;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu\Atomic_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Menu\Atomic_Menu_Entry\Atomic_Menu_Entry;
@@ -11,12 +12,15 @@ use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use ElementorEditorTesting\Traits\Breakpoints_Trait;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Test_Atomic_Menu extends Elementor_Test_Base {
+	use Breakpoints_Trait;
+
 
 	const LOCKED_TYPES = [
 		'e-menu-items',
@@ -639,13 +643,367 @@ class Test_Atomic_Menu extends Elementor_Test_Base {
 		$this->assertStringContainsString( '[data-e-collapsed-position="overlay"] > .e-menu-items-base{position:absolute', $css );
 	}
 
+	public function test_collapse_breakpoint_schema__accepts_desktop_and_none() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+		$prop_type = $this->get_config( 'e-menu' )['atomic_props_schema']['collapse-breakpoint'];
+
+		// Act & Assert.
+		$this->assertTrue( $prop_type->validate( [ '$$type' => 'string', 'value' => 'desktop' ] ) );
+		$this->assertTrue( $prop_type->validate( [ '$$type' => 'string', 'value' => 'none' ] ) );
+		$this->assertTrue( $prop_type->validate( [ '$$type' => 'string', 'value' => 'tablet' ] ) );
+		$this->assertFalse( $prop_type->validate( [ '$$type' => 'string', 'value' => 'unknown' ] ) );
+	}
+
+	public function test_resolve_collapse_breakpoints__keeps_every_available_value() {
+		// Act.
+		$resolved = Atomic_Menu::resolve_collapse_breakpoints( [ 'mobile', 'tablet', 'laptop' ] );
+
+		// Assert.
+		$this->assertSame( 'mobile', $resolved['mobile'] );
+		$this->assertSame( 'tablet', $resolved['tablet'] );
+		$this->assertSame( 'laptop', $resolved['laptop'] );
+		$this->assertSame( 'desktop', $resolved['desktop'] );
+		$this->assertSame( 'none', $resolved['none'] );
+	}
+
+	public function test_resolve_collapse_breakpoints__a_removed_breakpoint_falls_to_the_next_smaller_one() {
+		// Act.
+		$resolved = Atomic_Menu::resolve_collapse_breakpoints( [ 'mobile', 'laptop' ] );
+
+		// Assert.
+		$this->assertSame( 'mobile', $resolved['mobile_extra'] );
+		$this->assertSame( 'mobile', $resolved['tablet'] );
+		$this->assertSame( 'mobile', $resolved['tablet_extra'] );
+		$this->assertSame( 'laptop', $resolved['laptop'] );
+	}
+
+	public function test_resolve_collapse_breakpoints__falls_to_none_when_nothing_smaller_is_left() {
+		// Act.
+		$resolved = Atomic_Menu::resolve_collapse_breakpoints( [ 'tablet', 'laptop' ] );
+
+		// Assert.
+		$this->assertSame( 'none', $resolved['mobile'] );
+		$this->assertSame( 'none', $resolved['mobile_extra'] );
+		$this->assertSame( 'tablet', $resolved['tablet'] );
+		$this->assertSame( 'desktop', $resolved['desktop'] );
+	}
+
+	public function test_resolve_collapse_breakpoints__with_no_active_breakpoints_only_desktop_and_none_remain() {
+		// Act.
+		$resolved = Atomic_Menu::resolve_collapse_breakpoints( [] );
+
+		// Assert.
+		$this->assertSame( 'none', $resolved['laptop'] );
+		$this->assertSame( 'desktop', $resolved['desktop'] );
+	}
+
+	public function test_rendered_nav__keeps_desktop_and_none_as_the_collapse_breakpoint() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		foreach ( [ 'desktop', 'none' ] as $value ) {
+			// Act.
+			$html = $this->render_menu( [
+				'collapse-breakpoint' => [
+					'$$type' => 'string',
+					'value' => $value,
+				],
+			] );
+
+			// Assert.
+			$this->assertSame( $value, $this->load_html( $html )->query( '//nav' )->item( 0 )->getAttribute( 'data-e-collapse' ) );
+		}
+	}
+
+	public function test_rendered_nav__collapses_at_the_next_smaller_breakpoint_when_the_stored_one_is_no_longer_active() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+		$this->assertArrayNotHasKey( 'laptop', Plugin::$instance->breakpoints->get_active_breakpoints() );
+
+		foreach ( [
+			'laptop' => 'tablet',
+			'tablet_extra' => 'tablet',
+			'mobile_extra' => 'mobile',
+		] as $stored => $effective ) {
+			// Act.
+			$html = $this->render_menu( [
+				'collapse-breakpoint' => [
+					'$$type' => 'string',
+					'value' => $stored,
+				],
+			] );
+
+			// Assert.
+			$this->assertSame( $effective, $this->load_html( $html )->query( '//nav' )->item( 0 )->getAttribute( 'data-e-collapse' ), $stored );
+		}
+	}
+
+	public function test_rendered_nav__keeps_a_stored_extra_breakpoint_while_it_is_active() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+		$this->activate_breakpoints( [ 'viewport_laptop' ] );
+
+		try {
+			// Act.
+			$html = $this->render_menu( [
+				'collapse-breakpoint' => [
+					'$$type' => 'string',
+					'value' => 'laptop',
+				],
+			] );
+		} finally {
+			$this->reset_breakpoints_to_default();
+		}
+
+		// Assert.
+		$this->assertSame( 'laptop', $this->load_html( $html )->query( '//nav' )->item( 0 )->getAttribute( 'data-e-collapse' ) );
+	}
+
+	public function test_collapse_breakpoint_control__selects_the_resolved_option_for_a_breakpoint_that_is_no_longer_active() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		$props = $this->get_collapse_breakpoint_control_props();
+
+		// Assert.
+		$this->assertSame( 'tablet', $props['fallbackValues']['laptop'] );
+		$this->assertSame( 'tablet', $props['fallbackValues']['tablet_extra'] );
+		$this->assertSame( 'mobile', $props['fallbackValues']['mobile_extra'] );
+
+		foreach ( [ 'mobile', 'tablet', 'desktop', 'none' ] as $kept ) {
+			$this->assertArrayNotHasKey( $kept, $props['fallbackValues'] );
+		}
+	}
+
+	public function test_collapse_breakpoint_control__lists_the_active_breakpoints_then_desktop_and_none() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+		$this->activate_breakpoints( [ 'viewport_laptop' ] );
+
+		try {
+			// Act.
+			$props = $this->get_collapse_breakpoint_control_props();
+		} finally {
+			$this->reset_breakpoints_to_default();
+		}
+
+		// Assert.
+		$this->assertSame(
+			[ 'mobile', 'tablet', 'laptop', 'desktop', 'none' ],
+			array_column( $props['options'], 'value' )
+		);
+		$this->assertArrayNotHasKey( 'laptop', $props['fallbackValues'] );
+	}
+
+	private function get_collapse_breakpoint_control_props(): array {
+		$menu = Plugin::$instance->elements_manager->create_element_instance( [
+			'id' => 'menucontrols',
+			'elType' => 'e-menu',
+			'settings' => [],
+			'elements' => [],
+		] );
+
+		$control = $this->find_control( $menu->get_atomic_controls(), 'collapse-breakpoint' );
+		$this->assertNotNull( $control );
+
+		return $control->get_props();
+	}
+
+	private function find_control( array $items, string $bind ) {
+		foreach ( $items as $item ) {
+			if ( method_exists( $item, 'get_bind' ) && $bind === $item->get_bind() ) {
+				return $item;
+			}
+
+			if ( method_exists( $item, 'get_items' ) ) {
+				$found = $this->find_control( $item->get_items(), $bind );
+
+				if ( $found ) {
+					return $found;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private function activate_breakpoints( array $keys ): void {
+		$this->set_admin_user();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit->set_settings( 'active_breakpoints', $keys );
+		$kit->save( [ 'settings' => $kit->get_settings() ] );
+
+		Plugin::$instance->documents->get( $kit->get_id(), false );
+		Plugin::$instance->breakpoints->refresh();
+	}
+
+	public function test_get_config__stays_a_nested_templated_element_with_the_collapse_template_context() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		// Act.
+		$config = $this->get_config( 'e-menu' );
+
+		// Assert.
+		$this->assertTrue( $config['support_nesting'] );
+		$this->assertNotEmpty( $config['twig_main_template'] );
+		$this->assertNotEmpty( $config['twig_templates'] );
+		$this->assertArrayHasKey( 'collapse_breakpoints', $config['template_context'] );
+	}
+
+	public function test_resolve_collapse_breakpoints__widescreen_falls_to_desktop_unless_the_site_has_it() {
+		// Act.
+		$without = Atomic_Menu::resolve_collapse_breakpoints( [ 'mobile', 'tablet' ] );
+		$with = Atomic_Menu::resolve_collapse_breakpoints( [ 'mobile', 'tablet', 'widescreen' ] );
+
+		// Assert.
+		$this->assertSame( 'desktop', $without['widescreen'] );
+		$this->assertSame( 'widescreen', $with['widescreen'] );
+		$this->assertSame( 'desktop', $with['desktop'] );
+	}
+
+	public function test_widescreen__is_offered_and_collapses_at_every_width_while_desktop_stops_where_it_starts() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+		$this->activate_breakpoints( [ 'viewport_mobile', 'viewport_tablet', 'viewport_widescreen' ] );
+
+		try {
+			$widescreen_min = (int) Plugin::$instance->breakpoints->get_active_breakpoints( 'widescreen' )->get_value();
+
+			// Act.
+			$css = Atomic_Menu::get_collapse_css();
+			$widths = Atomic_Menu::get_collapse_widths();
+			$props = $this->get_collapse_breakpoint_control_props();
+		} finally {
+			$this->reset_breakpoints_to_default();
+		}
+
+		// Assert.
+		$this->assertSame( [ 'mobile', 'tablet', 'desktop', 'widescreen' ], array_keys( $widths ) );
+		$this->assertSame( $widescreen_min - 1, $widths['desktop'] );
+		$this->assertNull( $widths['widescreen'] );
+		$this->assertStringContainsString( '@media(scripting:enabled) and (max-width:' . ( $widescreen_min - 1 ) . 'px){.e-menu[data-e-collapse="desktop"]', $css );
+		$this->assertStringContainsString( '@media(scripting:enabled){.e-menu[data-e-collapse="widescreen"]', $css );
+		$this->assertSame( [ 'mobile', 'tablet', 'desktop', 'widescreen', 'none' ], array_column( $props['options'], 'value' ) );
+	}
+
+	public function test_widescreen__is_not_offered_when_the_site_does_not_have_it() {
+		// Act.
+		$widths = Atomic_Menu::get_collapse_widths();
+
+		// Assert.
+		$this->assertArrayNotHasKey( 'widescreen', $widths );
+		$this->assertNull( $widths['desktop'] );
+	}
+
+	public function test_editor_canvas_and_frontend_resolve_the_collapse_breakpoint_the_same_way() {
+		// Arrange.
+		$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+		$assert_both_agree = function ( array $expected ) {
+			// The editor builds the canvas config once per load, so a changed breakpoint shows after a reload.
+			$this->register_elements_with_experiment( Experiments_Manager::STATE_ACTIVE );
+
+			$canvas_map = $this->get_config( 'e-menu' )['template_context']['collapse_breakpoints'];
+
+			foreach ( $expected as $stored => $effective ) {
+				$html = $this->render_menu( [
+					'collapse-breakpoint' => [
+						'$$type' => 'string',
+						'value' => $stored,
+					],
+				] );
+
+				// Assert.
+				$this->assertSame( $effective, $canvas_map[ $stored ], "canvas: {$stored}" );
+				$this->assertSame( $effective, $this->load_html( $html )->query( '//nav' )->item( 0 )->getAttribute( 'data-e-collapse' ), "frontend: {$stored}" );
+			}
+		};
+
+		// Act & Assert.
+		$assert_both_agree( [ 'laptop' => 'tablet', 'tablet' => 'tablet', 'mobile_extra' => 'mobile' ] );
+
+		$this->activate_breakpoints( [ 'viewport_laptop', 'viewport_mobile_extra' ] );
+
+		try {
+			$assert_both_agree( [ 'laptop' => 'laptop', 'tablet' => 'tablet', 'mobile_extra' => 'mobile_extra' ] );
+		} finally {
+			$this->reset_breakpoints_to_default();
+		}
+
+		$assert_both_agree( [ 'laptop' => 'tablet', 'mobile_extra' => 'mobile' ] );
+	}
+
+	public function test_get_collapse_css__orders_the_blocks_from_the_smallest_breakpoint_to_desktop() {
+		// Arrange.
+		$this->activate_breakpoints( [ 'viewport_mobile_extra', 'viewport_tablet_extra', 'viewport_laptop' ] );
+
+		try {
+			// Act.
+			$css = Atomic_Menu::get_collapse_css();
+		} finally {
+			$this->reset_breakpoints_to_default();
+		}
+
+		preg_match_all( '/\.e-menu\[data-e-collapse="(\w+)"\]:has\(> \.e-menu-toggle-base\)\{flex-wrap/', $css, $matches );
+
+		// Assert.
+		$this->assertSame(
+			[ 'mobile', 'mobile_extra', 'tablet', 'tablet_extra', 'laptop', 'desktop' ],
+			$matches[1]
+		);
+	}
+
+	public function test_resolve_collapse_breakpoints__lists_the_keys_from_the_smallest_width_to_the_largest() {
+		// Arrange.
+		$default_widths = array_map(
+			fn( array $config ) => $config['default_value'],
+			Breakpoints_Manager::get_default_config()
+		);
+
+		// Act.
+		$keys = array_diff( array_keys( Atomic_Menu::resolve_collapse_breakpoints( [] ) ), [ 'desktop', 'widescreen', 'none' ] );
+		$widths = array_map( fn( string $key ) => $default_widths[ $key ], $keys );
+
+		// Assert.
+		$sorted = $widths;
+		sort( $sorted );
+
+		$this->assertSame( $sorted, $widths );
+		$this->assertSame( [ 'desktop', 'widescreen', 'none' ], array_slice( array_keys( Atomic_Menu::resolve_collapse_breakpoints( [] ) ), -3 ) );
+	}
+
+	public function test_get_collapse_css__desktop_collapses_at_every_width_without_a_media_query() {
+		// Act.
+		$css = Atomic_Menu::get_collapse_css();
+
+		// Assert.
+		$scope = '.e-menu[data-e-collapse="desktop"]:has(> .e-menu-toggle-base)';
+		$this->assertStringContainsString( "{$scope} > .e-menu-toggle-base{display:flex;", $css );
+		$this->assertStringContainsString( "{$scope} > .e-menu-items-base{display:none}", $css );
+		$this->assertStringContainsString( "{$scope}[data-e-open=\"true\"] > .e-menu-items-base{display:flex}", $css );
+		$this->assertStringContainsString( '@media(scripting:enabled){' . $scope, $css );
+	}
+
+	public function test_get_collapse_css__none_never_collapses() {
+		// Act.
+		$css = Atomic_Menu::get_collapse_css();
+
+		// Assert.
+		$this->assertStringNotContainsString( 'data-e-collapse="none"', $css );
+		$this->assertStringContainsString( '.e-menu[data-e-collapse] > .e-menu-toggle-base{display:none}', $css );
+	}
+
 	public function test_get_collapse_css__defaults_items_layout_in_every_collapsible_breakpoint_block() {
 		// Act.
 		$css = Atomic_Menu::get_collapse_css();
 
 		// Assert.
 		$blocks = substr_count( $css, '@media(scripting:enabled)' );
-		$this->assertGreaterThan( 0, $blocks );
+		$this->assertGreaterThan( 1, $blocks );
 		$this->assertSame( $blocks, substr_count( $css, '> .e-menu-items-base){flex-direction:column;flex-basis:100%;width:100%}' ) );
 	}
 

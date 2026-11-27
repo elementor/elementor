@@ -227,6 +227,7 @@ export function createNestedTemplatedElementView( {
 					this._lastResolvedSettingsHash = settingsHash;
 
 					const context = {
+						...( element.template_context ?? {} ),
 						id: model.get( 'id' ),
 						interaction_id: this.getInteractionId(),
 						type,

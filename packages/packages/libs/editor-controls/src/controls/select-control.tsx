@@ -24,6 +24,7 @@ type SelectControlProps = {
 	onChange?: ( newValue: string | null, previousValue: string | null | undefined ) => void;
 	MenuProps?: SelectProps[ 'MenuProps' ];
 	ariaLabel?: string;
+	fallbackValues?: Record< string, string >;
 };
 
 const DEFAULT_MENU_PROPS = {
@@ -35,7 +36,14 @@ const DEFAULT_MENU_PROPS = {
 };
 
 export const SelectControl = createControl(
-	( { options = [], groups = [], onChange, MenuProps = DEFAULT_MENU_PROPS, ariaLabel }: SelectControlProps ) => {
+	( {
+		options = [],
+		groups = [],
+		onChange,
+		MenuProps = DEFAULT_MENU_PROPS,
+		ariaLabel,
+		fallbackValues,
+	}: SelectControlProps ) => {
 		const { value, setValue, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
 		const handleChange = ( event: SelectChangeEvent< StringPropValue[ 'value' ] > ) => {
 			const newValue = event.target.value || null;
@@ -44,6 +52,8 @@ export const SelectControl = createControl(
 			setValue( newValue );
 		};
 		const flatOptions = flattenGroupedOptions( options, groups );
+		const isStoredValueAvailable = flatOptions.some( ( option ) => option.value === value );
+		const resolvedValue = ( ! isStoredValueAvailable && value && fallbackValues?.[ value ] ) || value;
 		const isDisabled = disabled || flatOptions.length === 0;
 
 		return (
@@ -57,7 +67,7 @@ export const SelectControl = createControl(
 					renderValue={ ( selectedValue: string | null ) =>
 						getSelectRenderValue( flatOptions, placeholder, selectedValue )
 					}
-					value={ value ?? '' }
+					value={ resolvedValue ?? '' }
 					onChange={ handleChange }
 					disabled={ isDisabled }
 					fullWidth
