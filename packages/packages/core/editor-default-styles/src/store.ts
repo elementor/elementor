@@ -51,8 +51,9 @@ export const slice = createSlice( {
 		) {
 			const normalizedData = Array.isArray( data ) ? {} : data;
 
-			state.initialData = structuredClone( normalizedData );
-			state.data = structuredClone( normalizedData );
+			const clonedData = cloneDefaultStylesData( normalizedData );
+			state.initialData = clonedData;
+			state.data = cloneDefaultStylesData( clonedData );
 			state.isDirty = false;
 		},
 
@@ -110,12 +111,12 @@ export const slice = createSlice( {
 		},
 
 		reset( state ) {
-			state.data = structuredClone( state.initialData );
+			state.data = cloneDefaultStylesData( state.initialData );
 			state.isDirty = false;
 		},
 
 		commit( state ) {
-			state.initialData = state.data;
+			state.initialData = cloneDefaultStylesData( state.data );
 			state.isDirty = false;
 		},
 
