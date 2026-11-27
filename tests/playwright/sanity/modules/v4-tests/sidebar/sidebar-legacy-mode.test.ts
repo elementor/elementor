@@ -70,7 +70,7 @@ test.describe( 'Sidebar Legacy elements mode @v4-tests', () => {
 
 		await test.step( 'Switch to Legacy', async () => {
 			await legacySwitcherButton().click();
-			await expect( atomicSwitcherButton() ).toBeVisible();
+			await expect( legacySwitcherButton() ).toHaveAttribute( 'aria-pressed', 'true' );
 			await expect( atomicPanelHeading() ).toBeHidden();
 		} );
 

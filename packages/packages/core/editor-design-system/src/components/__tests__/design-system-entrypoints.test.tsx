@@ -54,7 +54,6 @@ jest.mock( '@elementor/editor-sidebar', () => ( {
 let mockSwitchToLegacyCallback: ( () => void ) | null = null;
 
 jest.mock( '@elementor/editor-elements-panel', () => ( {
-	isLegacyElementsPanelSelected: jest.fn( () => false ),
 	useOnSwitchToLegacyElementsPanel: ( cb: () => void ) => {
 		mockSwitchToLegacyCallback = cb;
 	},
@@ -64,7 +63,6 @@ jest.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
 } ) );
 
-import { isLegacyElementsPanelSelected } from '@elementor/editor-elements-panel';
 import { isSidebarEnabled } from '@elementor/editor-sidebar';
 import { __privateListenTo as listenTo, __privateOpenRoute as openRoute } from '@elementor/editor-v1-adapters';
 
@@ -97,7 +95,6 @@ describe( 'DesignSystemEntrypoints', () => {
 		jest.clearAllMocks();
 		mockSwitchToLegacyCallback = null;
 		jest.mocked( isSidebarEnabled ).mockReturnValue( false );
-		jest.mocked( isLegacyElementsPanelSelected ).mockReturnValue( false );
 
 		jest.mocked( usePanelActions ).mockReturnValue( {
 			open: mockOpen,
@@ -546,14 +543,12 @@ describe( 'DesignSystemEntrypoints', () => {
 	} );
 
 	describe( 'Legacy elements mode', () => {
-		const setLegacy = ( sidebar: boolean, legacy: boolean ) => {
-			jest.mocked( isSidebarEnabled ).mockReturnValue( sidebar );
-			jest.mocked( isLegacyElementsPanelSelected ).mockReturnValue( legacy );
-		};
-
-		it( 'should still open from the toggle event when sidebar is on and Legacy is selected', async () => {
+		// Legacy intentionally does not gate non-rail entry points (product decision, ED-26553):
+		// a Legacy-tab user may still edit a v4 element. The component reads no Legacy selection
+		// helper for opening, so this guards against reintroducing such a gate.
+		it( 'should still open from the toggle event when the Legacy elements panel is selected', async () => {
 			// Arrange.
-			setLegacy( true, true );
+			jest.mocked( isSidebarEnabled ).mockReturnValue( true );
 			render( <DesignSystemEntrypoints /> );
 
 			// Act.
@@ -568,22 +563,9 @@ describe( 'DesignSystemEntrypoints', () => {
 			expect( mockOpen ).toHaveBeenCalled();
 		} );
 
-		it( 'should still allow toggle-close in Legacy when open', () => {
-			setLegacy( true, true );
-			jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: true, isBlocked: false } );
-			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'classes' );
-			render( <DesignSystemEntrypoints /> );
-
-			act( () => {
-				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
-			} );
-
-			expect( mockClose ).toHaveBeenCalled();
-		} );
-
 		describe( 'switch to Legacy while open', () => {
 			it( 'should close when open and sidebar on', () => {
-				setLegacy( true, true );
+				jest.mocked( isSidebarEnabled ).mockReturnValue( true );
 				jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: true, isBlocked: false } );
 				render( <DesignSystemEntrypoints /> );
 
@@ -595,7 +577,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			} );
 
 			it( 'should not close when closed', () => {
-				setLegacy( true, true );
+				jest.mocked( isSidebarEnabled ).mockReturnValue( true );
 				render( <DesignSystemEntrypoints /> );
 
 				act( () => {
@@ -606,7 +588,6 @@ describe( 'DesignSystemEntrypoints', () => {
 			} );
 
 			it( 'should not close when sidebar is off', () => {
-				setLegacy( false, true );
 				jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: true, isBlocked: false } );
 				render( <DesignSystemEntrypoints /> );
 

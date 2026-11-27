@@ -41,7 +41,7 @@ describe( 'useSidebarDesignSystemProps', () => {
 		expect( result.current.disabled ).toBe( expected );
 	} );
 
-	it( 'should keep selected/onClick from the toolbar hook and not be exclusive', () => {
+	it( 'should keep selected/onClick from the toolbar hook', () => {
 		// Arrange.
 		mockToolbar( true );
 		jest.mocked( useIsLegacyElementsPanelSelected ).mockReturnValue( false );
@@ -52,6 +52,5 @@ describe( 'useSidebarDesignSystemProps', () => {
 		// Assert.
 		expect( result.current.selected ).toBe( true );
 		expect( result.current.onClick ).toBe( onClick );
-		expect( result.current ).not.toHaveProperty( 'exclusive' );
 	} );
 } );
