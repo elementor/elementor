@@ -225,7 +225,7 @@ const ScannerScreen = ( {
 	angieAppUrl,
 	angiePluginSearchUrl,
 	isActivated,
-	isAngieActive,
+	isAngieEnabled,
 	isAngieInstalled,
 	lastReport,
 	retryAt = null,
@@ -243,7 +243,7 @@ const ScannerScreen = ( {
 		initialScan,
 		initialRetryAt: lastReport ? null : retryAt,
 		isActivated,
-		isAngieActive,
+		isAngieEnabled,
 		llmsConfig,
 		markdownConfig,
 		botAccessConfig,
@@ -284,7 +284,7 @@ ScannerScreen.propTypes = {
 	angieAppUrl: PropTypes.string.isRequired,
 	angiePluginSearchUrl: PropTypes.string.isRequired,
 	isActivated: PropTypes.bool,
-	isAngieActive: PropTypes.bool,
+	isAngieEnabled: PropTypes.bool,
 	isAngieInstalled: PropTypes.bool,
 	lastReport: PropTypes.object,
 	retryAt: PropTypes.string,
@@ -304,7 +304,7 @@ export const ScannerApp = ( {
 	angieAppUrl = '',
 	angiePluginSearchUrl = '',
 	isActivated = false,
-	isAngieActive = false,
+	isAngieEnabled = false,
 	isAngieInstalled = false,
 	lastReport,
 	retryAt = null,
@@ -325,7 +325,7 @@ export const ScannerApp = ( {
 					angieAppUrl={ angieAppUrl }
 					angiePluginSearchUrl={ angiePluginSearchUrl }
 					isActivated={ isActivated }
-					isAngieActive={ isAngieActive }
+					isAngieEnabled={ isAngieEnabled }
 					isAngieInstalled={ isAngieInstalled }
 					lastReport={ lastReport }
 					retryAt={ retryAt }
@@ -349,7 +349,7 @@ ScannerApp.propTypes = {
 	angieAppUrl: PropTypes.string,
 	angiePluginSearchUrl: PropTypes.string,
 	isActivated: PropTypes.bool,
-	isAngieActive: PropTypes.bool,
+	isAngieEnabled: PropTypes.bool,
 	isAngieInstalled: PropTypes.bool,
 	lastReport: PropTypes.object,
 	retryAt: PropTypes.string,

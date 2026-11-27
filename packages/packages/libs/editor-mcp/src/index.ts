@@ -21,6 +21,7 @@ export { ANGIE_MODEL_PREFERENCES, ANGIE_REQUIRED_RESOURCES, type AngieModelPrefe
 export { getActiveChatInfo, type ActiveChatInfo } from './utils/get-active-chat-info';
 export { hasLoadedEditorAngie, openAngieInAgentMode, openAngieInAskMode } from './utils/open-angie-in-ask-mode';
 export type {
+	AngieState,
 	EditorAngieWindowHost,
 	OpenAngieCommonProperties,
 	OpenAngiePluginProperties,
