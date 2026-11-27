@@ -9,3 +9,4 @@ export {
 export { SIDEBAR_WIDTH_VAR } from './constants';
 export { isSidebarEnabled } from './gate';
 export { init } from './init';
+export { useIsSidebarRailLocked } from './rail-lock';

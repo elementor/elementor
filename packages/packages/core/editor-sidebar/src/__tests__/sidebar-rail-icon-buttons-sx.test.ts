@@ -19,4 +19,12 @@ describe( 'sidebarRailIconButtonsSx', () => {
 			},
 		} );
 	} );
+
+	it( 'greys out disabled rail icon buttons', () => {
+		expect( sidebarRailIconButtonsSx ).toMatchObject( {
+			'& .MuiIconButton-root.Mui-disabled': {
+				color: 'action.disabled',
+			},
+		} );
+	} );
 } );
