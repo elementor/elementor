@@ -38,6 +38,9 @@ export const BotAccessPanel = ( { settings } ) => {
 				<Typography variant="subtitle1">
 					{ __( 'Decide how AI agents can use your content', 'elementor' ) }
 				</Typography>
+				<Typography variant="body2" color="text.secondary">
+					{ __( 'Turning off every option blocks a bot in robots.txt. Other options are content signals that bots may choose to follow.', 'elementor' ) }
+				</Typography>
 				{ hasPhysicalFile && (
 					<Stack direction="row">
 						<Chip

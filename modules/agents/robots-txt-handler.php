@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Agents;
 
+use Elementor\Modules\Agents\Classes\Robots_Txt_Parser;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -9,9 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Manages the Elementor Agent Ready block in WordPress's virtual robots.txt.
  *
- * Adds an Allow rule and a Content-Signal line for every bot the site owner
- * manages in the Bot access control module. Bots outside that list get no
- * stanza and fall back to the site's `User-agent: *` rules.
+ * Adds a group with a Content-Signal line for every bot the site owner manages
+ * in the Bot access control module. A crawler that has its own group ignores
+ * `User-agent: *`, so each group repeats the site's `*` rules, unless the site
+ * already defines a group for that bot. A bot with every permission off gets
+ * `Disallow: /`. Bots outside that list get no group and fall back to the
+ * site's `User-agent: *` rules.
  *
  * The rules are wrapped in a delimited block so they can be identified and
  * replaced idempotently:
@@ -51,8 +56,11 @@ class Robots_Txt_Handler {
 	 */
 	private bool $physical_file_exists = false;
 
-	public function __construct( Agent_Ready_Settings $settings ) {
+	private Robots_Txt_Parser $parser;
+
+	public function __construct( Agent_Ready_Settings $settings, ?Robots_Txt_Parser $parser = null ) {
 		$this->settings = $settings;
+		$this->parser   = $parser ?? new Robots_Txt_Parser();
 	}
 
 	/**
@@ -85,7 +93,7 @@ class Robots_Txt_Handler {
 			return $this->strip_block( $output );
 		}
 
-		$block = $this->build_block();
+		$block = $this->build_block( $this->parser->parse( $this->strip_block( $output ) ) );
 
 		if ( false !== strpos( $output, self::BLOCK_BEGIN ) ) {
 			$pattern = '/' . preg_quote( self::BLOCK_BEGIN, '/' ) . '.*?' . preg_quote( self::BLOCK_END, '/' ) . '/s';
@@ -131,7 +139,10 @@ class Robots_Txt_Handler {
 		return is_string( $stripped ) ? $stripped : $output;
 	}
 
-	private function build_block(): string {
+	/**
+	 * @param array{ wildcard_rules: string[], user_agents: string[] } $site_rules Rules parsed from the output without this block.
+	 */
+	private function build_block( array $site_rules ): string {
 		$lines = [];
 
 		$lines[] = self::BLOCK_BEGIN;
@@ -139,7 +150,11 @@ class Robots_Txt_Handler {
 
 		foreach ( $this->settings->get_managed_bots() as $token => $permissions ) {
 			$lines[] = 'User-agent: ' . $token;
-			$lines[] = 'Allow: /';
+
+			foreach ( $this->get_bot_rules( $token, $permissions, $site_rules ) as $rule ) {
+				$lines[] = $rule;
+			}
+
 			$lines[] = $this->format_content_signal( $permissions );
 			$lines[] = '';
 		}
@@ -151,6 +166,36 @@ class Robots_Txt_Handler {
 		$lines[] = self::BLOCK_END;
 
 		return implode( "\n", $lines );
+	}
+
+	/**
+	 * @param array<string, bool>                                       $permissions Permission flags keyed by Agent_Ready_Settings::BOT_PERMISSION_*.
+	 * @param array{ wildcard_rules: string[], user_agents: string[] } $site_rules  Rules parsed from the site's robots.txt.
+	 * @return string[]
+	 */
+	private function get_bot_rules( string $token, array $permissions, array $site_rules ): array {
+		if ( $this->is_fully_blocked( $permissions ) ) {
+			return [ 'Disallow: /' ];
+		}
+
+		if ( in_array( strtolower( $token ), $site_rules['user_agents'], true ) ) {
+			return [];
+		}
+
+		return $site_rules['wildcard_rules'] ?: [ 'Allow: /' ];
+	}
+
+	/**
+	 * @param array<string, bool> $permissions Permission flags keyed by Agent_Ready_Settings::BOT_PERMISSION_*.
+	 */
+	private function is_fully_blocked( array $permissions ): bool {
+		foreach ( array_keys( self::CONTENT_SIGNAL_KEYS ) as $permission ) {
+			if ( ! empty( $permissions[ $permission ] ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**

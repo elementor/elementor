@@ -94,6 +94,65 @@ class Test_Robots_Txt_Handler extends Elementor_Test_Base {
 		$this->assertStringContainsString( "User-agent: *\nContent-Signal: search=yes, ai-input=yes, ai-train=no", $output );
 	}
 
+	public function test_add_rules__copies_wildcard_rules_into_managed_bot_group() {
+		// Arrange
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL, 'bots', [
+			'GPTBot' => [ 'search' => true, 'ai_input' => true, 'ai_train' => false ],
+		] );
+		$handler = new Robots_Txt_Handler( $this->settings );
+
+		// Act
+		$output = $handler->add_rules( "User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\n", true );
+
+		// Assert
+		$this->assertStringContainsString(
+			"User-agent: GPTBot\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\nContent-Signal: search=yes, ai-input=yes, ai-train=no",
+			$output
+		);
+	}
+
+	public function test_add_rules__fully_blocked_bot_gets_disallow_all_only() {
+		// Arrange
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL, 'bots', [
+			'GPTBot' => [ 'search' => false, 'ai_input' => false, 'ai_train' => false ],
+		] );
+		$handler = new Robots_Txt_Handler( $this->settings );
+
+		// Act
+		$output = $handler->add_rules( "User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\n", true );
+
+		// Assert
+		$this->assertStringContainsString( "User-agent: GPTBot\nDisallow: /\nContent-Signal: search=no, ai-input=no, ai-train=no", $output );
+		$this->assertStringNotContainsString( "User-agent: GPTBot\nDisallow: /wp-admin/", $output );
+	}
+
+	public function test_add_rules__leaves_rules_to_existing_group_for_managed_bot() {
+		// Arrange
+		$this->settings->set_server_value( Agent_Ready_Settings::MODULE_BOT_ACCESS_CONTROL, 'bots', [
+			'GPTBot' => [ 'search' => true, 'ai_input' => true, 'ai_train' => false ],
+		] );
+		$handler = new Robots_Txt_Handler( $this->settings );
+
+		// Act
+		$output = $handler->add_rules( "User-agent: *\nDisallow: /wp-admin/\n\nUser-agent: GPTBot\nDisallow: /\n", true );
+
+		// Assert
+		$this->assertStringContainsString( "User-agent: GPTBot\nContent-Signal: search=yes, ai-input=yes, ai-train=no", $output );
+		$this->assertStringNotContainsString( 'Allow: /', $output );
+	}
+
+	public function test_add_rules__second_pass_gives_same_output() {
+		// Arrange
+		$handler = new Robots_Txt_Handler( $this->settings );
+		$first   = $handler->add_rules( "User-agent: *\nDisallow: /wp-admin/\n", true );
+
+		// Act
+		$second = $handler->add_rules( $first, true );
+
+		// Assert
+		$this->assertSame( $first, $second );
+	}
+
 	public function test_add_rules__omits_unmanaged_bots_until_they_are_added() {
 		// Arrange
 		$handler = new Robots_Txt_Handler( $this->settings );
