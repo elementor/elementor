@@ -4,6 +4,8 @@ import {
 	__useActiveDocument as useActiveDocument,
 	__useActiveDocumentActions as useActiveDocumentActions,
 } from '@elementor/editor-documents';
+import { useOnSwitchToLegacyElementsPanel } from '@elementor/editor-elements-panel';
+import { isSidebarEnabled } from '@elementor/editor-sidebar';
 import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import {
 	__privateListenTo as listenTo,
@@ -84,6 +86,12 @@ export function DesignSystemEntrypoints() {
 
 	const isOpenRef = useRef( isOpen );
 	isOpenRef.current = isOpen;
+
+	useOnSwitchToLegacyElementsPanel( () => {
+		if ( isSidebarEnabled() && isOpenRef.current ) {
+			void close();
+		}
+	} );
 
 	useEffect( () => {
 		const handler = ( event: Event ) => {

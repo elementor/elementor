@@ -18,6 +18,7 @@ import { __ } from '@wordpress/i18n';
 import { componentInstanceTransformer } from './component-instance-transformer';
 import { componentOverridableTransformer } from './component-overridable-transformer';
 import { componentOverrideTransformer } from './component-override-transformer';
+import { ComponentsLegacyGuard } from './components/components-panel/components-legacy-guard';
 import { panel } from './components/components-panel/panel';
 import { Components } from './components/components-tab/components';
 import { openDetachConfirmDialog } from './components/detach-instance-confirmation-dialog';
@@ -94,6 +95,11 @@ export function init() {
 function registerComponentsEntry() {
 	if ( isSidebarEnabled() ) {
 		registerPanel( panel );
+
+		injectIntoLogic( {
+			id: 'components-legacy-guard',
+			component: ComponentsLegacyGuard,
+		} );
 
 		sidebarTools.registerToggleAction( {
 			id: 'open-components-panel',

@@ -8,6 +8,9 @@ export const sidebarRailIconButtonsSx: SxProps< Theme > = {
 			backgroundColor: 'action.hover',
 		},
 	},
+	'& .MuiIconButton-root.Mui-disabled': {
+		color: 'action.disabled',
+	},
 	'& .MuiIconButton-root:is([aria-pressed="true"], [aria-expanded="true"])': {
 		color: 'primary.main',
 		backgroundColor: 'action.selected',
