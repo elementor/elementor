@@ -6,6 +6,7 @@ import { isSidebarEnabled, sidebarTools } from '@elementor/editor-sidebar';
 import { DesignSystemEntrypoints } from './components/design-system-entrypoints';
 import { panel } from './design-system-panel';
 import { useOpenDesignSystemToolbar } from './use-open-design-system-toolbar';
+import { useSidebarDesignSystemProps } from './use-sidebar-design-system-props';
 
 export function init() {
 	registerPanel( panel );
@@ -20,7 +21,7 @@ export function init() {
 			id: 'open-design-system-toolbar',
 			group: 'design',
 			priority: 4,
-			useProps: useOpenDesignSystemToolbar,
+			useProps: useSidebarDesignSystemProps,
 		} );
 
 		return;

@@ -47,10 +47,25 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	routeOpenEvent: jest.fn( ( route: string ) => `route:open:${ route }` ),
 } ) );
 
+jest.mock( '@elementor/editor-sidebar', () => ( {
+	isSidebarEnabled: jest.fn( () => false ),
+} ) );
+
+let mockSwitchToLegacyCallback: ( () => void ) | null = null;
+
+jest.mock( '@elementor/editor-elements-panel', () => ( {
+	isLegacyElementsPanelSelected: jest.fn( () => false ),
+	useOnSwitchToLegacyElementsPanel: ( cb: () => void ) => {
+		mockSwitchToLegacyCallback = cb;
+	},
+} ) );
+
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
 } ) );
 
+import { isLegacyElementsPanelSelected } from '@elementor/editor-elements-panel';
+import { isSidebarEnabled } from '@elementor/editor-sidebar';
 import { __privateListenTo as listenTo, __privateOpenRoute as openRoute } from '@elementor/editor-v1-adapters';
 
 function dispatchWindowEvent( type: string, detail?: Record< string, unknown > ) {
@@ -80,6 +95,9 @@ describe( 'DesignSystemEntrypoints', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockSwitchToLegacyCallback = null;
+		jest.mocked( isSidebarEnabled ).mockReturnValue( false );
+		jest.mocked( isLegacyElementsPanelSelected ).mockReturnValue( false );
 
 		jest.mocked( usePanelActions ).mockReturnValue( {
 			open: mockOpen,
@@ -524,6 +542,130 @@ describe( 'DesignSystemEntrypoints', () => {
 
 			expect( mockClose ).toHaveBeenCalled();
 			expect( mockOpenSaveDialog ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'Legacy elements mode', () => {
+		const setLegacy = ( sidebar: boolean, legacy: boolean ) => {
+			jest.mocked( isSidebarEnabled ).mockReturnValue( sidebar );
+			jest.mocked( isLegacyElementsPanelSelected ).mockReturnValue( legacy );
+		};
+
+		it( 'should not open from the toggle event when sidebar is on and Legacy is selected', () => {
+			setLegacy( true, true );
+			mockUseActiveDocument.mockReturnValue( { isDirty: true } );
+			const dispatchSpy = jest.spyOn( window, 'dispatchEvent' );
+			render( <DesignSystemEntrypoints /> );
+
+			act( () => {
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
+			} );
+
+			const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( e as Event ).type );
+			expect( dispatched ).not.toContain( EVENT_OPEN_CLASSES );
+			expect( mockOpenSaveDialog ).not.toHaveBeenCalled();
+			expect( mockOpen ).not.toHaveBeenCalled();
+
+			dispatchSpy.mockRestore();
+		} );
+
+		it.each( [ EVENT_OPEN_DEFAULTS, EVENT_OPEN_VARIABLES, EVENT_OPEN_CLASSES ] )(
+			'should not open the route on %s in Legacy',
+			( eventName ) => {
+				setLegacy( true, true );
+				render( <DesignSystemEntrypoints /> );
+
+				act( () => {
+					dispatchWindowEvent( eventName );
+				} );
+
+				expect( openRoute ).not.toHaveBeenCalled();
+			}
+		);
+
+		it( 'should not open from active-panel URL in Legacy', async () => {
+			setLegacy( true, true );
+			window.history.pushState( {}, '', '/?active-panel=design-system' );
+			render( <DesignSystemEntrypoints /> );
+
+			await fireRoutePanelOpen();
+			await act( async () => {
+				await new Promise( ( r ) => requestAnimationFrame( r ) );
+			} );
+
+			expect( mockOpen ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should still allow toggle-close in Legacy when open', () => {
+			setLegacy( true, true );
+			jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: true, isBlocked: false } );
+			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'classes' );
+			render( <DesignSystemEntrypoints /> );
+
+			act( () => {
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
+			} );
+
+			expect( mockClose ).toHaveBeenCalled();
+		} );
+
+		it( 'should still open when sidebar is off even if Legacy is selected', () => {
+			setLegacy( false, true );
+			render( <DesignSystemEntrypoints /> );
+
+			act( () => {
+				dispatchWindowEvent( EVENT_OPEN_CLASSES );
+			} );
+
+			expect( openRoute ).toHaveBeenCalledWith( V1_ELEMENTS_PANEL_ROUTE );
+		} );
+
+		it( 'should still open when sidebar is on and Atomic is selected', () => {
+			setLegacy( true, false );
+			render( <DesignSystemEntrypoints /> );
+
+			act( () => {
+				dispatchWindowEvent( EVENT_OPEN_CLASSES );
+			} );
+
+			expect( openRoute ).toHaveBeenCalledWith( V1_ELEMENTS_PANEL_ROUTE );
+		} );
+
+		describe( 'switch to Legacy while open', () => {
+			it( 'should close when open and sidebar on', () => {
+				setLegacy( true, true );
+				jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: true, isBlocked: false } );
+				render( <DesignSystemEntrypoints /> );
+
+				act( () => {
+					mockSwitchToLegacyCallback?.();
+				} );
+
+				expect( mockClose ).toHaveBeenCalled();
+			} );
+
+			it( 'should not close when closed', () => {
+				setLegacy( true, true );
+				render( <DesignSystemEntrypoints /> );
+
+				act( () => {
+					mockSwitchToLegacyCallback?.();
+				} );
+
+				expect( mockClose ).not.toHaveBeenCalled();
+			} );
+
+			it( 'should not close when sidebar is off', () => {
+				setLegacy( false, true );
+				jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: true, isBlocked: false } );
+				render( <DesignSystemEntrypoints /> );
+
+				act( () => {
+					mockSwitchToLegacyCallback?.();
+				} );
+
+				expect( mockClose ).not.toHaveBeenCalled();
+			} );
 		} );
 	} );
 } );
