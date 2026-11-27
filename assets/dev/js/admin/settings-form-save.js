@@ -265,6 +265,7 @@ export default class SettingsFormSave {
 
 	showElementorLeaveDialog( destination ) {
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
+			className: 'elementor-settings-unsaved-dialog',
 			headerMessage: __( 'You have unsaved changes', 'elementor' ),
 			message: this.getLeaveDialogMessage(),
 			closeButton: true,
