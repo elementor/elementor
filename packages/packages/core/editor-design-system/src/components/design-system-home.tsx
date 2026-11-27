@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ChevronRightIcon, ColorFilterIcon, ColorSwatchIcon, TextIcon } from '@elementor/icons';
-import { Box, Chip, Rotate, Stack, Typography, useTheme } from '@elementor/ui';
+import { Box, Rotate, Stack, Typography, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type DesignSystemTab } from '../initial-tab';
@@ -107,7 +107,6 @@ function HomeRow( { title, description, icon, isRtl, onSelect }: HomeRowProps ) 
 					{ description }
 				</Typography>
 			</Stack>
-			<Chip label="0" size="small" variant="filled" sx={ { bgcolor: 'action.selected', fontWeight: 'bold' } } />
 			<Rotate in={ isRtl }>
 				<ChevronRightIcon fontSize="small" color="action" />
 			</Rotate>

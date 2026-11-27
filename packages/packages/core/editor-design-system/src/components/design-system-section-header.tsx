@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ArrowLeftIcon, ColorFilterIcon, ColorSwatchIcon, TextIcon } from '@elementor/icons';
-import { Box, IconButton, Rotate, Stack, Typography, useTheme } from '@elementor/ui';
+import { IconButton, Rotate, Stack, Typography, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type DesignSystemTab } from '../initial-tab';
@@ -44,8 +44,4 @@ export function DesignSystemSectionHeader( { section, onBack }: DesignSystemSect
 			</Typography>
 		</Stack>
 	);
-}
-
-export function DesignSystemSectionHeaderPlaceholder() {
-	return <Box sx={ { flex: 1, minWidth: 0 } } />;
 }

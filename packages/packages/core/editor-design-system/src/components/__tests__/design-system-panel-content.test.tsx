@@ -69,6 +69,10 @@ const mockVariablesManagerPanelEmbedded = require( '@elementor/editor-variables'
 const mockClassManagerPanelEmbedded = require( '@elementor/editor-global-classes' )
 	.ClassManagerPanelEmbedded as jest.Mock;
 
+jest.mock( '@elementor/editor-sidebar', () => ( {
+	isSidebarEnabled: () => false,
+} ) );
+
 jest.mock( '@elementor/icons', () => ( {
 	ArrowLeftIcon: () => <span aria-hidden="true" />,
 	ChevronRightIcon: () => <span aria-hidden="true" />,
@@ -95,11 +99,7 @@ describe( 'DesignSystemPanelContent', () => {
 					onExposeCloseAttempt?.( mockDefaultsCloseAttempt );
 					return () => onExposeCloseAttempt?.( null );
 				}, [ onExposeCloseAttempt ] );
-				return (
-					<div role="region" aria-label="Default Styles">
-						Default Styles Content
-					</div>
-				);
+				return <div>Default Styles Content</div>;
 			}
 		);
 
@@ -114,11 +114,7 @@ describe( 'DesignSystemPanelContent', () => {
 					onExposeCloseAttempt?.( mockVariablesCloseAttempt );
 					return () => onExposeCloseAttempt?.( null );
 				}, [ onExposeCloseAttempt ] );
-				return (
-					<div role="region" aria-label="Variables Manager">
-						Variables Manager Content
-					</div>
-				);
+				return <div>Variables Manager Content</div>;
 			}
 		);
 
@@ -133,11 +129,7 @@ describe( 'DesignSystemPanelContent', () => {
 					onExposeCloseAttempt?.( mockClassesCloseAttempt );
 					return () => onExposeCloseAttempt?.( null );
 				}, [ onExposeCloseAttempt ] );
-				return (
-					<div role="region" aria-label="Classes Manager">
-						Class Manager Content
-					</div>
-				);
+				return <div>Class Manager Content</div>;
 			}
 		);
 	} );
@@ -181,7 +173,7 @@ describe( 'DesignSystemPanelContent', () => {
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
 
 			expect( screen.getByRole( 'list', { name: 'Design system sections' } ) ).toBeVisible();
-			expect( screen.queryByRole( 'region', { name: 'Default Styles' } ) ).not.toBeVisible();
+			expect( screen.getByRole( 'region', { name: 'Default Styles', hidden: true } ) ).not.toBeVisible();
 		} );
 
 		it( 'should open directly into Variables when a deep link requests it', () => {
@@ -223,6 +215,25 @@ describe( 'DesignSystemPanelContent', () => {
 
 			expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
 				event: 'classManagerOpened',
+				source: 'system-panel',
+			} );
+		} );
+
+		it( 'should track panelOpened when Default styles is chosen from home', () => {
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Default styles' } ) );
+
+			expect( mockTrackDefaultStyles ).toHaveBeenCalledWith( { event: 'panelOpened' } );
+		} );
+
+		it( 'should track openManager with system-panel when Variables is chosen from home', () => {
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Variables' } ) );
+
+			expect( mockTrackVariablesManagerEvent ).toHaveBeenCalledWith( {
+				action: 'openManager',
 				source: 'system-panel',
 			} );
 		} );
@@ -350,7 +361,7 @@ describe( 'DesignSystemPanelContent', () => {
 					useEffect( () => {
 						onExposeCloseAttempt?.( null );
 					}, [ onExposeCloseAttempt ] );
-					return <div role="region" aria-label="Default Styles" />;
+					return <div>Default Styles Content</div>;
 				}
 			);
 
@@ -359,7 +370,7 @@ describe( 'DesignSystemPanelContent', () => {
 					useEffect( () => {
 						onExposeCloseAttempt?.( null );
 					}, [ onExposeCloseAttempt ] );
-					return <div role="region" aria-label="Variables Manager" />;
+					return <div>Variables Manager Content</div>;
 				}
 			);
 
@@ -368,7 +379,7 @@ describe( 'DesignSystemPanelContent', () => {
 					useEffect( () => {
 						onExposeCloseAttempt?.( null );
 					}, [ onExposeCloseAttempt ] );
-					return <div role="region" aria-label="Classes Manager" />;
+					return <div>Class Manager Content</div>;
 				}
 			);
 
