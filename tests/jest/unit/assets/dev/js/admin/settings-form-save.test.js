@@ -7,6 +7,7 @@ import SettingsFormSave, {
 
 const NAV_AFTER_SAVE_STORAGE_KEY = 'elementor_admin_settings_nav_after_save';
 const NAV_AFTER_SAVE_INTENT_KEY = 'elementor_admin_settings_nav_after_save_intent';
+const SCROLL_Y_AFTER_SAVE_STORAGE_KEY = 'elementor_admin_settings_scroll_y_after_save';
 const TEST_ORIGIN = 'https://example.com';
 
 describe( 'serializeSettingsForm', () => {
@@ -148,6 +149,29 @@ describe( 'SettingsFormSave', () => {
 		saveHandler.syncSubmitState();
 
 		expect( form.classList.contains( 'elementor-settings-form-is-dirty' ) ).toBe( true );
+	} );
+
+	it( 'should restore scroll position after settings save redirect', () => {
+		const scrollToMock = jest.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
+
+		delete window.location;
+		window.location = {
+			origin: TEST_ORIGIN,
+			href: 'https://example.com/wp-admin/admin.php?page=elementor&settings-updated=true',
+			search: '?page=elementor&settings-updated=true',
+			assign: jest.fn(),
+		};
+
+		sessionStorage.setItem( SCROLL_Y_AFTER_SAVE_STORAGE_KEY, '120' );
+
+		const form = createForm();
+		new SettingsFormSave( form );
+
+		expect( scrollToMock ).toHaveBeenCalled();
+		expect( scrollToMock.mock.calls.some( ( call ) => 120 === call[ 0 ].top ) ).toBe( true );
+		expect( sessionStorage.getItem( SCROLL_Y_AFTER_SAVE_STORAGE_KEY ) ).toBeNull();
+
+		scrollToMock.mockRestore();
 	} );
 
 	it( 'should allow navigation when the form is submitted', () => {

@@ -4,6 +4,7 @@ const SETTINGS_FORM_FIELD_SELECTOR = 'input, select, textarea';
 const NAV_AFTER_SAVE_STORAGE_KEY = 'elementor_admin_settings_nav_after_save';
 const NAV_AFTER_SAVE_INTENT_KEY = 'elementor_admin_settings_nav_after_save_intent';
 const SCROLL_Y_AFTER_SAVE_STORAGE_KEY = 'elementor_admin_settings_scroll_y_after_save';
+const SCROLL_RESTORE_RAF_PASSES = 3;
 
 export function serializeSettingsForm( form ) {
 	if ( ! form ) {
@@ -109,12 +110,20 @@ export default class SettingsFormSave {
 		this.allowNavigation = false;
 		this.pendingNavigationUrl = null;
 
+		this.enableManualScrollRestoration();
+
 		this.bindEvents();
 		this.bindNavigationGuard();
 		this.patchSubmitClick();
 		this.syncSubmitState();
 		this.restoreScrollAfterSave();
 		this.completeNavigationAfterSave();
+	}
+
+	enableManualScrollRestoration() {
+		if ( 'scrollRestoration' in window.history ) {
+			window.history.scrollRestoration = 'manual';
+		}
 	}
 
 	wasSettingsJustSaved() {
@@ -391,8 +400,41 @@ export default class SettingsFormSave {
 			return;
 		}
 
-		window.requestAnimationFrame( () => {
-			window.scrollTo( 0, scrollY );
-		} );
+		this.pinScrollPosition( scrollY );
+	}
+
+	pinScrollPosition( scrollY ) {
+		const applyScroll = () => {
+			window.scrollTo( {
+				left: 0,
+				top: scrollY,
+				behavior: 'auto',
+			} );
+		};
+
+		applyScroll();
+
+		let remainingPasses = SCROLL_RESTORE_RAF_PASSES;
+
+		const scheduleScrollRestorePass = () => {
+			if ( remainingPasses <= 0 ) {
+				return;
+			}
+
+			remainingPasses -= 1;
+
+			window.requestAnimationFrame( () => {
+				applyScroll();
+				scheduleScrollRestorePass();
+			} );
+		};
+
+		scheduleScrollRestorePass();
+
+		if ( 'complete' === document.readyState ) {
+			window.requestAnimationFrame( applyScroll );
+		} else {
+			window.addEventListener( 'load', applyScroll, { once: true } );
+		}
 	}
 }
