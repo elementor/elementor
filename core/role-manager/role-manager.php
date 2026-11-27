@@ -98,6 +98,16 @@ class Role_Manager extends Settings_Page {
 	 */
 	public function display_settings_page() {
 		$this->get_tabs();
+
+		if ( Settings_Page::is_settings_save_experience_active() ) {
+			$this->display_settings_page_with_admin_flow_save();
+			return;
+		}
+
+		$this->display_settings_page_legacy();
+	}
+
+	private function display_settings_page_with_admin_flow_save(): void {
 		$nav_screen = $this->get_settings_nav_screen_slug();
 		?>
 		<div class="wrap">
@@ -127,6 +137,33 @@ class Role_Manager extends Settings_Page {
 						?>
 				</div>
 			</form>
+		</div><!-- /.wrap -->
+		<?php
+	}
+
+	private function display_settings_page_legacy(): void {
+		?>
+		<div class="wrap">
+			<h1 class="wp-heading-inline"><?php echo esc_html( $this->get_page_title() ); ?></h1>
+
+			<div>
+				<div id="elementor-role-manager">
+					<h2><?php echo esc_html__( 'Manage What Your Users Can Edit In Elementor', 'elementor' ); ?></h2>
+					<form id="elementor-settings-form" method="post" action="options.php">
+						<?php
+						settings_fields( static::PAGE_ID );
+						echo '<div class="elementor-settings-form-page elementor-active">';
+						foreach ( get_editable_roles() as $role_slug => $role_data ) {
+							if ( 'administrator' === $role_slug ) {
+								continue;
+							}
+							$this->display_role_controls( $role_slug, $role_data );
+						}
+						submit_button( __( 'Save Changes', 'elementor' ), 'primary', 'submit', true, [ 'data-id' => 'elementor-role-manager-button-save-changes' ] );
+						?>
+					</form>
+				</div>
+			</div>
 		</div><!-- /.wrap -->
 		<?php
 	}

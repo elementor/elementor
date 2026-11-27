@@ -9,13 +9,7 @@ const CollapsedMenuItemTooltip = ( { item, isActive, onClick, IconComponent, onM
 	return (
 		<ListItem disablePadding dense disableGutters onMouseEnter={ onMouseEnter }>
 			<Tooltip title={ item.label } placement={ isRtlLanguage ? 'left' : 'right' }>
-				<MenuItemButton
-					component="a"
-					href={ item.url }
-					onClick={ onClick }
-					selected={ isActive }
-					sx={ { height: 36 } }
-				>
+				<MenuItemButton onClick={ onClick } selected={ isActive } sx={ { height: 36 } }>
 					<MenuIcon>
 						<IconComponent />
 					</MenuIcon>

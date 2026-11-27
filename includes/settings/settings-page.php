@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\EditorOne\Module as EditorOneModule;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -326,6 +327,10 @@ abstract class Settings_Page {
 	}
 
 	public static function register_settings_form_layout_body_class(): void {
+		if ( ! self::is_settings_save_experience_active() ) {
+			return;
+		}
+
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Admin screen routing only.
 		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
 
@@ -334,6 +339,10 @@ abstract class Settings_Page {
 		}
 
 		add_filter( 'admin_body_class', [ self::class, 'append_settings_form_body_class' ] );
+	}
+
+	public static function is_settings_save_experience_active(): bool {
+		return EditorOneModule::is_admin_navigation_active();
 	}
 
 	public static function append_settings_form_body_class( string $classes ): string {
@@ -362,6 +371,16 @@ abstract class Settings_Page {
 		$this->register_settings_fields();
 
 		$tabs = $this->get_tabs();
+
+		if ( self::is_settings_save_experience_active() ) {
+			$this->display_settings_page_with_admin_flow_save( $tabs );
+			return;
+		}
+
+		$this->display_settings_page_legacy( $tabs );
+	}
+
+	protected function display_settings_page_with_admin_flow_save( array $tabs ): void {
 		$nav_screen = $this->get_settings_nav_screen_slug();
 		?>
 		<div class="wrap">
@@ -393,7 +412,6 @@ abstract class Settings_Page {
 					$sanitized_tab_id = esc_attr( $tab_id );
 					$sanitized_tab_label = esc_html( $tab['label'] );
 
-					// PHPCS - Escaped the relevant strings above.
 					echo "<a id='elementor-settings-tab-{$sanitized_tab_id}' class='nav-tab{$active_class}' href='#tab-{$sanitized_tab_id}'>{$sanitized_tab_label}</a>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				}
 				?>
@@ -414,7 +432,6 @@ abstract class Settings_Page {
 
 					$sanitized_tab_id = esc_attr( $tab_id );
 
-					// PHPCS - $active_class is a non-dynamic string and $sanitized_tab_id is escaped above.
 					echo "<div id='tab-{$sanitized_tab_id}' class='elementor-settings-form-page{$active_class}'>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 					foreach ( $tab['sections'] as $section_id => $section ) {
@@ -441,6 +458,82 @@ abstract class Settings_Page {
 
 					echo '</div>';
 				}
+				?>
+			</form>
+		</div><!-- /.wrap -->
+		<?php
+	}
+
+	protected function display_settings_page_legacy( array $tabs ): void {
+		?>
+		<div class="wrap">
+			<h1 class="wp-heading-inline"><?php echo esc_html( $this->get_page_title() ); ?></h1>
+			<hr class="wp-header-end">
+			<div id="elementor-settings-tabs-wrapper" class="nav-tab-wrapper">
+				<?php
+				foreach ( $tabs as $tab_id => $tab ) {
+					if ( ! $this->should_render_tab( $tab ) ) {
+						continue;
+					}
+
+					$active_class = '';
+
+					if ( 'general' === $tab_id ) {
+						$active_class = ' nav-tab-active';
+					}
+
+					$sanitized_tab_id = esc_attr( $tab_id );
+					$sanitized_tab_label = esc_html( $tab['label'] );
+
+					echo "<a id='elementor-settings-tab-{$sanitized_tab_id}' class='nav-tab{$active_class}' href='#tab-{$sanitized_tab_id}'>{$sanitized_tab_label}</a>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				}
+				?>
+			</div>
+			<form id="elementor-settings-form" method="post" action="options.php">
+				<?php
+				settings_fields( static::PAGE_ID );
+
+				foreach ( $tabs as $tab_id => $tab ) {
+					if ( ! $this->should_render_tab( $tab ) ) {
+						continue;
+					}
+
+					$active_class = '';
+
+					if ( 'general' === $tab_id ) {
+						$active_class = ' elementor-active';
+					}
+
+					$sanitized_tab_id = esc_attr( $tab_id );
+
+					echo "<div id='tab-{$sanitized_tab_id}' class='elementor-settings-form-page{$active_class}'>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+					foreach ( $tab['sections'] as $section_id => $section ) {
+						if ( ! $this->should_render_section( $section ) ) {
+							continue;
+						}
+
+						$full_section_id = 'elementor_' . $section_id . '_section';
+
+						if ( ! empty( $section['label'] ) ) {
+							echo '<h2>' . esc_html( $section['label'] ) . '</h2>';
+						}
+
+						if ( ! empty( $section['callback'] ) ) {
+							$section['callback']();
+						}
+
+						echo '<table class="form-table">';
+
+						do_settings_fields( static::PAGE_ID, $full_section_id );
+
+						echo '</table>';
+					}
+
+					echo '</div>';
+				}
+
+				submit_button( __( 'Save Changes', 'elementor' ), 'primary', 'submit', true, [ 'data-id' => 'elementor-settings-button-save-changes' ] );
 				?>
 			</form>
 		</div><!-- /.wrap -->

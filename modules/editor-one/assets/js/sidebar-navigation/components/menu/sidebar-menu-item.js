@@ -48,7 +48,8 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 		EditorOneEventManager.sendSidebarMenuItemClicked( {
 			eventId: item.event_id,
 		} );
-	}, [ hasChildren, isExpanded, item.event_id, item.slug ] );
+		window.location.href = item.url;
+	}, [ hasChildren, isExpanded, item.event_id, item.slug, item.url ] );
 
 	const handleChildClick = useCallback( ( childItem ) => {
 		EditorOneEventManager.sendSidebarMenuItemClicked( {
@@ -60,12 +61,7 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 	return (
 		<>
 			<ListItem disablePadding dense disableGutters>
-				<MenuItemButton
-					component={ hasChildren ? 'button' : 'a' }
-					href={ hasChildren ? undefined : item.url }
-					onClick={ handleClick }
-					selected={ isActive && ! hasChildren }
-				>
+				<MenuItemButton onClick={ handleClick } selected={ isActive && ! hasChildren }>
 					<MenuIcon>
 						<IconComponent />
 					</MenuIcon>

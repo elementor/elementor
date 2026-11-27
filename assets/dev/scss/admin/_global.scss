@@ -315,8 +315,8 @@ body {
 	font-size: 17px;
 }
 
-// Settings
-.elementor-settings-page-header {
+// Settings (Admin flow experiment)
+body.e-admin-navigation-active .elementor-settings-page-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;

@@ -380,6 +380,10 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 		},
 
 		initSettingsFormSave() {
+			if ( ! document.body.classList.contains( 'e-admin-navigation-active' ) ) {
+				return;
+			}
+
 			const form = document.getElementById( 'elementor-settings-form' );
 
 			if ( ! form ) {
