@@ -134,6 +134,11 @@ export function DesignSystemEntrypoints() {
 
 	useEffect( () => {
 		return listenTo( routeOpenEvent( V1_ELEMENTS_PANEL_ROUTE ), () => {
+			if ( isBlockedByLegacy() ) {
+				pendingTabRef.current = null;
+				return;
+			}
+
 			const tab = pendingTabRef.current;
 			if ( tab ) {
 				pendingTabRef.current = null;
@@ -206,11 +211,11 @@ export function DesignSystemEntrypoints() {
 				return;
 			}
 
+			hasOpenedFromUrl.current = true;
+
 			if ( isBlockedByLegacy() ) {
 				return;
 			}
-
-			hasOpenedFromUrl.current = true;
 
 			requestAnimationFrame( () => {
 				if ( targetTab ) {

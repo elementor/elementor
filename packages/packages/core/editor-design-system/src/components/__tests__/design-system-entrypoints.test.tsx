@@ -583,6 +583,44 @@ describe( 'DesignSystemEntrypoints', () => {
 			}
 		);
 
+		it( 'should consume the URL request in Legacy and not open after switching to Atomic', async () => {
+			setLegacy( true, true );
+			mockUseActiveDocument.mockReturnValue( { isDirty: true } );
+			window.history.pushState( {}, '', '/?active-panel=design-system' );
+			render( <DesignSystemEntrypoints /> );
+
+			await fireRoutePanelOpen();
+			await act( async () => {
+				await new Promise( ( r ) => requestAnimationFrame( r ) );
+			} );
+
+			setLegacy( true, false );
+			await fireRoutePanelOpen();
+			await act( async () => {
+				await new Promise( ( r ) => requestAnimationFrame( r ) );
+			} );
+
+			expect( mockOpen ).not.toHaveBeenCalled();
+			expect( mockOpenSaveDialog ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should drop a pending tab when the route opens in Legacy', async () => {
+			setLegacy( true, false );
+			render( <DesignSystemEntrypoints /> );
+
+			act( () => {
+				dispatchWindowEvent( EVENT_OPEN_CLASSES );
+			} );
+
+			setLegacy( true, true );
+			await fireRoutePanelOpen();
+			setLegacy( true, false );
+			await fireRoutePanelOpen();
+
+			expect( setPendingDesignSystemTab ).not.toHaveBeenCalled();
+			expect( mockOpen ).not.toHaveBeenCalled();
+		} );
+
 		it( 'should not open from active-panel URL in Legacy', async () => {
 			setLegacy( true, true );
 			window.history.pushState( {}, '', '/?active-panel=design-system' );

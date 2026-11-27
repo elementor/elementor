@@ -21,7 +21,7 @@ describe( 'useSidebarDesignSystemProps', () => {
 			icon: () => null,
 			onClick,
 			selected: true,
-		} as never );
+		} as ReturnType< typeof useOpenDesignSystemToolbar > );
 	} );
 
 	it( 'should be disabled in Legacy', () => {
