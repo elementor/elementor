@@ -319,7 +319,7 @@ abstract class Settings_Page {
 	 */
 	public static function get_settings_form_layout_page_slugs(): array {
 		return [
-			'elementor-settings',
+			'elementor',
 			'elementor-tools',
 			'elementor-role-manager',
 		];

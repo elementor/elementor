@@ -26,13 +26,10 @@ const SidebarCollapsedMenuItem = ( {
 		}
 	};
 
-	const handleClick = () => {
-		if ( ! hasChildren ) {
-			EditorOneEventManager.sendSidebarMenuItemClicked( {
-				eventId: item.event_id,
-			} );
-			window.location.href = item.url;
-		}
+	const handleLeafClick = () => {
+		EditorOneEventManager.sendSidebarMenuItemClicked( {
+			eventId: item.event_id,
+		} );
 	};
 
 	return (
@@ -54,7 +51,7 @@ const SidebarCollapsedMenuItem = ( {
 				<CollapsedMenuItemTooltip
 					item={ item }
 					isActive={ isActive }
-					onClick={ handleClick }
+					onClick={ handleLeafClick }
 					IconComponent={ IconComponent }
 					onMouseEnter={ handleMouseEnter }
 				/>

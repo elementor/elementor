@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 
 const SETTINGS_FORM_FIELD_SELECTOR = 'input, select, textarea';
 const NAV_AFTER_SAVE_STORAGE_KEY = 'elementor_admin_settings_nav_after_save';
+const SCROLL_Y_AFTER_SAVE_STORAGE_KEY = 'elementor_admin_settings_scroll_y_after_save';
 
 export function serializeSettingsForm( form ) {
 	if ( ! form ) {
@@ -109,6 +110,7 @@ export default class SettingsFormSave {
 		this.bindNavigationGuard();
 		this.patchSubmitClick();
 		this.syncSubmitState();
+		this.restoreScrollAfterSave();
 		this.completeNavigationAfterSave();
 	}
 
@@ -149,6 +151,7 @@ export default class SettingsFormSave {
 			}
 
 			this.allowNavigation = true;
+			sessionStorage.setItem( SCROLL_Y_AFTER_SAVE_STORAGE_KEY, String( window.scrollY ) );
 		};
 
 		this.form.addEventListener( 'submit', this.onFormSubmit, true );
@@ -244,6 +247,7 @@ export default class SettingsFormSave {
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
 			headerMessage: __( 'You have unsaved changes', 'elementor' ),
 			message: this.getLeaveDialogMessage(),
+			closeButton: true,
 			strings: {
 				confirm: __( 'Save changes', 'elementor' ),
 				cancel: __( 'Discard', 'elementor' ),
@@ -331,5 +335,29 @@ export default class SettingsFormSave {
 	resetBaseline() {
 		this.baseline = serializeSettingsForm( this.form );
 		this.syncSubmitState();
+	}
+
+	restoreScrollAfterSave() {
+		if ( ! this.wasSettingsJustSaved() ) {
+			return;
+		}
+
+		const storedScrollY = sessionStorage.getItem( SCROLL_Y_AFTER_SAVE_STORAGE_KEY );
+
+		if ( null === storedScrollY ) {
+			return;
+		}
+
+		sessionStorage.removeItem( SCROLL_Y_AFTER_SAVE_STORAGE_KEY );
+
+		const scrollY = Number.parseInt( storedScrollY, 10 );
+
+		if ( Number.isNaN( scrollY ) ) {
+			return;
+		}
+
+		window.requestAnimationFrame( () => {
+			window.scrollTo( 0, scrollY );
+		} );
 	}
 }

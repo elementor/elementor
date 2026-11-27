@@ -382,7 +382,7 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 		initSettingsFormSave() {
 			const form = document.getElementById( 'elementor-settings-form' );
 
-			if ( ! form || ! document.body.classList.contains( 'elementor-admin-settings-form' ) ) {
+			if ( ! form ) {
 				return;
 			}
 
