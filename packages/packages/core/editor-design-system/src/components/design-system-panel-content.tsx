@@ -29,6 +29,12 @@ export type DesignSystemPanelContentProps = {
 const EVENT_SET_TAB = 'elementor/design-system/set-tab';
 const EVENT_GO_HOME = 'elementor/design-system/go-home';
 
+const INITIAL_SECTION_MOUNT_KEYS: Record< DesignSystemTab, number > = {
+	defaults: 0,
+	variables: 0,
+	classes: 0,
+};
+
 const trackDesignSystemSectionOpened = ( tab: DesignSystemTab ) => {
 	switch ( tab ) {
 		case 'defaults':
@@ -46,17 +52,74 @@ const trackDesignSystemSectionOpened = ( tab: DesignSystemTab ) => {
 export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelContentProps ) {
 	const sidebarPanelChrome = isSidebarEnabled();
 	const [ currentView, setCurrentView ] = useState< DesignSystemView >( () => getInitialDesignSystemView() );
+	const [ sectionMountKeys, setSectionMountKeys ] = useState( INITIAL_SECTION_MOUNT_KEYS );
 	const defaultsCloseAttemptRef = useRef< ( () => void ) | null >( null );
 	const variablesCloseAttemptRef = useRef< ( () => void ) | null >( null );
 	const classesCloseAttemptRef = useRef< ( () => void ) | null >( null );
-	const sectionExitActionRef = useRef< () => void >( () => {} );
+	const pendingExitActionRef = useRef< () => void >( () => {} );
+	const sectionLeavingRef = useRef< DesignSystemTab | null >( null );
+	const isChainingRef = useRef( false );
+	const currentViewRef = useRef( currentView );
+
+	useEffect( () => {
+		currentViewRef.current = currentView;
+	}, [ currentView ] );
+
+	const bumpSectionMountKey = useCallback( ( section: DesignSystemTab ) => {
+		setSectionMountKeys( ( keys ) => ( {
+			...keys,
+			[ section ]: keys[ section ] + 1,
+		} ) );
+	}, [] );
+
+	const finalizeSectionExit = useCallback( () => {
+		const leaving = sectionLeavingRef.current;
+		if ( leaving ) {
+			bumpSectionMountKey( leaving );
+			sectionLeavingRef.current = null;
+		}
+		pendingExitActionRef.current();
+	}, [ bumpSectionMountKey ] );
+
+	const chainedThroughVariables = useCallback( () => {
+		if ( ! isChainingRef.current && variablesCloseAttemptRef.current ) {
+			isChainingRef.current = true;
+			variablesCloseAttemptRef.current();
+			isChainingRef.current = false;
+			return;
+		}
+
+		finalizeSectionExit();
+	}, [ finalizeSectionExit ] );
+
+	const chainedThroughClasses = useCallback( () => {
+		if ( ! isChainingRef.current && classesCloseAttemptRef.current ) {
+			isChainingRef.current = true;
+			classesCloseAttemptRef.current();
+			isChainingRef.current = false;
+			return;
+		}
+
+		finalizeSectionExit();
+	}, [ finalizeSectionExit ] );
+
+	const chainedThroughDefaults = useCallback( () => {
+		if ( ! isChainingRef.current && defaultsCloseAttemptRef.current ) {
+			isChainingRef.current = true;
+			defaultsCloseAttemptRef.current();
+			isChainingRef.current = false;
+			return;
+		}
+
+		finalizeSectionExit();
+	}, [ finalizeSectionExit ] );
 
 	const goHome = useCallback( () => {
 		setCurrentView( null );
 		notifyDesignSystemViewChange( null );
 	}, [] );
 
-	const openSection = useCallback( ( tab: DesignSystemTab ) => {
+	const applyOpenSection = useCallback( ( tab: DesignSystemTab ) => {
 		const normalized = normalizeDesignSystemTab( tab );
 		setCurrentView( normalized );
 		persistDesignSystemTab( normalized );
@@ -70,21 +133,57 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 		classes: classesCloseAttemptRef.current,
 	} );
 
+	const requestOpenSection = useCallback(
+		( tab: DesignSystemTab ) => {
+			const normalized = normalizeDesignSystemTab( tab );
+			const activeView = currentViewRef.current;
+
+			if ( activeView === normalized ) {
+				return;
+			}
+
+			const openSection = () => {
+				applyOpenSection( normalized );
+			};
+
+			if ( ! activeView ) {
+				openSection();
+				return;
+			}
+
+			sectionLeavingRef.current = activeView;
+			pendingExitActionRef.current = openSection;
+
+			const closeAttempt = getSectionCloseAttempt( activeView, getCloseAttempts() );
+			if ( closeAttempt ) {
+				closeAttempt();
+				return;
+			}
+
+			bumpSectionMountKey( activeView );
+			openSection();
+		},
+		[ applyOpenSection, bumpSectionMountKey ]
+	);
+
 	const attemptBackFromSection = useCallback( () => {
-		if ( ! currentView ) {
+		const activeView = currentViewRef.current;
+		if ( ! activeView ) {
 			return;
 		}
 
-		const closeAttempt = getSectionCloseAttempt( currentView, getCloseAttempts() );
+		sectionLeavingRef.current = activeView;
+		pendingExitActionRef.current = goHome;
 
-		sectionExitActionRef.current = goHome;
+		const closeAttempt = getSectionCloseAttempt( activeView, getCloseAttempts() );
 		if ( closeAttempt ) {
 			closeAttempt();
 			return;
 		}
 
+		bumpSectionMountKey( activeView );
 		goHome();
-	}, [ currentView, goHome ] );
+	}, [ bumpSectionMountKey, goHome ] );
 
 	useEffect( () => {
 		notifyDesignSystemViewChange( currentView );
@@ -96,10 +195,14 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 			if ( ! tab ) {
 				return;
 			}
-			openSection( tab );
+			requestOpenSection( tab );
 		};
 
 		const goHomeHandler = () => {
+			if ( currentViewRef.current ) {
+				attemptBackFromSection();
+				return;
+			}
 			goHome();
 		};
 
@@ -110,19 +213,45 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 			window.removeEventListener( EVENT_SET_TAB, setTabHandler as EventListener );
 			window.removeEventListener( EVENT_GO_HOME, goHomeHandler );
 		};
-	}, [ goHome, openSection ] );
+	}, [ attemptBackFromSection, goHome, requestOpenSection ] );
 
-	const handleHeaderClose = () => {
-		if ( ! currentView ) {
+	const preparePanelClose = useCallback( () => {
+		sectionLeavingRef.current = null;
+		pendingExitActionRef.current = () => {
 			void onRequestClose();
+		};
+	}, [ onRequestClose ] );
+
+	const startPanelCloseChain = useCallback( () => {
+		preparePanelClose();
+
+		if ( defaultsCloseAttemptRef.current ) {
+			defaultsCloseAttemptRef.current();
 			return;
 		}
 
-		const closeAttempt = getSectionCloseAttempt( currentView, getCloseAttempts() );
+		if ( variablesCloseAttemptRef.current ) {
+			variablesCloseAttemptRef.current();
+			return;
+		}
 
-		sectionExitActionRef.current = () => {
-			void onRequestClose();
-		};
+		if ( classesCloseAttemptRef.current ) {
+			classesCloseAttemptRef.current();
+			return;
+		}
+
+		void onRequestClose();
+	}, [ onRequestClose, preparePanelClose ] );
+
+	const handleHeaderClose = () => {
+		if ( ! currentView ) {
+			startPanelCloseChain();
+			return;
+		}
+
+		preparePanelClose();
+
+		const closeAttempt = getSectionCloseAttempt( currentView, getCloseAttempts() );
 		if ( closeAttempt ) {
 			closeAttempt();
 			return;
@@ -130,10 +259,6 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 
 		void onRequestClose();
 	};
-
-	const handleSectionRequestClose = useCallback( () => {
-		sectionExitActionRef.current();
-	}, [] );
 
 	const showHome = currentView === null;
 
@@ -182,7 +307,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 								overflow: 'hidden',
 							} }
 						>
-							<DesignSystemHome onSelect={ openSection } />
+							<DesignSystemHome onSelect={ requestOpenSection } />
 						</Box>
 						<Box
 							role="region"
@@ -197,7 +322,8 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 							} }
 						>
 							<DefaultStylesTabEmbedded
-								onRequestClose={ handleSectionRequestClose }
+								key={ sectionMountKeys.defaults }
+								onRequestClose={ chainedThroughVariables }
 								onExposeCloseAttempt={ ( fn ) => {
 									defaultsCloseAttemptRef.current = fn;
 								} }
@@ -216,7 +342,8 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 							} }
 						>
 							<VariablesManagerPanelEmbedded
-								onRequestClose={ handleSectionRequestClose }
+								key={ sectionMountKeys.variables }
+								onRequestClose={ chainedThroughClasses }
 								onExposeCloseAttempt={ ( fn ) => {
 									variablesCloseAttemptRef.current = fn;
 								} }
@@ -235,7 +362,8 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 							} }
 						>
 							<ClassManagerPanelEmbedded
-								onRequestClose={ handleSectionRequestClose }
+								key={ sectionMountKeys.classes }
+								onRequestClose={ chainedThroughDefaults }
 								onExposeCloseAttempt={ ( fn ) => {
 									classesCloseAttemptRef.current = fn;
 								} }

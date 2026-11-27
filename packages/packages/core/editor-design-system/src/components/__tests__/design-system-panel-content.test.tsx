@@ -253,6 +253,23 @@ describe( 'DesignSystemPanelContent', () => {
 			expect( screen.getByText( 'Variables Manager Content' ) ).not.toBeVisible();
 		} );
 
+		it( 'should defer set-tab navigation to the active section close attempt', () => {
+			jest.mocked( getInitialDesignSystemView ).mockReturnValue( 'variables' );
+
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+
+			act( () => {
+				window.dispatchEvent(
+					new CustomEvent( EVENT_SET_TAB, {
+						detail: { tab: 'classes' },
+					} )
+				);
+			} );
+
+			expect( mockVariablesCloseAttempt ).toHaveBeenCalled();
+			expect( screen.getByRole( 'region', { name: 'Variables Manager' } ) ).toBeVisible();
+		} );
+
 		it( 'should switch to Variables when set-tab event fires with "variables"', () => {
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
 
@@ -306,12 +323,13 @@ describe( 'DesignSystemPanelContent', () => {
 	} );
 
 	describe( 'close button behavior', () => {
-		it( 'should close the panel from home without delegating to sections', () => {
+		it( 'should run the defaults close attempt when closing from home before closing the panel', () => {
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
 
 			fireEvent.click( screen.getByRole( 'button', { name: 'Close' } ) );
 
-			expect( onRequestClose ).toHaveBeenCalled();
+			expect( mockDefaultsCloseAttempt ).toHaveBeenCalled();
+			expect( onRequestClose ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should delegate close to the defaults close attempt when on default styles', async () => {
