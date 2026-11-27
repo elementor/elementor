@@ -1,3 +1,4 @@
+import { useIsLegacyElementsPanelSelected } from '@elementor/editor-elements-panel';
 import { ComponentsIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
@@ -5,6 +6,7 @@ import { usePanelActions, usePanelStatus } from '../components/components-panel/
 
 export function useTogglePanelProps() {
 	const { isOpen, isBlocked } = usePanelStatus();
+	const isLegacy = useIsLegacyElementsPanelSelected();
 	const { open, close } = usePanelActions();
 
 	return {
@@ -12,6 +14,7 @@ export function useTogglePanelProps() {
 		icon: ComponentsIcon,
 		onClick: () => ( isOpen ? close() : open() ),
 		selected: isOpen,
-		disabled: isBlocked,
+		disabled: isBlocked || isLegacy,
+		exclusive: true,
 	};
 }
