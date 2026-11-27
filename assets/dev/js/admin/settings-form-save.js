@@ -62,18 +62,38 @@ export function isNavigationLeavingCurrentScreen( currentHref, targetHref ) {
 	return currentPage !== targetPage;
 }
 
+export function isSafeAdminNavigationDestination( destination ) {
+	try {
+		const target = new URL( destination, window.location.origin );
+
+		if ( target.origin !== window.location.origin ) {
+			return false;
+		}
+
+		if ( ! target.pathname.endsWith( 'admin.php' ) ) {
+			return false;
+		}
+
+		const page = target.searchParams.get( 'page' );
+
+		return !! page && page.startsWith( 'elementor' );
+	} catch ( error ) {
+		return false;
+	}
+}
+
 const SCREEN_NAV_BODIES = {
 	settings: __(
 		'You have unsaved changes on Settings. Save your changes before leaving, or discard them to continue.',
-		'elementor'
+		'elementor',
 	),
 	tools: __(
 		'You have unsaved changes on Tools. Save your changes before leaving, or discard them to continue.',
-		'elementor'
+		'elementor',
 	),
 	'role-manager': __(
 		'You have unsaved changes in Role Manager. Save your changes before leaving, or discard them to continue.',
-		'elementor'
+		'elementor',
 	),
 };
 
@@ -104,6 +124,11 @@ export default class SettingsFormSave {
 		}
 
 		sessionStorage.removeItem( NAV_AFTER_SAVE_STORAGE_KEY );
+
+		if ( ! isSafeAdminNavigationDestination( destination ) ) {
+			return;
+		}
+
 		this.allowNavigation = true;
 		window.location.assign( destination );
 	}
@@ -120,7 +145,10 @@ export default class SettingsFormSave {
 			if ( this.submitButton?.disabled ) {
 				event.preventDefault();
 				event.stopImmediatePropagation();
+				return;
 			}
+
+			this.allowNavigation = true;
 		};
 
 		this.form.addEventListener( 'submit', this.onFormSubmit, true );
@@ -169,6 +197,10 @@ export default class SettingsFormSave {
 				return;
 			}
 
+			if ( ! this.canShowLeavePrompt() ) {
+				return;
+			}
+
 			event.preventDefault();
 			event.stopPropagation();
 
@@ -177,6 +209,14 @@ export default class SettingsFormSave {
 		};
 
 		document.addEventListener( 'click', this.onDocumentClick, true );
+	}
+
+	canShowLeavePrompt() {
+		if ( elementorCommon?.dialogsManager ) {
+			return true;
+		}
+
+		return 'function' === typeof window.confirm;
 	}
 
 	getLeaveDialogMessage() {
@@ -188,10 +228,19 @@ export default class SettingsFormSave {
 	showLeaveDialog() {
 		const destination = this.pendingNavigationUrl;
 
-		if ( ! destination || ! elementorCommon?.dialogsManager ) {
+		if ( ! destination ) {
 			return;
 		}
 
+		if ( elementorCommon?.dialogsManager ) {
+			this.showElementorLeaveDialog( destination );
+			return;
+		}
+
+		this.showNativeLeaveDialog( destination );
+	}
+
+	showElementorLeaveDialog( destination ) {
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
 			headerMessage: __( 'You have unsaved changes', 'elementor' ),
 			message: this.getLeaveDialogMessage(),
@@ -201,14 +250,7 @@ export default class SettingsFormSave {
 			},
 			defaultOption: 'confirm',
 			onConfirm: () => {
-				sessionStorage.setItem( NAV_AFTER_SAVE_STORAGE_KEY, destination );
-				this.allowNavigation = true;
-
-				if ( typeof this.form.requestSubmit === 'function' ) {
-					this.form.requestSubmit( this.submitButton );
-				} else {
-					this.submitButton?.click();
-				}
+				this.persistNavigationAndSubmit( destination );
 			},
 			onCancel: () => {
 				this.allowNavigation = true;
@@ -218,6 +260,39 @@ export default class SettingsFormSave {
 				this.pendingNavigationUrl = null;
 			},
 		} ).show();
+	}
+
+	showNativeLeaveDialog( destination ) {
+		const saveChanges = window.confirm(
+			`${ __( 'You have unsaved changes', 'elementor' ) }\n\n${ this.getLeaveDialogMessage() }\n\n${ __( 'Save your changes before leaving?', 'elementor' ) }`,
+		);
+
+		if ( saveChanges ) {
+			this.persistNavigationAndSubmit( destination );
+			return;
+		}
+
+		const discardChanges = window.confirm(
+			__( 'Discard unsaved changes and leave this page?', 'elementor' ),
+		);
+
+		this.pendingNavigationUrl = null;
+
+		if ( discardChanges ) {
+			this.allowNavigation = true;
+			window.location.assign( destination );
+		}
+	}
+
+	persistNavigationAndSubmit( destination ) {
+		sessionStorage.setItem( NAV_AFTER_SAVE_STORAGE_KEY, destination );
+		this.allowNavigation = true;
+
+		if ( 'function' === typeof this.form.requestSubmit ) {
+			this.form.requestSubmit( this.submitButton );
+		} else {
+			this.submitButton?.click();
+		}
 	}
 
 	patchSubmitClick() {
@@ -231,6 +306,7 @@ export default class SettingsFormSave {
 			this.syncSubmitState();
 
 			if ( ! this.submitButton.disabled ) {
+				this.allowNavigation = true;
 				nativeClick();
 			}
 		};
