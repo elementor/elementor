@@ -5,10 +5,6 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { timeouts } from '../../../config/timeouts';
 import { wpCli } from '../../../assets/wp-cli';
 
-// The banner image comes from the real CDN. PR runs mask it, so a new image on the CDN cannot block them,
-// while the nightly and manual runs check the real image.
-const CHECK_CDN_IMAGES = [ 'schedule', 'workflow_dispatch' ].includes( process.env.GITHUB_EVENT_NAME ?? '' );
-
 test.describe( 'Editor One Menu Visual Tests', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		test.setTimeout( timeouts.singleTest );
@@ -38,6 +34,7 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 		await page.addStyleTag( { content: '#e-conversion-banner { display: none !important; }' } );
 
 		const sidebar = page.locator( '#editor-one-sidebar-navigation' );
+		// The banner image loads from the live CDN, the live @promotions check covers it.
 		const sidebarBannerImage = page.locator( '#e-home-screen .MuiContainer-maxWidthXs img' );
 		await expect( sidebar ).toBeVisible();
 
@@ -53,16 +50,5 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 				sidebarBannerImage,
 			],
 		} );
-
-		if ( CHECK_CDN_IMAGES ) {
-			await expect.poll( () => sidebarBannerImage.evaluate( ( image: HTMLImageElement ) => image.complete ? image.naturalWidth : 0 ), {
-				message: 'The sidebar banner image loads from the CDN',
-				timeout: timeouts.heavyAction,
-			} ).toBeGreaterThan( 0 );
-
-			await expect.soft( sidebarBannerImage ).toHaveScreenshot( 'editor-one-home-sidebar-banner.png', {
-				timeout: timeouts.heavyAction,
-			} );
-		}
 	} );
 } );
