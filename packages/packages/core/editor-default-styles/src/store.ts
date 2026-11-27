@@ -104,7 +104,7 @@ export const slice = createSlice( {
 		},
 
 		reset( state ) {
-			state.data = state.initialData;
+			state.data = structuredClone( state.initialData );
 			state.isDirty = false;
 		},
 

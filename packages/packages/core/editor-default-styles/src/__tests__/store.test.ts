@@ -78,6 +78,23 @@ describe( 'defaultStyles store', () => {
 		expect( selectIsDirty( getState() ) ).toBe( false );
 	} );
 
+	it( 'should keep initialData unchanged when editing after reset', () => {
+		dispatch(
+			slice.actions.load( {
+				data: {},
+			} )
+		);
+
+		updateDisplayProp( 'h1' );
+		dispatch( slice.actions.reset() );
+		const initialAfterReset = selectInitialData( getState() );
+
+		updateDisplayProp( 'h1' );
+
+		expect( selectInitialData( getState() ) ).toEqual( initialAfterReset );
+		expect( selectIsDirty( getState() ) ).toBe( true );
+	} );
+
 	it( 'should commit current data as initialData', () => {
 		dispatch(
 			slice.actions.load( {

@@ -257,12 +257,13 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, getC
 
 function getChangedStyleIds( previous: StylesCollection, current: StylesCollection ): string[] {
 	const changedIds: string[] = [];
+	const ids = new Set( [ ...Object.keys( previous ), ...Object.keys( current ) ] );
 
-	for ( const id of Object.keys( current ) ) {
+	for ( const id of ids ) {
 		const currentStyle = current[ id ];
 		const previousStyle = previous[ id ];
 
-		if ( ! previousStyle || currentStyle !== previousStyle ) {
+		if ( currentStyle !== previousStyle ) {
 			changedIds.push( id );
 		}
 	}
