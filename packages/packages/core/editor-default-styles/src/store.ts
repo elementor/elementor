@@ -31,6 +31,12 @@ export type StateWithDefaultStyles = SliceState< typeof slice >;
 
 const SLICE_NAME = 'defaultStyles';
 
+function cloneDefaultStylesData(
+	data: Record< StyleDefinitionID, StyleDefinition >
+): Record< StyleDefinitionID, StyleDefinition > {
+	return JSON.parse( JSON.stringify( data ) ) as Record< StyleDefinitionID, StyleDefinition >;
+}
+
 export const slice = createSlice( {
 	name: SLICE_NAME,
 	initialState,
