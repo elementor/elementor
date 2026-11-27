@@ -2,6 +2,7 @@
 namespace Elementor\Tests\Phpunit\Includes\Base;
 
 use Elementor\Element_Base;
+use Elementor\Modules\AtomicWidgets\Utils\Format_Element_Ids;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -176,6 +177,30 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 		ob_end_clean();
 
 		$this->assertTrue( in_array( 'elementor-invisible', $element->get_render_attributes( '_wrapper', 'class' ) ) );
+	}
+
+	public function test_repeated_widget_keeps_template_style_class_and_unique_instance_id() {
+		$source = self::$element_mock;
+		$source_class = 'elementor-element-' . $source['id'];
+		$instances = [ $source ];
+		foreach ( [ 'first', 'second' ] as $path ) {
+			$instances[] = Format_Element_Ids::format( [ $source ], [ $path ] )[0];
+		}
+
+		foreach ( $instances as $data ) {
+			$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
+			ob_start();
+			$widget->print_element();
+			$html = ob_get_clean();
+
+			$tags = new \WP_HTML_Tag_Processor( $html );
+			$this->assertTrue( $tags->next_tag( [ 'class_name' => 'elementor-widget-button' ] ) );
+			$this->assertSame( $data['id'], $tags->get_attribute( 'data-id' ) );
+			$this->assertTrue( $tags->has_class( 'elementor-element-' . $data['id'] ) );
+			$this->assertTrue( $tags->has_class( $source_class ) );
+		}
+
+		$this->assertNotSame( $instances[1]['id'], $instances[2]['id'] );
 	}
 
 	public function test_get_data_for_save() {
