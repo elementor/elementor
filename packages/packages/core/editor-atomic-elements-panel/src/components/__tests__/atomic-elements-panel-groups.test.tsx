@@ -9,9 +9,11 @@ jest.mock( '../elements-panel-switcher', () => ( { ElementsPanelSwitcher: () => 
 jest.mock( '@elementor/editor-panels', () => {
 	const Passthrough = ( { children }: React.PropsWithChildren ) => <div>{ children }</div>;
 
+	const Main = ( { children }: React.PropsWithChildren ) => <main>{ children }</main>;
+
 	return {
 		Panel: Passthrough,
-		PanelBody: Passthrough,
+		PanelBody: Main,
 		PanelHeader: Passthrough,
 		PanelHeaderTitle: Passthrough,
 	};
@@ -205,5 +207,47 @@ describe( 'AtomicElementsPanel search', () => {
 
 		// Assert.
 		expect( input ).toHaveValue( '' );
+	} );
+} );
+
+describe( 'AtomicElementsPanel sticky promotion', () => {
+	afterEach( () => {
+		delete ( window as unknown as { elementor?: unknown } ).elementor;
+	} );
+
+	it( 'should render the sticky upgrade promotion when the editor config provides it', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		( window as unknown as { elementor: unknown } ).elementor = {
+			config: {
+				editingPanelStickyPromotion: {
+					message: 'Access Pro for up to 40% off.',
+					button_text: 'Upgrade now',
+					url: 'https://go.elementor.com/sticky-panel/',
+				},
+			},
+		};
+
+		// Act.
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Assert.
+		const link = screen.getByRole( 'link', { name: 'Upgrade now' } );
+		expect( link ).toHaveAttribute( 'href', 'https://go.elementor.com/sticky-panel/' );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+		expect( screen.getByText( 'Access Pro for up to 40% off.', { exact: false } ) ).toContainElement( link );
+		expect( screen.getByRole( 'main' ) ).not.toContainElement( link );
+	} );
+
+	it( 'should not render the sticky upgrade promotion when the editor config has none', () => {
+		// Arrange.
+		jest.mocked( useAtomicWidgets ).mockReturnValue( widgets as never );
+		( window as unknown as { elementor: unknown } ).elementor = { config: {} };
+
+		// Act.
+		render( <AtomicElementsPanel { ...props } /> );
+
+		// Assert.
+		expect( screen.queryByRole( 'link', { name: 'Upgrade now' } ) ).not.toBeInTheDocument();
 	} );
 } );

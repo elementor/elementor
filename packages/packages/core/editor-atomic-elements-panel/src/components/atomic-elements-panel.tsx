@@ -14,6 +14,7 @@ import { AtomicPanelFallback } from './atomic-panel-fallback';
 import { ElementGroup } from './element-group';
 import { ElementsPanelSwitcher, type ElementsPanelSwitcherProps } from './elements-panel-switcher';
 import { ElementsSearch } from './elements-search';
+import { StickyPromotion } from './sticky-promotion';
 
 const ELEMENTS_TAB = 'elements';
 
@@ -50,6 +51,8 @@ const TABS_SX = {
 		'&.Mui-selected': { color: 'text.primary' },
 	},
 };
+
+const PANEL_BODY_SX = { overflowY: 'auto', height: 'auto', flex: 1, minHeight: 0 };
 
 export function AtomicElementsPanel( props: Omit< ElementsPanelSwitcherProps, 'value' > ) {
 	const widgets = useAtomicWidgets();
@@ -97,7 +100,7 @@ export function AtomicElementsPanel( props: Omit< ElementsPanelSwitcherProps, 'v
 					<Tab value={ ELEMENTS_TAB } label={ __( 'Elements', 'elementor' ) } />
 					<Tab value="my-library" label={ __( 'My Library', 'elementor' ) } />
 				</Tabs>
-				<PanelBody sx={ { overflowY: 'auto' } } onKeyDown={ onKeyDown }>
+				<PanelBody sx={ PANEL_BODY_SX } onKeyDown={ onKeyDown }>
 					<ElementsSearch
 						value={ query }
 						isSearching={ isSearching }
@@ -123,6 +126,7 @@ export function AtomicElementsPanel( props: Omit< ElementsPanelSwitcherProps, 'v
 						) }
 					</Box>
 				</PanelBody>
+				<StickyPromotion />
 			</Panel>
 		</ErrorBoundary>
 	);
