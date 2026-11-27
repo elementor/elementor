@@ -139,8 +139,9 @@ export default class SettingsFormSave {
 	completeNavigationAfterSave() {
 		const destination = sessionStorage.getItem( NAV_AFTER_SAVE_STORAGE_KEY );
 		const hasNavIntent = '1' === sessionStorage.getItem( NAV_AFTER_SAVE_INTENT_KEY );
+		const saveSucceeded = this.wasSettingsSavedForRedirect() || ! this.isDirty();
 
-		if ( ! destination || ! hasNavIntent || ! this.wasSettingsSavedForRedirect() ) {
+		if ( ! destination || ! hasNavIntent || ! saveSucceeded ) {
 			return;
 		}
 

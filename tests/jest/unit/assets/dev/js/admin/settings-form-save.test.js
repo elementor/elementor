@@ -164,6 +164,31 @@ describe( 'SettingsFormSave', () => {
 		expect( sessionStorage.getItem( 'elementor_admin_settings_scroll_y_after_save' ) ).not.toBeNull();
 	} );
 
+	it( 'should redirect after save when form is clean and intent is set', () => {
+		const assignMock = jest.fn();
+
+		delete window.location;
+		window.location = {
+			origin: TEST_ORIGIN,
+			href: 'https://example.com/wp-admin/admin.php?page=elementor-role-manager',
+			search: '?page=elementor-role-manager',
+			assign: assignMock,
+		};
+
+		sessionStorage.setItem(
+			NAV_AFTER_SAVE_STORAGE_KEY,
+			'https://example.com/wp-admin/admin.php?page=elementor-element-manager',
+		);
+		sessionStorage.setItem( NAV_AFTER_SAVE_INTENT_KEY, '1' );
+
+		const form = createForm();
+		new SettingsFormSave( form );
+
+		expect( assignMock ).toHaveBeenCalledWith(
+			'https://example.com/wp-admin/admin.php?page=elementor-element-manager',
+		);
+	} );
+
 	it( 'should redirect after save only for safe destinations', () => {
 		const assignMock = jest.fn();
 
