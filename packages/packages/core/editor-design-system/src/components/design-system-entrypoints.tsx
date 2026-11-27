@@ -4,7 +4,7 @@ import {
 	__useActiveDocument as useActiveDocument,
 	__useActiveDocumentActions as useActiveDocumentActions,
 } from '@elementor/editor-documents';
-import { isLegacyElementsPanelSelected, useOnSwitchToLegacyElementsPanel } from '@elementor/editor-elements-panel';
+import { useOnSwitchToLegacyElementsPanel } from '@elementor/editor-elements-panel';
 import { isSidebarEnabled } from '@elementor/editor-sidebar';
 import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import {
@@ -35,8 +35,6 @@ const OPEN_EVENT_BY_TAB: Record< DesignSystemTab, string > = {
 	variables: EVENT_OPEN_VARIABLES,
 	classes: EVENT_OPEN_CLASSES,
 };
-
-const isBlockedByLegacy = () => isSidebarEnabled() && isLegacyElementsPanelSelected();
 
 export function DesignSystemEntrypoints() {
 	const { open, close } = usePanelActions();
@@ -96,10 +94,6 @@ export function DesignSystemEntrypoints() {
 				return;
 			}
 
-			if ( ! isOpenRef.current && isBlockedByLegacy() ) {
-				return;
-			}
-
 			if ( isOpenRef.current && getActiveDesignSystemTab() === tab ) {
 				void close();
 				return;
@@ -134,11 +128,6 @@ export function DesignSystemEntrypoints() {
 
 	useEffect( () => {
 		return listenTo( routeOpenEvent( V1_ELEMENTS_PANEL_ROUTE ), () => {
-			if ( isBlockedByLegacy() ) {
-				pendingTabRef.current = null;
-				return;
-			}
-
 			const tab = pendingTabRef.current;
 			if ( tab ) {
 				pendingTabRef.current = null;
@@ -151,10 +140,6 @@ export function DesignSystemEntrypoints() {
 	useEffect( () => {
 		const bind = ( eventName: string, tab: DesignSystemTab ) => {
 			const handler = () => {
-				if ( isBlockedByLegacy() ) {
-					return;
-				}
-
 				pendingTabRef.current = tab;
 				openRoute( V1_ELEMENTS_PANEL_ROUTE );
 			};
@@ -212,10 +197,6 @@ export function DesignSystemEntrypoints() {
 			}
 
 			hasOpenedFromUrl.current = true;
-
-			if ( isBlockedByLegacy() ) {
-				return;
-			}
 
 			requestAnimationFrame( () => {
 				if ( targetTab ) {

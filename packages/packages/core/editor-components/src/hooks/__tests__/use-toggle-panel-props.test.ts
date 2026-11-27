@@ -36,6 +36,6 @@ describe( 'useTogglePanelProps', () => {
 
 		// Assert.
 		expect( result.current.disabled ).toBe( expected );
-		expect( result.current.exclusive ).toBe( true );
+		expect( result.current ).not.toHaveProperty( 'exclusive' );
 	} );
 } );

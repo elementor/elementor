@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { hasLoadedEditorAngie, isAngieAvailable, openAngieInAskMode } from '@elementor/editor-mcp';
-import { useIsSidebarRailLocked } from '@elementor/editor-sidebar';
 import { AngieIcon, HelpIcon } from '@elementor/icons';
 import {
 	bindMenu,
 	bindTrigger,
-	Box,
 	IconButton,
 	type IconButtonProps,
 	ListItemIcon,
@@ -22,23 +20,18 @@ import { dispatchHelpClickEvent, HELP_CENTER_ANGIE_PROMPT, HELP_CENTER_URL } fro
 export default function SidebarHelp() {
 	const popupState = usePopupState( { variant: 'popover', popupId: 'elementor-editor-sidebar-help' } );
 	const hasAngieActive = hasLoadedEditorAngie() || isAngieAvailable();
-	const isLocked = useIsSidebarRailLocked();
 	const title = __( 'Help', 'elementor' );
 
 	return (
 		<>
 			<Tooltip title={ title } placement="right">
-				{ /* @see https://mui.com/material-ui/react-tooltip/#disabled-elements */ }
-				<Box component="span">
-					<IconButton
-						{ ...bindTrigger( popupState ) }
-						disabled={ isLocked }
-						aria-label={ title }
-						size={ 'unstableTiny' as IconButtonProps[ 'size' ] }
-					>
-						<HelpIcon fontSize="small" />
-					</IconButton>
-				</Box>
+				<IconButton
+					{ ...bindTrigger( popupState ) }
+					aria-label={ title }
+					size={ 'unstableTiny' as IconButtonProps[ 'size' ] }
+				>
+					<HelpIcon fontSize="small" />
+				</IconButton>
 			</Tooltip>
 			<Menu
 				{ ...bindMenu( popupState ) }

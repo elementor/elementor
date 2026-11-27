@@ -8,7 +8,6 @@ export function useSidebarDesignSystemProps() {
 
 	return {
 		...toolbarProps,
-		disabled: isLegacySelected,
-		exclusive: true,
+		disabled: ( toolbarProps.disabled ?? false ) || ( isLegacySelected && ! toolbarProps.selected ),
 	};
 }

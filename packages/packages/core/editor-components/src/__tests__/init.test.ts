@@ -1,3 +1,4 @@
+import { injectIntoLogic } from '@elementor/editor';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { registerPanel } from '@elementor/editor-panels';
 import { isSidebarEnabled, sidebarTools } from '@elementor/editor-sidebar';
@@ -65,6 +66,7 @@ describe( 'editor-components init', () => {
 			expect.objectContaining( { id: 'open-components-panel' } )
 		);
 		expect( injectTab ).not.toHaveBeenCalled();
+		expect( injectIntoLogic ).toHaveBeenCalledWith( expect.objectContaining( { id: 'components-legacy-guard' } ) );
 	} );
 
 	it( 'should inject the elements panel tab only when the sidebar is disabled', () => {
@@ -78,5 +80,8 @@ describe( 'editor-components init', () => {
 		expect( injectTab ).toHaveBeenCalledWith( expect.objectContaining( { id: 'components' } ) );
 		expect( registerPanel ).not.toHaveBeenCalled();
 		expect( sidebarTools.registerToggleAction ).not.toHaveBeenCalled();
+		expect( injectIntoLogic ).not.toHaveBeenCalledWith(
+			expect.objectContaining( { id: 'components-legacy-guard' } )
+		);
 	} );
 } );

@@ -15,38 +15,43 @@ jest.mock( '../use-open-design-system-toolbar', () => ( {
 describe( 'useSidebarDesignSystemProps', () => {
 	const onClick = jest.fn();
 
-	beforeEach( () => {
+	const mockToolbar = ( selected: boolean ) => {
 		jest.mocked( useOpenDesignSystemToolbar ).mockReturnValue( {
 			title: 'Design System',
 			icon: () => null,
 			onClick,
-			selected: true,
+			selected,
 		} as ReturnType< typeof useOpenDesignSystemToolbar > );
-	} );
+	};
 
-	it( 'should be disabled in Legacy', () => {
-		jest.mocked( useIsLegacyElementsPanelSelected ).mockReturnValue( true );
+	it.each( [
+		[ 'Legacy + closed', true, false, true ],
+		[ 'Legacy + open', true, true, false ],
+		[ 'Atomic + closed', false, false, false ],
+		[ 'Atomic + open', false, true, false ],
+	] )( 'should compute disabled for %s', ( _label, isLegacy, isOpen, expected ) => {
+		// Arrange.
+		mockToolbar( isOpen );
+		jest.mocked( useIsLegacyElementsPanelSelected ).mockReturnValue( isLegacy );
 
+		// Act.
 		const { result } = renderHook( () => useSidebarDesignSystemProps() );
 
-		expect( result.current.disabled ).toBe( true );
+		// Assert.
+		expect( result.current.disabled ).toBe( expected );
 	} );
 
-	it( 'should be enabled in Atomic', () => {
+	it( 'should keep selected/onClick from the toolbar hook and not be exclusive', () => {
+		// Arrange.
+		mockToolbar( true );
 		jest.mocked( useIsLegacyElementsPanelSelected ).mockReturnValue( false );
 
+		// Act.
 		const { result } = renderHook( () => useSidebarDesignSystemProps() );
 
-		expect( result.current.disabled ).toBe( false );
-	} );
-
-	it( 'should be exclusive and keep selected/onClick from the toolbar hook', () => {
-		jest.mocked( useIsLegacyElementsPanelSelected ).mockReturnValue( false );
-
-		const { result } = renderHook( () => useSidebarDesignSystemProps() );
-
-		expect( result.current.exclusive ).toBe( true );
+		// Assert.
 		expect( result.current.selected ).toBe( true );
 		expect( result.current.onClick ).toBe( onClick );
+		expect( result.current ).not.toHaveProperty( 'exclusive' );
 	} );
 } );

@@ -13,9 +13,9 @@ const ELEMENTS_PANEL_STORAGE_KEY = 'elementor:new-experience:elements-panel';
 
 const DESIGN_SYSTEM = 'Design System';
 const COMPONENTS = 'Components';
-const OTHER_RAIL_ITEMS = [ 'Add Element', 'Theme Builder', 'Page Settings', 'History', 'Finder', 'Help' ];
+const ADD_ELEMENT = 'Add Element';
 
-test.describe( 'Sidebar rail lock @v4-tests', () => {
+test.describe( 'Sidebar Legacy elements mode @v4-tests', () => {
 	let wpAdmin: WpAdminPage;
 	let page: Page;
 	let context: BrowserContext;
@@ -27,7 +27,6 @@ test.describe( 'Sidebar rail lock @v4-tests', () => {
 
 	const atomicPanelHeading = (): Locator => designSystem.panel.getByRole( 'heading', { level: 2, name: 'Add', exact: true } );
 	const componentsPanelHeading = (): Locator => designSystem.panel.getByRole( 'heading', { level: 2, name: COMPONENTS, exact: true } );
-	const componentsCloseButton = (): Locator => designSystem.panel.getByRole( 'button', { name: 'Close', exact: true } );
 	const atomicSwitcherButton = (): Locator => designSystem.panel.getByRole( 'button', { name: 'Atomic elements panel', exact: true } );
 	const legacySwitcherButton = (): Locator => designSystem.panel.getByRole( 'button', { name: 'Legacy elements panel', exact: true } );
 
@@ -77,14 +76,14 @@ test.describe( 'Sidebar rail lock @v4-tests', () => {
 
 		await test.step( 'Design System and Components are disabled, Add Element is enabled', async () => {
 			await expectRailDisabled( [ DESIGN_SYSTEM, COMPONENTS ] );
-			await expect( railButton( 'Add Element' ) ).toBeEnabled();
+			await expect( railButton( ADD_ELEMENT ) ).toBeEnabled();
 		} );
 
 		await test.step( 'The state survives a reload', async () => {
 			await page.reload();
 			await wpAdmin.waitForPanel();
 			await wpAdmin.closeAnnouncementsIfVisible();
-			await expect( railButton( 'Add Element' ) ).toBeEnabled();
+			await expect( railButton( ADD_ELEMENT ) ).toBeEnabled();
 			await expectRailDisabled( [ DESIGN_SYSTEM, COMPONENTS ] );
 		} );
 
@@ -95,57 +94,20 @@ test.describe( 'Sidebar rail lock @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Opening Design System locks the other sidebar rail items', async () => {
-		await test.step( 'Open Design System from the rail', async () => {
-			await railButton( DESIGN_SYSTEM ).click();
-			await expect( designSystem.panelHeading ).toBeVisible();
-		} );
-
-		await test.step( 'Every other rail item is disabled, Design System stays enabled', async () => {
-			await expectRailDisabled( [ COMPONENTS, ...OTHER_RAIL_ITEMS ] );
-			await expect( railButton( DESIGN_SYSTEM ) ).toBeEnabled();
-		} );
-
-		await test.step( 'Close from the panel header', async () => {
-			await designSystem.closePanel();
-		} );
-
-		await test.step( 'Atomic elements panel is back and the rail is unlocked', async () => {
-			await expect( atomicPanelHeading() ).toBeVisible();
-			await expectRailEnabled( [ DESIGN_SYSTEM, COMPONENTS, ...OTHER_RAIL_ITEMS ] );
-		} );
-	} );
-
-	test( 'Opening Components locks the other sidebar rail items', async () => {
+	test( 'Opening Components in Atomic mode keeps the other sidebar rail items enabled', async () => {
 		await test.step( 'Open Components from the rail', async () => {
 			await railButton( COMPONENTS ).click();
 			await expect( componentsPanelHeading() ).toBeVisible();
 		} );
 
-		await test.step( 'Every other rail item is disabled, Components stays enabled', async () => {
-			await expectRailDisabled( [ DESIGN_SYSTEM, ...OTHER_RAIL_ITEMS ] );
-			await expect( railButton( COMPONENTS ) ).toBeEnabled();
+		await test.step( 'Add Element, Design System, Finder and Help stay enabled', async () => {
+			await expectRailEnabled( [ ADD_ELEMENT, DESIGN_SYSTEM, 'Finder', 'Help', COMPONENTS ] );
 		} );
 
-		await test.step( 'Close from the panel header', async () => {
-			await componentsCloseButton().click();
-			await expect( componentsPanelHeading() ).toBeHidden();
-		} );
-
-		await test.step( 'Atomic elements panel is back and the rail is unlocked', async () => {
-			await expect( atomicPanelHeading() ).toBeVisible();
-			await expectRailEnabled( [ DESIGN_SYSTEM, COMPONENTS, ...OTHER_RAIL_ITEMS ] );
-		} );
-
-		await test.step( 'Reopen Components and close it with the rail toggle', async () => {
-			await railButton( COMPONENTS ).click();
-			await expect( componentsPanelHeading() ).toBeVisible();
-			await expectRailDisabled( [ DESIGN_SYSTEM, ...OTHER_RAIL_ITEMS ] );
-
+		await test.step( 'Close Components with the rail toggle', async () => {
 			await railButton( COMPONENTS ).click();
 			await expect( componentsPanelHeading() ).toBeHidden();
 			await expect( atomicPanelHeading() ).toBeVisible();
-			await expectRailEnabled( [ DESIGN_SYSTEM, COMPONENTS, ...OTHER_RAIL_ITEMS ] );
 		} );
 	} );
 } );

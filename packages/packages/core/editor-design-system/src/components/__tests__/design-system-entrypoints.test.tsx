@@ -551,87 +551,21 @@ describe( 'DesignSystemEntrypoints', () => {
 			jest.mocked( isLegacyElementsPanelSelected ).mockReturnValue( legacy );
 		};
 
-		it( 'should not open from the toggle event when sidebar is on and Legacy is selected', () => {
+		it( 'should still open from the toggle event when sidebar is on and Legacy is selected', async () => {
+			// Arrange.
 			setLegacy( true, true );
-			mockUseActiveDocument.mockReturnValue( { isDirty: true } );
-			const dispatchSpy = jest.spyOn( window, 'dispatchEvent' );
 			render( <DesignSystemEntrypoints /> );
 
+			// Act.
 			act( () => {
 				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
 			} );
-
-			const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( e as Event ).type );
-			expect( dispatched ).not.toContain( EVENT_OPEN_CLASSES );
-			expect( mockOpenSaveDialog ).not.toHaveBeenCalled();
-			expect( mockOpen ).not.toHaveBeenCalled();
-
-			dispatchSpy.mockRestore();
-		} );
-
-		it.each( [ EVENT_OPEN_DEFAULTS, EVENT_OPEN_VARIABLES, EVENT_OPEN_CLASSES ] )(
-			'should not open the route on %s in Legacy',
-			( eventName ) => {
-				setLegacy( true, true );
-				render( <DesignSystemEntrypoints /> );
-
-				act( () => {
-					dispatchWindowEvent( eventName );
-				} );
-
-				expect( openRoute ).not.toHaveBeenCalled();
-			}
-		);
-
-		it( 'should consume the URL request in Legacy and not open after switching to Atomic', async () => {
-			setLegacy( true, true );
-			mockUseActiveDocument.mockReturnValue( { isDirty: true } );
-			window.history.pushState( {}, '', '/?active-panel=design-system' );
-			render( <DesignSystemEntrypoints /> );
-
-			await fireRoutePanelOpen();
-			await act( async () => {
-				await new Promise( ( r ) => requestAnimationFrame( r ) );
-			} );
-
-			setLegacy( true, false );
-			await fireRoutePanelOpen();
-			await act( async () => {
-				await new Promise( ( r ) => requestAnimationFrame( r ) );
-			} );
-
-			expect( mockOpen ).not.toHaveBeenCalled();
-			expect( mockOpenSaveDialog ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should drop a pending tab when the route opens in Legacy', async () => {
-			setLegacy( true, false );
-			render( <DesignSystemEntrypoints /> );
-
-			act( () => {
-				dispatchWindowEvent( EVENT_OPEN_CLASSES );
-			} );
-
-			setLegacy( true, true );
-			await fireRoutePanelOpen();
-			setLegacy( true, false );
 			await fireRoutePanelOpen();
 
-			expect( setPendingDesignSystemTab ).not.toHaveBeenCalled();
-			expect( mockOpen ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should not open from active-panel URL in Legacy', async () => {
-			setLegacy( true, true );
-			window.history.pushState( {}, '', '/?active-panel=design-system' );
-			render( <DesignSystemEntrypoints /> );
-
-			await fireRoutePanelOpen();
-			await act( async () => {
-				await new Promise( ( r ) => requestAnimationFrame( r ) );
-			} );
-
-			expect( mockOpen ).not.toHaveBeenCalled();
+			// Assert.
+			expect( openRoute ).toHaveBeenCalledWith( V1_ELEMENTS_PANEL_ROUTE );
+			expect( setPendingDesignSystemTab ).toHaveBeenCalledWith( 'classes' );
+			expect( mockOpen ).toHaveBeenCalled();
 		} );
 
 		it( 'should still allow toggle-close in Legacy when open', () => {
@@ -645,28 +579,6 @@ describe( 'DesignSystemEntrypoints', () => {
 			} );
 
 			expect( mockClose ).toHaveBeenCalled();
-		} );
-
-		it( 'should still open when sidebar is off even if Legacy is selected', () => {
-			setLegacy( false, true );
-			render( <DesignSystemEntrypoints /> );
-
-			act( () => {
-				dispatchWindowEvent( EVENT_OPEN_CLASSES );
-			} );
-
-			expect( openRoute ).toHaveBeenCalledWith( V1_ELEMENTS_PANEL_ROUTE );
-		} );
-
-		it( 'should still open when sidebar is on and Atomic is selected', () => {
-			setLegacy( true, false );
-			render( <DesignSystemEntrypoints /> );
-
-			act( () => {
-				dispatchWindowEvent( EVENT_OPEN_CLASSES );
-			} );
-
-			expect( openRoute ).toHaveBeenCalledWith( V1_ELEMENTS_PANEL_ROUTE );
 		} );
 
 		describe( 'switch to Legacy while open', () => {

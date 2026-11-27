@@ -15,6 +15,5 @@ export function useTogglePanelProps() {
 		onClick: () => ( isOpen ? close() : open() ),
 		selected: isOpen,
 		disabled: isBlocked || isLegacy,
-		exclusive: true,
 	};
 }
