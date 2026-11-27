@@ -350,6 +350,13 @@ body.e-admin-navigation-active .elementor-settings-page-header {
 	}
 }
 
+$e-admin-settings-form-bottom-spacing: 48px;
+
+body.e-admin-navigation-active.elementor-admin-settings-form #elementor-settings-form {
+	padding-block-end: $e-admin-settings-form-bottom-spacing;
+	box-sizing: border-box;
+}
+
 .elementor-settings-form-page {
 	padding-block-start: 30px;
 
