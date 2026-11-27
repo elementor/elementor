@@ -55,15 +55,8 @@ export function DesignSystemHome( { onSelect }: DesignSystemHomeProps ) {
 			} }
 		>
 			{ HOME_ITEMS.map( ( item ) => (
-				<Box
-					key={ item.tab }
-					role="listitem"
-				>
-					<HomeRow
-						{ ...item }
-						isRtl={ isRtl }
-						onSelect={ () => onSelect( item.tab ) }
-					/>
+				<Box key={ item.tab } role="listitem">
+					<HomeRow { ...item } isRtl={ isRtl } onSelect={ () => onSelect( item.tab ) } />
 				</Box>
 			) ) }
 		</Stack>

@@ -10,6 +10,14 @@ const EVENT_TOGGLE = 'elementor/toggle-design-system';
 
 type ToggleDetail = { home?: true; tab?: DesignSystemTab };
 
+function getToolbarToggleDetail( panelOpen: boolean, view: ReturnType< typeof getActiveDesignSystemView > ): ToggleDetail {
+	if ( ! panelOpen ) {
+		return { home: true };
+	}
+
+	return view ? { tab: view } : { home: true };
+}
+
 export function useOpenDesignSystemToolbar(): ToggleActionProps {
 	const { isOpen } = usePanelStatus();
 
@@ -21,12 +29,7 @@ export function useOpenDesignSystemToolbar(): ToggleActionProps {
 				trackDesignSystem( { event: 'opened' } );
 			}
 
-			const view = getActiveDesignSystemView();
-			const detail: ToggleDetail = isOpen
-				? view
-					? { tab: view }
-					: { home: true }
-				: { home: true };
+			const detail = getToolbarToggleDetail( isOpen, getActiveDesignSystemView() );
 
 			window.dispatchEvent( new CustomEvent( EVENT_TOGGLE, { detail } ) );
 		},

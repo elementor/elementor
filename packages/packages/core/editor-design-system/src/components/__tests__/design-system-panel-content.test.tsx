@@ -2,11 +2,7 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
-import {
-	getInitialDesignSystemView,
-	notifyDesignSystemViewChange,
-	persistDesignSystemTab,
-} from '../../initial-tab';
+import { getInitialDesignSystemView, notifyDesignSystemViewChange, persistDesignSystemTab } from '../../initial-tab';
 import { DesignSystemPanelContent } from '../design-system-panel-content';
 
 const EVENT_SET_TAB = 'elementor/design-system/set-tab';
@@ -173,7 +169,9 @@ describe( 'DesignSystemPanelContent', () => {
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
 
 			expect( screen.getByRole( 'list', { name: 'Design system sections' } ) ).toBeVisible();
-			expect( screen.getByRole( 'region', { name: 'Default Styles', hidden: true } ) ).not.toBeVisible();
+			expect( screen.getByText( 'Default Styles Content' ) ).not.toBeVisible();
+			expect( screen.getByText( 'Variables Manager Content' ) ).not.toBeVisible();
+			expect( screen.getByText( 'Class Manager Content' ) ).not.toBeVisible();
 		} );
 
 		it( 'should open directly into Variables when a deep link requests it', () => {
@@ -252,7 +250,7 @@ describe( 'DesignSystemPanelContent', () => {
 			} );
 
 			expect( screen.getByRole( 'region', { name: 'Classes Manager' } ) ).toBeVisible();
-			expect( screen.getByRole( 'region', { name: 'Variables Manager', hidden: true } ) ).not.toBeVisible();
+			expect( screen.getByText( 'Variables Manager Content' ) ).not.toBeVisible();
 		} );
 
 		it( 'should switch to Variables when set-tab event fires with "variables"', () => {
@@ -267,7 +265,7 @@ describe( 'DesignSystemPanelContent', () => {
 			} );
 
 			expect( screen.getByRole( 'region', { name: 'Variables Manager' } ) ).toBeVisible();
-			expect( screen.getByRole( 'region', { name: 'Classes Manager', hidden: true } ) ).not.toBeVisible();
+			expect( screen.getByText( 'Class Manager Content' ) ).not.toBeVisible();
 		} );
 
 		it( 'should persist tab when switching via custom event', () => {

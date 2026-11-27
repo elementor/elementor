@@ -17,6 +17,7 @@ import {
 	notifyDesignSystemViewChange,
 	persistDesignSystemTab,
 } from '../initial-tab';
+import { getSectionCloseAttempt, type SectionCloseAttempts } from '../section-close-attempt';
 import { DesignSystemHeaderMenu } from './design-system-header-menu';
 import { DesignSystemHome } from './design-system-home';
 import { DesignSystemSectionHeader } from './design-system-section-header';
@@ -63,17 +64,18 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 		trackDesignSystemSectionOpened( normalized );
 	}, [] );
 
+	const getCloseAttempts = (): SectionCloseAttempts => ( {
+		defaults: defaultsCloseAttemptRef.current,
+		variables: variablesCloseAttemptRef.current,
+		classes: classesCloseAttemptRef.current,
+	} );
+
 	const attemptBackFromSection = useCallback( () => {
 		if ( ! currentView ) {
 			return;
 		}
 
-		const closeAttempt =
-			currentView === 'defaults'
-				? defaultsCloseAttemptRef.current
-				: currentView === 'variables'
-					? variablesCloseAttemptRef.current
-					: classesCloseAttemptRef.current;
+		const closeAttempt = getSectionCloseAttempt( currentView, getCloseAttempts() );
 
 		sectionExitActionRef.current = goHome;
 		if ( closeAttempt ) {
@@ -116,12 +118,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 			return;
 		}
 
-		const closeAttempt =
-			currentView === 'defaults'
-				? defaultsCloseAttemptRef.current
-				: currentView === 'variables'
-					? variablesCloseAttemptRef.current
-					: classesCloseAttemptRef.current;
+		const closeAttempt = getSectionCloseAttempt( currentView, getCloseAttempts() );
 
 		sectionExitActionRef.current = () => {
 			void onRequestClose();
