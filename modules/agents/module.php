@@ -56,6 +56,7 @@ use Elementor\Modules\Agents\Components\Webmcp\Tools\Query_Business_Info;
 use Elementor\Modules\Agents\Components\Webmcp\Tools\Read_Page_Content;
 use Elementor\Modules\Agents\Components\Webmcp\Tools\Search_Site_Content;
 use Elementor\Modules\Agents\Components\Webmcp\Webmcp_Browser_Tools;
+use Elementor\Modules\Ai\Module as Ai_Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -86,6 +87,14 @@ class Module extends BaseModule {
 	const DASHBOARD_HOOK_SUFFIX = 'index.php';
 
 	const AJAX_ACTIVATE_ACTION = 'agents_ready_activate';
+
+	const ADMIN_BAR_ANGIE_TOGGLE_ID = 'elementor-angie-toggle';
+
+	const ADMIN_ANGIE_TOGGLE_SCRIPT_HANDLE = 'e-admin-angie-toggle';
+
+	const ADMIN_BAR_ANGIE_TOGGLE_PRIORITY = 999;
+
+	const ANGIE_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false" style="vertical-align:middle"><path d="M12.1354 2.43213C12.5964 2.43223 12.9703 2.80704 12.9703 3.26807C12.9701 7.15272 10.6738 10.5031 7.37268 11.9995C10.6742 13.496 12.9703 16.8479 12.9703 20.7329C12.9701 21.1937 12.5962 21.5678 12.1354 21.5679C11.6745 21.5678 11.3007 21.1937 11.3004 20.7329C11.3004 16.3629 7.80112 12.8356 3.50842 12.8354C3.0475 12.8354 2.67373 12.4614 2.67346 12.0005C2.67346 11.5683 3.00167 11.2124 3.42249 11.1694C3.45068 11.1666 3.47947 11.1655 3.50842 11.1655L3.90784 11.1548C8.01591 10.944 11.3002 7.50149 11.3004 3.26807C11.3004 2.80701 11.6743 2.43218 12.1354 2.43213Z"/><path d="M18.2184 9.3833C18.2918 9.198 18.554 9.19814 18.6276 9.3833C19.1023 10.6019 19.8968 11.5659 21.1901 12.0132C21.372 12.0773 21.3719 12.3348 21.1901 12.3989C19.8968 12.8462 19.1023 13.8103 18.6276 15.0288C18.5541 15.2142 18.2918 15.2142 18.2184 15.0288C17.7437 13.8105 16.9092 12.8463 15.608 12.3989C15.4259 12.3349 15.4259 12.0772 15.608 12.0132C16.901 11.5658 17.7355 10.6017 18.2184 9.3833Z"/></svg>';
 
 	const EDITOR_ONE_MENU_REGISTER_PRIORITY = 12;
 
@@ -158,6 +167,8 @@ class Module extends BaseModule {
 		$this->dashboard_overview_block = new Dashboard_Overview_Block( $this->scanner_store );
 		$this->dashboard_overview_block->register();
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_dashboard_tracking' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_angie_toggle' ] );
+		add_action( 'admin_bar_menu', [ $this, 'add_angie_toggle_to_admin_bar' ], self::ADMIN_BAR_ANGIE_TOGGLE_PRIORITY );
 
 		$watched_options = array_merge(
 			[ Agent_Ready_Settings::OPTION, Llms_Manual_Content::OPTION, self::OPTION_EXISTING_FILE_DECISION ],
@@ -290,6 +301,46 @@ class Module extends BaseModule {
 		);
 
 		wp_set_script_translations( self::SCRIPT_HANDLE, 'elementor' );
+	}
+
+	public function enqueue_angie_toggle(): void {
+		if ( ! $this->should_show_sdk_angie_toggle() ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			self::ADMIN_ANGIE_TOGGLE_SCRIPT_HANDLE,
+			$this->get_js_assets_url( 'admin-angie-toggle' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
+	public function add_angie_toggle_to_admin_bar( \WP_Admin_Bar $admin_bar ): void {
+		if ( ! $this->should_show_sdk_angie_toggle() ) {
+			return;
+		}
+
+		$admin_bar->add_node( [
+			'id'     => self::ADMIN_BAR_ANGIE_TOGGLE_ID,
+			'parent' => 'top-secondary',
+			'title'  => self::ANGIE_ICON_SVG . '<span class="screen-reader-text">' . esc_html__( 'Toggle Angie', 'elementor' ) . '</span>',
+			'href'   => '#',
+		] );
+	}
+
+	private function should_show_sdk_angie_toggle(): bool {
+		$ai_module = Plugin::$instance->modules_manager->get_modules( 'ai' );
+
+		if ( ! $ai_module || ! $ai_module->is_ai_enabled() ) {
+			return false;
+		}
+
+		return is_admin()
+			&& current_user_can( 'edit_posts' )
+			&& Ai_Module::is_angie_enabled()
+			&& ! Hints::is_plugin_active( 'angie' );
 	}
 
 	public function enqueue_dashboard_tracking( string $hook_suffix ): void {
@@ -1157,7 +1208,7 @@ class Module extends BaseModule {
 			'angiePluginSearchUrl'   => admin_url( 'plugin-install.php?s=angie&tab=search&type=term' ),
 			'angieAppUrl'            => admin_url( 'admin.php?page=angie-app' ),
 			'angieInstallHeroUrl'    => plugins_url( 'assets/images/angie-install-hero.png', __FILE__ ),
-			'isAngieActive'          => Hints::is_plugin_active( 'angie' ),
+			'isAngieEnabled'         => Ai_Module::is_angie_enabled(),
 			'isAngieInstalled'       => Hints::is_plugin_installed( 'angie' ),
 			'lastReport'             => $this->scanner_store->get_last_report(),
 			'scoreTiers'             => Score_Tiers::to_array(),

@@ -1,8 +1,10 @@
 export type SecondaryBarTab = {
 	id: string;
 	label: string;
+	tag?: string;
 	url: string;
 	is_active: boolean;
+	opens_in_app?: boolean;
 };
 
 export type SecondaryBarLink = {

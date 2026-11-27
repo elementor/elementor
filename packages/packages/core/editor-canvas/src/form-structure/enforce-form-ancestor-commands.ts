@@ -2,6 +2,7 @@ import { type NotificationData, notify } from '@elementor/editor-notifications';
 import { blockCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
+import { getLocalClipboardElements } from '../utils/get-local-clipboard-elements';
 import {
 	clipboardRootsAreAtomicForms,
 	type CreateArgs,
@@ -15,7 +16,6 @@ import {
 	type MoveArgs,
 	movedContainersIncludeAtomicFormRoot,
 	type PasteArgs,
-	type StorageContent,
 } from './utils';
 
 const FORM_FIELDS_OUTSIDE_ALERT: NotificationData = {
@@ -79,26 +79,18 @@ function blockFormFieldMove( args: MoveArgs ): boolean {
 }
 
 function blockFormFieldPaste( args: PasteArgs ): boolean {
-	const { storageType } = args;
+	const clipboardElements = getLocalClipboardElements( args.storageType );
 
-	if ( storageType !== 'localstorage' ) {
+	if ( ! clipboardElements ) {
 		return false;
 	}
 
-	const data = (
-		window as { elementorCommon?: { storage?: { get: () => StorageContent } } }
-	 )?.elementorCommon?.storage?.get();
-
-	if ( ! data?.clipboard?.elements ) {
-		return false;
-	}
-
-	const hasFormFieldElement = hasClipboardElementTypes( data.clipboard.elements, FORM_FIELD_ELEMENT_TYPES );
+	const hasFormFieldElement = hasClipboardElementTypes( clipboardElements, FORM_FIELD_ELEMENT_TYPES );
 
 	if (
 		hasFormFieldElement &&
 		! isWithinForm( args.container ) &&
-		! clipboardRootsAreAtomicForms( data.clipboard.elements )
+		! clipboardRootsAreAtomicForms( clipboardElements )
 	) {
 		handleBlockedFormField();
 

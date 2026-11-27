@@ -3,7 +3,7 @@ import { createPanel } from '@elementor/editor-panels';
 
 import { AtomicElementsPanel } from './components/atomic-elements-panel';
 
-export const { panel, usePanelStatus, usePanelActions } = createPanel( {
+export const { panel, usePanelStatus, usePanelActions, isPanelOpen } = createPanel( {
 	id: 'atomic-elements-panel',
 	component: ConnectedAtomicElementsPanel,
 	isOpenPreviousElement: true,

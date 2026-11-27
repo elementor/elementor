@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\AtomicWidgets\PlainResolvers\Plain_Values_Resolver;
 use Elementor\Modules\CompositeWidgets\ClosedStructure\Closed_Structure;
+use Elementor\Modules\CompositeWidgets\Mcp\Widget_Instance_Expander;
 use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Interactions\Module as Interactions_Module;
@@ -18,6 +19,7 @@ use Elementor\Modules\Mcp\Abilities\Appliers\Class_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Element_Config_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Interactions_Applier;
 use Elementor\Modules\Mcp\Abilities\Appliers\Style_Applier;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Composite_Widget_Placeholders;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Form_Structure_Validator;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
@@ -43,16 +45,25 @@ final class Composition_Compiler {
 	public const COMPONENT_PARENT_ID = 'component';
 
 	private ?Closed_Structure $closed_structure;
+	private ?Widget_Instance_Expander $widget_instance_expander;
 
-	private function __construct( ?Closed_Structure $closed_structure ) {
+	private function __construct( ?Closed_Structure $closed_structure, ?Widget_Instance_Expander $widget_instance_expander ) {
 		$this->closed_structure = $closed_structure;
-	}
-
-	public static function make( ?Closed_Structure $closed_structure = null ): self {
-		return new self( $closed_structure );
+		$this->widget_instance_expander = $widget_instance_expander;
 	}
 
 	/**
+	 * `<e-widget>` is accepted only when a widget instance expander is passed (`build-composition`).
+	 */
+	public static function make( ?Closed_Structure $closed_structure = null, ?Widget_Instance_Expander $widget_instance_expander = null ): self {
+		return new self( $closed_structure, $widget_instance_expander );
+	}
+
+	/**
+	 * Elementor Pro's `elementor/manage-widget` compiles with `COMPONENT_PARENT_ID` and reads `elements`, `warnings`,
+	 * `dom`, `xml_parser` and `pro_features_discovery`, so the signature and the returned keys are a Core–Pro contract
+	 * (pinned by `Test_Composition_Compiler_Contract`): keep them, and deprecate before changing them.
+	 *
 	 * @param array     $input         Composition input using the `elementor/build-composition` shapes.
 	 * @param ?Document $document      Context for resolving dynamic values, when a target document exists.
 	 * @param array     $document_tree Existing document tree used for insertion-context validation.
@@ -67,15 +78,20 @@ final class Composition_Compiler {
 		string $parent_id = self::DEFAULT_PARENT_ID
 	) {
 		$xml_parser = new Xml_Parser();
-		$type_resolver = new Widget_Type_Resolver( $xml_parser );
+		$widget_placeholders = new Composite_Widget_Placeholders( $xml_parser, $this->widget_instance_expander );
+		$type_resolver = new Widget_Type_Resolver( $xml_parser, $widget_placeholders->get_tags() );
 		$subtree_builder = new Subtree_Builder( $xml_parser );
+		$element_config = $this->as_map( $input['element_config'] ?? [] );
 
 		$dom = $xml_parser->parse( (string) ( $input['xml_structure'] ?? '' ) );
 		if ( is_wp_error( $dom ) ) {
 			return $dom;
 		}
 
-		$pro_features_discovery = ( new Pro_Elements_Remover( $xml_parser ) )->remove_and_collect_errors( $dom );
+		$pro_features_discovery = $this->unique_by_message( array_merge(
+			( new Pro_Elements_Remover( $xml_parser ) )->remove_and_collect_errors( $dom ),
+			$widget_placeholders->remove_unavailable( $dom, $element_config )
+		) );
 
 		[
 			'configs' => $widget_configs,
@@ -87,7 +103,8 @@ final class Composition_Compiler {
 			$xml_parser,
 			$document_tree,
 			$parent_id,
-			$unknown_widget_tag_errors
+			$unknown_widget_tag_errors,
+			$widget_placeholders->collect_missing_configuration_id_errors( $dom )
 		);
 		if ( $validation_error ) {
 			return $validation_error;
@@ -123,10 +140,17 @@ final class Composition_Compiler {
 
 		$index = $subtree_builder->index_by_config_id( $subtrees, $dom );
 
+		$expansion_error = $widget_placeholders->expand( $index, $element_config, $this->collect_referenced_config_ids( $input ), $warnings );
+		if ( $expansion_error ) {
+			return $expansion_error;
+		}
+
+		$widget_configs = $widget_placeholders->add_type_configs( $subtrees, $widget_configs, $type_resolver );
+
 		$variables_service = $this->create_variables_service();
 
 		$config_applier = new Element_Config_Applier( $type_resolver, $this->get_plain_values_resolver() );
-		$config_result = $config_applier->apply( $index, $this->as_map( $input['element_config'] ?? [] ), $widget_configs, $document );
+		$config_result = $config_applier->apply( $index, $element_config, $widget_configs, $document );
 		if ( $config_result['error'] ) {
 			return $config_result['error'];
 		}
@@ -158,6 +182,7 @@ final class Composition_Compiler {
 	 * @param array        $document_tree
 	 * @param string       $parent_id
 	 * @param string[]     $unknown_widget_tag_errors
+	 * @param string[]     $missing_configuration_id_errors
 	 *
 	 * @return \WP_Error|null
 	 */
@@ -166,10 +191,12 @@ final class Composition_Compiler {
 		Xml_Parser $xml_parser,
 		array $document_tree,
 		string $parent_id,
-		array $unknown_widget_tag_errors
+		array $unknown_widget_tag_errors,
+		array $missing_configuration_id_errors
 	) {
 		$errors = array_merge(
 			$this->tag_errors( 'elementor_duplicate_configuration_id', $xml_parser->collect_duplicate_configuration_id_errors( $dom ) ),
+			$this->tag_errors( 'elementor_missing_configuration_id', $missing_configuration_id_errors ),
 			$this->tag_errors( 'elementor_invalid_form_structure', ( new Form_Structure_Validator( $xml_parser ) )->collect_errors( $dom, $document_tree, $parent_id ) ),
 			$this->tag_errors( 'elementor_unknown_type', $unknown_widget_tag_errors ),
 			$this->tag_errors( Closed_Structure::ERROR_CODE, $this->collect_closed_parent_errors( $document_tree, $parent_id ) ),
@@ -316,6 +343,34 @@ final class Composition_Compiler {
 		}
 
 		return $warnings;
+	}
+
+	/**
+	 * @param \WP_Error[] $errors
+	 *
+	 * @return \WP_Error[]
+	 */
+	private function unique_by_message( array $errors ): array {
+		$unique = [];
+
+		foreach ( $errors as $error ) {
+			$unique[ $error->get_error_message() ] = $error;
+		}
+
+		return array_values( $unique );
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function collect_referenced_config_ids( array $input ): array {
+		$referenced = [];
+
+		foreach ( [ 'element_config', 'editor_settings', 'style', 'classes', 'interactions' ] as $map_key ) {
+			$referenced = array_merge( $referenced, array_map( 'strval', array_keys( $this->as_map( $input[ $map_key ] ?? [] ) ) ) );
+		}
+
+		return $referenced;
 	}
 
 	private function as_map( $value ): array {

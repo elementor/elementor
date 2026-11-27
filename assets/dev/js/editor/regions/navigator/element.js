@@ -95,13 +95,20 @@ export default class extends Marionette.CompositeView {
 		};
 	}
 
+	getNavigatorTitle() {
+		return elementor.hooks.applyFilters( 'navigator/element/title', this.model.getTitle(), this.model );
+	}
+
+	getNavigatorIcon() {
+		return elementor.hooks.applyFilters( 'navigator/element/icon', this.model.getIcon(), this.model );
+	}
+
 	templateHelpers() {
 		const helpers = {};
 
 		if ( ! this.isNavigatorContainer() ) {
-			helpers.title = this.model.getTitle();
-
-			helpers.icon = 'section' === this.model.get( 'elType' ) ? '' : this.model.getIcon();
+			helpers.title = this.getNavigatorTitle();
+			helpers.icon = 'section' === this.model.get( 'elType' ) ? '' : this.getNavigatorIcon();
 		}
 
 		return helpers;
@@ -166,12 +173,12 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onTitleExternalChange() {
-		this.ui.title.text( this.model.getTitle() );
+		this.ui.title.text( this.getNavigatorTitle() );
 	}
 
 	onModelEditorSettingsChange( elementModel, editorSettings ) {
 		if ( undefined !== elementModel.changed?.editor_settings?.title ) {
-			this.ui.title.text( editorSettings.title );
+			this.ui.title.text( this.getNavigatorTitle() );
 		}
 
 		window.dispatchEvent( new CustomEvent( 'elementor/element/update_editor_settings', {
@@ -434,15 +441,15 @@ export default class extends Marionette.CompositeView {
 
 	onModelSettingsChange( settingsModel ) {
 		if ( undefined !== settingsModel.changed._title ) {
-			this.ui.title.text( this.model.getTitle() );
+			this.ui.title.text( this.getNavigatorTitle() );
 		}
 
 		if ( undefined !== settingsModel.changed.presetTitle && undefined === settingsModel._title ) {
-			this.ui.title.text( this.model.getTitle() );
+			this.ui.title.text( this.getNavigatorTitle() );
 		}
 
 		if ( undefined !== settingsModel.changed.presetIcon ) {
-			this.ui.icon.html( `<i class="${ this.model.attributes.icon }"></i>` );
+			this.ui.icon.html( `<i class="${ this.getNavigatorIcon() }"></i>` );
 		}
 
 		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {

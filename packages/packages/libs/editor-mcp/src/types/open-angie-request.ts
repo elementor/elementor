@@ -1,4 +1,6 @@
-import type { AngieInteractionMode, AngieTriggerRequest } from '@elementor-external/angie-sdk';
+import type { AngieInteractionMode, AngieTriggerRequest } from '@elementor/editor-angie-sdk';
+
+export type AngieState = 'plugin' | 'sdk' | 'promo' | 'hidden';
 
 export type OpenAngieCommonProperties = {
 	prompt: string;
@@ -19,6 +21,7 @@ export type OpenAngieRequest = OpenAngieCommonProperties & {
 
 export type EditorAngieWindowHost = {
 	openAngie?: ( request: OpenAngieRequest ) => Promise< void > | void;
+	getAngieState?: () => AngieState;
 };
 
 declare global {

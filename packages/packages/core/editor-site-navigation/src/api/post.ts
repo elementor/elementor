@@ -1,6 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 
+import { DEFAULT_SITE_CONTENT_SORT, getRestOrderForSiteContentSort } from '../site-content-sort';
 import { type Post } from '../types';
 
 export type NewPost = {
@@ -10,6 +11,7 @@ export type NewPost = {
 
 export type UpdatePost = {
 	id: number;
+	status?: 'draft' | 'publish';
 	title?: string;
 };
 
@@ -58,6 +60,8 @@ export function getCannotEditPanelItemMessage( postTypeSlug: Slug ): string {
 
 export const POST_PER_PAGE = 10;
 
+export const COUNT_QUERY_PER_PAGE = 1;
+
 type WpPostsResponse = {
 	json: () => Promise< Post[] >;
 	headers: {
@@ -72,16 +76,25 @@ export type PostsResponse = {
 	currentPage: number;
 };
 
-export const getRequest = async ( postTypeSlug: Slug, page: number, search = '' ): Promise< PostsResponse > => {
+export const getRequest = async (
+	postTypeSlug: Slug,
+	page: number,
+	search = '',
+	status: string = 'any',
+	perPage = POST_PER_PAGE,
+	sort = DEFAULT_SITE_CONTENT_SORT
+): Promise< PostsResponse > => {
 	const baseUri = `/wp/v2/${ postTypesMap[ postTypeSlug ].rest_base }`;
 
 	const keys: Array< keyof Post > = [ 'id', 'type', 'title', 'link', 'status', 'user_can' ];
+	const { order, orderby } = getRestOrderForSiteContentSort( sort );
 
 	const queryParams = new URLSearchParams( {
-		status: 'any',
-		order: 'asc',
+		status,
+		order,
+		orderby,
 		page: page.toString(),
-		per_page: POST_PER_PAGE.toString(),
+		per_page: perPage.toString(),
 		_fields: keys.join( ',' ),
 	} );
 
@@ -128,13 +141,20 @@ export const updateRequest = ( postTypeSlug: Slug, updatedPost: UpdatePost ) => 
 	} );
 };
 
-export const deleteRequest = ( postTypeSlug: Slug, postId: number ) => {
+export const deleteRequest = ( postTypeSlug: Slug, postId: number, force = false ) => {
 	const path = `/wp/v2/${ postTypesMap[ postTypeSlug ].rest_base }`;
+	const forceQuery = force ? '?force=true' : '';
 
 	return apiFetch( {
-		path: `${ path }/${ postId }`,
+		path: `${ path }/${ postId }${ forceQuery }`,
 		method: 'DELETE',
 	} );
+};
+
+export const fetchPostsTotal = async ( postTypeSlug: Slug, status = 'any', search = '' ): Promise< number > => {
+	const response = await getRequest( postTypeSlug, 1, search, status, COUNT_QUERY_PER_PAGE );
+
+	return response.totalPosts;
 };
 
 export const duplicateRequest = ( originalPost: UpdatePost ) => {

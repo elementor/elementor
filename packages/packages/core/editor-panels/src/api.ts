@@ -1,10 +1,11 @@
 import { type ComponentType } from 'react';
 import {
+	__privateIsRouteActive as isRouteActive,
 	__privateRunCommand as runCommand,
 	__privateUseRouteStatus as useRouteStatus,
 	type UseRouteStatusOptions,
 } from '@elementor/editor-v1-adapters';
-import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
+import { __getState as getState, __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 
 import { injectIntoPanels } from './location';
 import { selectOpenId, slice } from './store';
@@ -51,6 +52,7 @@ export function createPanel< TOnOpenReturn >( {
 		},
 		usePanelStatus,
 		usePanelActions,
+		isPanelOpen: () => selectOpenId( getState() ) === id && isRouteActive( V2_PANEL ),
 	};
 }
 

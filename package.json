@@ -31,6 +31,7 @@
     "test:setup:playwright": "wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command=\"bash elementor-config/setup.sh\" && wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889 --command=\"bash elementor-config/setup.sh\"",
     "test:playwright": "playwright test -c tests/playwright/playwright.config.ts",
     "test:playwright:debug": "npm run test:playwright -- --debug",
+    "test:playwright:setup-cdn": "node scripts/setup-cdn-fixtures.mjs",
     "test:playwright:elements-regression": "playwright test -c tests/elements-regression/playwright.config.ts",
     "test:playwright:elements-regression:core": "playwright test -c tests/elements-regression/playwright.config.ts tests/elements-regression/tests/elements-regression.test.ts",
     "test:playwright:elements-regression:atomic": "playwright test -c tests/elements-regression/playwright.config.ts tests/elements-regression/tests/atomic-elements-regression.test.ts",
@@ -52,8 +53,8 @@
     "restart:testing": "bash scripts/setup-testing.sh --restart",
     "packages:version": "npm run version -w elementor-packages",
     "packages:release": "turbo build && npm run release -w elementor-packages",
-    "wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --mount=./tests/playwright/mu-plugins:/wordpress/wp-content/mu-plugins --blueprint=./tests/playwright/blueprints/local.json",
-    "wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --mount=./tests/playwright/mu-plugins:/wordpress/wp-content/mu-plugins --blueprint=./tests/playwright/blueprints/ci.json",
+    "wp-playground": "npm run test:playwright:setup-cdn && npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --mount=./tests/playwright/mu-plugins:/wordpress/wp-content/mu-plugins --blueprint=./tests/playwright/blueprints/local.json",
+    "wp-playground:ci": "npm run test:playwright:setup-cdn && npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --mount=./tests/playwright/mu-plugins:/wordpress/wp-content/mu-plugins --blueprint=./tests/playwright/blueprints/ci.json",
     "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run wp-playground\" \"WP_CLI_TARGET=playground npm run test:playwright -- --ui\""
   },
   "engines": {

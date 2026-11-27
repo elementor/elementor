@@ -8,6 +8,9 @@ use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\MCP\Composer\Admin\McpSettingsController;
 use Elementor\MCP\Composer\Admin\Page as Mcp_Admin_Page;
 use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
+use Elementor\Modules\CompositeWidgets\Mcp\Composite_Widgets_Resource_Ability;
+use Elementor\Modules\CompositeWidgets\Mcp\Manage_Widget_Pro_Features_Discovery_Ability;
+use Elementor\Modules\CompositeWidgets\Module as Composite_Widgets_Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\Mcp\Abilities\Ability_Hooks;
 use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
@@ -161,6 +164,9 @@ class Module extends BaseModule {
 
 		$this->registry = self::build_core_registry();
 
+		// The composite widgets experiment is registered after this module, so its check waits until every module exists.
+		add_action( 'elementor/init', fn () => $this->register_composite_widgets_abilities() );
+
 		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
 		( new Public_Preview_Handler() )->register();
 		( new Editor_Sync_State() )->register_hooks();
@@ -266,6 +272,27 @@ class Module extends BaseModule {
 			],
 			self::get_woocommerce_pro_features_discovery_abilities( Woocommerce_Pro_Features_Discovery::is_active() )
 		);
+	}
+
+	/** @return Abstract_Ability[] */
+	public static function get_composite_widgets_abilities(): array {
+		if ( ! Plugin::$instance->experiments->is_feature_active( Composite_Widgets_Module::EXPERIMENT_NAME ) ) {
+			return [];
+		}
+
+		$abilities = [ new Composite_Widgets_Resource_Ability() ];
+
+		if ( ! Utils::has_pro() ) {
+			$abilities[] = new Manage_Widget_Pro_Features_Discovery_Ability();
+		}
+
+		return $abilities;
+	}
+
+	private function register_composite_widgets_abilities(): void {
+		foreach ( self::get_composite_widgets_abilities() as $ability ) {
+			$this->registry->add( $ability );
+		}
 	}
 
 	/** @return Abstract_Ability[] */

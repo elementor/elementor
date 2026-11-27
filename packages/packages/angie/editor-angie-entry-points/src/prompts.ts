@@ -10,6 +10,18 @@ type ControlHeaderPromptParams = Pick< ControlHeaderProps, 'controlType' | 'bind
 	elementId: string;
 };
 
+type SiteContentActiveDocumentPromptParams = {
+	postId: number;
+	postType: string;
+	title: string;
+};
+
+const sanitizeAngiePromptQuotedLabel = ( label: string ): string =>
+	label
+		.replace( /[\r\n]+/g, ' ' )
+		.trim()
+		.replace( /"/g, "'" );
+
 type AngiePromptBuilders = {
 	backgroundImage: ( elementId: string ) => string;
 	classManager: () => string;
@@ -22,6 +34,7 @@ type AngiePromptBuilders = {
 	image: ( elementId: string ) => string;
 	interactions: ( params: InteractionsHeaderProps ) => string;
 	namedImage: ( elementId: string, bind: string ) => string;
+	siteContentActiveDocument: ( params: SiteContentActiveDocumentPromptParams ) => string;
 	styleTab: ( params: StyleTabHeaderProps ) => string;
 	text: ( elementId: string ) => string;
 	variableForm: ( params: VariableFormHeaderProps ) => string;
@@ -60,6 +73,8 @@ export const ANGIE_PROMPTS: AngiePromptBuilders = {
 	image: ( elementId: string ) => `At element ${ elementId }, image, I want: `,
 	interactions: ( { elementId }: InteractionsHeaderProps ) => `At element ${ elementId }, interactions, I want: `,
 	namedImage: ( elementId: string, bind: string ) => `At element ${ elementId }, image "${ bind }", I want: `,
+	siteContentActiveDocument: ( { postId, postType, title }: SiteContentActiveDocumentPromptParams ) =>
+		`For ${ postType } "${ sanitizeAngiePromptQuotedLabel( title ) }" (document id ${ postId }), I want: `,
 	styleTab: ( { elementId }: StyleTabHeaderProps ) => `At element ${ elementId }, styles, I want: `,
 	text: ( elementId: string ) => `At element ${ elementId } I want: `,
 	variableForm: ( { variableType, label }: VariableFormHeaderProps ) => {
@@ -74,10 +89,10 @@ export const ANGIE_PROMPTS: AngiePromptBuilders = {
 
 export const buildAngieSiteLogoPrompt = (): string =>
 	[
-		'Update the Site Identity site logo on the active kit. Site Settings (kit) must be open as the current document before any get or set.',
+		'Update the Site Identity site logo on the active kit.',
 		'Call v3-kit-site-identity (not update-elementor-kit-settings-colors-and-fonts) with action "get" to read the current site name, description, logo, and favicon.',
 		'Use the image agent to create or pick an appropriate site logo. Do not use an MCP tool for image generation.',
-		'When you have a public HTTPS image URL, call elementor/upload-media to import it into the WordPress Media Library (admin only).',
+		'When you have a public HTTPS image URL, call upload-media (with consent: true after the user approves) to import it into the WordPress Media Library (admin only).',
 		'Call v3-kit-site-identity with action "set" and patch { site_logo: { id, url } } using the attachment id and URL from the upload step.',
 		'Do not invent other write paths.',
 	].join( '\n\n' );

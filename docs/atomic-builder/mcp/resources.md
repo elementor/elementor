@@ -17,6 +17,7 @@ Read-only MCP URIs agents fetch before mutating data. Resources are read by URI;
 | `elementor://style/best-practices` | `elementor/style-best-practices` | `text/markdown` | `Style_Best_Practices_Ability` |
 | `elementor://wordpress/best-practices` | `elementor/wordpress-best-practices` | `text/markdown` | `Wordpress_Best_Practices_Ability` |
 | `elementor://interactions/schema` | `elementor/interactions-schema-resource` | `application/json` | `Interactions_Schema_Resource_Ability` |
+| `elementor://composite-widgets` | `elementor/composite-widgets-resource` | `application/json` | `Composite_Widgets_Resource_Ability` (only with the `e_composite_widgets` experiment) |
 | `elementor://dynamic-tags` | *(JS only)* | `application/json` | `dynamic-tags-resource.ts` |
 | `elementor://variables/tools/manage-global-variable-guide` | `elementor/manage-global-variable-guide` | `text/plain` | `Manage_Variable_Guide_Ability` |
 
@@ -53,6 +54,7 @@ Resources expose **labels** for author-facing references. Do not use internal pr
 | `style/best-practices` | Markdown from `static-resources/style/best-practices.md` |
 | `wordpress/best-practices` | Markdown from `static-resources/wordpress/best-practices.md` |
 | `interactions/schema` | LLM JSON Schema for interaction items |
+| `composite-widgets` | `{ usage, widgets, allowed_part_types }`, where each widget has `id`, `title`, `source`, `version`, `archived`, `insertable`, `parts` and `fields`; place one with `<e-widget>` in `build-composition` |
 | `dynamic-tags` | `[{ name, label, categories, settings }]` via `list-dynamic-tags` proxy |
 
 Cache `watermark` from global-variables to detect stale reads.

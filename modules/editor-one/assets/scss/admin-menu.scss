@@ -3,8 +3,8 @@ body.e-admin-navigation-active #adminmenu {
 		margin-block: 7px;
 
 		&.wp-menu-open > .wp-submenu {
-			margin-block-start: 7px;
-			padding-block: 6px 13px;
+			margin-block-start: 0;
+			padding-block: 13px;
 		}
 
 		&:not(.wp-menu-open) > a.menu-top {
@@ -207,6 +207,21 @@ body.e-admin-navigation-active #adminmenu {
 	& > a:focus::before {
 		border-block-start-color: var(--editor-one-flyout-menu-divider);
 		opacity: 0.7;
+	}
+}
+
+#adminmenu .wp-submenu li.elementor-submenu-opens-in-app > a::after {
+	content: '';
+	display: inline-block;
+	width: 12px;
+	height: 12px;
+	margin-inline-start: 4px;
+	vertical-align: middle;
+	background-color: currentColor;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 7h10v10h-2V10.4L7.4 18 6 16.6 13.6 9H7z'/%3E%3C/svg%3E") center / contain no-repeat;
+
+	.rtl & {
+		transform: scaleX(-1);
 	}
 }
 

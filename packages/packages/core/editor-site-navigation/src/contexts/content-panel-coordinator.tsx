@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { createContext, type ReactNode, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useRef } from 'react';
 
 import { type Slug } from '../api/post';
+
+export type ContentPanelSectionId = Slug | ( string & {} );
 
 type SectionHandlers = {
 	setExpanded: ( expanded: boolean ) => void;
@@ -9,28 +11,25 @@ type SectionHandlers = {
 };
 
 type ContentPanelCoordinatorValue = {
-	registerSection: ( type: Slug, handlers: SectionHandlers ) => void;
-	unregisterSection: ( type: Slug ) => void;
-	requestCreate: ( type: Slug ) => void;
-	searchQuery: string;
-	setSearchQuery: ( query: string ) => void;
+	registerSection: ( type: ContentPanelSectionId, handlers: SectionHandlers ) => void;
+	requestCreate: ( type: ContentPanelSectionId ) => void;
+	unregisterSection: ( type: ContentPanelSectionId ) => void;
 };
 
 const ContentPanelCoordinatorContext = createContext< ContentPanelCoordinatorValue | null >( null );
 
 export function ContentPanelCoordinatorProvider( { children }: { children: ReactNode } ) {
-	const sectionsRef = useRef( new Map< Slug, SectionHandlers >() );
-	const [ searchQuery, setSearchQuery ] = useState( '' );
+	const sectionsRef = useRef( new Map< ContentPanelSectionId, SectionHandlers >() );
 
-	const registerSection = useCallback( ( type: Slug, handlers: SectionHandlers ) => {
+	const registerSection = useCallback( ( type: ContentPanelSectionId, handlers: SectionHandlers ) => {
 		sectionsRef.current.set( type, handlers );
 	}, [] );
 
-	const unregisterSection = useCallback( ( type: Slug ) => {
+	const unregisterSection = useCallback( ( type: ContentPanelSectionId ) => {
 		sectionsRef.current.delete( type );
 	}, [] );
 
-	const requestCreate = useCallback( ( type: Slug ) => {
+	const requestCreate = useCallback( ( type: ContentPanelSectionId ) => {
 		const handlers = sectionsRef.current.get( type );
 
 		if ( ! handlers ) {
@@ -44,12 +43,10 @@ export function ContentPanelCoordinatorProvider( { children }: { children: React
 	const value = useMemo(
 		() => ( {
 			registerSection,
-			unregisterSection,
 			requestCreate,
-			searchQuery,
-			setSearchQuery,
+			unregisterSection,
 		} ),
-		[ registerSection, unregisterSection, requestCreate, searchQuery ]
+		[ registerSection, requestCreate, unregisterSection ]
 	);
 
 	return (

@@ -8,7 +8,7 @@
         "php": ">=7.4",
         "automattic/jetpack-autoloader": "^6",
         "elementor/elementor-mcp-composer": "^1.0.23",
-        "elementor/wp-one-package": "1.0.74"
+        "elementor/wp-one-package": "1.0.75"
     },
     "repositories": [
         {
@@ -87,7 +87,12 @@
                     "PKSA-g9zw-qxh8-pq8w": "CVE-2026-48805 (sandbox state regression in deprecated internal wrappers in src/Resources/core.php) - we don't enable sandbox.",
                     "PKSA-yd6k-t2gh-1m43": "CVE-2026-46636 (sandbox filter, tag and function allow-list bypass when sandbox state changes between renders) - we don't enable sandbox.",
                     "PKSA-1tmc-rt7x-12w6": "CVE-2026-48806 (sandbox __toString() policy bypass via dynamic mapping keys) - we don't enable sandbox.",
-                    "PKSA-xx6c-6d96-db2w": "CVE-2026-48807 (sandbox __toString() policy bypass via Traversable in join/replace and in/not in operators) - we don't enable sandbox."
+                    "PKSA-xx6c-6d96-db2w": "CVE-2026-48807 (sandbox __toString() policy bypass via Traversable in join/replace and in/not in operators) - we don't enable sandbox.",
+                    "PKSA-tfq6-ydd8-dhbf": "CVE-2026-133764 (sandbox __toString() policy bypass via the input of custom tests) - we don't enable sandbox.",
+                    "PKSA-v6ry-d7gg-9dnc": "CVE-2026-133770 (sandboxed templates can rewrite application-owned Markup objects through their constructor) - we don't enable sandbox.",
+                    "PKSA-szz8-81wy-3x8z": "CVE-2026-133768 (sandbox property allow-list bypass via the join filter on non-iterable objects) - we don't enable sandbox.",
+                    "PKSA-hjpc-r7p2-zyfx": "CVE-2026-133767 (sandbox allow-list and __toString() bypass via a dynamic embed parent expression) - we don't enable sandbox.",
+                    "PKSA-hs2m-ms65-2zgg": "CVE-2026-133771 (missing autoescaping for a variable named like a macro import alias of another scope) - we only render our own twig templates, and the only macro import aliases are 'm' and 'self', which are never used as context variable names."
                 }
             }
         }

@@ -1,42 +1,46 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Skeleton, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { postTypesMap } from '../../../api/post';
 import { useContentPanelCoordinator } from '../../../contexts/content-panel-coordinator';
 import { usePostListContext } from '../../../contexts/post-list-context';
+import {
+	SiteContentSectionToolbarProvider,
+	useSiteContentSectionToolbar,
+} from '../../../contexts/site-content-section-toolbar';
 import { useHomepage } from '../../../hooks/use-homepage';
 import { usePostListPagination } from '../../../hooks/use-post-list-pagination';
 import { usePosts } from '../../../hooks/use-posts';
+import { usePostsBaselineTotal } from '../../../hooks/use-posts-baseline-total';
+import { shouldPinHomepageForSiteContentSort } from '../../../site-content-sort';
+import {
+	hasActiveSiteContentStatusFilters,
+	isSiteContentListNarrowed,
+	isSiteContentTrashFilterActive,
+	serializeSiteContentStatusFilters,
+} from '../../../site-content-status-filter';
+import ContentPanelSectionToolbar from '../content-panel-section-toolbar';
 import SectionAddButton from '../section-add-button';
 import CollapsibleList from './collapsible-list';
 import ErrorState from './error-state';
 import PostListItem from './post-list-item';
 import PostListPaginationActions from './post-list-pagination-actions';
 
-const SEARCH_DEBOUNCE_MS = 300;
-
 type Props = {
 	isOpenByDefault?: boolean;
 };
 
-export default function PostsCollapsibleList( { isOpenByDefault = false }: Props ) {
-	const { type, editMode, setEditMode } = usePostListContext();
-	const { registerSection, unregisterSection, searchQuery } = useContentPanelCoordinator();
+function PostsCollapsibleListContent( { isOpenByDefault = false }: Props ) {
+	const { type, editMode, resetEditMode, setEditMode } = usePostListContext();
+	const { registerSection, unregisterSection } = useContentPanelCoordinator();
+	const { clearStatusFilters, debouncedSearch, siteContentSort, statusFilters } = useSiteContentSectionToolbar();
 	const [ isOpen, setIsOpen ] = useState( isOpenByDefault );
-	const trimmedSearch = searchQuery.trim();
-	const [ debouncedSearch, setDebouncedSearch ] = useState( trimmedSearch );
 	const focusAfterShowLessRef = useRef( false );
 	const listTopRef = useRef< HTMLDivElement | null >( null );
 	const loadMoreButtonRef = useRef< HTMLButtonElement | null >( null );
 	const sectionHeaderRef = useRef< HTMLDivElement | null >( null );
-
-	useEffect( () => {
-		const handle = window.setTimeout( () => setDebouncedSearch( trimmedSearch ), SEARCH_DEBOUNCE_MS );
-
-		return () => window.clearTimeout( handle );
-	}, [ trimmedSearch ] );
 
 	const {
 		data: { posts, total },
@@ -45,18 +49,35 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
-	} = usePosts( type, debouncedSearch );
+	} = usePosts( type, debouncedSearch, statusFilters, siteContentSort );
+	const isNarrowed = isSiteContentListNarrowed( statusFilters, debouncedSearch );
+	const isTrashFilter = isSiteContentTrashFilterActive( statusFilters );
+	const baselineStatus = isTrashFilter ? 'trash' : 'any';
+	const { data: baselineTotal } = usePostsBaselineTotal( type, isNarrowed, baselineStatus );
 	const { data: homepageId } = useHomepage();
 	const isPageType = type === 'page';
+	const statusFiltersKey = serializeSiteContentStatusFilters( statusFilters );
+
+	useEffect( () => {
+		if ( isTrashFilter ) {
+			resetEditMode();
+		}
+	}, [ isTrashFilter, resetEditMode ] );
 
 	useEffect( () => {
 		registerSection( type, {
 			setExpanded: setIsOpen,
-			startCreate: () => setEditMode( { mode: 'create', details: {} } ),
+			startCreate: () => {
+				if ( isSiteContentTrashFilterActive( statusFilters ) ) {
+					clearStatusFilters();
+				}
+
+				setEditMode( { mode: 'create', details: {} } );
+			},
 		} );
 
 		return () => unregisterSection( type );
-	}, [ registerSection, unregisterSection, type, setEditMode ] );
+	}, [ clearStatusFilters, registerSection, setEditMode, statusFilters, type, unregisterSection ] );
 
 	const filteredPosts = useMemo( () => {
 		if ( ! posts ) {
@@ -64,10 +85,12 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 		}
 
 		const mappedPosts = isPageType
-			? posts.map( ( post ) => ( post.id === homepageId ? { ...post, isHome: true } : post ) )
+			? posts.map( ( post ) => ( { ...post, isHome: post.id === homepageId } ) )
 			: posts;
 
-		const sorted = isPageType
+		const shouldPinHomepage = isPageType && shouldPinHomepageForSiteContentSort( siteContentSort );
+
+		const sorted = shouldPinHomepage
 			? [ ...mappedPosts ].sort( ( a, b ) => {
 					if ( a.id === homepageId ) {
 						return -1;
@@ -82,14 +105,14 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 			: mappedPosts;
 
 		return sorted;
-	}, [ posts, isPageType, homepageId ] );
+	}, [ homepageId, isPageType, posts, siteContentSort ] );
 
 	const pagination = usePostListPagination( {
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
 		loadedCount: filteredPosts.length,
-		resetKey: `${ type }:${ debouncedSearch }`,
+		resetKey: `${ type }:${ debouncedSearch }:${ statusFiltersKey }:${ siteContentSort }`,
 		totalCount: total,
 	} );
 
@@ -127,10 +150,10 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 	}, [ pagination.canLoadMore, pagination.visibleCount ] );
 
 	useEffect( () => {
-		if ( debouncedSearch && filteredPosts.length > 0 ) {
+		if ( ( debouncedSearch || hasActiveSiteContentStatusFilters( statusFilters ) ) && filteredPosts.length > 0 ) {
 			setIsOpen( true );
 		}
-	}, [ debouncedSearch, filteredPosts.length ] );
+	}, [ debouncedSearch, filteredPosts.length, statusFilters ] );
 
 	if ( postsError ) {
 		return <ErrorState />;
@@ -151,16 +174,32 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 
 	const displayCount = total;
 	const sectionTitle = postTypesMap[ type ].labels.plural_name;
-	const showNoResults = debouncedSearch && filteredPosts.length === 0;
+	const showNoResults =
+		( debouncedSearch || hasActiveSiteContentStatusFilters( statusFilters ) ) && filteredPosts.length === 0;
+	const countChipLabel = isNarrowed && baselineTotal !== undefined ? `${ total } / ${ baselineTotal }` : undefined;
+
+	const searchAriaLabel = sprintf(
+		/* translators: %s: document type plural label. */
+		__( 'Search %s', 'elementor' ),
+		sectionTitle
+	);
 
 	return (
 		<CollapsibleList
 			count={ displayCount }
+			countChipLabel={ countChipLabel }
 			headerRef={ sectionHeaderRef }
 			isOpen={ isOpen }
 			onOpenChange={ setIsOpen }
+			sectionToolbar={
+				<ContentPanelSectionToolbar
+					addAction={
+						isTrashFilter ? undefined : <SectionAddButton onBeforeCreate={ () => setIsOpen( true ) } />
+					}
+					searchAriaLabel={ searchAriaLabel }
+				/>
+			}
 			title={ sectionTitle }
-			trailingActions={ <SectionAddButton onBeforeCreate={ () => setIsOpen( true ) } /> }
 		>
 			{ showNoResults && (
 				<Box sx={ { py: 2, px: 2 } }>
@@ -173,7 +212,7 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 			{ displayedPosts.map( ( post ) => {
 				return <PostListItem key={ post.id } post={ post } />;
 			} ) }
-			{ [ 'duplicate', 'create' ].includes( editMode.mode ) && <PostListItem /> }
+			{ ! isTrashFilter && [ 'duplicate', 'create' ].includes( editMode.mode ) && <PostListItem /> }
 			<PostListPaginationActions
 				canLoadMore={ pagination.canLoadMore }
 				canShowLess={ pagination.canShowLess }
@@ -183,5 +222,15 @@ export default function PostsCollapsibleList( { isOpenByDefault = false }: Props
 				onShowLess={ handleShowLess }
 			/>
 		</CollapsibleList>
+	);
+}
+
+export default function PostsCollapsibleList( props: Props ) {
+	const { type } = usePostListContext();
+
+	return (
+		<SiteContentSectionToolbarProvider statusFilterCountSlugs={ [ type ] }>
+			<PostsCollapsibleListContent { ...props } />
+		</SiteContentSectionToolbarProvider>
 	);
 }

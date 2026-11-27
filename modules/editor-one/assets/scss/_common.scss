@@ -4,6 +4,7 @@
 @import "../../../../assets/dev/scss/direction/theme-light";
 
 @import "theme-light";
+@import "secondary-bar-placeholder";
 
 #wpwrap {
 	background-color: var(--e-one-palette-background-default);
@@ -383,8 +384,8 @@
 	.elementor-settings-form-page h2 {
 		margin-block: 1em;
 		font-family: var(--e-one-typography-fontFamily);
-		font-weight: 700;
-		font-size: 24px;
+		font-weight: 500;
+		font-size: 20px;
 		color: var(--e-one-palette-text-primary);
 		line-height: 1.8;
 		padding: 0;
@@ -392,6 +393,12 @@
 		&:first-child {
 			margin-block-start: 0;
 		}
+	}
+
+	#elementor-system-info > h2,
+	#elementor-role-manager > h2 {
+		font-weight: 500;
+		font-size: 20px;
 	}
 
 	.elementor-settings-form-page h2 ~ p {
