@@ -869,6 +869,12 @@ abstract class Element_Base extends Controls_Stack {
 			'data-e-type' => $this->get_type(),
 		] );
 
+		// Saved CSS targets the template ID, while repeated elements use an instance ID at runtime.
+		$origin_id = $this->get_data( 'origin_id' );
+		if ( is_string( $origin_id ) && '' !== $origin_id && $id !== $origin_id && sanitize_html_class( $origin_id ) === $origin_id ) {
+			$this->add_render_attribute( '_wrapper', 'class', 'elementor-element-' . $origin_id );
+		}
+
 		$class_settings = [];
 
 		foreach ( $settings as $setting_key => $setting ) {
