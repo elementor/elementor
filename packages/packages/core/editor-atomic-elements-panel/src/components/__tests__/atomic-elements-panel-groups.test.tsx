@@ -35,7 +35,7 @@ describe( 'AtomicElementsPanel groups', () => {
 
 		// Assert.
 		expect( screen.getAllByRole( 'button', { expanded: true } ).map( ( { textContent } ) => textContent ) ).toEqual(
-			[ 'Layout', 'Basic', 'Form' ]
+			[ 'Layout', 'Content', 'Form' ]
 		);
 		expect( screen.getByRole( 'button', { name: 'Flexbox' } ) ).toBeInTheDocument();
 	} );
