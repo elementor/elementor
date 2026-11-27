@@ -1,10 +1,12 @@
 import SettingsFormSave, {
 	isNavigationLeavingCurrentScreen,
 	isSafeAdminNavigationDestination,
+	resolveAdminNavigationUrl,
 	serializeSettingsForm,
 } from 'elementor-admin/settings-form-save';
 
 const NAV_AFTER_SAVE_STORAGE_KEY = 'elementor_admin_settings_nav_after_save';
+const TEST_ORIGIN = 'https://example.com';
 
 describe( 'serializeSettingsForm', () => {
 	const createForm = ( html ) => {
@@ -41,6 +43,17 @@ describe( 'serializeSettingsForm', () => {
 	} );
 } );
 
+describe( 'resolveAdminNavigationUrl', () => {
+	it( 'should resolve relative admin.php links against the current admin path', () => {
+		const baseHref = 'https://example.com/wp-admin/admin.php?page=elementor-role-manager';
+		const resolved = resolveAdminNavigationUrl( 'admin.php?page=elementor-element-manager', baseHref );
+
+		expect( resolved ).toBe(
+			'https://example.com/wp-admin/admin.php?page=elementor-element-manager',
+		);
+	} );
+} );
+
 describe( 'isNavigationLeavingCurrentScreen', () => {
 	it( 'should allow in-page settings tab hash navigation', () => {
 		const current = 'https://example.com/wp-admin/admin.php?page=elementor-settings#tab-general';
@@ -58,11 +71,19 @@ describe( 'isNavigationLeavingCurrentScreen', () => {
 } );
 
 describe( 'isSafeAdminNavigationDestination', () => {
-	it( 'should allow same-origin elementor admin URLs', () => {
+	it( 'should allow same-origin wp-admin URLs', () => {
 		const destination = 'https://example.com/wp-admin/admin.php?page=elementor-tools';
 
 		expect(
-			isSafeAdminNavigationDestination( destination ),
+			isSafeAdminNavigationDestination( destination, TEST_ORIGIN ),
+		).toBe( true );
+	} );
+
+	it( 'should allow element manager admin URLs', () => {
+		const destination = 'https://example.com/wp-admin/admin.php?page=elementor-element-manager';
+
+		expect(
+			isSafeAdminNavigationDestination( destination, TEST_ORIGIN ),
 		).toBe( true );
 	} );
 
@@ -70,15 +91,15 @@ describe( 'isSafeAdminNavigationDestination', () => {
 		const destination = 'https://other.test/wp-admin/admin.php?page=elementor-tools';
 
 		expect(
-			isSafeAdminNavigationDestination( destination ),
+			isSafeAdminNavigationDestination( destination, TEST_ORIGIN ),
 		).toBe( false );
 	} );
 
-	it( 'should reject non-elementor admin pages', () => {
-		const destination = 'https://example.com/wp-admin/admin.php?page=plugins';
+	it( 'should reject non-wp-admin URLs', () => {
+		const destination = 'https://example.com/blog/post';
 
 		expect(
-			isSafeAdminNavigationDestination( destination ),
+			isSafeAdminNavigationDestination( destination, TEST_ORIGIN ),
 		).toBe( false );
 	} );
 } );
@@ -147,7 +168,7 @@ describe( 'SettingsFormSave', () => {
 
 		delete window.location;
 		window.location = {
-			origin: 'https://example.com',
+			origin: TEST_ORIGIN,
 			href: 'https://example.com/wp-admin/admin.php?page=elementor-settings&settings-updated=true',
 			search: '?page=elementor-settings&settings-updated=true',
 			assign: assignMock,
@@ -172,7 +193,7 @@ describe( 'SettingsFormSave', () => {
 
 		delete window.location;
 		window.location = {
-			origin: 'https://example.com',
+			origin: TEST_ORIGIN,
 			href: 'https://example.com/wp-admin/admin.php?page=elementor-settings&settings-updated=true',
 			search: '?page=elementor-settings&settings-updated=true',
 			assign: assignMock,

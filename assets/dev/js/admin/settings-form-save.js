@@ -44,6 +44,14 @@ export function serializeSettingsForm( form ) {
 	return entries.map( ( [ name, value ] ) => `${ name }\u0000${ value }` ).join( '\n' );
 }
 
+export function resolveAdminNavigationUrl( href, baseHref = window.location.href ) {
+	try {
+		return new URL( href, baseHref ).href;
+	} catch ( error ) {
+		return null;
+	}
+}
+
 export function isNavigationLeavingCurrentScreen( currentHref, targetHref ) {
 	const origin = window.location.origin;
 	const current = new URL( currentHref, origin );
@@ -63,21 +71,15 @@ export function isNavigationLeavingCurrentScreen( currentHref, targetHref ) {
 	return currentPage !== targetPage;
 }
 
-export function isSafeAdminNavigationDestination( destination ) {
+export function isSafeAdminNavigationDestination( destination, origin = window.location.origin ) {
 	try {
-		const target = new URL( destination, window.location.origin );
+		const target = new URL( destination );
 
-		if ( target.origin !== window.location.origin ) {
+		if ( target.origin !== origin ) {
 			return false;
 		}
 
-		if ( ! target.pathname.endsWith( 'admin.php' ) ) {
-			return false;
-		}
-
-		const page = target.searchParams.get( 'page' );
-
-		return !! page && page.startsWith( 'elementor' );
+		return target.pathname.includes( '/wp-admin/' );
 	} catch ( error ) {
 		return false;
 	}
@@ -115,7 +117,9 @@ export default class SettingsFormSave {
 	}
 
 	wasSettingsJustSaved() {
-		return 'true' === new URLSearchParams( window.location.search ).get( 'settings-updated' );
+		const settingsUpdated = new URLSearchParams( window.location.search ).get( 'settings-updated' );
+
+		return 'true' === settingsUpdated || '1' === settingsUpdated;
 	}
 
 	completeNavigationAfterSave() {
@@ -125,12 +129,12 @@ export default class SettingsFormSave {
 			return;
 		}
 
-		sessionStorage.removeItem( NAV_AFTER_SAVE_STORAGE_KEY );
-
 		if ( ! isSafeAdminNavigationDestination( destination ) ) {
+			sessionStorage.removeItem( NAV_AFTER_SAVE_STORAGE_KEY );
 			return;
 		}
 
+		sessionStorage.removeItem( NAV_AFTER_SAVE_STORAGE_KEY );
 		this.allowNavigation = true;
 		window.location.assign( destination );
 	}
@@ -194,9 +198,9 @@ export default class SettingsFormSave {
 				return;
 			}
 
-			const destination = new URL( href, window.location.origin ).href;
+			const destination = resolveAdminNavigationUrl( href );
 
-			if ( ! isNavigationLeavingCurrentScreen( window.location.href, destination ) ) {
+			if ( ! destination || ! isNavigationLeavingCurrentScreen( window.location.href, destination ) ) {
 				return;
 			}
 
@@ -248,6 +252,9 @@ export default class SettingsFormSave {
 			headerMessage: __( 'You have unsaved changes', 'elementor' ),
 			message: this.getLeaveDialogMessage(),
 			closeButton: true,
+			closeButtonOptions: {
+				iconClass: 'eicon-close',
+			},
 			strings: {
 				confirm: __( 'Save changes', 'elementor' ),
 				cancel: __( 'Discard', 'elementor' ),
@@ -267,15 +274,18 @@ export default class SettingsFormSave {
 	}
 
 	showNativeLeaveDialog( destination ) {
+		/* eslint-disable no-alert -- Fallback when dialogsManager is unavailable. */
 		const saveChanges = window.confirm(
 			`${ __( 'You have unsaved changes', 'elementor' ) }\n\n${ this.getLeaveDialogMessage() }\n\n${ __( 'Save your changes before leaving?', 'elementor' ) }`,
 		);
+		/* eslint-enable no-alert */
 
 		if ( saveChanges ) {
 			this.persistNavigationAndSubmit( destination );
 			return;
 		}
 
+		/* eslint-disable-next-line no-alert */
 		const discardChanges = window.confirm(
 			__( 'Discard unsaved changes and leave this page?', 'elementor' ),
 		);
