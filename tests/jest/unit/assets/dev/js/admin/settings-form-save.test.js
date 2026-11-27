@@ -6,6 +6,7 @@ import SettingsFormSave, {
 } from 'elementor-admin/settings-form-save';
 
 const NAV_AFTER_SAVE_STORAGE_KEY = 'elementor_admin_settings_nav_after_save';
+const NAV_AFTER_SAVE_INTENT_KEY = 'elementor_admin_settings_nav_after_save_intent';
 const TEST_ORIGIN = 'https://example.com';
 
 describe( 'serializeSettingsForm', () => {
@@ -178,6 +179,7 @@ describe( 'SettingsFormSave', () => {
 			NAV_AFTER_SAVE_STORAGE_KEY,
 			'https://example.com/wp-admin/admin.php?page=elementor-tools',
 		);
+		sessionStorage.setItem( NAV_AFTER_SAVE_INTENT_KEY, '1' );
 
 		const form = createForm();
 		new SettingsFormSave( form );
@@ -186,6 +188,29 @@ describe( 'SettingsFormSave', () => {
 			'https://example.com/wp-admin/admin.php?page=elementor-tools',
 		);
 		expect( sessionStorage.getItem( NAV_AFTER_SAVE_STORAGE_KEY ) ).toBeNull();
+		expect( sessionStorage.getItem( NAV_AFTER_SAVE_INTENT_KEY ) ).toBeNull();
+	} );
+
+	it( 'should not redirect without save-and-navigate intent', () => {
+		const assignMock = jest.fn();
+
+		delete window.location;
+		window.location = {
+			origin: TEST_ORIGIN,
+			href: 'https://example.com/wp-admin/admin.php?page=elementor-settings&settings-updated=true',
+			search: '?page=elementor-settings&settings-updated=true',
+			assign: assignMock,
+		};
+
+		sessionStorage.setItem(
+			NAV_AFTER_SAVE_STORAGE_KEY,
+			'https://example.com/wp-admin/admin.php?page=elementor-tools',
+		);
+
+		const form = createForm();
+		new SettingsFormSave( form );
+
+		expect( assignMock ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should clear unsafe post-save destinations', () => {
@@ -203,11 +228,13 @@ describe( 'SettingsFormSave', () => {
 			NAV_AFTER_SAVE_STORAGE_KEY,
 			'https://evil.test/wp-admin/admin.php?page=elementor-tools',
 		);
+		sessionStorage.setItem( NAV_AFTER_SAVE_INTENT_KEY, '1' );
 
 		const form = createForm();
 		new SettingsFormSave( form );
 
 		expect( assignMock ).not.toHaveBeenCalled();
 		expect( sessionStorage.getItem( NAV_AFTER_SAVE_STORAGE_KEY ) ).toBeNull();
+		expect( sessionStorage.getItem( NAV_AFTER_SAVE_INTENT_KEY ) ).toBeNull();
 	} );
 } );

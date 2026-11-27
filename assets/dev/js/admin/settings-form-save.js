@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 
 const SETTINGS_FORM_FIELD_SELECTOR = 'input, select, textarea';
 const NAV_AFTER_SAVE_STORAGE_KEY = 'elementor_admin_settings_nav_after_save';
+const NAV_AFTER_SAVE_INTENT_KEY = 'elementor_admin_settings_nav_after_save_intent';
 const SCROLL_Y_AFTER_SAVE_STORAGE_KEY = 'elementor_admin_settings_scroll_y_after_save';
 
 export function serializeSettingsForm( form ) {
@@ -122,19 +123,33 @@ export default class SettingsFormSave {
 		return 'true' === settingsUpdated || '1' === settingsUpdated;
 	}
 
+	hasSettingsSaveNotice() {
+		return !! document.getElementById( 'setting-error-settings_updated' );
+	}
+
+	wasSettingsSavedForRedirect() {
+		return this.wasSettingsJustSaved() || this.hasSettingsSaveNotice();
+	}
+
+	clearNavigationAfterSaveStorage() {
+		sessionStorage.removeItem( NAV_AFTER_SAVE_STORAGE_KEY );
+		sessionStorage.removeItem( NAV_AFTER_SAVE_INTENT_KEY );
+	}
+
 	completeNavigationAfterSave() {
 		const destination = sessionStorage.getItem( NAV_AFTER_SAVE_STORAGE_KEY );
+		const hasNavIntent = '1' === sessionStorage.getItem( NAV_AFTER_SAVE_INTENT_KEY );
 
-		if ( ! destination || ! this.wasSettingsJustSaved() ) {
+		if ( ! destination || ! hasNavIntent || ! this.wasSettingsSavedForRedirect() ) {
 			return;
 		}
 
 		if ( ! isSafeAdminNavigationDestination( destination ) ) {
-			sessionStorage.removeItem( NAV_AFTER_SAVE_STORAGE_KEY );
+			this.clearNavigationAfterSaveStorage();
 			return;
 		}
 
-		sessionStorage.removeItem( NAV_AFTER_SAVE_STORAGE_KEY );
+		this.clearNavigationAfterSaveStorage();
 		this.allowNavigation = true;
 		window.location.assign( destination );
 	}
@@ -254,6 +269,13 @@ export default class SettingsFormSave {
 			closeButton: true,
 			closeButtonOptions: {
 				iconClass: 'eicon-close',
+				attributes: {
+					'aria-label': __( 'Close', 'elementor' ),
+					class: 'dialog-close-button',
+					href: '#',
+					role: 'button',
+					tabindex: 0,
+				},
 			},
 			strings: {
 				confirm: __( 'Save changes', 'elementor' ),
@@ -300,6 +322,7 @@ export default class SettingsFormSave {
 
 	persistNavigationAndSubmit( destination ) {
 		sessionStorage.setItem( NAV_AFTER_SAVE_STORAGE_KEY, destination );
+		sessionStorage.setItem( NAV_AFTER_SAVE_INTENT_KEY, '1' );
 		this.allowNavigation = true;
 
 		if ( 'function' === typeof this.form.requestSubmit ) {
