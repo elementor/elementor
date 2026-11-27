@@ -1,5 +1,8 @@
-import { act, renderHook } from '@testing-library/react';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import { act, renderHook } from '@testing-library/react';
+
+import type * as Selection from '../elements-panel-selection';
+import type * as LegacyMode from '../legacy-mode';
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	isExperimentActive: jest.fn(),
@@ -7,7 +10,7 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 
 const STORAGE_KEY = 'elementor:new-experience:elements-panel';
 
-type Api = typeof import( '../index' );
+type Api = typeof LegacyMode & typeof Selection;
 
 function loadApi(): Api {
 	let api!: Api;
