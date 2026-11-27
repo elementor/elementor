@@ -100,14 +100,14 @@ class Role_Manager extends Settings_Page {
 		$this->get_tabs();
 
 		if ( Settings_Page::is_settings_save_experience_active() ) {
-			$this->display_settings_page_with_admin_flow_save();
+			$this->render_role_manager_with_admin_flow_save();
 			return;
 		}
 
-		$this->display_settings_page_legacy();
+		$this->render_role_manager_legacy();
 	}
 
-	private function display_settings_page_with_admin_flow_save(): void {
+	private function render_role_manager_with_admin_flow_save(): void {
 		$nav_screen = $this->get_settings_nav_screen_slug();
 		?>
 		<div class="wrap">
@@ -141,7 +141,7 @@ class Role_Manager extends Settings_Page {
 		<?php
 	}
 
-	private function display_settings_page_legacy(): void {
+	private function render_role_manager_legacy(): void {
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline"><?php echo esc_html( $this->get_page_title() ); ?></h1>
