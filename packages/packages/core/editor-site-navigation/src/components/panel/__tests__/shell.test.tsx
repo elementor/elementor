@@ -3,6 +3,7 @@ import { renderWithQuery } from 'test-utils';
 import { screen } from '@testing-library/react';
 
 import useAccessiblePanelPostTypes from '../../../hooks/use-accessible-panel-post-types';
+import { registerSiteContentSection, resetSiteContentSections } from '../../../site-content-sections';
 import Shell from '../shell';
 
 jest.mock( '../../../hooks/use-posts', () => ( {
@@ -41,11 +42,16 @@ const mockUseAccessiblePanelPostTypes = jest.mocked( useAccessiblePanelPostTypes
 
 describe( 'Shell', () => {
 	beforeEach( () => {
+		resetSiteContentSections();
 		mockUseAccessiblePanelPostTypes.mockReturnValue( {
 			accessiblePostTypes: [ 'page', 'post' ],
 			isUserPending: false,
 			showUserLoadError: false,
 		} );
+	} );
+
+	afterEach( () => {
+		resetSiteContentSections();
 	} );
 
 	it( 'shows no sections while user capabilities are pending', () => {
@@ -99,6 +105,30 @@ describe( 'Shell', () => {
 
 		expect( screen.getByText( 'Pages' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Posts' ) ).toBeInTheDocument();
+	} );
+
+	it( 'shows the content types filter when more than one section is available', () => {
+		registerSiteContentSection( {
+			id: 'popups',
+			label: 'Popups',
+			render: () => null,
+		} );
+
+		renderWithQuery( <Shell /> );
+
+		expect( screen.getByRole( 'button', { name: 'Content types' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'hides the content types filter when only one section is available', () => {
+		mockUseAccessiblePanelPostTypes.mockReturnValue( {
+			accessiblePostTypes: [ 'page' ],
+			isUserPending: false,
+			showUserLoadError: false,
+		} );
+
+		renderWithQuery( <Shell /> );
+
+		expect( screen.queryByRole( 'button', { name: 'Content types' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows an error message when user capabilities fail to load', () => {

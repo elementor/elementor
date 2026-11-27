@@ -55,16 +55,16 @@ class Test_Post_Noindex extends Elementor_Test_Base {
 		$post_id = $this->factory()->post->create( [
 			'post_status' => 'publish',
 		] );
-		update_post_meta( $post_id, '_seopress_robots_index', 'no' );
+		update_post_meta( $post_id, '_seopress_robots_index', 'yes' );
 
 		$this->assertTrue( Post_Noindex::is_noindex( $post_id ) );
 	}
 
-	public function test_seopress_index_enabled_is_not_noindex() {
+	public function test_seopress_without_noindex_is_indexable() {
 		$post_id = $this->factory()->post->create( [
 			'post_status' => 'publish',
 		] );
-		update_post_meta( $post_id, '_seopress_robots_index', 'yes' );
+		update_post_meta( $post_id, '_seopress_robots_index', 'no' );
 
 		$this->assertFalse( Post_Noindex::is_noindex( $post_id ) );
 	}
