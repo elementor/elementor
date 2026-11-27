@@ -281,7 +281,7 @@ class Test_Validation extends TestCase {
 
 	public function test_sanitize__will_throw_if_number_of_interactions_per_element_exceeds_the_limit() {
 		$interactions = [];
-		for ( $i = 0; $i < 6; $i++ ) {
+		for ( $i = 0; $i <= Validation::MAX_INTERACTIONS_PER_ELEMENT; $i++ ) {
 			$interactions[] = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0 );
 		}
 
@@ -308,7 +308,7 @@ class Test_Validation extends TestCase {
 
 	public function test_validate__will_not_throw_if_number_of_interactions_per_element_within_the_limit() {
 		$interactions = [];
-		for ( $i = 0; $i < 5; $i++ ) {
+		for ( $i = 0; $i < Validation::MAX_INTERACTIONS_PER_ELEMENT; $i++ ) {
 			$interactions[] = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0 );
 		}
 
@@ -569,5 +569,82 @@ class Test_Validation extends TestCase {
 		$result = $this->validation()->sanitize( $document );
 
 		$this->assertNotEmpty( $result['elements'][0]['interactions'] );
+	}
+
+	public function test_sanitize__keeps_valid_code_effect() {
+		// Arrange.
+		$document = $this->document_with_items( [ $this->create_code_effect_interaction( 'load' ) ] );
+
+		// Act.
+		$result = $this->validation()->sanitize( $document );
+
+		// Assert.
+		$items = json_decode( $result['elements'][0]['interactions'], true )['items'];
+		$this->assertCount( 1, $items );
+		$this->assertSame( 'code', $items[0]['value']['animation']['value']['effect']['value'] );
+	}
+
+	public function test_sanitize__keeps_code_effect_with_code_effect_only_trigger() {
+		// Arrange.
+		$document = $this->document_with_items( [ $this->create_code_effect_interaction( 'drag' ) ] );
+
+		// Act.
+		$result = $this->validation()->sanitize( $document );
+
+		// Assert.
+		$items = json_decode( $result['elements'][0]['interactions'], true )['items'];
+		$this->assertSame( 'drag', $items[0]['value']['trigger']['value'] );
+	}
+
+	public function test_sanitize__strips_preset_effect_with_code_effect_only_trigger() {
+		// Arrange.
+		$document = $this->document_with_items( [ $this->create_prop_type_interaction( 'longPress', 'fade' ) ] );
+
+		// Act.
+		$result = $this->validation()->sanitize( $document );
+
+		// Assert.
+		$this->assertEquals( [], $result['elements'][0]['interactions'] );
+	}
+
+	public function test_sanitize__strips_code_effect_without_code() {
+		// Arrange.
+		$interaction = $this->create_code_effect_interaction( 'load' );
+		unset( $interaction['value']['animation']['value']['code_effect'] );
+		$document = $this->document_with_items( [ $interaction ] );
+
+		// Act.
+		$result = $this->validation()->sanitize( $document );
+
+		// Assert.
+		$this->assertEquals( [], $result['elements'][0]['interactions'] );
+	}
+
+	private function document_with_items( array $items ) {
+		return [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => $items,
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+	}
+
+	private function create_code_effect_interaction( $trigger ) {
+		$interaction = $this->create_prop_type_interaction( $trigger, 'code' );
+		$interaction['value']['animation']['value']['code_effect'] = [
+			'$$type' => 'code-effect',
+			'value' => [
+				'code' => [ '$$type' => 'code', 'value' => '({ element, motion }) => motion.animate( element, { scale: 1.1 } )' ],
+			],
+		];
+
+		return $interaction;
 	}
 }

@@ -21,6 +21,14 @@ import { type PlainCustomEffect, toCustomEffectPropValue } from './custom-effect
 import { getInteractionsConfig } from './get-interactions-config';
 import { generateTempInteractionId } from './temp-id-utils';
 
+export const CODE_EFFECT = 'code';
+
+export const EVENT_TRIGGER = 'event';
+
+export const CODE_EFFECT_EXTRA_TRIGGERS = [ 'scrollOut', 'doubleClick', 'longPress', 'drag', 'resize', EVENT_TRIGGER ];
+
+const EFFECTS_WITHOUT_TYPE = [ 'custom', CODE_EFFECT ];
+
 export const createString = ( value: string ): StringPropValue => ( {
 	$$type: 'string',
 	value,
@@ -116,6 +124,7 @@ export const createAnimationPreset = ( {
 	start,
 	end,
 	customEffects,
+	codeEffect,
 }: {
 	effect: string;
 	type: string;
@@ -130,13 +139,17 @@ export const createAnimationPreset = ( {
 	start?: SizeStringValue;
 	end?: SizeStringValue;
 	customEffects?: PropValue | PlainCustomEffect;
+	codeEffect?: PropValue;
 } ): AnimationPresetPropValue => {
 	const customEffectProp = toCustomEffectPropValue( customEffects );
+	const hasCodeEffect = CODE_EFFECT === effect && codeEffect !== undefined;
+
 	return {
 		$$type: 'animation-preset-props',
 		value: {
 			effect: createString( effect ),
 			...( customEffectProp !== undefined && { custom_effect: customEffectProp } ),
+			...( hasCodeEffect && { code_effect: codeEffect } ),
 			type: createString( type ),
 			direction: createString( direction ?? '' ),
 			timing_config: createTimingConfig( duration, delay ),
@@ -250,20 +263,35 @@ const TRIGGER_LABELS: Record< string, string > = {
 	scrollIn: 'Scroll into view',
 	scrollOut: 'Scroll out of view',
 	scrollOn: 'While scrolling',
+	doubleClick: 'Double click',
+	longPress: 'Long press',
+	event: 'On event',
 };
 
 const capitalize = ( str: string ): string => {
 	return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
 };
 
+type NamedCodeEffect = { value?: { name?: StringPropValue } };
+
+export const extractCodeEffectName = ( codeEffect?: PropValue ): string =>
+	extractString( ( codeEffect as NamedCodeEffect | undefined )?.value?.name );
+
 export const buildDisplayLabel = ( item: InteractionItemValue ): string => {
 	const trigger = extractString( item.trigger );
 	const effect = extractString( item.animation.value.effect );
 	const type = extractString( item.animation.value.type );
 
-	const triggerLabel = TRIGGER_LABELS[ trigger ] || capitalize( trigger );
-	const effectLabel = capitalize( effect );
-	const typeLabel = 'custom' === effect ? '' : capitalize( type );
+	const eventName = EVENT_TRIGGER === trigger ? extractString( item.event ) : '';
+	const triggerLabel = [ TRIGGER_LABELS[ trigger ] || capitalize( trigger ), eventName ]
+		.filter( Boolean )
+		.join( ' ' );
+	const codeEffectName = CODE_EFFECT === effect ? extractCodeEffectName( item.animation.value.code_effect ) : '';
+	const effectLabel = codeEffectName || capitalize( effect );
+	const typeLabel = EFFECTS_WITHOUT_TYPE.includes( effect ) ? '' : capitalize( type );
 
-	return `${ triggerLabel }: ${ effectLabel } ${ typeLabel }`;
+	const firesEvent = extractString( item.fires_event );
+	const firesLabel = firesEvent ? ` → ${ firesEvent }` : '';
+
+	return `${ triggerLabel }: ${ effectLabel } ${ typeLabel }${ firesLabel }`;
 };

@@ -1,9 +1,82 @@
 import {
+	buildDisplayLabel,
+	createAnimationPreset,
 	createExcludedBreakpoints,
 	createInteractionBreakpoints,
 	createString,
 	extractExcludedBreakpoints,
 } from '../utils/prop-value-utils';
+import { createInteractionItemValue } from './utils';
+
+describe( 'createAnimationPreset code effect', () => {
+	const codeEffect = { $$type: 'code-effect', value: { code: { $$type: 'code', value: '() => {}' } } };
+	const baseOptions = { type: 'in', duration: 600, delay: 0, replay: false, codeEffect };
+
+	it( 'should include code_effect when the effect is code', () => {
+		// Act
+		const result = createAnimationPreset( { ...baseOptions, effect: 'code' } );
+
+		// Assert
+		expect( result.value.code_effect ).toEqual( codeEffect );
+	} );
+
+	it( 'should drop code_effect when the effect is not code', () => {
+		// Act
+		const result = createAnimationPreset( { ...baseOptions, effect: 'fade' } );
+
+		// Assert
+		expect( result.value.code_effect ).toBeUndefined();
+	} );
+
+	it( 'should label code effects without a type', () => {
+		// Arrange
+		const item = createInteractionItemValue( { trigger: 'load', effect: 'code' } );
+
+		// Act
+		const label = buildDisplayLabel( item );
+
+		// Assert
+		expect( label ).toBe( 'On page load: Code ' );
+	} );
+
+	it( 'should label code effect only triggers', () => {
+		// Arrange
+		const item = createInteractionItemValue( { trigger: 'longPress', effect: 'code' } );
+
+		// Act
+		const label = buildDisplayLabel( item );
+
+		// Assert
+		expect( label ).toBe( 'Long press: Code ' );
+	} );
+
+	it( 'should include the event name in the label of an event trigger', () => {
+		// Arrange
+		const item = createInteractionItemValue( { trigger: 'event', effect: 'code' } );
+		item.event = createString( 'card-open' );
+
+		// Act
+		const label = buildDisplayLabel( item );
+
+		// Assert
+		expect( label ).toBe( 'On event card-open: Code ' );
+	} );
+
+	it( 'should label a code effect by its name', () => {
+		// Arrange
+		const item = createInteractionItemValue( { trigger: 'hover', effect: 'code' } );
+		item.animation.value.code_effect = {
+			$$type: 'code-effect',
+			value: { name: createString( 'Add class "is-active"' ) },
+		};
+
+		// Act
+		const label = buildDisplayLabel( item );
+
+		// Assert
+		expect( label ).toBe( 'Hover: Add class "is-active" ' );
+	} );
+} );
 
 describe( 'Breakpoints Utility Functions', () => {
 	describe( 'createExcludedBreakpoints', () => {

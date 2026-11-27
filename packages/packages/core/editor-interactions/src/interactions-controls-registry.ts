@@ -3,10 +3,12 @@ import { type PropValue } from '@elementor/editor-props';
 
 import {
 	type DirectionFieldProps,
+	type EffectFieldProps,
 	type FieldProps,
 	type RepeatFieldProps,
 	type ReplayFieldProps,
 	type TimesFieldProps,
+	type TriggerFieldProps,
 } from './types';
 
 export type InteractionsControlType =
@@ -23,12 +25,14 @@ export type InteractionsControlType =
 	| 'relativeTo'
 	| 'start'
 	| 'end'
-	| 'customEffects';
+	| 'customEffects'
+	| 'codeEffect';
 
 type InteractionsControlPropsMap = {
-	trigger: FieldProps;
-	effect: FieldProps;
+	trigger: TriggerFieldProps;
+	effect: EffectFieldProps;
 	customEffects: FieldProps< PropValue >;
+	codeEffect: FieldProps< PropValue >;
 	effectType: FieldProps;
 	direction: DirectionFieldProps;
 	duration: FieldProps;
@@ -51,7 +55,13 @@ type ControlOptions< T extends InteractionsControlType > = {
 type StoredControlOptions = {
 	type: InteractionsControlType;
 	component: ComponentType<
-		FieldProps | DirectionFieldProps | ReplayFieldProps | RepeatFieldProps | TimesFieldProps
+		| FieldProps
+		| EffectFieldProps
+		| TriggerFieldProps
+		| DirectionFieldProps
+		| ReplayFieldProps
+		| RepeatFieldProps
+		| TimesFieldProps
 	>;
 	options?: string[];
 };

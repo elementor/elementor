@@ -2,8 +2,9 @@
 
 namespace Elementor\Modules\Interactions;
 
-use Elementor\Plugin;
+use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Interactions\Cache\Interactions_Postmeta;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -48,6 +49,10 @@ class Interactions_Frontend_Handler {
 			return $elements_data;
 		}
 
+		if ( Component_Document::TYPE === get_post_type( $post_id ) ) {
+			Interactions_Collector::instance()->register_component_roots( array_column( $elements_data, 'id' ) );
+		}
+
 		$interactions_postmeta = new Interactions_Postmeta();
 		$cached_rows = $interactions_postmeta->load_content( $post_id );
 
@@ -86,7 +91,7 @@ class Interactions_Frontend_Handler {
 		$this->enqueue_interactions_assets();
 
 		// Output as JSON script tag
-		$json_data = wp_json_encode( $elements_with_interactions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+		$json_data = wp_json_encode( $elements_with_interactions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON data is already encoded
 		echo '<script type="application/json" id="' . Module::SCRIPT_ID_INTERACTIONS_DATA . '">' . $json_data . '</script>';

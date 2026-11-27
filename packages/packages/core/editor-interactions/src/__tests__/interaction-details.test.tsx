@@ -585,6 +585,134 @@ describe( 'InteractionDetails', () => {
 		} );
 	} );
 
+	describe( 'Code effect', () => {
+		const codeEffectValue = {
+			$$type: 'code-effect',
+			value: { code: { $$type: 'code', value: '({ element, motion }) => motion.hover( element, () => {} )' } },
+		};
+
+		const mockCodeEffectControl = jest.fn( ( { onChange } ) => (
+			<button onClick={ () => onChange( codeEffectValue ) }>Update code effect</button>
+		) );
+
+		const createCodeInteraction = () => {
+			const interaction = createInteractionItemValue( { trigger: 'load', effect: 'code' } );
+			interaction.animation.value.code_effect = codeEffectValue;
+
+			return interaction;
+		};
+
+		beforeEach( () => {
+			const { getInteractionsControl } = require( '../interactions-controls-registry' );
+			const defaultImplementation = getInteractionsControl.getMockImplementation();
+
+			getInteractionsControl.mockImplementation( ( type: string ) =>
+				type === 'codeEffect' ? { component: mockCodeEffectControl } : defaultImplementation( type )
+			);
+		} );
+
+		it( 'should show only the trigger, effect and code effect controls', () => {
+			// Arrange
+			const interaction = createCodeInteraction();
+
+			// Act
+			renderInteractionDetails( interaction );
+
+			// Assert
+			expect( screen.getByText( 'Trigger' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Effect' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Update code effect' } ) ).toBeInTheDocument();
+			[ 'Type', 'Direction', 'Duration', 'Delay', 'Easing', 'Replay' ].forEach( ( label ) => {
+				expect( screen.queryByText( label ) ).not.toBeInTheDocument();
+			} );
+		} );
+
+		it( 'should not render the code effect control for other effects', () => {
+			// Arrange
+			const interaction = createInteractionItemValue( { effect: 'fade' } );
+
+			// Act
+			renderInteractionDetails( interaction );
+
+			// Assert
+			expect( screen.queryByRole( 'button', { name: 'Update code effect' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should keep the trigger and pass the code effect through on change', () => {
+			// Arrange
+			const interaction = createCodeInteraction();
+			interaction.trigger = { $$type: 'string', value: 'drag' };
+			renderInteractionDetails( interaction );
+
+			// Act
+			fireEvent.click( screen.getByRole( 'button', { name: 'Update code effect' } ) );
+
+			// Assert
+			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
+			expect( updatedInteraction.trigger.value ).toBe( 'drag' );
+			expect( updatedInteraction.animation.value.code_effect ).toEqual( codeEffectValue );
+		} );
+
+		it( 'should pass the effect to the trigger control', () => {
+			// Arrange
+			const mockTriggerControl = jest.fn( () => null );
+			const { getInteractionsControl } = require( '../interactions-controls-registry' );
+			getInteractionsControl.mockImplementation( ( type: string ) =>
+				type === 'trigger' ? { component: mockTriggerControl } : null
+			);
+
+			// Act
+			renderInteractionDetails( createCodeInteraction() );
+
+			// Assert
+			expect( mockTriggerControl ).toHaveBeenCalledWith( expect.objectContaining( { effect: 'code' } ), {} );
+		} );
+
+		it( 'should pass the code effect name to the effect control', () => {
+			// Arrange
+			const { getInteractionsControl } = require( '../interactions-controls-registry' );
+			const mockEffectControl = jest.fn( () => null );
+			const defaultImplementation = getInteractionsControl.getMockImplementation();
+			getInteractionsControl.mockImplementation( ( type: string ) =>
+				type === 'effect' ? { component: mockEffectControl } : defaultImplementation( type )
+			);
+			const interaction = createCodeInteraction();
+			interaction.animation.value.code_effect = {
+				$$type: 'code-effect',
+				value: { ...codeEffectValue.value, name: { $$type: 'string', value: 'Set attribute aria-expanded' } },
+			};
+
+			// Act
+			renderInteractionDetails( interaction );
+
+			// Assert
+			expect( mockEffectControl ).toHaveBeenCalledWith(
+				expect.objectContaining( { codeEffectName: 'Set attribute aria-expanded' } ),
+				{}
+			);
+		} );
+
+		it( 'should reset a code effect only trigger to load when switching to a preset effect', () => {
+			// Arrange
+			const mockEffectControl = ( { onChange }: { onChange: ( value: string ) => void } ) => (
+				<button onClick={ () => onChange( 'fade' ) }>Use fade</button>
+			);
+			const { getInteractionsControl } = require( '../interactions-controls-registry' );
+			getInteractionsControl.mockImplementation( ( type: string ) =>
+				type === 'effect' ? { component: mockEffectControl } : null
+			);
+			const interaction = createCodeInteraction();
+			interaction.trigger = { $$type: 'string', value: 'longPress' };
+			renderInteractionDetails( interaction );
+
+			// Act
+			fireEvent.click( screen.getByRole( 'button', { name: 'Use fade' } ) );
+
+			// Assert
+			expect( mockOnChange.mock.calls[ 0 ][ 0 ].trigger.value ).toBe( 'load' );
+		} );
+	} );
+
 	describe( 'Start / End (size)', () => {
 		let startControlProps: { value: unknown; onChange: ( v: unknown ) => void };
 		let endControlProps: { value: unknown; onChange: ( v: unknown ) => void };

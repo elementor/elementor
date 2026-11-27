@@ -274,4 +274,34 @@ class Test_Parser extends TestCase {
 		$this->assertFalse( $method->invoke( $parser, '' ) );
 		$this->assertFalse( $method->invoke( $parser, null ) );
 	}
+
+	public function test_assign_interaction_ids__escapes_html_sensitive_characters_in_code() {
+		// Arrange.
+		$code = '({ element, motion }) => element.children.length > 0 && motion.animate( element, { x: 1 } )';
+		$given_document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'interactions' => json_encode( [
+						'items' => [
+							[
+								'$$type' => 'interaction-item',
+								'value' => [ 'code' => $code ],
+							],
+						],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		// Act.
+		$result = $this->parser()->assign_interaction_ids( $given_document );
+
+		// Assert.
+		$encoded = $result['elements'][0]['interactions'];
+		$this->assertStringNotContainsString( '>', $encoded );
+		$this->assertStringNotContainsString( '&', $encoded );
+		$this->assertSame( $code, json_decode( $encoded, true )['items'][0]['value']['code'] );
+	}
 }

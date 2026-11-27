@@ -17,10 +17,16 @@ class Presets {
 
 	const BASE_TRIGGERS = [ 'load', 'scrollIn' ];
 	const ADDITIONAL_TRIGGERS = [ 'scrollOut', 'scrollOn', 'hover', 'click' ];
+	const EVENT_TRIGGER = 'event';
+	const EVENT_NAME_MAX_LENGTH = 40;
+	const EVENT_NAME_PATTERN = '/^[a-z][a-z0-9-]{0,' . ( self::EVENT_NAME_MAX_LENGTH - 1 ) . '}$/';
+	const CODE_EFFECT_ONLY_TRIGGERS = [ 'doubleClick', 'longPress', 'drag', 'resize', self::EVENT_TRIGGER ];
 
 	const DEFAULT_EASING = 'easeIn';
 	const BASE_EFFECTS = [ 'fade', 'slide', 'scale' ];
-	const ADDITIONAL_EFFECTS = [ 'custom' ];
+	const ADDITIONAL_EFFECTS = [ 'custom', 'code' ];
+	const CODE_EFFECT = 'code';
+	const DEFAULT_CODE_EFFECT_TRIGGER = 'load';
 
 	const TYPES = [ 'in', 'out' ];
 	const DIRECTIONS = [ 'left', 'right', 'top', 'bottom', 'top-left', 'top-right', 'bottom-left', 'bottom-right', '' ];
@@ -40,7 +46,11 @@ class Presets {
 	}
 
 	public static function triggers_options() {
-		return array_merge( self::BASE_TRIGGERS, self::ADDITIONAL_TRIGGERS );
+		return array_merge( self::BASE_TRIGGERS, self::ADDITIONAL_TRIGGERS, self::CODE_EFFECT_ONLY_TRIGGERS );
+	}
+
+	public static function pro_triggers_options() {
+		return array_merge( self::ADDITIONAL_TRIGGERS, self::CODE_EFFECT_ONLY_TRIGGERS );
 	}
 
 	public function defaults() {
