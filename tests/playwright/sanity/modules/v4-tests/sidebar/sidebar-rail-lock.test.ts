@@ -82,6 +82,8 @@ test.describe( 'Sidebar rail lock @v4-tests', () => {
 
 		await test.step( 'The state survives a reload', async () => {
 			await page.reload();
+			await wpAdmin.waitForPanel();
+			await wpAdmin.closeAnnouncementsIfVisible();
 			await expect( railButton( 'Add Element' ) ).toBeEnabled();
 			await expectRailDisabled( [ DESIGN_SYSTEM, COMPONENTS ] );
 		} );
