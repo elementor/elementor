@@ -15,25 +15,9 @@ jest.mock( '@wordpress/i18n', () => ( {
 } ) );
 
 jest.mock( '@elementor/ui', () => ( {
-	Box: ( {
-		children,
-		onClick,
-		onKeyDown,
-		role,
-		tabIndex,
-	}: {
-		children: React.ReactNode;
-		onClick?: () => void;
-		onKeyDown?: ( event: React.KeyboardEvent ) => void;
-		role?: string;
-		tabIndex?: number;
-	} ) => (
-		<div role={ role } tabIndex={ tabIndex } onClick={ onClick } onKeyDown={ onKeyDown }>
-			{ children }
-		</div>
-	),
+	Box: ( { children, ...rest }: React.ComponentProps<'div'> ) => <div { ...rest }>{ children }</div>,
 	Rotate: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
-	Stack: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
+	Stack: ( { children, ...rest }: React.ComponentProps<'div'> ) => <div { ...rest }>{ children }</div>,
 	Typography: ( { children }: { children: React.ReactNode } ) => <span>{ children }</span>,
 	useTheme: () => ( { direction: 'ltr' } ),
 } ) );

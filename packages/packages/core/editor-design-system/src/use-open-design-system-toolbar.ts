@@ -10,7 +10,10 @@ const EVENT_TOGGLE = 'elementor/toggle-design-system';
 
 type ToggleDetail = { home?: true; tab?: DesignSystemTab };
 
-function getToolbarToggleDetail( panelOpen: boolean, view: ReturnType< typeof getActiveDesignSystemView > ): ToggleDetail {
+function getToolbarToggleDetail(
+	panelOpen: boolean,
+	view: ReturnType< typeof getActiveDesignSystemView >
+): ToggleDetail {
 	if ( ! panelOpen ) {
 		return { home: true };
 	}
