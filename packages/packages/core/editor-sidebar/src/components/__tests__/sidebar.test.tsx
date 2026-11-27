@@ -74,7 +74,9 @@ describe( 'Sidebar rail exclusive lock', () => {
 	} );
 
 	afterEach( () => {
-		ids.forEach( ( id ) => setItemState( id, {} ) );
+		act( () => {
+			ids.forEach( ( id ) => setItemState( id, {} ) );
+		} );
 	} );
 
 	it( 'should disable the other items and keep the exclusive selected owner enabled', () => {
