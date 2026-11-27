@@ -2,7 +2,7 @@ import * as React from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { usePanelActions, usePanelStatus } from '../../design-system-panel';
-import { getActiveDesignSystemTab, setPendingDesignSystemTab } from '../../initial-tab';
+import { getActiveDesignSystemView, setPendingDesignSystemHome, setPendingDesignSystemTab } from '../../initial-tab';
 import { DesignSystemEntrypoints } from '../design-system-entrypoints';
 
 const EVENT_OPEN_DEFAULTS = 'elementor/open-default-styles';
@@ -34,10 +34,13 @@ jest.mock( '../../design-system-panel', () => ( {
 } ) );
 
 jest.mock( '../../initial-tab', () => ( {
-	getActiveDesignSystemTab: jest.fn( () => 'defaults' ),
+	getActiveDesignSystemView: jest.fn( () => null ),
 	setPendingDesignSystemTab: jest.fn(),
+	setPendingDesignSystemHome: jest.fn(),
 	getInitialDesignSystemTab: jest.fn( () => 'defaults' ),
+	getInitialDesignSystemView: jest.fn( () => null ),
 	persistDesignSystemTab: jest.fn(),
+	notifyDesignSystemViewChange: jest.fn(),
 	notifyDesignSystemTabChange: jest.fn(),
 } ) );
 
@@ -87,7 +90,7 @@ describe( 'DesignSystemEntrypoints', () => {
 		} );
 
 		jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: false, isBlocked: false } );
-		jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'defaults' );
+		jest.mocked( getActiveDesignSystemView ).mockReturnValue( null );
 		mockUseActiveDocument.mockReturnValue( null );
 
 		jest.mocked( useDialog ).mockReturnValue( {
@@ -166,20 +169,20 @@ describe( 'DesignSystemEntrypoints', () => {
 			jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: true, isBlocked: false } );
 		} );
 
-		it( 'should close the panel when toggled with the same tab that is already active', () => {
-			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'defaults' );
+		it( 'should close the panel when toggled with home while the hub is active', () => {
+			jest.mocked( getActiveDesignSystemView ).mockReturnValue( null );
 
 			render( <DesignSystemEntrypoints /> );
 
 			act( () => {
-				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'defaults' } );
+				dispatchWindowEvent( EVENT_TOGGLE, { home: true } );
 			} );
 
 			expect( mockClose ).toHaveBeenCalled();
 		} );
 
 		it( 'should close variables panel when toggled with variables while variables is active', () => {
-			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'variables' );
+			jest.mocked( getActiveDesignSystemView ).mockReturnValue( 'variables' );
 
 			render( <DesignSystemEntrypoints /> );
 
@@ -191,7 +194,7 @@ describe( 'DesignSystemEntrypoints', () => {
 		} );
 
 		it( 'should close classes panel when toggled with classes while classes is active', () => {
-			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'classes' );
+			jest.mocked( getActiveDesignSystemView ).mockReturnValue( 'classes' );
 
 			render( <DesignSystemEntrypoints /> );
 
@@ -285,7 +288,7 @@ describe( 'DesignSystemEntrypoints', () => {
 	describe( 'tab persistence across close and reopen', () => {
 		it( 'should reopen with the classes tab after user switched to classes then closed', async () => {
 			jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: true, isBlocked: false } );
-			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'defaults' );
+			jest.mocked( getActiveDesignSystemView ).mockReturnValue( null );
 
 			const { unmount } = render( <DesignSystemEntrypoints /> );
 
@@ -309,7 +312,7 @@ describe( 'DesignSystemEntrypoints', () => {
 				close: mockClose,
 			} );
 			jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: false, isBlocked: false } );
-			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'classes' );
+			jest.mocked( getActiveDesignSystemView ).mockReturnValue( 'classes' );
 
 			const dispatchSpy2 = jest.spyOn( window, 'dispatchEvent' );
 
@@ -363,13 +366,13 @@ describe( 'DesignSystemEntrypoints', () => {
 			expect( mockOpen ).toHaveBeenCalled();
 		} );
 
-		it( 'should default to defaults when active-panel=design-system has no tab param', async () => {
+		it( 'should open home when active-panel=design-system has no tab param', async () => {
 			window.history.pushState( {}, '', '/?active-panel=design-system' );
 
 			render( <DesignSystemEntrypoints /> );
 			await fireRoutePanelOpenWithTimers();
 
-			expect( jest.mocked( setPendingDesignSystemTab ) ).toHaveBeenCalledWith( 'defaults' );
+			expect( jest.mocked( setPendingDesignSystemHome ) ).toHaveBeenCalled();
 			expect( mockOpen ).toHaveBeenCalled();
 		} );
 
@@ -514,7 +517,7 @@ describe( 'DesignSystemEntrypoints', () => {
 		it( 'should still allow closing the panel when document is dirty', () => {
 			mockUseActiveDocument.mockReturnValue( { isDirty: true } );
 			jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: true, isBlocked: false } );
-			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'variables' );
+			jest.mocked( getActiveDesignSystemView ).mockReturnValue( 'variables' );
 
 			render( <DesignSystemEntrypoints /> );
 

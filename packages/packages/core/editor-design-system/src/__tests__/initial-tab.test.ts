@@ -80,7 +80,7 @@ describe( 'getInitialDesignSystemTab — pending tab (key new behaviour)', () =>
 } );
 
 describe( 'notifyDesignSystemTabChange and getActiveDesignSystemTab', () => {
-	it( 'getActiveDesignSystemTab returns the initial stored value on fresh load', () => {
+	it( 'getActiveDesignSystemTab falls back to stored tab when view is home', () => {
 		localStorage.setItem( STORAGE_KEY, 'classes' );
 		mod = loadModule();
 
@@ -100,6 +100,24 @@ describe( 'notifyDesignSystemTabChange and getActiveDesignSystemTab', () => {
 	} );
 } );
 
+describe( 'getInitialDesignSystemView', () => {
+	it( 'returns null when no pending open is set', () => {
+		expect( mod.getInitialDesignSystemView() ).toBeNull();
+	} );
+
+	it( 'returns the pending section when setPendingDesignSystemTab was called', () => {
+		mod.setPendingDesignSystemTab( 'variables' );
+
+		expect( mod.getInitialDesignSystemView() ).toBe( 'variables' );
+	} );
+
+	it( 'returns null when setPendingDesignSystemHome was called', () => {
+		mod.setPendingDesignSystemHome();
+
+		expect( mod.getInitialDesignSystemView() ).toBeNull();
+	} );
+} );
+
 describe( 'persistDesignSystemTab', () => {
 	it( 'writes the tab value to localStorage', () => {
 		mod.persistDesignSystemTab( 'classes' );
@@ -114,9 +132,12 @@ describe( 'persistDesignSystemTab', () => {
 		expect( localStorage.getItem( STORAGE_KEY ) ).toBe( 'variables' );
 	} );
 
-	it( 'does NOT update activeTabInMemory (only notifyDesignSystemTabChange does that)', () => {
+	it( 'persists storage without changing the in-memory view', () => {
+		mod.notifyDesignSystemViewChange( null );
+
 		mod.persistDesignSystemTab( 'classes' );
 
-		expect( mod.getActiveDesignSystemTab() ).toBe( 'defaults' );
+		expect( mod.getActiveDesignSystemView() ).toBeNull();
+		expect( mod.getActiveDesignSystemTab() ).toBe( 'classes' );
 	} );
 } );

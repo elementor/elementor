@@ -234,6 +234,7 @@ function ClassManagerPanelContent( { onRequestClose, onExposeCloseAttempt }: Cla
 								label: __( 'Discard', 'elementor' ),
 								action: () => {
 									resetAndClosePanel();
+									void onRequestClose();
 								},
 							},
 							confirm: {

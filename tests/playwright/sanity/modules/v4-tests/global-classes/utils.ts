@@ -127,9 +127,8 @@ export async function openClassManager( page: Page, editor: EditorPage, divBlock
 	}
 
 	const panel = page.locator( '#elementor-panel' );
-	await panel.getByRole( 'heading', { level: 2, name: 'Design system' } ).waitFor( { state: 'visible' } );
-	await expect( panel.getByRole( 'tab', { name: 'Classes' } ) ).toHaveAttribute( 'aria-selected', 'true' );
-	await expect( panel.getByRole( 'button', { name: 'Save changes' } ) ).toBeVisible();
+	await panel.getByRole( 'button', { name: 'Back' } ).waitFor( { state: 'visible' } );
+	await expect( panel.getByRole( 'region', { name: 'Classes Manager' } ).getByRole( 'button', { name: 'Save changes' } ) ).toBeVisible();
 }
 
 export async function saveAndCloseClassManager( page: Page ): Promise<void> {
@@ -204,7 +203,7 @@ export async function saveAndCloseClassManagerViaDialog( page: Page ): Promise<v
 
 function classManagerListItem( page: Page, className: string ) {
 	return page
-		.locator( '#elementor-panel [role="tabpanel"]:visible' )
+		.locator( '#elementor-panel [role="region"][aria-label="Classes Manager"]' )
 		.locator( 'li[role="listitem"]' )
 		.filter( { has: page.getByText( className, { exact: true } ) } );
 }

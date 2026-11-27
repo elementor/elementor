@@ -492,6 +492,7 @@ describe( 'ClassManagerPanel', () => {
 	it( 'should restore to initial state on clicking "discard"', () => {
 		// Arrange.
 		jest.spyOn( slice.actions, 'resetToInitialState' );
+		const onRequestClose = jest.fn();
 		let attemptClose: ( () => void ) | null = null;
 
 		act( () => __dispatch( slice.actions.setOrder( [ 'class-1', 'class-2' ] ) ) );
@@ -501,7 +502,7 @@ describe( 'ClassManagerPanel', () => {
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
 					<ClassManagerPanelEmbedded
-						onRequestClose={ jest.fn() }
+						onRequestClose={ onRequestClose }
 						onExposeCloseAttempt={ ( cb ) => {
 							attemptClose = cb;
 						} }
@@ -519,6 +520,7 @@ describe( 'ClassManagerPanel', () => {
 		fireEvent.click( discardButton );
 		expect( slice.actions.resetToInitialState ).toHaveBeenCalledWith( { context: 'frontend' } );
 		expect( store.getState().globalClasses.data.order ).toEqual( [ 'class-2', 'class-1' ] );
+		expect( onRequestClose ).toHaveBeenCalled();
 	} );
 
 	it( 'should track classManagerSearched event when search field is focused', () => {

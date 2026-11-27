@@ -118,7 +118,7 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 		} );
 
 		await test.step( 'Imported classes are visible in Classes tab', async () => {
-			await designSystem.switchToClassesTab();
+			await designSystem.switchToClassesFromHome();
 			for ( const label of SAMPLE_CLASSES_LABELS ) {
 				await expect( designSystem.getClassItem( label ) ).toBeVisible();
 			}

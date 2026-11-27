@@ -13,13 +13,12 @@ export default class VariablesManagerPage {
 	async openVariableManager() {
 		await this.designSystem.openFromToolbar();
 
-		const isVariablesTabSelected = await this.designSystem.variablesTab
-			.getAttribute( 'aria-selected' )
-			.then( ( v ) => 'true' === v )
-			.catch( () => false );
+		const isOnVariables =
+			( await this.designSystem.addVariableButton.isVisible().catch( () => false ) ) ||
+			( await this.designSystem.variablesSearchInput.isVisible().catch( () => false ) );
 
-		if ( ! isVariablesTabSelected ) {
-			await this.designSystem.switchToVariablesTab();
+		if ( ! isOnVariables ) {
+			await this.designSystem.switchToVariablesFromHome();
 		}
 	}
 
