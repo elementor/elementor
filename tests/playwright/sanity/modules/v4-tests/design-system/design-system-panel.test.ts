@@ -40,10 +40,11 @@ test.describe( 'Design System Panel @v4-tests', () => {
 			await expect( designSystem.panelHeading ).toHaveText( 'Design system' );
 		} );
 
-		await test.step( 'All three tabs are rendered', async () => {
-			await expect( designSystem.defaultsTab ).toBeVisible();
-			await expect( designSystem.variablesTab ).toBeVisible();
-			await expect( designSystem.classesTab ).toBeVisible();
+		await test.step( 'Home navigation cards are rendered', async () => {
+			await expect( designSystem.homeList ).toBeVisible();
+			await expect( designSystem.variablesHomeItem ).toBeVisible();
+			await expect( designSystem.classesHomeItem ).toBeVisible();
+			await expect( designSystem.defaultStylesHomeItem ).toBeVisible();
 		} );
 	} );
 
@@ -59,8 +60,8 @@ test.describe( 'Design System Panel @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Defaults tab is active by default when panel opens from toolbar', async () => {
-		await test.step( 'Open panel from top bar with no prior preference', async () => {
+	test( 'Toolbar opens home hub instead of a specific section', async () => {
+		await test.step( 'Open panel from top bar', async () => {
 			await page.evaluate( () => {
 				window.localStorage.removeItem( 'elementor_editor_design_system_active_tab' );
 			} );
@@ -68,88 +69,65 @@ test.describe( 'Design System Panel @v4-tests', () => {
 			await designSystem.openFromToolbar();
 		} );
 
-		await test.step( 'Defaults tab is selected', async () => {
-			await expect( designSystem.defaultsTab ).toHaveAttribute( 'aria-selected', 'true' );
-		} );
-
-		await test.step( 'Defaults tab content (tag selector) is displayed', async () => {
-			await expect( designSystem.defaultsTagSelector ).toBeVisible();
-		} );
-
-		await test.step( 'Variables tab is not selected', async () => {
-			await expect( designSystem.variablesTab ).toHaveAttribute( 'aria-selected', 'false' );
+		await test.step( 'Home list is shown and section content is hidden', async () => {
+			await expect( designSystem.homeList ).toBeVisible();
+			await expect( designSystem.defaultsTagSelector ).toBeHidden();
 		} );
 	} );
 
-	test( 'Clicking Classes tab shows Class Manager content', async () => {
-		await test.step( 'Open panel (starts on Defaults tab)', async () => {
+	test( 'Choosing Classes from home shows Class Manager content', async () => {
+		await test.step( 'Open panel on home', async () => {
 			await page.evaluate( () => {
 				window.localStorage.removeItem( 'elementor_editor_design_system_active_tab' );
 			} );
 			await designSystem.openFromToolbar();
-			await expect( designSystem.defaultsTab ).toHaveAttribute( 'aria-selected', 'true' );
+			await expect( designSystem.homeList ).toBeVisible();
 		} );
 
-		await test.step( 'Switch to Classes tab', async () => {
-			await designSystem.switchToClassesTab();
-		} );
-
-		await test.step( 'Classes tab is now selected', async () => {
-			await expect( designSystem.classesTab ).toHaveAttribute( 'aria-selected', 'true' );
+		await test.step( 'Open Classes from home', async () => {
+			await designSystem.switchToClassesFromHome();
 		} );
 
 		await test.step( 'Class Manager content (Save changes button) is visible', async () => {
 			await expect( designSystem.classesSaveButton ).toBeVisible();
 		} );
 
-		await test.step( 'Variables Manager content is no longer displayed', async () => {
+		await test.step( 'Default styles content is not displayed', async () => {
 			await expect( designSystem.defaultsTagSelector ).toBeHidden();
 		} );
 	} );
 
-	test( 'Clicking Variables tab switches back from Classes to Variables', async () => {
-		await test.step( 'Open panel and switch to Classes', async () => {
-			await page.evaluate( () => {
-				window.localStorage.setItem( 'elementor_editor_design_system_active_tab', 'classes' );
-			} );
+	test( 'Choosing Variables from home shows Variables manager', async () => {
+		await test.step( 'Open panel and drill into Variables', async () => {
 			await designSystem.openFromToolbar();
-			await expect( designSystem.classesTab ).toHaveAttribute( 'aria-selected', 'true' );
+			await designSystem.switchToVariablesFromHome();
 		} );
 
-		await test.step( 'Switch to Variables tab', async () => {
-			await designSystem.switchToVariablesTab();
-		} );
-
-		await test.step( 'Variables tab is selected and content is visible', async () => {
-			await expect( designSystem.variablesTab ).toHaveAttribute( 'aria-selected', 'true' );
+		await test.step( 'Variables empty state is visible', async () => {
 			await expect( designSystem.variablesEmptyState ).toBeVisible();
 		} );
 	} );
 
-	test( 'Active tab is persisted across close and reopen from toolbar', async () => {
-		await test.step( 'Open panel and switch to Classes tab', async () => {
+	test( 'Reopen from toolbar lands on home even after visiting Classes', async () => {
+		await test.step( 'Open panel, open Classes, then close', async () => {
 			await page.evaluate( () => {
 				window.localStorage.removeItem( 'elementor_editor_design_system_active_tab' );
 			} );
 
 			await designSystem.openFromToolbar();
-			await designSystem.switchToClassesTab();
-			await expect( designSystem.classesTab ).toHaveAttribute( 'aria-selected', 'true' );
-		} );
-
-		await test.step( 'Close the panel', async () => {
+			await designSystem.switchToClassesFromHome();
 			await designSystem.closePanel();
 			await expect( designSystem.panelHeading ).toBeHidden();
 		} );
 
-		await test.step( 'Reopen from toolbar — Classes tab should still be active', async () => {
+		await test.step( 'Reopen from toolbar shows home, not Classes', async () => {
 			await designSystem.openFromToolbar();
-			await expect( designSystem.classesTab ).toHaveAttribute( 'aria-selected', 'true' );
-			await expect( designSystem.classesSaveButton ).toBeVisible();
+			await expect( designSystem.homeList ).toBeVisible();
+			await expect( designSystem.classesSaveButton ).toBeHidden();
 		} );
 	} );
 
-	test( 'Class Manager button in style panel opens Design System on Classes tab', async () => {
+	test( 'Class Manager button in style panel opens Design System on Classes', async () => {
 		let divBlockId: string;
 
 		await test.step( 'Add a div block element to the canvas', async () => {
@@ -160,19 +138,13 @@ test.describe( 'Design System Panel @v4-tests', () => {
 			await designSystem.openFromClassManagerButton( editor, divBlockId );
 		} );
 
-		await test.step( 'Design System panel is open', async () => {
-			await expect( designSystem.panelHeading ).toBeVisible();
-			await expect( designSystem.panelHeading ).toHaveText( 'Design system' );
-		} );
-
-		await test.step( 'Classes tab is active', async () => {
-			await expect( designSystem.classesTab ).toHaveAttribute( 'aria-selected', 'true' );
+		await test.step( 'Class Manager content is visible', async () => {
 			await expect( designSystem.classesSaveButton ).toBeVisible();
 		} );
 	} );
 
-	test( 'Toolbar button toggles panel closed when same tab is already active', async () => {
-		await test.step( 'Open panel on Defaults tab', async () => {
+	test( 'Toolbar button toggles panel closed when home is already showing', async () => {
+		await test.step( 'Open panel on home', async () => {
 			await page.evaluate( () => {
 				window.localStorage.removeItem( 'elementor_editor_design_system_active_tab' );
 			} );
@@ -186,13 +158,13 @@ test.describe( 'Design System Panel @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Variables tab shows create menu when Add variable button is clicked', async () => {
-		await test.step( 'Open panel and switch to Variables tab', async () => {
+	test( 'Variables section shows create menu when Add variable button is clicked', async () => {
+		await test.step( 'Open panel and open Variables from home', async () => {
 			await page.evaluate( () => {
 				window.localStorage.removeItem( 'elementor_editor_design_system_active_tab' );
 			} );
 			await designSystem.openFromToolbar();
-			await designSystem.switchToVariablesTab();
+			await designSystem.switchToVariablesFromHome();
 		} );
 
 		await test.step( 'Click "Add variable" button', async () => {
@@ -206,13 +178,13 @@ test.describe( 'Design System Panel @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Design System panel screenshot — Variables tab', async () => {
-		await test.step( 'Open panel and switch to Variables tab', async () => {
+	test( 'Design System panel screenshot — Variables section', async () => {
+		await test.step( 'Open panel and open Variables from home', async () => {
 			await page.evaluate( () => {
 				window.localStorage.removeItem( 'elementor_editor_design_system_active_tab' );
 			} );
 			await designSystem.openFromToolbar();
-			await designSystem.switchToVariablesTab();
+			await designSystem.switchToVariablesFromHome();
 		} );
 
 		await expect( page.locator( '#elementor-panel' ) ).toHaveScreenshot(
@@ -220,13 +192,13 @@ test.describe( 'Design System Panel @v4-tests', () => {
 		);
 	} );
 
-	test( 'Design System panel screenshot — Classes tab', async () => {
-		await test.step( 'Open panel and switch to Classes tab', async () => {
+	test( 'Design System panel screenshot — Classes section', async () => {
+		await test.step( 'Open panel and open Classes from home', async () => {
 			await page.evaluate( () => {
 				window.localStorage.removeItem( 'elementor_editor_design_system_active_tab' );
 			} );
 			await designSystem.openFromToolbar();
-			await designSystem.switchToClassesTab();
+			await designSystem.switchToClassesFromHome();
 		} );
 
 		await expect( page.locator( '#elementor-panel' ) ).toHaveScreenshot(

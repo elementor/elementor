@@ -24,20 +24,24 @@ export default class DesignSystemPage {
 		return this.panel.getByRole( 'heading', { level: 2, name: 'Design system' } );
 	}
 
+	get homeList(): Locator {
+		return this.panel.getByRole( 'list', { name: 'Design system sections' } );
+	}
+
+	get variablesHomeItem(): Locator {
+		return this.panel.getByRole( 'button', { name: 'Variables', exact: true } );
+	}
+
+	get classesHomeItem(): Locator {
+		return this.panel.getByRole( 'button', { name: 'Classes', exact: true } );
+	}
+
+	get defaultStylesHomeItem(): Locator {
+		return this.panel.getByRole( 'button', { name: 'Default styles', exact: true } );
+	}
+
 	get closeButton(): Locator {
 		return this.panel.getByRole( 'button', { name: 'Close' } );
-	}
-
-	get defaultsTab(): Locator {
-		return this.panel.getByRole( 'tab', { name: 'Defaults' } );
-	}
-
-	get variablesTab(): Locator {
-		return this.panel.getByRole( 'tab', { name: 'Variables' } );
-	}
-
-	get classesTab(): Locator {
-		return this.panel.getByRole( 'tab', { name: 'Classes' } );
 	}
 
 	get addVariableButton(): Locator {
@@ -57,11 +61,11 @@ export default class DesignSystemPage {
 	}
 
 	get defaultsSaveButton(): Locator {
-		return this.panel.getByRole( 'tabpanel' ).getByRole( 'button', { name: 'Save changes' } );
+		return this.panel.getByRole( 'region', { name: 'Default Styles' } ).getByRole( 'button', { name: 'Save changes' } );
 	}
 
 	get classesSaveButton(): Locator {
-		return this.panel.getByRole( 'button', { name: 'Save changes' } );
+		return this.panel.getByRole( 'region', { name: 'Classes Manager' } ).getByRole( 'button', { name: 'Save changes' } );
 	}
 
 	get headerMenuButton(): Locator {
@@ -151,19 +155,19 @@ export default class DesignSystemPage {
 		await this.panelHeading.waitFor( { state: 'hidden' } );
 	}
 
-	async switchToDefaultsTab(): Promise< void > {
-		await this.defaultsTab.click();
-		await expect( this.defaultsTab ).toHaveAttribute( 'aria-selected', 'true' );
+	async switchToDefaultsFromHome(): Promise< void > {
+		await this.defaultStylesHomeItem.click();
+		await expect( this.defaultsTagSelector ).toBeVisible();
 	}
 
-	async switchToVariablesTab(): Promise< void > {
-		await this.variablesTab.click();
+	async switchToVariablesFromHome(): Promise< void > {
+		await this.variablesHomeItem.click();
 		await this.addVariableButton.waitFor( { state: 'visible' } );
 	}
 
-	async switchToClassesTab(): Promise< void > {
-		await this.classesTab.click();
-		await expect( this.classesTab ).toHaveAttribute( 'aria-selected', 'true' );
+	async switchToClassesFromHome(): Promise< void > {
+		await this.classesHomeItem.click();
+		await expect( this.classesSaveButton ).toBeVisible();
 	}
 
 	async openFromClassManagerButton( editor: EditorPage, elementId: string ): Promise< void > {
@@ -171,8 +175,7 @@ export default class DesignSystemPage {
 		await editor.v4Panel.openTab( 'style' );
 		await this.page.getByRole( 'button', { name: 'Class Manager' } ).click();
 		await this.dismissUnsavedChangesDialogIfVisible();
-		await this.panelHeading.waitFor( { state: 'visible' } );
-		await expect( this.classesTab ).toHaveAttribute( 'aria-selected', 'true' );
+		await expect( this.panel.getByRole( 'button', { name: 'Back' } ) ).toBeVisible();
 		await expect( this.classesSaveButton ).toBeVisible();
 	}
 
@@ -253,7 +256,7 @@ export default class DesignSystemPage {
 
 	getClassItem( className: string ): Locator {
 		return this.panel
-			.getByRole( 'tabpanel' )
+			.getByRole( 'region', { name: 'Classes Manager' } )
 			.locator( 'li' )
 			.filter( { has: this.page.getByRole( 'button', { name: 'More actions' } ) } )
 			.filter( { hasText: className } );

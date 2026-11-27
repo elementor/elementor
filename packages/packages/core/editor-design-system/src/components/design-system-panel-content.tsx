@@ -1,39 +1,34 @@
 import * as React from 'react';
-import { type SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { DefaultStylesTabEmbedded, trackDefaultStyles } from '@elementor/editor-default-styles';
 import { ClassManagerPanelEmbedded, trackGlobalClasses } from '@elementor/editor-global-classes';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { isSidebarEnabled } from '@elementor/editor-sidebar';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { trackVariablesManagerEvent, VariablesManagerPanelEmbedded } from '@elementor/editor-variables';
-import { ColorFilterIcon, ColorSwatchIcon, TextIcon } from '@elementor/icons';
-import { Box, CloseButton, Divider, Stack, Tab, Tabs, useTabs } from '@elementor/ui';
+import { Box, CloseButton, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import {
 	type DesignSystemTab,
-	getInitialDesignSystemTab,
+	type DesignSystemView,
+	getInitialDesignSystemView,
 	normalizeDesignSystemTab,
-	notifyDesignSystemTabChange,
+	notifyDesignSystemViewChange,
 	persistDesignSystemTab,
 } from '../initial-tab';
 import { DesignSystemHeaderMenu } from './design-system-header-menu';
-
-const stickyTabRowStyles = {
-	position: 'sticky' as const,
-	zIndex: 1100,
-	opacity: 1,
-	backgroundColor: 'background.default' as const,
-	transition: 'top 300ms ease' as const,
-};
+import { DesignSystemHome } from './design-system-home';
+import { DesignSystemSectionHeader } from './design-system-section-header';
 
 export type DesignSystemPanelContentProps = {
 	onRequestClose: () => void | Promise< void >;
 };
 
 const EVENT_SET_TAB = 'elementor/design-system/set-tab';
+const EVENT_GO_HOME = 'elementor/design-system/go-home';
 
-const trackDesignSystemTabOpened = ( tab: DesignSystemTab ) => {
+const trackDesignSystemSectionOpened = ( tab: DesignSystemTab ) => {
 	switch ( tab ) {
 		case 'defaults':
 			trackDefaultStyles( { event: 'panelOpened' } );
@@ -49,88 +44,101 @@ const trackDesignSystemTabOpened = ( tab: DesignSystemTab ) => {
 
 export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelContentProps ) {
 	const sidebarPanelChrome = isSidebarEnabled();
-	const [ currentTab, setCurrentTab ] = useState( () => getInitialDesignSystemTab() );
+	const [ currentView, setCurrentView ] = useState< DesignSystemView >( () => getInitialDesignSystemView() );
 	const defaultsCloseAttemptRef = useRef< ( () => void ) | null >( null );
 	const variablesCloseAttemptRef = useRef< ( () => void ) | null >( null );
 	const classesCloseAttemptRef = useRef< ( () => void ) | null >( null );
-	const isChainingRef = useRef( false );
-	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs( currentTab );
+	const sectionExitActionRef = useRef< () => void >( () => {} );
 
-	const chainedThroughClasses = useCallback( () => {
-		if ( ! isChainingRef.current && classesCloseAttemptRef.current ) {
-			isChainingRef.current = true;
-			classesCloseAttemptRef.current();
-			isChainingRef.current = false;
+	const goHome = useCallback( () => {
+		setCurrentView( null );
+		notifyDesignSystemViewChange( null );
+	}, [] );
+
+	const openSection = useCallback( ( tab: DesignSystemTab ) => {
+		const normalized = normalizeDesignSystemTab( tab );
+		setCurrentView( normalized );
+		persistDesignSystemTab( normalized );
+		notifyDesignSystemViewChange( normalized );
+		trackDesignSystemSectionOpened( normalized );
+	}, [] );
+
+	const attemptBackFromSection = useCallback( () => {
+		if ( ! currentView ) {
 			return;
 		}
 
-		void onRequestClose();
-	}, [ onRequestClose ] );
+		const closeAttempt =
+			currentView === 'defaults'
+				? defaultsCloseAttemptRef.current
+				: currentView === 'variables'
+					? variablesCloseAttemptRef.current
+					: classesCloseAttemptRef.current;
 
-	const chainedThroughVariables = useCallback( () => {
-		if ( ! isChainingRef.current && variablesCloseAttemptRef.current ) {
-			isChainingRef.current = true;
-			variablesCloseAttemptRef.current();
-			isChainingRef.current = false;
+		sectionExitActionRef.current = goHome;
+		if ( closeAttempt ) {
+			closeAttempt();
 			return;
 		}
 
-		void onRequestClose();
-	}, [ onRequestClose ] );
-
-	const chainedThroughDefaults = useCallback( () => {
-		if ( ! isChainingRef.current && defaultsCloseAttemptRef.current ) {
-			isChainingRef.current = true;
-			defaultsCloseAttemptRef.current();
-			isChainingRef.current = false;
-			return;
-		}
-
-		void onRequestClose();
-	}, [ onRequestClose ] );
+		goHome();
+	}, [ currentView, goHome ] );
 
 	useEffect( () => {
-		notifyDesignSystemTabChange( currentTab );
-	}, [ currentTab ] );
+		notifyDesignSystemViewChange( currentView );
+	}, [ currentView ] );
 
 	useEffect( () => {
-		const handler = ( event: Event ) => {
+		const setTabHandler = ( event: Event ) => {
 			const tab = ( event as CustomEvent< { tab: DesignSystemTab } > ).detail?.tab;
 			if ( ! tab ) {
 				return;
 			}
-			const normalizedTab = normalizeDesignSystemTab( tab );
-			setCurrentTab( normalizedTab );
-			persistDesignSystemTab( normalizedTab );
-			notifyDesignSystemTabChange( normalizedTab );
-			trackDesignSystemTabOpened( normalizedTab );
+			openSection( tab );
 		};
 
-		window.addEventListener( EVENT_SET_TAB, handler as EventListener );
+		const goHomeHandler = () => {
+			goHome();
+		};
+
+		window.addEventListener( EVENT_SET_TAB, setTabHandler as EventListener );
+		window.addEventListener( EVENT_GO_HOME, goHomeHandler );
 
 		return () => {
-			window.removeEventListener( EVENT_SET_TAB, handler as EventListener );
+			window.removeEventListener( EVENT_SET_TAB, setTabHandler as EventListener );
+			window.removeEventListener( EVENT_GO_HOME, goHomeHandler );
 		};
-	}, [] );
+	}, [ goHome, openSection ] );
 
 	const handleHeaderClose = () => {
-		if ( currentTab === 'defaults' && defaultsCloseAttemptRef.current ) {
-			defaultsCloseAttemptRef.current();
+		if ( ! currentView ) {
+			void onRequestClose();
 			return;
 		}
 
-		if ( currentTab === 'variables' && variablesCloseAttemptRef.current ) {
-			variablesCloseAttemptRef.current();
-			return;
-		}
+		const closeAttempt =
+			currentView === 'defaults'
+				? defaultsCloseAttemptRef.current
+				: currentView === 'variables'
+					? variablesCloseAttemptRef.current
+					: classesCloseAttemptRef.current;
 
-		if ( currentTab === 'classes' && classesCloseAttemptRef.current ) {
-			classesCloseAttemptRef.current();
+		sectionExitActionRef.current = () => {
+			void onRequestClose();
+		};
+		if ( closeAttempt ) {
+			closeAttempt();
 			return;
 		}
 
 		void onRequestClose();
 	};
+
+	const handleSectionRequestClose = useCallback( () => {
+		sectionExitActionRef.current();
+	}, [] );
+
+	const showHome = currentView === null;
 
 	return (
 		<ThemeProvider>
@@ -143,9 +151,13 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 						spacing={ 0.5 }
 						sx={ sidebarPanelChrome ? undefined : { p: 1, pl: 2 } }
 					>
-						<PanelHeaderTitle sx={ { flex: 1, minWidth: 0 } }>
-							{ __( 'Design system', 'elementor' ) }
-						</PanelHeaderTitle>
+						{ showHome ? (
+							<PanelHeaderTitle sx={ { flex: 1, minWidth: 0 } }>
+								{ __( 'Design system', 'elementor' ) }
+							</PanelHeaderTitle>
+						) : (
+							<DesignSystemSectionHeader section={ currentView } onBack={ attemptBackFromSection } />
+						) }
 						<DesignSystemHeaderMenu />
 						<CloseButton
 							aria-label={ __( 'Close', 'elementor' ) }
@@ -164,93 +176,69 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 					} }
 				>
 					<Stack direction="column" sx={ { width: '100%', flex: 1, minHeight: 0, overflow: 'hidden' } }>
-						<Stack sx={ { ...stickyTabRowStyles, top: 0, flexShrink: 0 } }>
-							<Tabs
-								variant="fullWidth"
-								size="small"
-								sx={ { mt: 0.5 } }
-								{ ...getTabsProps() }
-								onChange={ ( e: SyntheticEvent, newValue: DesignSystemTab ) => {
-									getTabsProps().onChange( e, newValue );
-									setCurrentTab( newValue );
-									persistDesignSystemTab( newValue );
-									notifyDesignSystemTabChange( newValue );
-									trackDesignSystemTabOpened( newValue );
-								} }
-							>
-								<Tab
-									label={ __( 'Defaults', 'elementor' ) }
-									icon={ <TextIcon fontSize="small" /> }
-									iconPosition="start"
-									{ ...getTabProps( 'defaults' ) }
-								/>
-								<Tab
-									label={ __( 'Variables', 'elementor' ) }
-									icon={ <ColorFilterIcon fontSize="small" /> }
-									iconPosition="start"
-									{ ...getTabProps( 'variables' ) }
-								/>
-								<Tab
-									label={ __( 'Classes', 'elementor' ) }
-									icon={ <ColorSwatchIcon fontSize="small" /> }
-									iconPosition="start"
-									{ ...getTabProps( 'classes' ) }
-								/>
-							</Tabs>
-							<Divider />
-						</Stack>
 						<Box
-							role="tabpanel"
-							{ ...getTabPanelProps( 'defaults' ) }
 							sx={ {
 								flex: 1,
 								minHeight: 0,
-								display: currentTab === 'defaults' ? 'flex' : 'none',
+								display: showHome ? 'flex' : 'none',
+								flexDirection: 'column',
+								overflow: 'hidden',
+							} }
+						>
+							<DesignSystemHome onSelect={ openSection } />
+						</Box>
+						<Box
+							role="region"
+							aria-label={ __( 'Default Styles', 'elementor' ) }
+							sx={ {
+								flex: 1,
+								minHeight: 0,
+								display: currentView === 'defaults' ? 'flex' : 'none',
 								flexDirection: 'column',
 								overflow: 'hidden',
 								pt: 1,
 							} }
 						>
 							<DefaultStylesTabEmbedded
-								onRequestClose={ chainedThroughVariables }
+								onRequestClose={ handleSectionRequestClose }
 								onExposeCloseAttempt={ ( fn ) => {
 									defaultsCloseAttemptRef.current = fn;
 								} }
 							/>
 						</Box>
 						<Box
-							role="tabpanel"
-							{ ...getTabPanelProps( 'variables' ) }
+							role="region"
+							aria-label={ __( 'Variables Manager', 'elementor' ) }
 							sx={ {
 								flex: 1,
 								minHeight: 0,
-								display: currentTab === 'variables' ? 'flex' : 'none',
+								display: currentView === 'variables' ? 'flex' : 'none',
 								flexDirection: 'column',
 								overflow: 'hidden',
 								pt: 1,
 							} }
 						>
 							<VariablesManagerPanelEmbedded
-								onRequestClose={ chainedThroughClasses }
+								onRequestClose={ handleSectionRequestClose }
 								onExposeCloseAttempt={ ( fn ) => {
 									variablesCloseAttemptRef.current = fn;
 								} }
 							/>
 						</Box>
 						<Box
-							role="tabpanel"
-							{ ...getTabPanelProps( 'classes' ) }
+							role="region"
+							aria-label={ __( 'Classes Manager', 'elementor' ) }
 							sx={ {
 								flex: 1,
 								minHeight: 0,
-								display: currentTab === 'classes' ? 'flex' : 'none',
+								display: currentView === 'classes' ? 'flex' : 'none',
 								flexDirection: 'column',
 								overflow: 'hidden',
 								pt: 1,
 							} }
 						>
 							<ClassManagerPanelEmbedded
-								onRequestClose={ chainedThroughDefaults }
+								onRequestClose={ handleSectionRequestClose }
 								onExposeCloseAttempt={ ( fn ) => {
 									classesCloseAttemptRef.current = fn;
 								} }

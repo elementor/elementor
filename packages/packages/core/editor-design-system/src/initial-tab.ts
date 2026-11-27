@@ -1,5 +1,7 @@
 export type DesignSystemTab = 'defaults' | 'variables' | 'classes';
 
+export type DesignSystemView = DesignSystemTab | null;
+
 const STORAGE_KEY = 'elementor_editor_design_system_active_tab';
 
 function readStoredTab(): DesignSystemTab {
@@ -17,37 +19,68 @@ function readStoredTab(): DesignSystemTab {
 	return 'defaults';
 }
 
-let pendingTabForOpen: DesignSystemTab | null = null;
+let pendingOpenView: DesignSystemView | undefined;
 
-let activeTabInMemory: DesignSystemTab = readStoredTab();
+let activeViewInMemory: DesignSystemView = null;
 
 export function normalizeDesignSystemTab( tab: DesignSystemTab ): DesignSystemTab {
 	return tab;
 }
 
 export function setPendingDesignSystemTab( tab: DesignSystemTab ): void {
-	pendingTabForOpen = tab;
+	pendingOpenView = tab;
+}
+
+export function setPendingDesignSystemHome(): void {
+	pendingOpenView = null;
+}
+
+function consumePendingOpen(): DesignSystemView | undefined {
+	if ( pendingOpenView === undefined ) {
+		return undefined;
+	}
+	const view = pendingOpenView;
+	pendingOpenView = undefined;
+	activeViewInMemory = view;
+	if ( view ) {
+		persistDesignSystemTab( view );
+	}
+	return view;
+}
+
+export function getInitialDesignSystemView(): DesignSystemView {
+	const pending = consumePendingOpen();
+	if ( pending !== undefined ) {
+		return pending;
+	}
+	activeViewInMemory = null;
+	return null;
 }
 
 export function getInitialDesignSystemTab(): DesignSystemTab {
-	if ( pendingTabForOpen ) {
-		const t = pendingTabForOpen;
-		pendingTabForOpen = null;
-		activeTabInMemory = t;
-		persistDesignSystemTab( t );
-		return t;
+	const pending = consumePendingOpen();
+	if ( pending !== undefined ) {
+		return pending ?? readStoredTab();
 	}
-	const t = readStoredTab();
-	activeTabInMemory = t;
-	return t;
+	const stored = readStoredTab();
+	activeViewInMemory = stored;
+	return stored;
+}
+
+export function notifyDesignSystemViewChange( view: DesignSystemView ): void {
+	activeViewInMemory = view;
 }
 
 export function notifyDesignSystemTabChange( tab: DesignSystemTab ): void {
-	activeTabInMemory = tab;
+	activeViewInMemory = tab;
+}
+
+export function getActiveDesignSystemView(): DesignSystemView {
+	return activeViewInMemory;
 }
 
 export function getActiveDesignSystemTab(): DesignSystemTab {
-	return activeTabInMemory;
+	return activeViewInMemory ?? readStoredTab();
 }
 
 export function persistDesignSystemTab( tab: DesignSystemTab ): void {

@@ -13,7 +13,12 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { usePanelActions, usePanelStatus } from '../design-system-panel';
-import { type DesignSystemTab, getActiveDesignSystemTab, setPendingDesignSystemTab } from '../initial-tab';
+import {
+	type DesignSystemTab,
+	getActiveDesignSystemView,
+	setPendingDesignSystemHome,
+	setPendingDesignSystemTab,
+} from '../initial-tab';
 
 const V1_ELEMENTS_PANEL_ROUTE = 'panel/elements/categories';
 const EVENT_OPEN_DEFAULTS = 'elementor/open-default-styles';
@@ -21,6 +26,7 @@ const EVENT_OPEN_VARIABLES = 'elementor/open-variables-manager';
 const EVENT_OPEN_CLASSES = 'elementor/open-global-classes-manager';
 const EVENT_TOGGLE = 'elementor/toggle-design-system';
 const EVENT_SET_TAB = 'elementor/design-system/set-tab';
+const EVENT_GO_HOME = 'elementor/design-system/go-home';
 
 const ACTIVE_PANEL_PARAM = 'active-panel';
 const PANEL_ID = 'design-system';
@@ -81,12 +87,32 @@ export function DesignSystemEntrypoints() {
 
 	useEffect( () => {
 		const handler = ( event: Event ) => {
-			const tab = ( event as CustomEvent< { tab: DesignSystemTab } > ).detail?.tab;
+			const detail = ( event as CustomEvent< { tab?: DesignSystemTab; home?: true } > ).detail;
+
+			if ( detail?.home ) {
+				if ( isOpenRef.current && getActiveDesignSystemView() === null ) {
+					void close();
+					return;
+				}
+
+				if ( isOpenRef.current ) {
+					window.dispatchEvent( new CustomEvent( EVENT_GO_HOME ) );
+					return;
+				}
+
+				gatedOpen( () => {
+					pendingHomeRef.current = true;
+					openRoute( V1_ELEMENTS_PANEL_ROUTE );
+				} );
+				return;
+			}
+
+			const tab = detail?.tab;
 			if ( tab !== 'defaults' && tab !== 'variables' && tab !== 'classes' ) {
 				return;
 			}
 
-			if ( isOpenRef.current && getActiveDesignSystemTab() === tab ) {
+			if ( isOpenRef.current && getActiveDesignSystemView() === tab ) {
 				void close();
 				return;
 			}
@@ -109,6 +135,7 @@ export function DesignSystemEntrypoints() {
 	}, [ close, gatedOpen ] );
 
 	const pendingTabRef = useRef< DesignSystemTab | null >( null );
+	const pendingHomeRef = useRef( false );
 	const [ readyToOpenFromEvent, setReadyToOpenFromEvent ] = useState( false );
 
 	useEffect( () => {
@@ -120,6 +147,13 @@ export function DesignSystemEntrypoints() {
 
 	useEffect( () => {
 		return listenTo( routeOpenEvent( V1_ELEMENTS_PANEL_ROUTE ), () => {
+			if ( pendingHomeRef.current ) {
+				pendingHomeRef.current = false;
+				setPendingDesignSystemHome();
+				setReadyToOpenFromEvent( true );
+				return;
+			}
+
 			const tab = pendingTabRef.current;
 			if ( tab ) {
 				pendingTabRef.current = null;
@@ -163,6 +197,7 @@ export function DesignSystemEntrypoints() {
 		}
 
 		let targetTab: DesignSystemTab | null = null;
+		let openHome = false;
 
 		if ( activePanel === PANEL_ID ) {
 			const tab = urlParams.get( 'design-system-tab' );
@@ -170,8 +205,10 @@ export function DesignSystemEntrypoints() {
 				targetTab = 'classes';
 			} else if ( tab === 'variables' ) {
 				targetTab = 'variables';
-			} else {
+			} else if ( tab === 'defaults' ) {
 				targetTab = 'defaults';
+			} else {
+				openHome = true;
 			}
 		} else if ( activePanel === LEGACY_DEFAULT_STYLES_PANEL ) {
 			targetTab = 'defaults';
@@ -191,7 +228,9 @@ export function DesignSystemEntrypoints() {
 			hasOpenedFromUrl.current = true;
 
 			requestAnimationFrame( () => {
-				if ( targetTab ) {
+				if ( openHome ) {
+					setPendingDesignSystemHome();
+				} else if ( targetTab ) {
 					setPendingDesignSystemTab( targetTab );
 				}
 				gatedOpen( () => void open() );
