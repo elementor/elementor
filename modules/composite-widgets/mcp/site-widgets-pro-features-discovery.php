@@ -15,6 +15,19 @@ class Site_Widgets_Pro_Features_Discovery {
 	const PRO_FEATURE = 'site_widgets';
 	const ACTION_ADD_TO_PAGE = 'add_to_page';
 
+	public static function for_manage( string $action ): \WP_Error {
+		return Pro_Features_Discovery::error(
+			self::PRO_FEATURE,
+			__( 'Saving and managing widgets on the site needs Elementor Pro, so nothing was changed. What Pro gives the user: the block saved once as a widget, placed on any page with the same structure and design, with its own simple content and style controls.', 'elementor' ),
+			__( 'Free path: build the block with native widgets and a global class so the styling stays consistent. Tell the user each copy will be edited separately.', 'elementor' ),
+			self::UPGRADE_URL,
+			[
+				'action' => $action,
+				'access' => Site_Widgets_Access_Controller::get_access(),
+			]
+		);
+	}
+
 	public static function for_add_to_page(): \WP_Error {
 		return Pro_Features_Discovery::error(
 			self::PRO_FEATURE,

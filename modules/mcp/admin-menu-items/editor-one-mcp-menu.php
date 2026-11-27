@@ -7,6 +7,7 @@ use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interfac
 use Elementor\MCP\Composer\Admin\Page;
 use Elementor\Modules\EditorOne\Classes\Admin_Page_Title;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Module as Editor_One_Module;
 use Elementor\Modules\Mcp\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -74,7 +75,7 @@ class Editor_One_Mcp_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu
 			return;
 		}
 
-		$title_markup = Admin_Page_Title::get_markup( (string) $this->get_page_title() );
+		$title_markup = Admin_Page_Title::get_markup( (string) $this->get_page_title(), Editor_One_Module::is_admin_navigation_active() );
 		$html = preg_replace( '/(<div class="wrap">\s*)/', '$1' . $title_markup, $html, 1 );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Injected markup is escaped; MCP page HTML is trusted plugin output.

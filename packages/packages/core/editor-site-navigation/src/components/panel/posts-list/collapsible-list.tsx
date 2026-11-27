@@ -15,6 +15,7 @@ type Props = {
 	headerRef?: Ref< HTMLDivElement >;
 	isOpen: boolean;
 	onOpenChange: ( isOpen: boolean ) => void;
+	sectionToolbar?: ReactNode;
 	title: string;
 	trailingActions?: ReactNode;
 };
@@ -39,6 +40,7 @@ export default function CollapsibleList( {
 	headerRef,
 	isOpen,
 	onOpenChange,
+	sectionToolbar,
 	title,
 	trailingActions,
 	children,
@@ -102,6 +104,7 @@ export default function CollapsibleList( {
 					</Stack>
 				) }
 			</Box>
+			{ isOpen && sectionToolbar }
 			<Collapse aria-labelledby={ labelId } id={ contentId } in={ isOpen } timeout="auto" unmountOnExit>
 				<List dense disablePadding sx={ contentPanelListSectionListSx }>
 					{ children }

@@ -1,13 +1,6 @@
 import { useEffect, useState } from 'react';
 
-type Channel = {
-	on: ( event: string, callback: () => void ) => void;
-	off: ( event: string, callback: () => void ) => void;
-};
-
-type ExtendedWindow = Window & {
-	elementor?: { channels?: { panelElements?: Channel } };
-};
+import { type ExtendedWindow } from '../types';
 
 export function useIsDragging() {
 	const [ isDragging, setIsDragging ] = useState( false );

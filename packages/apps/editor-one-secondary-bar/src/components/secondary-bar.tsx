@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Link, Stack } from '@elementor/ui';
+import { ArrowUpRightIcon } from '@elementor/icons';
+import { Chip, Link, Stack, withDirection } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
 import { type SecondaryBarConfig } from '../types';
@@ -9,6 +10,8 @@ import { FinderButton } from './finder-button';
 type Props = {
 	config: SecondaryBarConfig;
 };
+
+const DirectionalArrowIcon = withDirection( ArrowUpRightIcon );
 
 const getTabSx = ( isActive: boolean ) => {
 	const boxShadow = isActive ? 'inset 0 -3px 0 currentColor' : 'none';
@@ -64,12 +67,16 @@ export function SecondaryBar( { config }: Props ) {
 						sx={ getTabSx( tab.is_active ) }
 					>
 						{ tab.label }
+						{ tab.opens_in_app && <DirectionalArrowIcon fontSize="tiny" sx={ { ml: 0.5 } } /> }
+						{ tab.tag && (
+							<Chip size="tiny" shape="rounded" variant="outlined" label={ tab.tag } sx={ { ml: 1 } } />
+						) }
 					</Link>
 				) ) }
 			</Stack>
 			<Stack alignItems="stretch" direction="row" sx={ { flexShrink: 0 } }>
 				{ config.addons.length > 0 && <AddonsMenu addons={ config.addons } /> }
-				{ config.is_finder_available && <FinderButton showLeadingDivider={ config.addons.length > 0 } /> }
+				{ config.is_finder_available && <FinderButton /> }
 			</Stack>
 		</Stack>
 	);

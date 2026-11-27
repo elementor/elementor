@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 
 import { type SecondaryBarConfig } from '../../types';
 import { SecondaryBar } from '../secondary-bar';
@@ -17,6 +17,10 @@ const createConfig = ( overrides: Partial< SecondaryBarConfig > = {} ): Secondar
 
 const addons = [ { id: 'dev-tools', label: 'Dev Tools', url: '/dev-tools' } ];
 
+const getFinderDivider = ( finder: HTMLElement ) =>
+	// eslint-disable-next-line testing-library/no-node-access
+	finder.parentElement?.querySelector( '[aria-hidden="true"]' ) ?? null;
+
 describe( '<SecondaryBar />', () => {
 	afterEach( () => {
 		delete window.$e;
@@ -31,6 +35,24 @@ describe( '<SecondaryBar />', () => {
 		expect( screen.getByRole( 'link', { name: 'Settings' } ) ).toHaveAttribute( 'href', '/settings' );
 		expect( screen.getByRole( 'link', { name: 'Settings' } ) ).toHaveAttribute( 'aria-current', 'page' );
 		expect( screen.getByRole( 'link', { name: 'Tools' } ) ).not.toHaveAttribute( 'aria-current' );
+	} );
+
+	it( 'should render the tag of a tab inside its link', () => {
+		// Arrange
+		const tabs = [
+			{ id: 'readiness-score', label: 'Readiness Score', url: '/readiness', is_active: true, tag: 'Beta' },
+			{ id: 'tools', label: 'Tools', url: '/tools', is_active: false },
+		];
+
+		// Act
+		render( <SecondaryBar config={ createConfig( { tabs } ) } /> );
+
+		// Assert
+		expect(
+			within( screen.getByRole( 'link', { name: /Readiness Score/ } ) ).getByText( 'Beta' )
+		).toBeInTheDocument();
+		expect( within( screen.getByRole( 'link', { name: 'Tools' } ) ).queryByText( 'Beta' ) ).not.toBeInTheDocument();
+		expect( screen.getAllByText( 'Beta' ) ).toHaveLength( 1 );
 	} );
 
 	it( 'should keep all tabs reachable with Tab when none is active', () => {
@@ -102,12 +124,26 @@ describe( '<SecondaryBar />', () => {
 		expect( () => fireEvent.click( screen.getByRole( 'button', { name: 'Finder' } ) ) ).not.toThrow();
 	} );
 
-	it( 'should render the finder in a fixed-width slot when addons are shown', () => {
+	it( 'should render the finder divider when addons are shown', () => {
 		// Act
 		render( <SecondaryBar config={ createConfig( { addons } ) } /> );
 
 		// Assert
-		expect( screen.getByRole( 'button', { name: 'Finder' } ) ).toBeInTheDocument();
+		const finder = screen.getByRole( 'button', { name: 'Finder' } );
+
+		expect( finder ).toBeInTheDocument();
+		expect( getFinderDivider( finder ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render the finder divider even when there are no addons', () => {
+		// Act
+		render( <SecondaryBar config={ createConfig( { addons: [] } ) } /> );
+
+		// Assert
+		const finder = screen.getByRole( 'button', { name: 'Finder' } );
+
+		expect( finder ).toBeInTheDocument();
+		expect( getFinderDivider( finder ) ).toBeInTheDocument();
 	} );
 
 	it( 'should hide Finder when it is not available', () => {

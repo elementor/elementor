@@ -3,6 +3,7 @@
 namespace Elementor\Modules\EditorOne\Components;
 
 use Elementor\Modules\EditorOne\Classes\Admin_Flow_Config;
+use Elementor\Modules\EditorOne\Classes\App_Link_Classifier;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Subscription_Action;
@@ -14,8 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Admin_Menu_Structure {
 
 	const DIVIDER_CLASS = 'elementor-submenu-has-divider';
-
-	const PAGES_MENU_SLUG = 'edit.php?post_type=page';
+	const OPENS_IN_APP_CLASS = 'elementor-submenu-opens-in-app';
 
 	const UPGRADE_SLUGS = [
 		'elementor-one-upgrade',
@@ -33,7 +33,7 @@ class Admin_Menu_Structure {
 
 		add_action( 'admin_menu', [ $this, 'register_upgrade_submenu_page' ], 10007 );
 		add_action( 'admin_menu', [ $this, 'register_parent_aliases' ], 10008 );
-		add_action( 'admin_menu', [ $this, 'place_elementor_below_pages' ], 10020 );
+		add_action( 'admin_menu', [ $this, 'place_elementor_above_hello' ], 10020 );
 		add_action( 'admin_head', [ $this, 'rebuild_submenu' ], 20 );
 		add_filter( 'admin_body_class', [ $this, 'add_admin_navigation_body_class' ] );
 	}
@@ -85,14 +85,14 @@ class Admin_Menu_Structure {
 		}
 	}
 
-	public function place_elementor_below_pages(): void {
+	public function place_elementor_above_hello(): void {
 		if ( ! $this->should_apply() ) {
 			return;
 		}
 
 		global $menu;
 
-		$menu = $this->move_below_pages( (array) $menu, Menu_Config::ELEMENTOR_HOME_MENU_SLUG, self::PAGES_MENU_SLUG ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$menu = $this->move_to_position( (array) $menu, Menu_Config::ELEMENTOR_HOME_MENU_SLUG, Menu_Config::MENU_POSITION ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
 	public function rebuild_submenu(): void {
@@ -132,21 +132,23 @@ class Admin_Menu_Structure {
 		) );
 	}
 
-	public function move_below_pages( array $menu, string $item_slug, string $pages_slug ): array {
+	/**
+	 * Moves the top-level item to the given position. A taken position is resolved by stepping up by 0.01,
+	 * which keeps the item below Hello (59.9) as long as the position starts just under it.
+	 */
+	public function move_to_position( array $menu, string $item_slug, float $position ): array {
 		$slugs = array_map( fn( $item ) => $item[2] ?? '', $menu );
 		$item_key = array_search( $item_slug, $slugs, true );
-		$pages_key = array_search( $pages_slug, $slugs, true );
 
-		if ( false === $item_key || false === $pages_key ) {
+		if ( false === $item_key ) {
 			return $menu;
 		}
 
 		$item = $menu[ $item_key ];
 		unset( $menu[ $item_key ] );
-		$position = (float) $pages_key + 1;
 
 		while ( isset( $menu[ (string) $position ] ) ) {
-			++$position;
+			$position = round( $position + 0.01, 2 );
 		}
 
 		$menu[ (string) $position ] = $item;
@@ -232,6 +234,17 @@ class Admin_Menu_Structure {
 
 		$item[0] = $label;
 		$item[2] = $slug;
+
+		return $this->mark_if_opens_in_app( $item );
+	}
+
+	private function mark_if_opens_in_app( array $item ): array {
+		if ( ! App_Link_Classifier::opens_in_app( $this->admin_flow_handler->get_map()->get_default_url( $item[2] ) ) ) {
+			return $item;
+		}
+
+		$item[3] = $item[3] ?? $item[0];
+		$item[4] = trim( ( $item[4] ?? '' ) . ' ' . self::OPENS_IN_APP_CLASS );
 
 		return $item;
 	}

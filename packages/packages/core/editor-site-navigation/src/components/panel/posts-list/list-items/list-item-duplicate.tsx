@@ -23,6 +23,7 @@ export default function ListItemDuplicate() {
 				title: inputValue,
 			} );
 
+			resetEditMode();
 			navigateToDocument( postId );
 		} catch {
 			setError();
