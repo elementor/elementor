@@ -85,6 +85,9 @@ jobs:
     env:
       RUN_SUFFIX: ${{ format('{0}{1}', inputs.php_version && format('-php{0}', inputs.php_version) || '', inputs.wp_core && format('-wp{0}', inputs.wp_core) || '') }}
       WP_NIGHTLY: ${{ inputs.php_version == '' && (github.event_name == 'schedule' || github.event.inputs.run_mode == 'nightly') }}
+      # The live CDN is checked by its own nightly run in playwright.yml, PR runs stay offline.
+      E2E_CDN_SCENARIO: ${{ github.event.inputs.cdn_source && 'live' || github.event.inputs.cdn_scenario || '' }}
+      E2E_CDN_SOURCE: ${{ github.event.inputs.cdn_source || '' }}
     if: |
       always() &&
       (needs.build-plugin.result == 'success' || needs.prepare-caller-build.result == 'success')
@@ -170,6 +173,15 @@ jobs:
         run: |
           jq '.config.WP_DEBUG = true | .config.WP_DEBUG_LOG = true | .config.WP_DEBUG_DISPLAY = false' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
 
+      - name: Setup CDN promotion fixtures
+        uses: elementor/elementor-editor-github-actions/actions/fetch-cdn-scenario@main
+        with:
+          output-dir: tests/playwright/mu-plugins/editor-assets-cdn/live
+          mu-plugins-dir: tests/playwright/mu-plugins
+          copy-fixtures: true
+          fetch-live: ${{ env.E2E_CDN_SCENARIO == 'live' }}
+          cdn-source: ${{ env.E2E_CDN_SOURCE }}
+          allow-failure: true
       - name: Install WordPress environment
         run: |
           npm run start-local-server
