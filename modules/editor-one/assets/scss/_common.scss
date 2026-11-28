@@ -396,9 +396,18 @@
 	}
 
 	#elementor-system-info > h2,
-	#elementor-role-manager > h2 {
+	.elementor-settings-page-header__title {
 		font-weight: 500;
 		font-size: 20px;
+	}
+
+	.elementor-settings-page-header__save {
+		background-color: var(--e-one-palette-background-default);
+
+		#submit[disabled],
+		#submit:disabled {
+			opacity: 0.45;
+		}
 	}
 
 	.elementor-settings-form-page h2 ~ p {
@@ -467,7 +476,16 @@
 	}
 }
 
+$e-editor-one-secondary-bar-height: 48px;
+$e-editor-one-secondary-bar-sticky-z-index: 19;
+$e-editor-one-secondary-bar-sticky-save-gap: 8px;
+
 body:has(#editor-one-top-bar > *) {
+
+	#wpcontent {
+		--e-secondary-bar-height: #{$e-editor-one-secondary-bar-height};
+		--e-secondary-bar-sticky-save-gap: #{$e-editor-one-secondary-bar-sticky-save-gap};
+	}
 
 	&:not(.e-has-sidebar-navigation) {
 		--editor-one-sidebar-navigation-width: 0px;
@@ -498,6 +516,11 @@ body:has(#editor-one-top-bar > *) {
 
 	#editor-one-secondary-bar {
 		order: -1;
+		position: sticky;
+		inset-block-start: 0;
+		z-index: $e-editor-one-secondary-bar-sticky-z-index;
+		flex-shrink: 0;
+		background-color: var(--e-one-palette-background-default);
 	}
 
 	$e-notice-gap-from-top: 24px;

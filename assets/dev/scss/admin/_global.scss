@@ -315,7 +315,69 @@ body {
 	font-size: 17px;
 }
 
-// Settings
+// Settings (Admin flow experiment)
+$e-admin-settings-save-sticky-z-index: 20;
+
+body.e-admin-navigation-active .elementor-settings-form {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	column-gap: 16px;
+	align-items: start;
+
+	> hr.wp-header-end,
+	> #elementor-settings-tabs-wrapper,
+	> .elementor-settings-form-page,
+	> #elementor-role-manager,
+	> input[type="hidden"] {
+		grid-column: 1 / -1;
+	}
+}
+
+body.e-admin-navigation-active .elementor-settings-page-header {
+	display: contents;
+
+	.wp-heading-inline,
+	&__title {
+		grid-column: 1;
+		grid-row: 1;
+		margin: 0;
+		min-inline-size: 0;
+	}
+
+	&__save {
+		grid-column: 2;
+		grid-row: 1 / -1;
+		position: sticky;
+		inset-block-start: calc(var(--e-secondary-bar-height, 0px) + var(--e-secondary-bar-sticky-save-gap, 0px));
+		z-index: $e-admin-settings-save-sticky-z-index;
+		align-self: start;
+		padding-block-end: 4px;
+		background-color: $white;
+
+		.submit {
+			margin: 0;
+			padding: 0;
+		}
+
+		#submit[disabled],
+		#submit:disabled {
+			cursor: not-allowed;
+			opacity: 0.55;
+		}
+	}
+
+	&--role-manager .elementor-settings-page-header__title {
+		margin-block-end: 1em;
+	}
+}
+
+$e-admin-settings-form-bottom-spacing: 48px;
+
+body.e-admin-navigation-active.elementor-admin-settings-form #elementor-settings-form {
+	padding-block-end: $e-admin-settings-form-bottom-spacing;
+	box-sizing: border-box;
+}
+
 .elementor-settings-form-page {
 	padding-block-start: 30px;
 

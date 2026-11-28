@@ -73,3 +73,22 @@ $e-dialog-confirm-space: 20px;
 		}
 	}
 }
+
+$e-settings-unsaved-dialog-close-inset-block: 18px;
+$e-settings-unsaved-dialog-close-inset-inline: 8px;
+$e-settings-unsaved-dialog-header-close-padding: 32px;
+
+body.e-admin-navigation-active {
+	.dialog-type-confirm.elementor-settings-unsaved-dialog {
+		.dialog-close-button {
+			margin-block-start: 0;
+			inset-block-start: $e-settings-unsaved-dialog-close-inset-block;
+			inset-inline-end: $e-settings-unsaved-dialog-close-inset-inline;
+			z-index: 1;
+		}
+
+		.dialog-header {
+			padding-inline-end: $e-settings-unsaved-dialog-header-close-padding;
+		}
+	}
+}
