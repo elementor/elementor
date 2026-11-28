@@ -478,11 +478,13 @@
 
 $e-editor-one-secondary-bar-height: 48px;
 $e-editor-one-secondary-bar-sticky-z-index: 19;
+$e-editor-one-secondary-bar-sticky-save-gap: 8px;
 
 body:has(#editor-one-top-bar > *) {
 
 	#wpcontent {
 		--e-secondary-bar-height: #{$e-editor-one-secondary-bar-height};
+		--e-secondary-bar-sticky-save-gap: #{$e-editor-one-secondary-bar-sticky-save-gap};
 	}
 
 	&:not(.e-has-sidebar-navigation) {

@@ -348,10 +348,10 @@ body.e-admin-navigation-active .elementor-settings-page-header {
 		grid-column: 2;
 		grid-row: 1 / -1;
 		position: sticky;
-		inset-block-start: var(--e-secondary-bar-height, 0px);
+		inset-block-start: calc(var(--e-secondary-bar-height, 0px) + var(--e-secondary-bar-sticky-save-gap, 0px));
 		z-index: $e-admin-settings-save-sticky-z-index;
 		align-self: start;
-		padding-block: 4px;
+		padding-block-end: 4px;
 		background-color: $white;
 
 		.submit {
