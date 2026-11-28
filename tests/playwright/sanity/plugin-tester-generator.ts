@@ -12,11 +12,18 @@ const isBelowVersion = ( currentVersion?: string, minVersion?: string ) => {
 
 const lawFirmAboutEditorUrl = '/law-firm-about/?elementor';
 
-const openLawFirmAboutInElementor = async ( page: Page, wpAdmin: WpAdminPage ): Promise<void> => {
+const openLawFirmAboutInElementor = async (
+	page: Page,
+	wpAdmin: WpAdminPage,
+	afterNavigate?: () => Promise<void>,
+): Promise<void> => {
 	await page.goto( lawFirmAboutEditorUrl, {
 		waitUntil: 'domcontentloaded',
 		timeout: timeouts.heavyAction,
 	} );
+	if ( afterNavigate ) {
+		await afterNavigate();
+	}
 	await wpAdmin.waitForPanel();
 };
 
@@ -111,10 +118,17 @@ export const generatePluginTests = ( testType: string ) => {
 					}
 				}
 
-				await openLawFirmAboutInElementor( page, wpAdmin );
-
-				if ( 'connect-polylang-elementor' === plugin.pluginName && page.url().includes( 'page=mlang_wizard' ) ) {
-					await page.getByRole( 'link', { name: 'Not right now' } ).click();
+				if ( 'connect-polylang-elementor' === plugin.pluginName ) {
+					await openLawFirmAboutInElementor( page, wpAdmin, async () => {
+						if ( page.url().includes( 'page=mlang_wizard' ) ) {
+							await page.getByRole( 'link', { name: 'Not right now' } ).click();
+							await page.goto( lawFirmAboutEditorUrl, {
+								waitUntil: 'domcontentloaded',
+								timeout: timeouts.heavyAction,
+							} );
+						}
+					} );
+				} else {
 					await openLawFirmAboutInElementor( page, wpAdmin );
 				}
 
